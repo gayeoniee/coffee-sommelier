@@ -1,0 +1,37 @@
+providers:
+  ollama:
+    base_url: http://localhost:11434/v1
+    api_key_env: null
+  nvidia:
+    base_url: https://integrate.api.nvidia.com/v1
+    api_key_env: NVIDIA_API_KEY
+
+tasks:
+  enrich:
+    provider: ollama
+    model: "qwen3.5:9b"
+    timeout: 180
+    max_tokens: 2048
+    extra: {reasoning_effort: "none"}
+  embed:
+    provider: ollama
+    model: bge-m3
+    timeout: 120
+  vision:
+    provider: nvidia
+    model: meta/llama-3.2-11b-vision-instruct
+    timeout: 30
+    max_tokens: 800
+    fallback: {provider: ollama, model: "qwen3.5:9b", timeout: 120, max_tokens: 2048}
+  answer:
+    provider: nvidia
+    model: deepseek-ai/deepseek-v4.1-flash
+    timeout: 30
+    max_tokens: 1500
+    fallback: {provider: ollama, model: "qwen3.5:9b", timeout: 120, max_tokens: 2048}
+  # gold-set labeller: must differ from the enrich model, so no local fallback
+  judge:
+    provider: nvidia
+    model: deepseek-ai/deepseek-v4.1-flash
+    timeout: 120
+    max_tokens: 3000
