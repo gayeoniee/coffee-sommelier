@@ -2,20 +2,39 @@ import csv
 import random
 from pathlib import Path
 
-from pipeline.enrich import EnrichOutput, coffee_texts
+from pipeline.enrich import EnrichOutput, coffee_texts, read_json_lines, rule_tags, tag_vocab
 from pipeline.llm import LLMError
-from pipeline.records import CoffeeRecord, ReviewRecord, read_jsonl
+from pipeline.records import CoffeeRecord, ReviewRecord, TaxonomyNode, read_jsonl
 
 SCORES = ("acidity", "body", "sweetness")
+ORIGIN_FIELDS = SCORES + ("tags",)
 GOLD_COLUMNS = (["key", "name", "text"] + [f"pred_{s}" for s in SCORES] + ["pred_is_decaf", "pred_tags"]
+                + [f"origin_{f}" for f in ORIGIN_FIELDS]
                 + [f"gold_{s}" for s in SCORES] + ["gold_is_decaf", "gold_tags"])
 MAX_DECAF = 10
+TEXT_CHARS = 3000  # what enrich sends to the LLM
+
+
+def _origin(source_value, enriched_value, by_rule: bool, llm_ok: bool) -> str:
+    """Where a predicted value came from: source data, enrich rules, an ok LLM answer, or nowhere.
+    'unknown' flags a value that none of those explains (e.g. a stale cache)."""
+    if source_value:
+        return "source"
+    if not enriched_value:
+        return "none"
+    if by_rule:
+        return "rule"
+    return "llm" if llm_ok else "unknown"
 
 
 def sample_gold(enriched_dir: Path, norm_dir: Path, out_path: Path, n: int = 50, seed: int = 42) -> int:
     if out_path.exists():
         raise FileExistsError(f"{out_path} exists; move it away before resampling (it may hold labels)")
     texts = coffee_texts(read_jsonl(norm_dir / "reviews.jsonl", ReviewRecord))
+    source = {c.key: c for c in read_jsonl(norm_dir / "coffees.jsonl", CoffeeRecord)}
+    vocab = tag_vocab(read_jsonl(norm_dir / "taxonomy.jsonl", TaxonomyNode))
+    cache = {e["key"]: e for e in read_json_lines(enriched_dir / "cache.jsonl")[0]}  # later lines win
+    llm_ok = {k for k, e in cache.items() if e.get("status") == "ok"}
     pool = [c for c in read_jsonl(enriched_dir / "coffees.jsonl", CoffeeRecord) if texts.get(c.key)]
     rng = random.Random(seed)
     decaf = [c for c in pool if c.is_decaf]
@@ -28,7 +47,12 @@ def sample_gold(enriched_dir: Path, norm_dir: Path, out_path: Path, n: int = 50,
         w.writeheader()
         for c in picked:
             row = {col: "" for col in GOLD_COLUMNS}
-            row.update(key=c.key, name=c.name, text=texts[c.key][:2000],
+            src = source.get(c.key)
+            for s in SCORES:
+                row[f"origin_{s}"] = _origin(src and getattr(src, s), getattr(c, s), False, c.key in llm_ok)
+            row["origin_tags"] = _origin(src and src.flavor_tags, c.flavor_tags,
+                                         bool(rule_tags(texts[c.key], vocab)), c.key in llm_ok)
+            row.update(key=c.key, name=c.name, text=texts[c.key][:TEXT_CHARS],
                        pred_is_decaf="1" if c.is_decaf else "0", pred_tags="; ".join(c.flavor_tags),
                        **{f"pred_{s}": "" if getattr(c, s) is None else str(getattr(c, s)) for s in SCORES})
             w.writerow(row)
@@ -43,24 +67,47 @@ def _mean(xs: list[float]) -> float | None:
     return round(sum(xs) / len(xs), 4) if xs else None
 
 
+def _int(cell: str | None) -> int | None:
+    try:
+        return int(float(cell))
+    except (TypeError, ValueError, OverflowError):
+        return None
+
+
+def _group(items: list[tuple[str, object]]) -> dict[str, list]:
+    groups: dict[str, list] = {}
+    for key, value in items:
+        groups.setdefault(key, []).append(value)
+    return groups
+
+
+def _score_stats(pairs: list[tuple[int | None, int]]) -> dict:
+    exact = [1.0 if p is not None and p == g else 0.0 for p, g in pairs]
+    within = [1.0 if p is not None and abs(p - g) <= 1 else 0.0 for p, g in pairs]
+    return {"n": len(pairs), "exact": _mean(exact), "within1": _mean(within)}
+
+
 def score_gold(path: Path) -> dict:
     rows = list(csv.DictReader(path.open(encoding="utf-8-sig")))
     out: dict = {}
+    by_origin: dict = {}
     for s in SCORES:
-        pairs = [(r[f"pred_{s}"], int(r[f"gold_{s}"])) for r in rows if r[f"gold_{s}"].strip()]
-        exact = [1.0 if p.strip() and int(p) == g else 0.0 for p, g in pairs]
-        within = [1.0 if p.strip() and abs(int(p) - g) <= 1 else 0.0 for p, g in pairs]
-        out[s] = {"n": len(pairs), "exact": _mean(exact), "within1": _mean(within)}
+        scored = [(r.get(f"origin_{s}") or "unknown", _int(r[f"pred_{s}"]), _int(r[f"gold_{s}"])) for r in rows]
+        scored = [(o, p, g) for o, p, g in scored if g is not None]  # unlabelled or unparsable gold cells
+        out[s] = _score_stats([(p, g) for _, p, g in scored])
+        by_origin[s] = {o: _score_stats(ps) for o, ps in _group([(o, (p, g)) for o, p, g in scored]).items()}
     dec = [(r["pred_is_decaf"].strip() == "1", r["gold_is_decaf"].strip() in ("1", "true", "yes", "y"))
            for r in rows if r["gold_is_decaf"].strip()]
     out["is_decaf"] = {"n": len(dec), "accuracy": _mean([1.0 if p == g else 0.0 for p, g in dec])}
-    jac = []
+    jac: list[tuple[str, float]] = []
     for r in rows:
         gold = _tags(r["gold_tags"])
         if gold:
             pred = _tags(r["pred_tags"])
-            jac.append(len(pred & gold) / len(pred | gold))
-    out["tags"] = {"n": len(jac), "jaccard": _mean(jac)}
+            jac.append((r.get("origin_tags") or "unknown", len(pred & gold) / len(pred | gold)))
+    out["tags"] = {"n": len(jac), "jaccard": _mean([j for _, j in jac])}
+    by_origin["tags"] = {o: {"n": len(js), "jaccard": _mean(js)} for o, js in _group(jac).items()}
+    out["by_origin"] = by_origin
     return out
 
 

@@ -1,4 +1,5 @@
 import csv
+import json
 
 import pytest
 
@@ -79,3 +80,55 @@ def test_label_gold_fills_only_empty_rows(tmp_path):
     assert rows["b"]["gold_acidity"] == "1" and rows["b"]["gold_body"] == ""
     assert rows["c"]["gold_acidity"] == ""
     assert judge.calls == 2
+
+
+def test_sample_gold_records_value_origin(tmp_path):
+    from pipeline.records import TaxonomyNode
+    norm, enr = tmp_path / "n", tmp_path / "e"
+    base = dict(source="t", collected_at="x")
+    write_jsonl(norm / "coffees.jsonl", [
+        CoffeeRecord(key="src", name="src", acidity=4, flavor_tags=["honey"], **base),   # values from the source
+        CoffeeRecord(key="rul", name="rul", **base),                                     # rule tags, LLM scores
+        CoffeeRecord(key="llm", name="llm", **base),                                     # LLM tags and scores
+        CoffeeRecord(key="emp", name="emp", **base),                                     # nothing filled
+    ])
+    write_jsonl(enr / "coffees.jsonl", [
+        CoffeeRecord(key="src", name="src", acidity=4, flavor_tags=["honey"], **base),
+        CoffeeRecord(key="rul", name="rul", acidity=2, flavor_tags=["lemon"], **base),
+        CoffeeRecord(key="llm", name="llm", body=5, flavor_tags=["honey"], **base),
+        CoffeeRecord(key="emp", name="emp", **base),
+    ])
+    write_jsonl(norm / "reviews.jsonl", [
+        ReviewRecord(key=f"r{k}", coffee_key=k, text=("lemon zest " if k == "rul" else "nice cup ") * 400, **base)
+        for k in ("src", "rul", "llm", "emp")])
+    write_jsonl(norm / "taxonomy.jsonl", [TaxonomyNode(key=f"sca:x>{v}", level=2, name_en=v) for v in ("lemon", "honey")])
+    ok = {"status": "ok", "hash": "h", "model": "m", "output": {}}
+    (enr / "cache.jsonl").write_text("\n".join(json.dumps({**ok, "key": k}) for k in ("rul", "llm"))
+                                     + "\n" + json.dumps({"key": "emp", "status": "failed"}) + "\n", encoding="utf-8")
+    out = tmp_path / "g.csv"
+    sample_gold(enr, norm, out, n=10)
+    rows = {r["key"]: r for r in csv.DictReader(out.open(encoding="utf-8-sig"))}
+    got = {k: tuple(r[f"origin_{f}"] for f in ("acidity", "body", "sweetness", "tags")) for k, r in rows.items()}
+    assert got == {"src": ("source", "none", "none", "source"),
+                   "rul": ("llm", "none", "none", "rule"),
+                   "llm": ("none", "llm", "none", "llm"),
+                   "emp": ("none", "none", "none", "none")}
+    assert len(rows["rul"]["text"]) == 3000
+
+
+def test_score_gold_by_origin_and_bad_cells(tmp_path):
+    p = tmp_path / "g.csv"
+    base = {c: "" for c in GOLD_COLUMNS}
+    with p.open("w", encoding="utf-8-sig", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=GOLD_COLUMNS)
+        w.writeheader()
+        w.writerow({**base, "key": "a", "pred_acidity": "4", "gold_acidity": "4.0", "origin_acidity": "source",
+                    "pred_tags": "lemon", "gold_tags": "lemon", "origin_tags": "rule"})
+        w.writerow({**base, "key": "b", "pred_acidity": "2", "gold_acidity": "3", "origin_acidity": "llm",
+                    "pred_tags": "honey", "gold_tags": "lemon", "origin_tags": "llm"})
+        w.writerow({**base, "key": "c", "pred_acidity": "", "gold_acidity": "?", "origin_acidity": "none"})
+    s = score_gold(p)
+    assert s["acidity"] == {"n": 2, "exact": 0.5, "within1": 1.0}
+    assert s["by_origin"]["acidity"] == {"source": {"n": 1, "exact": 1.0, "within1": 1.0},
+                                         "llm": {"n": 1, "exact": 0.0, "within1": 1.0}}
+    assert s["by_origin"]["tags"] == {"rule": {"n": 1, "jaccard": 1.0}, "llm": {"n": 1, "jaccard": 0.0}}
