@@ -10,6 +10,12 @@ def similar(conn, embedder, text: str, k: int = 5, decaf: bool | None = None) ->
         f" 1 - (embedding <=> %(v)s::vector) AS score FROM coffees WHERE {where}"
         " ORDER BY embedding <=> %(v)s::vector LIMIT %(k)s"
     )
-    cur = conn.execute(sql, {"v": v, "k": k, "decaf": decaf})
-    cols = [d.name for d in cur.description]
-    return [dict(zip(cols, row)) for row in cur.fetchall()]
+    # pgvector filters after the HNSW scan; iterative scan keeps searching until k filtered rows are found
+    # (relaxed_order may return rows slightly out of order, so re-sort).
+    with conn.transaction():
+        conn.execute("SET LOCAL hnsw.iterative_scan = relaxed_order")
+        conn.execute("SET LOCAL hnsw.ef_search = 200")
+        cur = conn.execute(sql, {"v": v, "k": k, "decaf": decaf})
+        cols = [d.name for d in cur.description]
+        rows = [dict(zip(cols, row)) for row in cur.fetchall()]
+    return sorted(rows, key=lambda r: r["score"], reverse=True)

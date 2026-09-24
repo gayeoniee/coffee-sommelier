@@ -107,3 +107,26 @@ def test_failed_load_keeps_previous_data(db_conn, tmp_path, monkeypatch):
     assert db_conn.execute("SELECT count(*) FROM coffees").fetchone() == (2,)
     assert db_conn.execute("SELECT count(*) FROM brands").fetchone() == (1,)
 
+
+def test_filtered_query_returns_k_rows_through_hnsw(db_conn):
+    import random
+
+    rng = random.Random(0)
+    rows = []
+    for i in range(300):
+        v = [rng.uniform(-1, 1) for _ in range(1024)]
+        rows.append((f"k{i}", f"coffee {i}", i < 5, to_vector_literal(v)))
+    db_conn.cursor().executemany(
+        "INSERT INTO coffees (key, name, is_decaf, embedding, source, collected_at)"
+        " VALUES (%s, %s, %s, %s::vector, 't', '2026-09-24')", rows)
+    db_conn.commit()
+    db_conn.execute("SET enable_seqscan = off")  # force the HNSW index (not the is_decaf btree + sort)
+    db_conn.execute("SET enable_sort = off")
+
+    class RandomEmbedder:
+        def embed(self, texts):
+            return [[rng.uniform(-1, 1) for _ in range(1024)] for _ in texts]
+
+    hits = similar(db_conn, RandomEmbedder(), "decaf", k=5, decaf=True)
+    assert len(hits) == 5 and all(h["is_decaf"] for h in hits)
+    assert [h["score"] for h in hits] == sorted((h["score"] for h in hits), reverse=True)
