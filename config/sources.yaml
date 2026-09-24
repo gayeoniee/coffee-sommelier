@@ -1,0 +1,5 @@
+# Shopify 스토어 원두 수집 대상. 추가 전 https://<domain>/robots.txt 에서 /products.json 허용 여부 확인.
+shopify:
+  - domain: kr.bluebottlecoffee.com
+    roaster: Blue Bottle Coffee
+    product_types: ["원두"]

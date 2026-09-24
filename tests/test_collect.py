@@ -70,3 +70,59 @@ def test_kaggle_collector_uses_downloader(tmp_path):
     c = KaggleCollector(datasets=("own/one", "own/two"), downloader=fake_dl)
     files = c.collect(tmp_path, http=None)
     assert [f.relative_to(tmp_path).as_posix() for f in files] == ["own__one/data.csv", "own__two/data.csv"]
+
+
+import json as _json
+
+from pipeline.collect.web import MegaCollector, PaikCollector, ShopifyCollector, StarbucksCollector
+
+
+def mock_http(handler):
+    def wrapped(request):
+        if request.url.path == "/robots.txt":
+            return httpx.Response(404)
+        return handler(request)
+    return PoliteClient(delay=0, transport=httpx.MockTransport(wrapped), sleep=lambda s: None)
+
+
+def test_starbucks_skips_non_json_codes(tmp_path):
+    def handler(request):
+        if request.url.path.endswith("W0000003.js"):
+            return httpx.Response(200, text='{"list": [{"product_NM": "아메리카노"}]}')
+        return httpx.Response(200, text="<html>not json</html>")
+
+    files = StarbucksCollector(codes=("W0000003", "W0000001")).collect(tmp_path, mock_http(handler))
+    assert [f.name for f in files] == ["W0000003.json"]
+
+
+def test_mega_stops_at_empty_page(tmp_path):
+    def handler(request):
+        page = int(request.url.params["page"])
+        body = '<li><a class="inner_modal_open"></a></li>' if page <= 2 else "<ul></ul>"
+        return httpx.Response(200, text=body)
+
+    files = MegaCollector().collect(tmp_path, mock_http(handler))
+    assert [f.name for f in files] == ["page_1.html", "page_2.html"]
+
+
+def test_paik_saves_page(tmp_path):
+    files = PaikCollector().collect(tmp_path, mock_http(lambda r: httpx.Response(200, text="<div class='hover'></div>")))
+    assert files[0].read_text(encoding="utf-8") == "<div class='hover'></div>"
+
+
+def test_shopify_paginates(tmp_path):
+    def handler(request):
+        page = int(request.url.params["page"])
+        products = [{"id": page, "title": f"p{page}"}] if page <= 2 else []
+        return httpx.Response(200, json={"products": products})
+
+    files = ShopifyCollector(domains=("shop.test",)).collect(tmp_path, mock_http(handler))
+    data = _json.loads(files[0].read_text(encoding="utf-8"))
+    assert files[0].name == "shop.test.json"
+    assert [p["id"] for p in data["products"]] == [1, 2]
+
+
+def test_registry_lists_all_sources():
+    from pipeline.collect.registry import ALL_COLLECTORS
+    assert [c.name for c in ALL_COLLECTORS] == [
+        "cqi", "roasterdb", "sca_wheel", "coffeereview_kaggle", "starbucks", "mega", "paik", "shopify"]
