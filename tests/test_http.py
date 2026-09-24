@@ -23,7 +23,7 @@ def test_missing_robots_allows_and_delays_second_request():
     c = make_client({"/data": lambda r: httpx.Response(200, text="ok")}, sleeps)
     assert c.get("https://a.test/data").text == "ok"
     assert c.get("https://a.test/data").text == "ok"
-    assert len(sleeps) == 1 and 0 < sleeps[0] <= 1.0
+    assert len(sleeps) == 2 and all(0 < s <= 1.0 for s in sleeps)
 
 
 def test_download_writes_file(tmp_path):

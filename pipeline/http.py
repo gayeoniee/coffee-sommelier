@@ -31,11 +31,13 @@ class PoliteClient:
             rp: urllib.robotparser.RobotFileParser | None = urllib.robotparser.RobotFileParser()
             try:
                 r = self._client.get(host + "/robots.txt")
+                self._last[p.netloc] = time.monotonic()
                 if r.status_code >= 400:
                     rp = None
                 else:
                     rp.parse(r.text.splitlines())
             except httpx.HTTPError:
+                self._last[p.netloc] = time.monotonic()
                 rp = None
             self._robots[host] = rp
         return self._robots[host]
