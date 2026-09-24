@@ -206,3 +206,11 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# coffee pipeline outputs
+data/raw/
+data/normalized/
+data/enriched/
+data/embedded/
+data/reports/
+!data/eval/*.csv
