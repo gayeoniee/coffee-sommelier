@@ -37,3 +37,36 @@ def test_latest_snapshot_skips_failed(tmp_path):
     (tmp_path / "ok_src" / "2026-09-20" / "manifest.json").write_text('{"ok": false}', encoding="utf-8")
     assert latest_snapshot(tmp_path, "ok_src").name == "2026-09-10"
     assert latest_snapshot(tmp_path, "none") is None
+
+
+import httpx
+
+from pipeline.collect.datasets import CQI, KaggleCollector, UrlFilesCollector
+from pipeline.http import PoliteClient
+
+
+def test_url_files_collector_downloads_each_file(tmp_path):
+    seen = []
+
+    def handler(request):
+        seen.append(request.url.path)
+        return httpx.Response(200, content=b"x") if request.url.path != "/robots.txt" else httpx.Response(404)
+
+    http = PoliteClient(delay=0, transport=httpx.MockTransport(handler), sleep=lambda s: None)
+    c = UrlFilesCollector("t", {"a.csv": "https://h.test/a.csv", "b.json": "https://h.test/b.json"})
+    files = c.collect(tmp_path, http)
+    assert sorted(f.name for f in files) == ["a.csv", "b.json"]
+    assert "/a.csv" in seen and "/b.json" in seen
+
+
+def test_cqi_collector_targets_three_files():
+    assert set(CQI.urls) == {"arabica_2018.csv", "robusta_2018.csv", "arabica_2023.csv"}
+
+
+def test_kaggle_collector_uses_downloader(tmp_path):
+    def fake_dl(dataset, dest):
+        (dest / "data.csv").write_text("a\n1\n", encoding="utf-8")
+
+    c = KaggleCollector(datasets=("own/one", "own/two"), downloader=fake_dl)
+    files = c.collect(tmp_path, http=None)
+    assert [f.relative_to(tmp_path).as_posix() for f in files] == ["own__one/data.csv", "own__two/data.csv"]
