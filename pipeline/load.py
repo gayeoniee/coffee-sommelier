@@ -1,17 +1,15 @@
-import json
 from pathlib import Path
 
 from psycopg.types.json import Jsonb
 
 from pipeline.db import reset_tables
+from pipeline.enrich import read_json_lines
 from pipeline.query import to_vector_literal
 from pipeline.records import BrandRecord, CoffeeRecord, MenuItemRecord, ReviewRecord, TaxonomyNode, read_jsonl
 
 
 def _read_lines(path: Path) -> list[dict]:
-    if not path.exists():
-        return []
-    return [json.loads(l) for l in path.read_text(encoding="utf-8").splitlines() if l.strip()]
+    return read_json_lines(path)[0]
 
 
 def _ids(conn, table: str) -> dict[str, int]:
@@ -19,7 +17,8 @@ def _ids(conn, table: str) -> dict[str, int]:
 
 
 def run_load(conn, norm_dir: Path, enriched_dir: Path, embedded_dir: Path) -> dict[str, int]:
-    reset_tables(conn)
+    """Replace all tables in one transaction: a failed load rolls back and leaves the previous data."""
+    reset_tables(conn, commit=False)
     cur = conn.cursor()
 
     taxonomy = sorted(read_jsonl(norm_dir / "taxonomy.jsonl", TaxonomyNode), key=lambda t: t.level)
@@ -41,7 +40,8 @@ def run_load(conn, norm_dir: Path, enriched_dir: Path, embedded_dir: Path) -> di
          for c in coffees])
     coffee_ids = _ids(conn, "coffees")
 
-    reviews = [r for r in read_jsonl(norm_dir / "reviews.jsonl", ReviewRecord) if r.coffee_key in coffee_ids]
+    all_reviews = read_jsonl(norm_dir / "reviews.jsonl", ReviewRecord)
+    reviews = [r for r in all_reviews if r.coffee_key in coffee_ids]
     cur.executemany(
         "INSERT INTO reviews (key, coffee_id, text, rating, sub_scores, source, source_url, collected_at)"
         " VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
@@ -56,7 +56,8 @@ def run_load(conn, norm_dir: Path, enriched_dir: Path, embedded_dir: Path) -> di
           coffee_ids.get(b.decaf_bean_coffee_key), b.notes, b.source_url, b.verified_at) for b in brands])
     brand_ids = _ids(conn, "brands")
 
-    items = [m for m in read_jsonl(norm_dir / "menu_items.jsonl", MenuItemRecord) if m.brand_key in brand_ids]
+    all_items = read_jsonl(norm_dir / "menu_items.jsonl", MenuItemRecord)
+    items = [m for m in all_items if m.brand_key in brand_ids]
     cur.executemany(
         "INSERT INTO menu_items (key, brand_id, name, name_en, category, is_decaf, decaf_option, caffeine_mg,"
         " coffee_id, source_url, collected_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
@@ -70,4 +71,5 @@ def run_load(conn, norm_dir: Path, enriched_dir: Path, embedded_dir: Path) -> di
 
     conn.commit()
     return {"coffees": len(coffees), "reviews": len(reviews), "brands": len(brands), "menu_items": len(items),
-            "flavor_taxonomy": len(taxonomy), "enrich_log": len(log)}
+            "flavor_taxonomy": len(taxonomy), "enrich_log": len(log),
+            "dropped_reviews": len(all_reviews) - len(reviews), "dropped_menu_items": len(all_items) - len(items)}

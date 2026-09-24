@@ -15,6 +15,7 @@ def apply_schema(conn: psycopg.Connection) -> None:
     conn.commit()
 
 
-def reset_tables(conn: psycopg.Connection) -> None:
+def reset_tables(conn: psycopg.Connection, commit: bool = True) -> None:
     conn.execute("TRUNCATE " + ", ".join(TABLES) + " RESTART IDENTITY CASCADE")
-    conn.commit()
+    if commit:
+        conn.commit()

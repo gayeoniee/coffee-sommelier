@@ -62,7 +62,7 @@ def test_run_enrich_rules_llm_failures_and_resume(tmp_path):
     norm, out = setup_norm(tmp_path), tmp_path / "enriched"
     client = FakeClient(fail_keys=["FailMe"])
     stats = run_enrich(norm, out, client)
-    assert stats == {"coffees": 4, "llm_calls": 2, "llm_ok": 1, "llm_failed": 1}
+    assert stats == {"coffees": 4, "llm_calls": 2, "llm_ok": 1, "llm_failed": 1, "cache_torn_lines": 0}
     by = {c.key: c for c in read_jsonl(out / "coffees.jsonl", CoffeeRecord)}
     assert by["c1"].flavor_tags == ["lemon", "black tea"]      # rule tags kept, LLM tags not used
     assert (by["c1"].acidity, by["c1"].body, by["c1"].sweetness) == (5, 2, 3)  # rule value wins, LLM fills gaps
@@ -94,3 +94,19 @@ def test_limit_caps_llm_calls(tmp_path):
 
 def test_enrich_output_validates_range():
     assert EnrichOutput(acidity=5).acidity == 5
+
+
+def test_torn_cache_line_is_skipped_and_resent(tmp_path):
+    norm, out = setup_norm(tmp_path), tmp_path / "enriched"
+    run_enrich(norm, out, FakeClient())                     # c1, c2 cached ok
+    cache_path = out / "cache.jsonl"
+    lines = cache_path.read_text(encoding="utf-8").splitlines()
+    assert [json.loads(l)["key"] for l in lines] == ["c1", "c2"]
+    cache_path.write_text(lines[0] + "\n" + lines[1][:25], encoding="utf-8")  # crash mid-write of c2
+    client = FakeClient()
+    stats = run_enrich(norm, out, client)
+    assert stats["llm_calls"] == 1 and "FailMe" in client.seen[0]    # c1 stays cached, torn c2 re-sent
+    assert stats["cache_torn_lines"] == 1
+    new_lines = cache_path.read_text(encoding="utf-8").split("\n")
+    assert json.loads(new_lines[-2])["key"] == "c2" and new_lines[-1] == ""  # appended on its own line
+    assert run_enrich(norm, out, FakeClient())["llm_calls"] == 0

@@ -71,15 +71,33 @@ def _merge_llm(c: CoffeeRecord, o: EnrichOutput, vocab: set[str]) -> CoffeeRecor
     return c.model_copy(update=update)
 
 
-def _load_cache(path: Path) -> dict[str, dict]:
+def read_json_lines(path: Path) -> tuple[list[dict], int]:
+    """Parse a JSONL file, skipping lines torn by an interrupted write. Returns (rows, skipped)."""
     if not path.exists():
-        return {}
-    cache = {}
+        return [], 0
+    rows, skipped = [], 0
     for line in path.read_text(encoding="utf-8").splitlines():
         if line.strip():
-            e = json.loads(line)
-            cache[e["key"]] = e  # later lines win
-    return cache
+            try:
+                rows.append(json.loads(line))
+            except json.JSONDecodeError:
+                skipped += 1
+    return rows, skipped
+
+
+def _load_cache(path: Path) -> tuple[dict[str, dict], int]:
+    rows, skipped = read_json_lines(path)
+    return {e["key"]: e for e in rows}, skipped  # later lines win
+
+
+def ends_torn(path: Path) -> bool:
+    """True when the file is non-empty and its last byte is not a newline (an interrupted append)."""
+    with path.open("rb") as f:
+        f.seek(0, 2)
+        if f.tell() == 0:
+            return False
+        f.seek(-1, 2)
+        return f.read(1) != b"\n"
 
 
 def run_enrich(norm_dir: Path, out_dir: Path, client, limit: int | None = None, retry_failed: bool = False) -> dict[str, int]:
@@ -89,10 +107,12 @@ def run_enrich(norm_dir: Path, out_dir: Path, client, limit: int | None = None, 
     vocab_set = set(vocab)
     out_dir.mkdir(parents=True, exist_ok=True)
     cache_path = out_dir / "cache.jsonl"
-    cache = _load_cache(cache_path)
-    stats = {"coffees": 0, "llm_calls": 0, "llm_ok": 0, "llm_failed": 0}
+    cache, skipped = _load_cache(cache_path)
+    stats = {"coffees": 0, "llm_calls": 0, "llm_ok": 0, "llm_failed": 0, "cache_torn_lines": skipped}
     enriched = []
     with cache_path.open("a", encoding="utf-8") as cache_file:
+        if ends_torn(cache_path):
+            cache_file.write("\n")  # terminate a torn last line so the next entry starts on its own line
         for c in coffees:
             text = texts.get(c.key) or c.flavor_summary or ""
             c = _apply_rules(c, text, vocab)

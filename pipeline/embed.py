@@ -2,7 +2,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from pipeline.enrich import coffee_texts
+from pipeline.enrich import coffee_texts, ends_torn, read_json_lines
 from pipeline.records import CoffeeRecord, ReviewRecord, read_jsonl
 
 REVIEW_CHARS = 1500
@@ -22,12 +22,8 @@ def run_embed(enriched_dir: Path, norm_dir: Path, out_dir: Path, embedder, batch
     coffees = read_jsonl(enriched_dir / "coffees.jsonl", CoffeeRecord)
     texts = coffee_texts(read_jsonl(norm_dir / "reviews.jsonl", ReviewRecord))
     path = out_dir / "embeddings.jsonl"
-    cache: dict[str, dict] = {}
-    if path.exists():
-        for line in path.read_text(encoding="utf-8").splitlines():
-            if line.strip():
-                e = json.loads(line)
-                cache[e["key"]] = e
+    partial = out_dir / "embeddings.jsonl.partial"  # batches finished by an interrupted run
+    cache = {e["key"]: e for p in (path, partial) for e in read_json_lines(p)[0]}
     rows, todo = {}, []
     for c in coffees:
         text = embedding_text(c, texts.get(c.key))
@@ -36,12 +32,18 @@ def run_embed(enriched_dir: Path, norm_dir: Path, out_dir: Path, embedder, batch
             rows[c.key] = cache[c.key]
         else:
             todo.append((c.key, h, text))
-    for i in range(0, len(todo), batch):
-        chunk = todo[i:i + batch]
-        for (key, h, _), v in zip(chunk, embedder.embed([t for _, _, t in chunk])):
-            rows[key] = {"key": key, "hash": h, "vector": v}
     out_dir.mkdir(parents=True, exist_ok=True)
+    with partial.open("a", encoding="utf-8") as pf:
+        if ends_torn(partial):
+            pf.write("\n")
+        for i in range(0, len(todo), batch):
+            chunk = todo[i:i + batch]
+            for (key, h, _), v in zip(chunk, embedder.embed([t for _, _, t in chunk])):
+                rows[key] = {"key": key, "hash": h, "vector": v}
+                pf.write(json.dumps(rows[key]) + "\n")
+            pf.flush()  # a crash later still leaves this batch reusable
     with path.open("w", encoding="utf-8") as f:
         for c in coffees:
             f.write(json.dumps(rows[c.key]) + "\n")
+    partial.unlink()
     return {"embedded": len(todo), "cached": len(coffees) - len(todo)}

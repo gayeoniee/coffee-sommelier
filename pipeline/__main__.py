@@ -64,6 +64,7 @@ def _run(a) -> int:
             apply_schema(conn)
             stats["load"] = run_load(conn, settings.NORMALIZED_DIR, settings.ENRICHED_DIR, settings.EMBEDDED_DIR)
             md = build_report(conn, stats)
+        print(f"[load] {json.dumps(stats['load'], ensure_ascii=False)}")
         settings.REPORTS_DIR.mkdir(parents=True, exist_ok=True)
         path = settings.REPORTS_DIR / f"quality_{dt.date.today().isoformat()}.md"
         path.write_text(md, encoding="utf-8")
@@ -73,6 +74,8 @@ def _run(a) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")  # Korean names on a cp949 Windows console
     a = build_parser().parse_args(argv)
     if a.cmd == "run":
         return _run(a)
