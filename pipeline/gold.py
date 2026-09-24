@@ -59,6 +59,11 @@ def sample_gold(enriched_dir: Path, norm_dir: Path, out_path: Path, n: int = 50,
     return len(picked)
 
 
+def read_gold_rows(path: Path) -> list[dict]:
+    with path.open(encoding="utf-8-sig", newline="") as f:
+        return list(csv.DictReader(f))
+
+
 def _tags(s: str) -> set[str]:
     return {t.strip().lower() for t in s.split(";") if t.strip()}
 
@@ -88,7 +93,7 @@ def _score_stats(pairs: list[tuple[int | None, int]]) -> dict:
 
 
 def score_gold(path: Path) -> dict:
-    rows = list(csv.DictReader(path.open(encoding="utf-8-sig")))
+    rows = read_gold_rows(path)
     out: dict = {}
     by_origin: dict = {}
     for s in SCORES:
@@ -128,7 +133,7 @@ GOLD_FIELDS = [f"gold_{s}" for s in SCORES] + ["gold_is_decaf", "gold_tags"]
 
 
 def label_gold(path: Path, client, vocab: list[str]) -> int:
-    rows = list(csv.DictReader(path.open(encoding="utf-8-sig")))
+    rows = read_gold_rows(path)
     vocab_set = set(vocab)
     labelled = 0
     for r in rows:

@@ -3,7 +3,7 @@ import json
 
 import pytest
 
-from pipeline.gold import GOLD_COLUMNS, label_gold, sample_gold, score_gold
+from pipeline.gold import GOLD_COLUMNS, read_gold_rows, label_gold, sample_gold, score_gold
 from pipeline.records import CoffeeRecord, ReviewRecord, write_jsonl
 
 
@@ -23,7 +23,7 @@ def test_sample_gold_includes_decaf_and_protects_labels(tmp_path):
     setup(tmp_path)
     out = tmp_path / "gold.csv"
     assert sample_gold(tmp_path / "e", tmp_path / "n", out, n=10) == 10
-    rows = list(csv.DictReader(out.open(encoding="utf-8-sig")))
+    rows = read_gold_rows(out)
     assert list(rows[0].keys()) == GOLD_COLUMNS
     assert sum(r["pred_is_decaf"] == "1" for r in rows) == 3
     assert all(r["key"] != "notext" and r["gold_acidity"] == "" for r in rows)
@@ -74,7 +74,7 @@ def test_label_gold_fills_only_empty_rows(tmp_path):
         w.writerow({**base, "key": "c", "name": "C", "text": "FAIL"})
     judge = FakeJudge()
     assert label_gold(p, judge, ["lemon", "honey"]) == 1
-    rows = {r["key"]: r for r in csv.DictReader(p.open(encoding="utf-8-sig"))}
+    rows = {r["key"]: r for r in read_gold_rows(p)}
     assert (rows["a"]["gold_acidity"], rows["a"]["gold_body"], rows["a"]["gold_sweetness"]) == ("5", "", "2")
     assert (rows["a"]["gold_is_decaf"], rows["a"]["gold_tags"]) == ("1", "lemon")
     assert rows["b"]["gold_acidity"] == "1" and rows["b"]["gold_body"] == ""
@@ -107,7 +107,7 @@ def test_sample_gold_records_value_origin(tmp_path):
                                      + "\n" + json.dumps({"key": "emp", "status": "failed"}) + "\n", encoding="utf-8")
     out = tmp_path / "g.csv"
     sample_gold(enr, norm, out, n=10)
-    rows = {r["key"]: r for r in csv.DictReader(out.open(encoding="utf-8-sig"))}
+    rows = {r["key"]: r for r in read_gold_rows(out)}
     got = {k: tuple(r[f"origin_{f}"] for f in ("acidity", "body", "sweetness", "tags")) for k, r in rows.items()}
     assert got == {"src": ("source", "none", "none", "source"),
                    "rul": ("llm", "none", "none", "rule"),
