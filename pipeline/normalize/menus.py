@@ -1,0 +1,122 @@
+import json
+import re
+from pathlib import Path
+
+import yaml
+from bs4 import BeautifulSoup
+
+from pipeline import settings
+from pipeline.normalize import Normalized
+from pipeline.records import BrandRecord, CoffeeRecord, MenuItemRecord, ReviewRecord
+from pipeline.rules import clean, detect_decaf, normalize_country, normalize_roast, num, process_from_text
+
+STARBUCKS_DECAF_OPTION_CODES = {"W0000003"}  # espresso drinks accept a decaf shot
+
+
+def normalize_starbucks(snap: Path, collected_at: str) -> Normalized:
+    items: dict[str, MenuItemRecord] = {}
+    for p in sorted(snap.glob("W*.json")):
+        for it in json.loads(p.read_text(encoding="utf-8"))["list"]:
+            name = clean(it.get("product_NM"))
+            if not name:
+                continue
+            key = f"menu:starbucks:{clean(it.get('product_CD')) or name}"
+            items[key] = MenuItemRecord(
+                key=key, brand_key="brand:starbucks", name=name, name_en=clean(it.get("product_ENGNM")),
+                category=clean(it.get("cate_NAME")), is_decaf=detect_decaf(name)[0],
+                decaf_option=p.stem in STARBUCKS_DECAF_OPTION_CODES, caffeine_mg=num(it.get("caffeine")),
+                source_url=f"https://www.starbucks.co.kr/upload/json/menu/{p.stem}.js", collected_at=collected_at,
+            )
+    return Normalized(menu_items=list(items.values()))
+
+
+def _soup(p: Path) -> BeautifulSoup:
+    return BeautifulSoup(p.read_text(encoding="utf-8"), "lxml")
+
+
+def normalize_mega(snap: Path, collected_at: str) -> Normalized:
+    items: dict[str, MenuItemRecord] = {}
+    for p in sorted(snap.glob("page_*.html")):
+        for modal in _soup(p).select("div.inner_modal"):
+            name_el = modal.select_one(".cont_text_title b")
+            if not name_el:
+                continue
+            name = name_el.get_text(strip=True)
+            en = modal.select_one(".inner_modal_title .cont_text_info")
+            m = re.search(r"카페인\s*([\d.]+)\s*mg", modal.get_text(" ", strip=True))
+            key = f"menu:mega:{name}"
+            items[key] = MenuItemRecord(
+                key=key, brand_key="brand:mega", name=name, name_en=en.get_text(strip=True) if en else None,
+                category="커피", is_decaf=detect_decaf(name)[0], caffeine_mg=float(m.group(1)) if m else None,
+                source_url="https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1",
+                collected_at=collected_at,
+            )
+    return Normalized(menu_items=list(items.values()))
+
+
+def normalize_paik(snap: Path, collected_at: str) -> Normalized:
+    items: dict[str, MenuItemRecord] = {}
+    p = snap / "coffee.html"
+    if not p.exists():
+        return Normalized()
+    for hv in _soup(p).select("div.hover"):
+        h3 = hv.select_one("h3")
+        if not h3:
+            continue
+        name = h3.get_text(strip=True)
+        key = f"menu:paik:{name}"
+        caffeine = None
+        for li in hv.select("ul.ingredient_table li"):
+            divs = li.find_all("div")
+            if len(divs) >= 2 and "카페인" in divs[0].get_text():
+                caffeine = num(divs[1].get_text(strip=True))
+        if key in items and caffeine is None:
+            continue  # the recommendation slider repeats items without nutrition rows
+        en = hv.select_one(".menu_tit2")
+        items[key] = MenuItemRecord(
+            key=key, brand_key="brand:paik", name=name, name_en=en.get_text(strip=True) if en else None,
+            category="커피", is_decaf=detect_decaf(name)[0], caffeine_mg=caffeine,
+            source_url="https://paikdabang.com/menu/menu_coffee/", collected_at=collected_at,
+        )
+    return Normalized(menu_items=list(items.values()))
+
+
+def _html_text(html: str) -> str:
+    return BeautifulSoup(html or "", "lxml").get_text("\n", strip=True)
+
+
+def normalize_shopify(snap: Path, collected_at: str, shops: list[dict] | None = None) -> Normalized:
+    shops = shops if shops is not None else settings.load_config("sources.yaml")["shopify"]
+    by_domain = {s["domain"]: s for s in shops}
+    out = Normalized()
+    for p in sorted(snap.glob("*.json")):
+        if p.name == "manifest.json":
+            continue
+        shop = by_domain.get(p.stem, {"domain": p.stem, "roaster": p.stem, "product_types": []})
+        for prod in json.loads(p.read_text(encoding="utf-8"))["products"]:
+            if prod.get("product_type") not in shop["product_types"]:
+                continue
+            title = clean(prod.get("title")) or "(unknown)"
+            text = _html_text(prod.get("body_html"))
+            key = f"shopify:{p.stem}:{prod.get('handle')}"
+            url = f"https://{p.stem}/products/{prod.get('handle')}"
+            is_decaf, decaf_process = detect_decaf(title, text)
+            out.coffees.append(CoffeeRecord(
+                key=key, name=title, roaster=shop["roaster"],
+                origin_country=normalize_country(f"{title} {text}"),
+                process=process_from_text(f"{title} {text}"), roast_level=normalize_roast(text),
+                is_decaf=is_decaf, decaf_process=decaf_process,
+                flavor_summary=text.split("\n")[0] if text else None,
+                source="shopify", source_url=url, collected_at=collected_at,
+            ))
+            if text:
+                out.reviews.append(ReviewRecord(key=f"review:{key}", coffee_key=key, text=text,
+                                                source="shopify", source_url=url, collected_at=collected_at))
+    return out
+
+
+def normalize_brands(curated_dir: Path) -> list[BrandRecord]:
+    p = curated_dir / "brands.yaml"
+    if not p.exists():
+        return []
+    return [BrandRecord.model_validate(b) for b in yaml.safe_load(p.read_text(encoding="utf-8"))]
