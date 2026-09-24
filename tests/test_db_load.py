@@ -62,3 +62,19 @@ def test_load_and_query(db_conn, tmp_path):
 
 def test_to_vector_literal():
     assert to_vector_literal([1, 0.5]) == "[1.0,0.5]"
+
+
+from pipeline.report import build_report
+
+
+def test_report_counts_and_missing_rates(db_conn, tmp_path):
+    norm, enriched, embedded = setup_files(tmp_path)
+    run_load(db_conn, norm, enriched, embedded)
+    md = build_report(db_conn, {"enrich": {"llm_calls": 1}})
+    assert "| coffees | 2 |" in md
+    assert "| decaf coffees | 1 |" in md
+    assert "| body | 100.0% |" in md          # both coffees lack body
+    assert "| acidity | 50.0% |" in md
+    assert "| t | 2 |" in md                  # per-source count
+    assert "enrich failed: 1" in md
+    assert "llm_calls" in md
