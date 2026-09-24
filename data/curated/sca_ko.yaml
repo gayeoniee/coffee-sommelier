@@ -1,0 +1,37 @@
+fruity: 과일
+fruity>berry: 베리
+fruity>dried fruit: 말린 과일
+fruity>other fruit: 기타 과일
+fruity>citrus fruit: 시트러스
+sour/fermented: 신맛/발효
+sour/fermented>sour: 신맛
+sour/fermented>alcohol fermented: 알코올/발효
+green/vegetative: 풀/채소
+green/vegetative>olive oil: 올리브유
+green/vegetative>raw: 날것
+green/vegetative>green vegetative: 풋내
+green/vegetative>beany: 콩비린내
+other: 기타
+other>chemical: 화학적
+other>papery/musty: 종이/곰팡내
+roasted: 로스팅
+roasted>cereal: 곡물
+roasted>burnt: 탄맛
+roasted>tobacco: 담배
+roasted>pipe tobacco: 파이프 담배
+spices: 향신료
+spices>brown spice: 브라운 스파이스
+spices>pepper: 후추
+spices>pungent: 자극적
+nutty/cocoa: 견과/코코아
+nutty/cocoa>cocoa: 코코아
+nutty/cocoa>nutty: 견과
+sweet: 단맛
+sweet>brown sugar: 흑설탕
+sweet>vanilla: 바닐라
+sweet>vanillin: 바닐린
+sweet>overall sweet: 전반적 단맛
+sweet>sweet aromatics: 달콤한 향
+floral: 꽃
+floral>black tea: 홍차
+floral>floral: 꽃향
