@@ -52,14 +52,22 @@ RAG 검색 결과(리뷰 원문)는 **LLM의 근거 입력**이며 사용자 화
 모든 서비스는 `docker compose up`으로 기동한다. Ollama는 호스트에서 실행하고 컨테이너는 `host.docker.internal:11434`로 접근한다.
 
 ### 2.1 모델 구성 (무료)
-| 용도 | 모델 | 비고 |
-|---|---|---|
-| 메인 LLM (태깅·번역·Vision·에이전트) | `qwen3.5:9b` (Ollama, 로컬) | 설치 확인됨. completion/vision/tools/thinking 지원, Q4_K_M 6.6GB, RTX 4060 8GB에서 구동 |
-| 임베딩 | `bge-m3` (Ollama, 로컬) | **미설치 — `ollama pull bge-m3` 필요**. 다국어(한국어 포함) |
-| 배포용 대체 | Gemini Flash 무료 등급 | 배포 서버는 로컬 GPU를 못 쓰므로. 한도·조건은 구현 시점에 재확인 |
-| 평가 비교군 | `qwen3:8b`, `granite4.1:8b`, `command-r7b` | 설치 확인됨 |
+두 공급자를 쓴다: **로컬 Ollama**(무제한, 대량 배치)와 **NVIDIA API 카탈로그**(`integrate.api.nvidia.com/v1`, OpenAI 호환, 온라인·배포용). 둘 다 OpenAI 호환 API라 `LLMClient` / `Embedder` 인터페이스 하나로 추상화하고, **작업(task)별로 공급자·모델을 설정 파일에서 지정**한다.
 
-LLM과 임베딩은 `LLMClient` / `Embedder` 인터페이스로 추상화하고 설정으로 공급자를 교체한다.
+| 작업 | 기본 모델 | 폴백 | 근거 (2026-09-24 실측) |
+|---|---|---|---|
+| 대량 구조화·번역 (1단계 enrich, 수천 건) | `qwen3.5:9b` (Ollama) | — | 설치 확인. vision/tools/thinking 지원, Q4_K_M 6.6GB, RTX 4060 8GB 구동. 호출 한도 없음 |
+| 임베딩 | `bge-m3` (Ollama) | — | 설치 완료, 1024차원 출력 확인 |
+| Vision 추출 (3단계, 앱 실시간) | `meta/llama-3.2-11b-vision-instruct` (NVIDIA) | `qwen3.5:9b` (Ollama) | 합성 원두카드에서 산지·가공·로스팅·디카페인 공법·노트 JSON 추출 정확, 2.5초 |
+| 향미 설명·추천 답변 (2~3단계, 앱 실시간) | `deepseek-ai/deepseek-v4.1-flash` (NVIDIA) | `qwen3.5:9b` (Ollama) | 한국어 품질 양호, 약 24초(reasoning 토큰 포함) |
+| 평가 비교군 (3단계) | 로컬: `qwen3:8b`, `granite4.1:8b`, `command-r7b` / NVIDIA: `nemotron-3-nano-omni-30b-a3b-reasoning`, `nemotron-3-super-120b-a12b` 등 | — | 로컬 설치 확인, NVIDIA 호출 가능 확인 |
+
+실측에서 확인된 제약과 설계 반영:
+- NVIDIA 무료 엔드포인트는 모델별 지연 편차가 크다. `llama-3.2-90b-vision`, `gemma-4-31b-it`, `gpt-oss-20b`는 90~150초 안에 응답하지 않았다. → 모든 원격 호출에 **타임아웃(기본 30초) + 로컬 폴백**을 둔다. 대형 모델은 오프라인 평가에서만 쓴다.
+- reasoning 모델은 `max_tokens`를 사고 과정에 소진해 `content`가 비는 경우가 있다(`glm-5.3-flash`, `nemotron-3-super`). → 클라이언트가 빈 `content`를 실패로 처리하고 폴백한다. reasoning 모델은 `max_tokens`를 넉넉히 준다.
+- 응답 헤더에 호출 한도 정보가 노출되지 않았다. → 원격 호출 수를 자체 카운트하고 429 응답 시 지수 백오프.
+- 이미지 URL 전달은 원격 서버의 다운로드 실패(403)가 있었다. → 이미지는 항상 **base64 data URL**로 보낸다.
+- API 키는 레포 루트 `.env`(git 제외)의 `NVIDIA_API_KEY`에서 읽고, `.env.example`에 키 이름만 둔다.
 
 ### 2.2 로드맵
 | 단계 | 내용 | 완료 시 되는 것 |
@@ -152,5 +160,5 @@ pipeline/
 ## 4. 열린 사항 (구현 중 확인)
 - CQI 2023 정확한 행 수, hanifalirsyad 데이터셋 행 수·컬럼, RoasterDB 샘플 크기.
 - 국내 스페셜티 로스터리 후보 선정(robots.txt 허용 여부 확인 후).
-- Gemini 무료 등급의 현재 한도·조건(배포 시점).
+- NVIDIA 무료 엔드포인트의 호출 한도·크레딧 조건(응답 헤더에 노출되지 않아 미확인).
 - SCA 휠 한국어 번역은 CC BY-NC-ND의 변경 금지 조건 때문에 **별도 매핑 테이블(`name_ko`)** 로 두고 원본 JSON은 수정·재배포하지 않는다.
