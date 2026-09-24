@@ -2069,6 +2069,12 @@ tasks:
     timeout: 30
     max_tokens: 1500
     fallback: {provider: ollama, model: "qwen3.5:9b", timeout: 120, max_tokens: 2048}
+  # gold-set labeller: must differ from the enrich model, so no local fallback
+  judge:
+    provider: nvidia
+    model: deepseek-ai/deepseek-v4.1-flash
+    timeout: 120
+    max_tokens: 3000
 ```
 
 - [ ] **Step 2: 실패하는 테스트 작성** — `tests/test_llm.py`
@@ -3253,10 +3259,13 @@ git commit -m "feat(cli): python -m pipeline run/query 와 품질 리포트"
 
 ---
 
-### Task 12: 태깅 정답셋 샘플링·채점
+### Task 12: 태깅 정답셋 샘플링·라벨링·채점
+
+정답 라벨은 enrich 모델(로컬 qwen)과 **다른 모델**(NVIDIA `judge` 작업, 폴백 없음)이 붙이는 실버 라벨이다. 사람이 나중에 CSV의 `gold_*`를 고치면 그 값이 우선한다(이미 채워진 행은 라벨러가 건드리지 않는다).
 
 **Files:**
 - Create: `pipeline/gold.py`, `tests/test_gold.py`
+- Modify: `pipeline/__main__.py` (`gold-label` 명령 추가)
 
 **Interfaces:**
 - Consumes: `read_jsonl`, `CoffeeRecord`, `ReviewRecord`, `coffee_texts`
@@ -3264,6 +3273,9 @@ git commit -m "feat(cli): python -m pipeline run/query 와 품질 리포트"
   - `GOLD_COLUMNS: list[str]`
   - `sample_gold(enriched_dir: Path, norm_dir: Path, out_path: Path, n: int = 50, seed: int = 42) -> int` — 리뷰 텍스트가 있는 원두만, 디카페인 최대 10건 우선 포함, 기존 파일이 있으면 `FileExistsError`(라벨 보호), CSV는 `utf-8-sig`(엑셀 호환)
   - `score_gold(path: Path) -> dict` — `{"acidity"|"body"|"sweetness": {"n", "exact", "within1"}, "is_decaf": {"n", "accuracy"}, "tags": {"n", "jaccard"}}`
+  - `GoldLabel(EnrichOutput)` + `is_decaf: bool = False`
+  - `label_gold(path: Path, client, vocab: list[str]) -> int` — `gold_*`가 전부 빈 행만 라벨링, 태그는 vocab으로 필터, `LLMError` 행은 건너뜀, 라벨링한 행 수 반환
+  - CLI `gold-label` — `label_gold(EVAL_DIR/"gold_enrich.csv", client_for("judge"), tag_vocab(taxonomy))`
 
 - [ ] **Step 1: 실패하는 테스트 작성** — `tests/test_gold.py`
 
@@ -3316,6 +3328,49 @@ def test_score_gold(tmp_path):
     assert s["sweetness"] == {"n": 0, "exact": None, "within1": None}
     assert s["is_decaf"] == {"n": 2, "accuracy": 0.5}
     assert s["tags"] == {"n": 1, "jaccard": 0.5}
+
+
+class FakeJudge:
+    last_model = "judge"
+
+    def __init__(self):
+        self.calls = 0
+
+    def chat_json(self, messages, schema):
+        self.calls += 1
+        if "FAIL" in messages[-1]["content"]:
+            from pipeline.llm import LLMError
+            raise LLMError("x")
+        return schema(flavor_tags=["Lemon", "made-up"], acidity=5, body=None, sweetness=2, is_decaf=True)
+
+
+def test_label_gold_fills_only_empty_rows(tmp_path):
+    p = tmp_path / "g.csv"
+    base = {c: "" for c in GOLD_COLUMNS}
+    with p.open("w", encoding="utf-8-sig", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=GOLD_COLUMNS)
+        w.writeheader()
+        w.writerow({**base, "key": "a", "name": "A", "text": "bright lemon"})
+        w.writerow({**base, "key": "b", "name": "B", "text": "x", "gold_acidity": "1"})   # human label kept
+        w.writerow({**base, "key": "c", "name": "C", "text": "FAIL"})
+    judge = FakeJudge()
+    assert label_gold(p, judge, ["lemon", "honey"]) == 1
+    rows = {r["key"]: r for r in csv.DictReader(p.open(encoding="utf-8-sig"))}
+    assert (rows["a"]["gold_acidity"], rows["a"]["gold_body"], rows["a"]["gold_sweetness"]) == ("5", "", "2")
+    assert (rows["a"]["gold_is_decaf"], rows["a"]["gold_tags"]) == ("1", "lemon")
+    assert rows["b"]["gold_acidity"] == "1" and rows["b"]["gold_body"] == ""
+    assert rows["c"]["gold_acidity"] == ""
+    assert judge.calls == 2
+```
+
+`tests/test_gold.py` 맨 위 import를 다음으로 한다:
+```python
+import csv
+
+import pytest
+
+from pipeline.gold import GOLD_COLUMNS, label_gold, sample_gold, score_gold
+from pipeline.records import CoffeeRecord, ReviewRecord, write_jsonl
 ```
 
 - [ ] **Step 2: 실패 확인**
@@ -3389,6 +3444,79 @@ def score_gold(path: Path) -> dict:
             jac.append(len(pred & gold) / len(pred | gold))
     out["tags"] = {"n": len(jac), "jaccard": _mean(jac)}
     return out
+
+
+class GoldLabel(EnrichOutput):
+    is_decaf: bool = False
+
+
+LABEL_SYSTEM = "You are an expert coffee cupper labelling an evaluation set. Answer from the tasting text only. Reply with one JSON object."
+LABEL_PROMPT = """Coffee: {name}
+Tasting text:
+{text}
+
+Allowed flavor tags: {vocab}
+
+Return JSON: {{"flavor_tags": [up to 6 allowed tags], "acidity": 1-5 or null, "body": 1-5 or null, "sweetness": 1-5 or null, "is_decaf": true or false}}
+Scale: 1 = very low, 3 = moderate, 5 = very high. Use null when the text gives no evidence."""
+GOLD_FIELDS = [f"gold_{s}" for s in SCORES] + ["gold_is_decaf", "gold_tags"]
+
+
+def label_gold(path: Path, client, vocab: list[str]) -> int:
+    rows = list(csv.DictReader(path.open(encoding="utf-8-sig")))
+    vocab_set = set(vocab)
+    labelled = 0
+    for r in rows:
+        if any(r[f].strip() for f in GOLD_FIELDS):
+            continue  # a human (or an earlier run) already labelled this row
+        messages = [{"role": "system", "content": LABEL_SYSTEM},
+                    {"role": "user", "content": LABEL_PROMPT.format(name=r["name"], text=r["text"], vocab=", ".join(vocab))}]
+        try:
+            o = client.chat_json(messages, GoldLabel)
+        except LLMError:
+            continue
+        for s in SCORES:
+            r[f"gold_{s}"] = "" if getattr(o, s) is None else str(getattr(o, s))
+        r["gold_is_decaf"] = "1" if o.is_decaf else "0"
+        r["gold_tags"] = "; ".join(t.lower() for t in o.flavor_tags if t.lower() in vocab_set)
+        labelled += 1
+    with path.open("w", encoding="utf-8-sig", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=GOLD_COLUMNS)
+        w.writeheader()
+        w.writerows(rows)
+    return labelled
+```
+
+`pipeline/gold.py` 맨 위 import에 다음을 추가한다:
+```python
+from pipeline.enrich import EnrichOutput, coffee_texts
+from pipeline.llm import LLMError
+```
+(기존 `from pipeline.enrich import coffee_texts` 줄을 위 줄로 바꾼다.)
+
+- [ ] **Step 3b: CLI에 `gold-label` 추가** — `pipeline/__main__.py`
+
+`build_parser()`에서 `sub.add_parser("gold-score", ...)` 줄 바로 앞에:
+```python
+    sub.add_parser("gold-label", help="fill empty gold labels with the judge model")
+```
+`main()`에서 `if a.cmd == "gold-score":` 블록 바로 앞에:
+```python
+    if a.cmd == "gold-label":
+        from pipeline.enrich import tag_vocab
+        from pipeline.gold import label_gold
+        from pipeline.llm import client_for
+        from pipeline.records import TaxonomyNode, read_jsonl
+
+        vocab = tag_vocab(read_jsonl(settings.NORMALIZED_DIR / "taxonomy.jsonl", TaxonomyNode))
+        n = label_gold(settings.EVAL_DIR / "gold_enrich.csv", client_for("judge"), vocab)
+        print(f"labelled {n} rows")
+        return 0
+```
+`tests/test_cli.py` 끝에:
+```python
+def test_gold_label_command_exists():
+    assert build_parser().parse_args(["gold-label"]).cmd == "gold-label"
 ```
 
 - [ ] **Step 4: 통과 확인**
@@ -3404,8 +3532,8 @@ Expected: all passed (DB 테스트 포함 — Docker DB 실행 중이어야 함)
 - [ ] **Step 6: Commit**
 
 ```bash
-git add pipeline/gold.py tests/test_gold.py
-git commit -m "feat(eval): 태깅 정답셋 샘플링과 필드별 일치율 채점"
+git add pipeline/gold.py pipeline/__main__.py tests/test_gold.py tests/test_cli.py
+git commit -m "feat(eval): 태깅 정답셋 샘플링·judge 모델 실버 라벨링·필드별 일치율 채점"
 ```
 
 ---
@@ -3457,13 +3585,15 @@ uv run python -m pipeline query "bright citrus floral Ethiopia washed" -k 5 --de
 ```
 Expected: 첫 결과들이 에티오피아/산미 높은 원두, 두 번째는 전부 `decaf=True`.
 
-- [ ] **Step 8: 정답셋 샘플 + 라벨링 (완료 기준 3)**
+- [ ] **Step 8: 정답셋 샘플 + 실버 라벨링 + 채점 (완료 기준 3)**
 
-Run: `uv run python -m pipeline gold-sample --n 50`
-그다음 **사용자에게** `data/eval/gold_enrich.csv`의 `gold_*` 열 라벨링을 요청한다(엑셀로 열림, `pred_*`는 참고용, 태그는 `; `로 구분, 디카페인은 1/0). 라벨이 채워지면:
-
-Run: `uv run python -m pipeline gold-score`
-Expected: `data/eval/gold_scores.json` 생성, 필드별 `exact`/`within1`/`accuracy`/`jaccard` 수치.
+Run:
+```bash
+uv run python -m pipeline gold-sample --n 50
+uv run python -m pipeline gold-label
+uv run python -m pipeline gold-score
+```
+Expected: `labelled` 45 이상(NVIDIA 타임아웃 행은 비어 있을 수 있음 — `gold-label`을 한 번 더 돌리면 빈 행만 다시 시도), `data/eval/gold_scores.json` 생성, 필드별 `exact`/`within1`/`accuracy`/`jaccard` 수치. 사용자에게 라벨링을 요청하지 않는다.
 
 - [ ] **Step 9: README 재작성**
 
@@ -3477,7 +3607,7 @@ Expected: `data/eval/gold_scores.json` 생성, 필드별 `exact`/`within1`/`accu
 ## 지금 단계: 1단계 데이터 기반 (완료)
 - 지식베이스: 원두 N건(소스별 표), 리뷰 N건, 프랜차이즈 메뉴 N건(카페인 mg 포함), 브랜드 10곳, SCA 향미 택소노미
 - 파이프라인: collect → normalize → enrich(규칙 우선 + 로컬 LLM) → embed(bge-m3) → load(pgvector)
-- 품질: 필드별 결측률 표, 태깅 정답셋 50건 대비 일치율 표
+- 품질: 필드별 결측률 표, 태깅 정답셋 50건 대비 일치율 표 (정답 라벨 = enrich와 다른 모델 deepseek-v4.1-flash의 실버 라벨, 사람 검수 시 CSV에서 덮어쓰기)
 
 ## 빠른 시작
 docker compose up -d db
