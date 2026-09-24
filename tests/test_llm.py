@@ -105,3 +105,23 @@ def test_load_targets_reads_config(monkeypatch):
     assert (primary.provider, primary.api_key, primary.timeout) == ("nvidia", "secret", 30.0)
     assert (fallback.provider, fallback.model, fallback.api_key) == ("ollama", "qwen3.5:9b", None)
     assert load_targets("embed")[1] is None
+
+
+def test_non_json_or_malformed_200_falls_back():
+    def fn(body, req):
+        if body["model"] == "html":
+            return httpx.Response(200, text="<html>gateway</html>")
+        if body["model"] == "shape":
+            return httpx.Response(200, json={"choices": "oops"})
+        return reply("from-fallback")
+
+    for primary in ("html", "shape"):
+        c = LLMClient(target(primary), fallback=target("fb"), transport=transport(fn))
+        assert c.chat([{"role": "user", "content": "x"}]) == "from-fallback"
+
+
+def test_embedder_malformed_response_raises_llm_error():
+    for resp in (httpx.Response(200, text="not json"), httpx.Response(200, json={"data": [{"index": 0}]})):
+        e = Embedder(target("bge-m3"), transport=transport(lambda b, r, resp=resp: resp))
+        with pytest.raises(LLMError):
+            e.embed(["a"])

@@ -85,6 +85,15 @@ def _html_text(html: str) -> str:
     return BeautifulSoup(html or "", "lxml").get_text("\n", strip=True)
 
 
+_ROAST_CONTEXT = re.compile(r"로스팅|로스트|roast", re.I)
+
+
+def _roast_from_text(text: str) -> str | None:
+    """Roast words only count in sentences about roasting ("다크 초콜릿" is a flavor, not a roast)."""
+    sentences = re.split(r"[\n.!?]+", text or "")
+    return normalize_roast(" ".join(s for s in sentences if _ROAST_CONTEXT.search(s)))
+
+
 def normalize_shopify(snap: Path, collected_at: str, shops: list[dict] | None = None) -> Normalized:
     shops = shops if shops is not None else settings.load_config("sources.yaml")["shopify"]
     by_domain = {s["domain"]: s for s in shops}
@@ -104,7 +113,7 @@ def normalize_shopify(snap: Path, collected_at: str, shops: list[dict] | None = 
             out.coffees.append(CoffeeRecord(
                 key=key, name=title, roaster=shop["roaster"],
                 origin_country=normalize_country(f"{title} {text}"),
-                process=process_from_text(f"{title} {text}"), roast_level=normalize_roast(text),
+                process=process_from_text(f"{title} {text}"), roast_level=_roast_from_text(text),
                 is_decaf=is_decaf, decaf_process=decaf_process,
                 flavor_summary=text.split("\n")[0] if text else None,
                 source="shopify", source_url=url, collected_at=collected_at,

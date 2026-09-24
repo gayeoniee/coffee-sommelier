@@ -93,3 +93,14 @@ def test_run_normalize_writes_all_files(tmp_path):
     assert read_jsonl(tmp_path / "norm" / "menu_items.jsonl", MenuItemRecord)[0].brand_key == "brand:starbucks"
     assert read_jsonl(tmp_path / "norm" / "brands.jsonl", BrandRecord)[0].name == "스타벅스"
     assert (tmp_path / "norm" / "coffees.jsonl").exists()
+
+
+def test_shopify_roast_only_from_roast_sentences(tmp_path):
+    (tmp_path / "shop.test.json").write_text(json.dumps({"products": [
+        {"handle": "a", "title": "A", "product_type": "원두", "body_html": "<p>다크 초콜릿과 체리</p>"},
+        {"handle": "b", "title": "B", "product_type": "원두", "body_html": "<p>다크 초콜릿과 체리</p><p>미디엄 로스트</p>"},
+        {"handle": "c", "title": "C", "product_type": "원두", "body_html": "<p>Dark chocolate. Light Roast.</p>"},
+    ]}, ensure_ascii=False), encoding="utf-8")
+    n = normalize_shopify(tmp_path, "2026-09-24",
+                          shops=[{"domain": "shop.test", "roaster": "Shop", "product_types": ["원두"]}])
+    assert [c.roast_level for c in n.coffees] == [None, "medium", "light"]

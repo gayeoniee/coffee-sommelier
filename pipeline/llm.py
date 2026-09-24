@@ -43,7 +43,10 @@ def _post(target: Target, path: str, payload: dict, transport, sleep, max_retrie
                 continue
             if r.status_code >= 400:
                 raise LLMError(f"HTTP {r.status_code} from {target.model}: {r.text[:200]}")
-            return r.json()
+            try:
+                return r.json()
+            except ValueError as e:
+                raise LLMError(f"non-JSON response from {target.model}: {r.text[:200]}") from e
     raise LLMError(f"rate limited: {target.model}")
 
 
@@ -68,7 +71,10 @@ class LLMClient:
             payload.update(target.extra)
         self.calls += 1
         data = _post(target, "/chat/completions", payload, self._transport, self._sleep)
-        content = ((data.get("choices") or [{}])[0].get("message") or {}).get("content")
+        try:
+            content = ((data.get("choices") or [{}])[0].get("message") or {}).get("content")
+        except (KeyError, TypeError, IndexError, AttributeError) as e:
+            raise LLMError(f"malformed chat response from {target.model}: {e!r}") from e
         if not content or not content.strip():
             raise LLMError(f"empty content from {target.model}")
         self.last_model = target.model
@@ -100,7 +106,10 @@ class Embedder:
     def embed(self, texts: list[str]) -> list[list[float]]:
         data = _post(self.target, "/embeddings", {"model": self.target.model, "input": texts},
                      self._transport, self._sleep)
-        return [d["embedding"] for d in sorted(data["data"], key=lambda d: d["index"])]
+        try:
+            return [d["embedding"] for d in sorted(data["data"], key=lambda d: d["index"])]
+        except (KeyError, TypeError, IndexError, AttributeError) as e:
+            raise LLMError(f"malformed embedding response from {self.target.model}: {e!r}") from e
 
 
 def load_targets(task: str) -> tuple[Target, Target | None]:

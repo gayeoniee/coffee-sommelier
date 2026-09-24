@@ -30,3 +30,18 @@ def test_download_writes_file(tmp_path):
     c = make_client({"/f.csv": lambda r: httpx.Response(200, content=b"a,b\n1,2\n")}, [])
     p = c.download("https://a.test/f.csv", tmp_path / "sub" / "f.csv")
     assert p.read_bytes() == b"a,b\n1,2\n"
+
+
+def test_robots_server_error_disallows_host():
+    c = make_client({"/robots.txt": lambda r: httpx.Response(503),
+                     "/data": lambda r: httpx.Response(200, text="ok")}, [])
+    with pytest.raises(RobotsDisallowed):
+        c.get("https://a.test/data")
+
+
+def test_robots_network_error_disallows_host():
+    def down(r):
+        raise httpx.ConnectError("down", request=r)
+    c = make_client({"/robots.txt": down, "/data": lambda r: httpx.Response(200, text="ok")}, [])
+    with pytest.raises(RobotsDisallowed):
+        c.get("https://a.test/data")

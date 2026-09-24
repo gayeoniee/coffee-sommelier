@@ -28,17 +28,20 @@ class PoliteClient:
         p = urlsplit(url)
         host = f"{p.scheme}://{p.netloc}"
         if host not in self._robots:
+            # RFC 9309: 4xx means no rules (allow all); 5xx or unreachable means assume full disallow.
             rp: urllib.robotparser.RobotFileParser | None = urllib.robotparser.RobotFileParser()
             try:
                 r = self._client.get(host + "/robots.txt")
                 self._last[p.netloc] = time.monotonic()
-                if r.status_code >= 400:
+                if r.status_code >= 500:
+                    rp.disallow_all = True
+                elif r.status_code >= 400:
                     rp = None
                 else:
                     rp.parse(r.text.splitlines())
             except httpx.HTTPError:
                 self._last[p.netloc] = time.monotonic()
-                rp = None
+                rp.disallow_all = True
             self._robots[host] = rp
         return self._robots[host]
 
