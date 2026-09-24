@@ -16,3 +16,7 @@ def test_query_decaf_flags():
     assert p.parse_args(["query", "x"]).decaf is None
     assert p.parse_args(["query", "x", "--decaf"]).decaf is True
     assert p.parse_args(["query", "x", "--no-decaf", "-k", "3"]).decaf is False
+
+
+def test_gold_label_command_exists():
+    assert build_parser().parse_args(["gold-label"]).cmd == "gold-label"

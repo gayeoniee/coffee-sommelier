@@ -25,6 +25,7 @@ def build_parser() -> argparse.ArgumentParser:
     gs = sub.add_parser("gold-sample", help="sample rows for the tagging gold set")
     gs.add_argument("--n", type=int, default=50)
     gs.add_argument("--seed", type=int, default=42)
+    sub.add_parser("gold-label", help="fill empty gold labels with the judge model")
     sub.add_parser("gold-score", help="score enrich output against the labelled gold set")
     return ap
 
@@ -89,6 +90,16 @@ def main(argv: list[str] | None = None) -> int:
         from pipeline.gold import sample_gold
         n = sample_gold(settings.ENRICHED_DIR, settings.NORMALIZED_DIR, settings.EVAL_DIR / "gold_enrich.csv", n=a.n, seed=a.seed)
         print(f"wrote {n} rows to {settings.EVAL_DIR / 'gold_enrich.csv'}")
+        return 0
+    if a.cmd == "gold-label":
+        from pipeline.enrich import tag_vocab
+        from pipeline.gold import label_gold
+        from pipeline.llm import client_for
+        from pipeline.records import TaxonomyNode, read_jsonl
+
+        vocab = tag_vocab(read_jsonl(settings.NORMALIZED_DIR / "taxonomy.jsonl", TaxonomyNode))
+        n = label_gold(settings.EVAL_DIR / "gold_enrich.csv", client_for("judge"), vocab)
+        print(f"labelled {n} rows")
         return 0
     if a.cmd == "gold-score":
         from pipeline.gold import score_gold
