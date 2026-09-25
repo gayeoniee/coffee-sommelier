@@ -64,6 +64,22 @@ def read_gold_rows(path: Path) -> list[dict]:
         return list(csv.DictReader(f))
 
 
+def clone_unlabelled(src: Path, dst: Path) -> int:
+    """Copy a gold CSV with every gold_* cell emptied, so a second judge starts from scratch."""
+    if dst.exists():
+        raise FileExistsError(f"{dst} exists; move it away before cloning")
+    rows = read_gold_rows(src)
+    for r in rows:
+        for field in GOLD_FIELDS:
+            r[field] = ""
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    with dst.open("w", encoding="utf-8-sig", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=GOLD_COLUMNS)
+        w.writeheader()
+        w.writerows(rows)
+    return len(rows)
+
+
 def _tags(s: str) -> set[str]:
     return {t.strip().lower() for t in s.split(";") if t.strip()}
 
@@ -113,6 +129,28 @@ def score_gold(path: Path) -> dict:
     out["tags"] = {"n": len(jac), "jaccard": _mean([j for _, j in jac])}
     by_origin["tags"] = {o: {"n": len(js), "jaccard": _mean(js)} for o, js in _group(jac).items()}
     out["by_origin"] = by_origin
+    return out
+
+
+def agreement(path_a: Path, path_b: Path) -> dict:
+    """How much two independently-labelled gold sets agree, joined by key."""
+    a = {r["key"]: r for r in read_gold_rows(path_a)}
+    b = {r["key"]: r for r in read_gold_rows(path_b)}
+    keys = [k for k in a if k in b]
+    out: dict = {}
+    for s in SCORES:
+        pairs = [(_int(a[k][f"gold_{s}"]), _int(b[k][f"gold_{s}"])) for k in keys]
+        pairs = [(x, y) for x, y in pairs if x is not None and y is not None]
+        out[s] = {"n": len(pairs),
+                  "exact": _mean([1.0 if x == y else 0.0 for x, y in pairs]),
+                  "within1": _mean([1.0 if abs(x - y) <= 1 else 0.0 for x, y in pairs])}
+    truthy = ("1", "true", "yes", "y")
+    dec = [(a[k]["gold_is_decaf"].strip(), b[k]["gold_is_decaf"].strip()) for k in keys]
+    dec = [(x in truthy, y in truthy) for x, y in dec if x and y]
+    out["is_decaf"] = {"n": len(dec), "agreement": _mean([1.0 if x == y else 0.0 for x, y in dec])}
+    jac = [(_tags(a[k]["gold_tags"]), _tags(b[k]["gold_tags"])) for k in keys]
+    jac = [len(x & y) / len(x | y) for x, y in jac if x and y]
+    out["tags"] = {"n": len(jac), "jaccard": _mean(jac)}
     return out
 
 

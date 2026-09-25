@@ -25,8 +25,14 @@ def build_parser() -> argparse.ArgumentParser:
     gs = sub.add_parser("gold-sample", help="sample rows for the tagging gold set")
     gs.add_argument("--n", type=int, default=50)
     gs.add_argument("--seed", type=int, default=42)
-    sub.add_parser("gold-label", help="fill empty gold labels with the judge model")
-    sub.add_parser("gold-score", help="score enrich output against the labelled gold set")
+    gl = sub.add_parser("gold-label", help="fill empty gold labels with the judge model")
+    gl.add_argument("--judge", default="judge", help="task name in config/models.yaml")
+    gl.add_argument("--file", default="gold_enrich.csv", help="CSV name, relative to the eval dir")
+    gsc = sub.add_parser("gold-score", help="score enrich output against the labelled gold set")
+    gsc.add_argument("--file", default="gold_enrich.csv", help="CSV name, relative to the eval dir")
+    ga = sub.add_parser("gold-agree", help="inter-judge agreement between two labelled gold sets")
+    ga.add_argument("--a", default="gold_enrich.csv")
+    ga.add_argument("--b", default="gold_enrich_judge2.csv")
     return ap
 
 
@@ -96,19 +102,30 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if a.cmd == "gold-label":
         from pipeline.enrich import tag_vocab
-        from pipeline.gold import label_gold
+        from pipeline.gold import clone_unlabelled, label_gold
         from pipeline.llm import client_for
         from pipeline.records import TaxonomyNode, read_jsonl
 
+        path = settings.EVAL_DIR / a.file
+        if a.file != "gold_enrich.csv" and not path.exists():
+            clone_unlabelled(settings.EVAL_DIR / "gold_enrich.csv", path)
         vocab = tag_vocab(read_jsonl(settings.NORMALIZED_DIR / "taxonomy.jsonl", TaxonomyNode))
-        n = label_gold(settings.EVAL_DIR / "gold_enrich.csv", client_for("judge"), vocab)
+        n = label_gold(path, client_for(a.judge), vocab)
         print(f"labelled {n} rows")
         return 0
     if a.cmd == "gold-score":
         from pipeline.gold import score_gold
-        scores = score_gold(settings.EVAL_DIR / "gold_enrich.csv")
-        (settings.EVAL_DIR / "gold_scores.json").write_text(json.dumps(scores, indent=2), encoding="utf-8")
+        path = settings.EVAL_DIR / a.file
+        scores = score_gold(path)
+        out_name = "gold_scores.json" if a.file == "gold_enrich.csv" else f"{path.stem}_scores.json"
+        (settings.EVAL_DIR / out_name).write_text(json.dumps(scores, indent=2), encoding="utf-8")
         print(json.dumps(scores, indent=2))
+        return 0
+    if a.cmd == "gold-agree":
+        from pipeline.gold import agreement
+        result = agreement(settings.EVAL_DIR / a.a, settings.EVAL_DIR / a.b)
+        (settings.EVAL_DIR / "gold_agreement.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
+        print(json.dumps(result, indent=2))
         return 0
     return 1
 

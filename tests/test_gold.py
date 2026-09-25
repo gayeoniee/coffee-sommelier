@@ -3,7 +3,7 @@ import json
 
 import pytest
 
-from pipeline.gold import GOLD_COLUMNS, read_gold_rows, label_gold, sample_gold, score_gold
+from pipeline.gold import GOLD_COLUMNS, agreement, clone_unlabelled, read_gold_rows, label_gold, sample_gold, score_gold
 from pipeline.records import CoffeeRecord, ReviewRecord, write_jsonl
 
 
@@ -114,6 +114,55 @@ def test_sample_gold_records_value_origin(tmp_path):
                    "llm": ("none", "llm", "none", "llm"),
                    "emp": ("none", "none", "none", "none")}
     assert len(rows["rul"]["text"]) == 3000
+
+
+def test_clone_unlabelled_empties_gold_cells_and_keeps_the_rest(tmp_path):
+    src = tmp_path / "src.csv"
+    base = {c: "" for c in GOLD_COLUMNS}
+    with src.open("w", encoding="utf-8-sig", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=GOLD_COLUMNS)
+        w.writeheader()
+        w.writerow({**base, "key": "a", "name": "A", "text": "t", "pred_acidity": "3",
+                    "gold_acidity": "4", "gold_is_decaf": "1", "gold_tags": "lemon"})
+    dst = tmp_path / "dst.csv"
+    assert clone_unlabelled(src, dst) == 1
+    rows = read_gold_rows(dst)
+    assert list(rows[0].keys()) == GOLD_COLUMNS
+    assert (rows[0]["key"], rows[0]["name"], rows[0]["text"], rows[0]["pred_acidity"]) == ("a", "A", "t", "3")
+    assert (rows[0]["gold_acidity"], rows[0]["gold_is_decaf"], rows[0]["gold_tags"]) == ("", "", "")
+    with pytest.raises(FileExistsError):
+        clone_unlabelled(src, dst)
+
+
+def test_agreement_joins_by_key_and_skips_unparsable_or_empty_cells(tmp_path):
+    pa, pb = tmp_path / "a.csv", tmp_path / "b.csv"
+    base = {c: "" for c in GOLD_COLUMNS}
+    with pa.open("w", encoding="utf-8-sig", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=GOLD_COLUMNS)
+        w.writeheader()
+        w.writerow({**base, "key": "a", "gold_acidity": "4", "gold_body": "2", "gold_sweetness": "",
+                    "gold_is_decaf": "1", "gold_tags": "lemon; honey"})
+        w.writerow({**base, "key": "b", "gold_acidity": "3", "gold_body": "3", "gold_sweetness": "3",
+                    "gold_is_decaf": "0", "gold_tags": ""})
+        w.writerow({**base, "key": "c", "gold_acidity": "", "gold_body": "1", "gold_sweetness": "2",
+                    "gold_is_decaf": "1", "gold_tags": "lemon"})
+    with pb.open("w", encoding="utf-8-sig", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=GOLD_COLUMNS)
+        w.writeheader()
+        w.writerow({**base, "key": "a", "gold_acidity": "4", "gold_body": "4", "gold_sweetness": "3",
+                    "gold_is_decaf": "1", "gold_tags": "lemon"})
+        w.writerow({**base, "key": "b", "gold_acidity": "2", "gold_body": "", "gold_sweetness": "3",
+                    "gold_is_decaf": "1", "gold_tags": ""})
+        w.writerow({**base, "key": "c", "gold_acidity": "5", "gold_body": "1", "gold_sweetness": "3",
+                    "gold_is_decaf": "", "gold_tags": "honey"})
+        w.writerow({**base, "key": "d", "gold_acidity": "1", "gold_body": "1", "gold_sweetness": "1",
+                    "gold_is_decaf": "1", "gold_tags": "lemon"})
+    result = agreement(pa, pb)
+    assert result["acidity"] == {"n": 2, "exact": 0.5, "within1": 1.0}
+    assert result["body"] == {"n": 2, "exact": 0.5, "within1": 0.5}
+    assert result["sweetness"] == {"n": 2, "exact": 0.5, "within1": 1.0}
+    assert result["is_decaf"] == {"n": 2, "agreement": 0.5}
+    assert result["tags"] == {"n": 2, "jaccard": 0.25}
 
 
 def test_score_gold_by_origin_and_bad_cells(tmp_path):

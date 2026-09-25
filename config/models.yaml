@@ -35,3 +35,9 @@ tasks:
     model: deepseek-ai/deepseek-v4.1-flash
     timeout: 120
     max_tokens: 3000
+  # second gold-set labeller from a different vendor, for inter-judge agreement
+  judge2:
+    provider: nvidia
+    model: nvidia/nemotron-3-super-120b-a12b
+    timeout: 120
+    max_tokens: 4000
