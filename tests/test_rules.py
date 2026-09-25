@@ -28,6 +28,11 @@ def test_clean_and_num():
     (("Decaf Mexico", "supercritical CO2"), (True, "co2")),
     (("Mountain Water Process Mexico",), (True, "mountain-water")),
     (("Kenya AA",), (False, None)),
+    (("Ethiopia Limu Washed", "Visit https://www.facebook.com/jadecafe19930822/ for more"), (False, None)),
+    (("Homacho Waeno Natural", "visit www.theredecafe.com."), (False, None)),
+    (("Guatemala ASDECAFE",), (False, None)),
+    (("Sidamo Natural Water Decaf",), (True, "unknown")),
+    (("DECAF Colombia",), (True, "unknown")),
 ])
 def test_detect_decaf(texts, expected):
     assert detect_decaf(*texts) == expected

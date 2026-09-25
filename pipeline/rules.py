@@ -36,7 +36,7 @@ def join_text(*parts) -> str | None:
 
 
 # --- decaf -------------------------------------------------------------
-DECAF_WORD = re.compile(r"decaf|decaffeinat|디카페인", re.I)
+DECAF_WORD = re.compile(r"(?<![a-z])(?:decaf|decaffeinat)|디카페인", re.I)
 # (name, pattern, counts-without-the-word-decaf)
 DECAF_PROCESSES = [
     ("swiss-water", re.compile(r"swiss\s*water", re.I), True),
