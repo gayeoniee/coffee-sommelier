@@ -13,6 +13,7 @@ GOLD_COLUMNS = (["key", "name", "text"] + [f"pred_{s}" for s in SCORES] + ["pred
                 + [f"gold_{s}" for s in SCORES] + ["gold_is_decaf", "gold_tags"])
 MAX_DECAF = 10
 TEXT_CHARS = 3000  # what enrich sends to the LLM
+DECAF_TRUE = ("1", "true", "yes", "y")
 
 
 def _origin(source_value, enriched_value, by_rule: bool, llm_ok: bool) -> str:
@@ -117,7 +118,7 @@ def score_gold(path: Path) -> dict:
         scored = [(o, p, g) for o, p, g in scored if g is not None]  # unlabelled or unparsable gold cells
         out[s] = _score_stats([(p, g) for _, p, g in scored])
         by_origin[s] = {o: _score_stats(ps) for o, ps in _group([(o, (p, g)) for o, p, g in scored]).items()}
-    dec = [(r["pred_is_decaf"].strip() == "1", r["gold_is_decaf"].strip() in ("1", "true", "yes", "y"))
+    dec = [(r["pred_is_decaf"].strip() == "1", r["gold_is_decaf"].strip() in DECAF_TRUE)
            for r in rows if r["gold_is_decaf"].strip()]
     out["is_decaf"] = {"n": len(dec), "accuracy": _mean([1.0 if p == g else 0.0 for p, g in dec])}
     jac: list[tuple[str, float]] = []
@@ -141,12 +142,9 @@ def agreement(path_a: Path, path_b: Path) -> dict:
     for s in SCORES:
         pairs = [(_int(a[k][f"gold_{s}"]), _int(b[k][f"gold_{s}"])) for k in keys]
         pairs = [(x, y) for x, y in pairs if x is not None and y is not None]
-        out[s] = {"n": len(pairs),
-                  "exact": _mean([1.0 if x == y else 0.0 for x, y in pairs]),
-                  "within1": _mean([1.0 if abs(x - y) <= 1 else 0.0 for x, y in pairs])}
-    truthy = ("1", "true", "yes", "y")
+        out[s] = _score_stats(pairs)
     dec = [(a[k]["gold_is_decaf"].strip(), b[k]["gold_is_decaf"].strip()) for k in keys]
-    dec = [(x in truthy, y in truthy) for x, y in dec if x and y]
+    dec = [(x in DECAF_TRUE, y in DECAF_TRUE) for x, y in dec if x and y]
     out["is_decaf"] = {"n": len(dec), "agreement": _mean([1.0 if x == y else 0.0 for x, y in dec])}
     jac = [(_tags(a[k]["gold_tags"]), _tags(b[k]["gold_tags"])) for k in keys]
     jac = [len(x & y) / len(x | y) for x, y in jac if x and y]

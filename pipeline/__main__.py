@@ -31,8 +31,8 @@ def build_parser() -> argparse.ArgumentParser:
     gsc = sub.add_parser("gold-score", help="score enrich output against the labelled gold set")
     gsc.add_argument("--file", default="gold_enrich.csv", help="CSV name, relative to the eval dir")
     ga = sub.add_parser("gold-agree", help="inter-judge agreement between two labelled gold sets")
-    ga.add_argument("--a", default="gold_enrich.csv")
-    ga.add_argument("--b", default="gold_enrich_judge2.csv")
+    ga.add_argument("--a", default="gold_enrich.csv", help="first judge's CSV name, relative to the eval dir")
+    ga.add_argument("--b", default="gold_enrich_judge2.csv", help="second judge's CSV name, relative to the eval dir")
     return ap
 
 
