@@ -1,0 +1,64 @@
+{
+  "acidity": {
+    "n": 24,
+    "exact": 0.4167,
+    "within1": 0.8333
+  },
+  "body": {
+    "n": 25,
+    "exact": 0.36,
+    "within1": 0.88
+  },
+  "sweetness": {
+    "n": 25,
+    "exact": 0.28,
+    "within1": 0.6
+  },
+  "is_decaf": {
+    "n": 28,
+    "accuracy": 1.0
+  },
+  "tags": {
+    "n": 28,
+    "jaccard": 0.3598
+  },
+  "by_origin": {
+    "acidity": {
+      "llm": {
+        "n": 13,
+        "exact": 0.6154,
+        "within1": 1.0
+      },
+      "source": {
+        "n": 11,
+        "exact": 0.1818,
+        "within1": 0.6364
+      }
+    },
+    "body": {
+      "source": {
+        "n": 25,
+        "exact": 0.36,
+        "within1": 0.88
+      }
+    },
+    "sweetness": {
+      "llm": {
+        "n": 15,
+        "exact": 0.4667,
+        "within1": 1.0
+      },
+      "none": {
+        "n": 10,
+        "exact": 0.0,
+        "within1": 0.0
+      }
+    },
+    "tags": {
+      "rule": {
+        "n": 28,
+        "jaccard": 0.3598
+      }
+    }
+  }
+}

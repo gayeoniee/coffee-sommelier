@@ -1,430 +1,155 @@
-# 🍷 Wine Sommelier - AI 기반 개인 맞춤형 와인 추천 시스템
+# ☕ Coffee Sommelier — 내 커피 취향을 알아주는 앱
 
-> **1인 프로젝트 | 2025.12.10 ~ 2026.01.18**  
-> **역할**: 기획, 데이터 엔지니어링, AI 개발
+> 건강 때문에 디카페인을 마시지만 산미 있는 커피를 좋아하는 사람도, 카페에서 실패 없이 고를 수 있게.
 
----
+카페에서 음료를 고를 때 **사용자 조건(카페인 등)은 반드시 지키고**, 취향(산미·바디·향미)에 맞는 선택지를 **근거와 함께** 추천하며, 마신 기록으로 점점 개인화되는 앱을 만든다. 이 레포는 그중 **1단계: 데이터 기반**까지 완료된 상태다.
 
-## 1️⃣ 프로젝트 개요
+| 단계 | 내용 | 상태 |
+|---|---|---|
+| **1. 데이터 기반** | 수집 → 정규화 → 구조화(규칙 + 로컬 LLM) → 임베딩 → pgvector 적재, 품질 리포트, 태깅 평가 | ✅ 완료 |
+| 2. 추천 + 기록 | 취향 온보딩, 조건 필터 + 취향 점수 추천, 음용 기록, PWA | 예정 |
+| 3. 스캔 + 추론 + 평가 | 원두카드/메뉴 사진 Vision 추출, 근거 기반 향미 예측, 모델 비교 | 예정 |
+| 4. 에이전트 | 멀티턴 대화("아까 거보다 산미 센 걸로") | 예정 |
 
-### 📌 한 줄 소개
-"달지 않고 바디감 있는 레드 와인"처럼 모호한 사용자 질문을 이해하고 72,000건의 와인 데이터에서 최적의 와인을 찾아주는 AI 소믈리에 시스템
-
-### 🎯 핵심 가치
-- **모호한 자연어 질의 처리**: "프랑스 와인 제외해줘", "산미가 강한 화이트 와인" 등 자연스러운 대화로 추천
-- **논리적 필터링**: Self-Querying Retriever로 100% 정확한 메타데이터 필터링 구현
-- **고품질 큐레이션**: 평점 88점 이상 데이터만 선별하여 신뢰도 높은 추천 제공
-
-### 🛠 기술 스택
-
-| 카테고리 | 기술 상세 |
-|---------|----------|
-| **Language** | Python 3.10+ |
-| **Framework** | LangChain, Streamlit |
-| **AI/NLP** | Self-Querying Retriever, Feature Extraction |
-| **Vector DB** | Pinecone (클라우드 벡터 데이터베이스) |
-| **Embedding** | OpenAI text-embedding-3-small |
-| **LLM** | GPT-4o-mini (메타데이터 쿼리 생성) |
-| **Tools** | VS Code, Git |
-
-### 📊 주요 성과 지표
-
-| 지표 | 수치 | 설명 |
-|------|------|------|
-| **데이터 규모** | 130,000건 → 72,000건 | 평점 88점 이상 고품질 데이터 44% 정제 |
-| **필터링 정확도** | 100% | Self-Querying 기반 논리 필터 (오탐률 0%) |
-| **응답 시간** | 평균 2.5초 | 질의 → 추천 결과 생성 |
-| **추출 Feature** | 12개 맛 태그 | Oak, Berry, Acid, Floral 등 NLP 자동 추출 |
+설계 문서: [`docs/superpowers/specs/2026-09-24-coffee-sommelier-design.md`](docs/superpowers/specs/2026-09-24-coffee-sommelier-design.md)
 
 ---
 
-## 2️⃣ 프로젝트 취지
+## 1단계 결과
 
-### 🔍 해결하고자 한 문제
+### 지식베이스 (Postgres + pgvector)
 
-#### **Problem 1: 와인 선택의 어려움**
-- 와인 초보자는 자신의 취향을 전문 용어로 표현하기 어려움
-- "달지 않은", "묵직한", "과일향 나는" 같은 모호한 표현 사용
-- 기존 추천 시스템은 정확한 키워드 입력을 요구함
+| 항목 | 행 수 |
+|---|---|
+| 원두 (`coffees`, 전부 1024차원 임베딩) | **9,048** |
+| └ 디카페인 원두 | 161 |
+| 리뷰 텍스트 (`reviews`, RAG 근거 전용) | 7,401 |
+| 프랜차이즈 메뉴 (`menu_items`, 카페인 mg 포함) | 304 (스타벅스 71 · 메가 119 · 빽다방 114) |
+| └ 디카페인 메뉴 | 74 |
+| 브랜드 (`brands`, 디카페인 가능 여부·추가요금) | 10 |
+| SCA 향미 택소노미 (`flavor_taxonomy`, 1·2단계 한국어) | 121 |
 
-#### **Problem 2: 유사도 검색의 맹점**
-```python
-# 문제 상황 예시
-사용자: "프랑스 와인 제외해줘"
+원두 소스별: coffeereview(Kaggle) 7,393 · CQI 1,546 · RoasterDB 100 · 블루보틀 코리아 9
 
-[기존 유사도 검색 방식]
-→ "프랑스" 키워드와 유사한 문서 검색
-→ 결과: 프랑스 와인이 상위 랭크됨 (역효과!)
+### 필드 결측률 (원두)
 
-[Self-Querying 방식]
-→ LLM이 자연어를 메타데이터 필터로 변환
-→ Country != 'France' 논리 필터 적용
-→ 결과: 프랑스 와인 100% 제외
+| 필드 | 결측 | 비고 |
+|---|---|---|
+| embedding | 0.0% | |
+| body | 0.8% | |
+| acidity | 13.3% | 원본 점수 2,166건뿐 → 나머지는 LLM이 텍스트에서 추론 |
+| origin_country | 13.7% | 블렌드·산지 미기재 |
+| flavor_tags | 17.2% | CQI는 텍스트가 없어 태그 불가 |
+| roast_level | 22.0% | |
+| process | 45.9% | 리뷰에 가공방식 언급이 없는 경우 |
+| sweetness | 46.8% | 단맛만으로는 LLM을 부르지 않음(비용 절감) |
+
+### 구조화 품질 평가 (정답셋 50건)
+
+정답 라벨은 사람 대신 **enrich 모델(qwen3.5 9B)과 다른 두 모델**이 붙인 실버 라벨이다.
+- judge 1: `deepseek-v4.1-flash` (NVIDIA 무료 엔드포인트, 28건 — 나머지는 타임아웃)
+- judge 2: `nemotron-3-super-120b` (다른 회사 모델, 49건)
+
+**judge 간 일치도** — 라벨 자체를 얼마나 믿을 수 있나
+
+| 필드 | 정확 일치 | ±1 이내 |
+|---|---|---|
+| 산미 | 78% | 100% |
+| 바디 | 75% | 100% |
+| 단맛 | 67% | 96% |
+| 디카페인 여부 | 100% | |
+| 향미 태그 (Jaccard) | 0.81 | |
+
+**파이프라인 값 vs 정답** (judge 2 기준, 값이 어디서 왔는지별)
+
+| 필드 | 값 출처 | n | 정확 일치 | ±1 이내 |
+|---|---|---|---|---|
+| 산미 | **LLM 추론** | 23 | 52% | **96%** |
+| 산미 | 원본 점수(5분위 변환) | 16 | 38% | 63% |
+| 단맛 | **LLM 추론** | 30 | 77% | **100%** |
+| 바디 | 원본 점수(5분위 변환) | 43 | 30% | 86% |
+| 디카페인 여부 | 규칙 | 49 | 98% | |
+| 향미 태그 | 규칙(키워드 매칭) | 49 | Jaccard 0.42 | |
+
+읽는 법:
+- 두 judge가 서로 잘 일치하므로(±1 이내 96~100%) 실버 라벨로 쓸 만하다.
+- **LLM이 채운 값은 정답과 ±1 이내 96~100%**로 가장 정확하다.
+- 원본 점수를 소스 내 5분위로 바꾼 값은 오히려 낮다. 5분위는 "스페셜티 안에서의 상대 위치"인데 judge는 절대 척도로 매기기 때문이다 → 2단계에서 절대 척도 보정 필요.
+- **규칙 기반 태그(Jaccard 0.42)가 가장 약한 고리**다. 부정 표현("no bitterness")과 일반어("fresh") 오탐이 원인으로 보인다 → 개선 1순위.
+
+원자료: `data/eval/gold_*.csv`, `gold_scores.json`, `gold_enrich_judge2_scores.json`, `gold_agreement.json`
+
+### 검색 예시
+
+```text
+$ python -m pipeline query "bright citrus floral Ethiopia washed" -k 5 --decaf
+0.616  Decaf Ethiopia Sidamo | Old Soul Co. | Ethiopia | natural | decaf=True | acidity=2 ...
+0.607  Ethiopia Sidamo Natural Water Decaf | Jackrabbit Java | Ethiopia | washed | decaf=True ...
+0.598  Decaf Harfusa Ethiopia Yirgacheffe | Counter Culture Coffee | Ethiopia | washed | decaf=True ...
+```
+디카페인이 전체의 2%뿐이라 pgvector HNSW가 필터 후 k개를 못 채우는 문제가 있었고, `hnsw.iterative_scan = relaxed_order`로 해결했다.
+
+---
+
+## 빠른 시작
+
+```bash
+docker compose up -d db          # Postgres 17 + pgvector
+uv sync
+ollama pull qwen3.5:9b && ollama pull bge-m3
+cp .env.example .env             # NVIDIA_API_KEY (평가 judge용)
+# Kaggle 키: ~/.kaggle/kaggle.json
+
+uv run python -m pipeline run                    # collect → normalize → enrich → embed → load
+uv run python -m pipeline query "산미 밝은 에티오피아" --decaf
+uv run python -m pipeline gold-sample && uv run python -m pipeline gold-label && uv run python -m pipeline gold-score
+uv run pytest -q                                 # 114 tests (DB 테스트 포함)
 ```
 
-#### **Problem 3: 대규모 데이터에서의 품질 관리**
-- 약 130,000건의 와인 리뷰 중 품질 편차 큼
-- 평점 낮은 와인 추천 시 사용자 신뢰도 하락
+`run --only <stage>`로 단계별 실행, `--limit N`으로 LLM 호출 수 제한, `--retry-failed`로 실패 행 재시도. enrich·embed는 캐시로 **중단 후 이어서** 실행된다(실제로 컴퓨터 재시작·메모리 부족으로 여러 번 끊겼지만 한 건도 잃지 않았다).
 
----
-
-### 💡 솔루션
-
-#### **Solution 1: Self-Querying Retriever 구현**
-자연어를 구조화된 쿼리로 자동 변환하여 정확한 필터링 수행
+## 아키텍처
 
 ```
-사용자 입력: "이탈리아산 레드 와인 중에서 2015년 이후 생산된 걸로 추천해줘"
-
-↓ LLM 파싱 (GPT-4o-mini)
-
-Semantic Query: "이탈리아 레드 와인"
-Metadata Filter: {
-  "Country": "Italy",
-  "Variety": "Red",
-  "Year": {"$gte": 2015}
-}
-
-↓ Pinecone 검색
-
-결과: 이탈리아 레드 와인 + 2015년 이후 + 유사도 높은 순
+pipeline/
+  collect/    robots.txt 준수 + 호스트별 1초 지연, 소스별 격리(하나가 실패해도 계속), 날짜별 원본 스냅샷
+  normalize/  공통 스키마, 산지·가공·로스팅 표기 통일, 디카페인 판별, 3개 스크랩 데이터 병합
+  enrich.py   규칙 우선 → 빈 칸만 로컬 LLM(qwen3.5:9b) → JSON 스키마 검증 → 재개 가능한 캐시
+  embed.py    bge-m3 (1024차원), 텍스트 해시 캐시, 배치별 저장
+  load.py     단일 트랜잭션 적재(실패 시 롤백)
+  llm.py      Ollama·NVIDIA 공용 OpenAI 호환 클라이언트: 타임아웃·로컬 폴백·빈 응답 처리·429 백오프
+  gold.py     정답셋 샘플링(디카페인 우선), judge 라벨링, 값 출처별 채점, judge 간 일치도
 ```
 
-#### **Solution 2: 고품질 데이터 엔지니어링**
-1. **평점 기반 필터링**: 88점 이상만 선별 (130,000건 → 72,000건)
-2. **NLP Feature Extraction**: 리뷰에서 맛 키워드 자동 추출
-   - Oak, Berry, Acid, Citrus, Spice 등 12개 카테고리 태깅
-
-#### **Solution 3: 사용자 친화적 인터페이스**
-- Streamlit으로 대화형 UI 구현
-- 실시간 채팅 방식 추천
-- 추천 결과에 근거(맛 프로필, 평점, 리뷰) 함께 제공
-
----
-
-### 🎯 차별점
-
-| 비교 항목 | 기존 추천 시스템 | Wine Sommelier |
-|----------|----------------|----------------|
-| **질의 방식** | 정확한 키워드 필요 | 자연어 대화 가능 |
-| **부정 표현** | 처리 불가 ("~제외") | 논리 필터로 100% 처리 |
-| **데이터 품질** | 전체 데이터 사용 | 고평점만 선별 (신뢰도↑) |
-| **맛 정보** | 수동 입력 필요 | NLP 자동 추출 |
-| **사용성** | 전문가 중심 | 초보자 친화적 |
-
----
-
-## 3️⃣ 구현 기능 목록
-
-### 🏗 시스템 아키텍처
-
-```
-[사용자 입력]
-     ↓
-[Streamlit UI]
-     ↓
-[LangChain Self-Querying]
-     ├─→ [LLM] → 메타데이터 필터 생성
-     └─→ [Embedding Model] → 의미 벡터 생성
-     ↓
-[Pinecone Vector DB]
-     ├─ Semantic Search (유사도 검색)
-     └─ Metadata Filtering (논리 필터)
-     ↓
-[결과 후처리 & 랭킹]
-     ↓
-[추천 결과 반환]
-```
-
----
-
-### ⚙️ 핵심 기능 상세
-
-#### **[Feature 1] Self-Querying Retriever**
-
-**구현 배경**
-- 유사도 검색만으로는 부정 표현("~아닌", "~제외") 처리 불가
-- 숫자 비교("X년 이후", "가격 Y원 이하") 논리 연산 필요
-
-**기술적 구현**
-```python
-# LangChain Self-Querying 설정 예시
-from langchain.retrievers import SelfQueryRetriever
-from langchain.chains.query_constructor.base import AttributeInfo
-
-metadata_field_info = [
-    AttributeInfo(
-        name="Country",
-        description="와인 생산 국가 (예: France, Italy, USA)",
-        type="string"
-    ),
-    AttributeInfo(
-        name="Points",
-        description="평점 (88-100점)",
-        type="integer"
-    ),
-    AttributeInfo(
-        name="Price",
-        description="가격 (USD)",
-        type="float"
-    ),
-    # ... 추가 메타데이터
-]
-
-retriever = SelfQueryRetriever.from_llm(
-    llm=ChatOpenAI(model="gpt-4o-mini"),
-    vectorstore=pinecone_vectorstore,
-    document_contents="와인 리뷰 및 맛 프로필",
-    metadata_field_info=metadata_field_info
-)
-```
-
-**성과**
-- ✅ 부정 표현 100% 정확 처리
-- ✅ 복합 조건(AND, OR, NOT) 지원
-- ✅ 기존 유사도 검색 대비 오탐률 0%
-
----
-
-#### **[Feature 2] NLP 기반 맛 Feature 추출**
-
-**구현 배경**
-- 와인 리뷰는 비정형 텍스트
-- 검색 효율을 위해 구조화된 맛 태그 필요
-
-**기술적 구현**
-```python
-
-# 맛 카테고리 매핑
-TASTE_CATEGORIES = {
-    'fruit': ['berry', 'cherry', 'apple', 'citrus'],
-    'oak': ['oak', 'vanilla', 'toast', 'smoke'],
-    'acid': ['crisp', 'bright', 'zesty', 'tart'],
-    # ... 
-}
-
-# 추출 결과를 메타데이터로 저장
-metadata['taste_profile'] = extracted_tags
-```
-
-**성과**
-- ✅ 12개 맛 카테고리 자동 태깅
-- ✅ 수동 라벨링 대비 작업 시간 95% 단축
-- ✅ 리뷰 텍스트 → 검색 가능한 구조화 데이터 변환
-
----
-
-#### **[Feature 3] 데이터 품질 관리 파이프라인**
-
-**처리 과정**
-```python
-# 1단계: 초기 데이터 로드
-df = pd.read_csv('winemag-data-130k-v2.csv')  # 129,971건
-
-# 2단계: 결측치 처리
-df = df.dropna(subset=['description', 'points', 'country'])  # 72,000건
-
-# 3단계: 평점 필터링 (신뢰도 향상)
-df = df[df['points'] >= 88]  
-
-# 4단계: 중복 제거
-df = df.drop_duplicates(subset=['title', 'description'])
-
-
-
-# 최종: 약 72,000건 고품질 데이터셋
-```
-
-
----
-
-#### **[Feature 4] Pinecone 벡터 DB 구축**
-
-**인덱스 설계**
-```python
-import pinecone
-from langchain.embeddings import OpenAIEmbeddings
-
-# Pinecone 초기화
-pinecone.init(api_key=PINECONE_API_KEY, environment='gcp-starter')
-
-# 인덱스 생성 (차원수: OpenAI embedding 1536)
-index_name = pinecone.Index('wine-sommelier')
-
-# 문서 임베딩 및 업로드
-embeddings = OpenAIEmbeddings(model='text-embedding-3-small')
-
-# 3. LangChain Document 객체로 변환
-documents = []
-for _, row in df.iterrows():
-    doc = Document(
-        page_content=row['page_content'], # 검색 대상 텍스트
-        metadata={
-            "title": row['title'],
-            "country": row['country'],
-            "continent": row['continent'],
-            "points": int(row['points']),
-            "price": float(row['price']),
-            "variety": row['variety'],
-            "tag_oak": int(row['tag_oak']),
-            "tag_acid": int(row['tag_acid'])
-        }
-    )
-    documents.append(doc)
-
-# 4. Batch Upsert (100개씩 나누어 업로드)
-batch_size = 100
-for i in range(0, len(documents), batch_size):
-    batch = documents[i : i + batch_size]
-    PineconeVectorStore.from_documents(
-        batch, 
-        embeddings, 
-        index_name=index_name
-    )
-    print(f"{i + len(batch)} / {len(documents)} 업로드 완료...")
-    time.sleep(1) # API 레이트 리밋 방지
-```
-
-**성능 최적화**
-- ✅ 배치 업로드 (100개씩) → 처리 시간 단축
-- ✅ 메타데이터 인덱싱 → 필터링 속도 향상
-- ✅ 무료 티어 최대 활용 (100만 벡터)
-
----
-
-#### **[Feature 5] Streamlit 웹 인터페이스**
-
-**주요 UI 구성**
-```python
-import streamlit as st
-
-# 1. 대화형 채팅 인터페이스
-st.title("🍷 Wine Sommelier")
-user_input = st.chat_input("어떤 와인을 찾으시나요?")
-
-if user_input:
-    # 2. 실시간 응답 표시
-    with st.chat_message("assistant"):
-        with st.spinner("와인을 검색 중입니다..."):
-            results = retriever.get_relevant_documents(user_input)
-        
-        # 3. 추천 결과 카드 형식으로 표시
-        for wine in results[:3]:
-            with st.expander(f"🍇 {wine.metadata['title']}"):
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.metric("평점", f"{wine.metadata['points']}점")
-                    st.metric("가격", f"${wine.metadata['price']}")
-                with col2:
-                    st.write(f"**국가**: {wine.metadata['country']}")
-                    st.write(f"**맛**: {wine.metadata['taste_profile']}")
-                
-                st.write("**리뷰**")
-                st.write(wine.page_content[:200] + "...")
-```
-
----
-
-### 📋 기능 요약표
-
-| ID | 기능 | 기술 구현 | 우선순위 |
-|----|------|-----------|----------|
-| F-01 | 자연어 질의 처리 | Self-Querying Retriever | ⭐⭐⭐⭐⭐ |
-| F-02 | 메타데이터 필터링 | LangChain + Pinecone | ⭐⭐⭐⭐⭐ |
-| F-03 | 맛 Feature 추출 | NLP | ⭐⭐⭐⭐ |
-| F-04 | 벡터 검색 | OpenAI Embedding + Pinecone | ⭐⭐⭐⭐⭐ |
-| F-05 | 웹 인터페이스 | Streamlit | ⭐⭐⭐⭐ |
-| F-06 | 데이터 품질 관리 | Pandas 전처리 파이프라인 | ⭐⭐⭐⭐⭐ |
-
----
-
-## 4️⃣ 프로젝트 후기
-
-### 💡 기술적 성장 포인트
-
-#### **1. RAG 시스템의 한계 발견 및 극복**
-
-**문제 인식**
-```
-초기 구현: 단순 유사도 검색
-↓
-문제 발생: "프랑스 제외"가 오히려 프랑스 와인 추천
-↓
-원인 분석: 부정 표현은 의미적으로 키워드와 유사도 높음
-↓
-해결: Self-Querying으로 논리 필터 분리
-```
-
-**배운 점**
-- RAG는 만능이 아니며, 사용 사례에 따라 하이브리드 접근 필요
-- Semantic Search(의미 검색) + Structured Filtering(구조 필터)의 조합이 핵심
-- 사용자 의도 파싱이 정확도에 결정적 영향
-
----
-
-#### **2. LLM 프롬프트 엔지니어링**
-
-
-**배운 점**
-- 스키마를 명확히 제시할수록 LLM 파싱 정확도 향상
-- Few-shot 예시 추가 시 edge case 처리 능력 개선
-- Temperature=0 설정으로 일관성 확보
-
----
-
-#### **3. 대규모 데이터 처리 경험**
-
-**배운 점**
-- 전처리 단계의 데이터 정제가 전체 파이프라인 효율에 결정적
-- API Rate Limit 고려한 배치 처리 설계 중요
-- 품질 vs 양의 트레이드오프: 적은 고품질 데이터가 더 나은 결과
-
----
-
-#### **4. 벡터 DB 선택 및 최적화**
-
-**비교 검토한 옵션**
-| DB | 장점 | 단점 | 선택 이유 |
-|-----|------|------|----------|
-| **Pinecone** | 관리 불필요, 메타필터 강력 | 유료 (무료 100만 벡터) | ✅ 선택 |
-| ChromaDB | 로컬 실행, 무료 | 확장성 제한 | × |
-| Weaviate | 오픈소스, 유연함 | 설정 복잡 | × |
-
-
-**배운 점**
-- 메타데이터 인덱싱 전략이 필터 성능에 직접 영향
-- 무료 티어 제약 안에서 최대 성능 끌어내는 설계 능력
-- 클라우드 벡터 DB의 장단점 실전 경험
-
----
-
-### 🚀 개선 가능한 점 & 향후 계획
-
-#### **단기 개선 사항 (1-2주)**
-1. **추천 근거 시각화**
-   - 현재: 텍스트 설명만
-   - 개선: 맛 프로필 레이더 차트, 가격대 비교 그래프
-
-2. **대화 히스토리 관리**
-   - 현재: 단발성 질문만
-   - 개선: "방금 추천한 것보다 더 저렴한 걸로" 같은 문맥 이해
-
-3. **다국어 지원**
-   - 현재: 영어만
-   - 개선: 한국어 와인명, 품종 번역 추가
-
-
----
-
-### 🎓 프로젝트를 통해 배운 핵심 교훈
-
-#### **1. 데이터 품질이 모델 성능을 결정한다**
-> 72,000건 전부 vs 40,000건 엄선 → 후자가 사용자 만족도 월등히 높음.  
-> "쓰레기를 넣으면 쓰레기가 나온다(GIGO)" 원칙 체감.
-
-
-#### **2. 사용자 관점에서 생각하는 습관**
-> 기술적으로 멋진 기능보다, 직관적인 UX가 더 중요.  
-> "프랑스 제외"라는 간단한 말을 이해 못 하면 실패한 서비스.
-
-
+### 설계 결정
+- **카페인은 절대 조건(필터), 산미·바디는 취향 점수.** 와인 v1의 "프랑스 제외 = 논리 필터"를 한 단계 발전시킨 구조.
+- **데이터가 적은 도메인 대응:** 규칙으로 먼저 채우고 빈 칸만 LLM → 약 9천 건 중 5,035건만 LLM 호출(로컬, 비용 0원).
+- **무료 모델 구성:** 대량 배치는 로컬 Ollama, 실시간·평가는 NVIDIA 무료 엔드포인트. 실측 결과 큰 모델 다수가 무료 등급에서 90초 이상 응답하지 않아, 모든 원격 호출에 타임아웃 + 로컬 폴백을 둔다.
+- **RAG 원문은 사용자에게 그대로 보여주지 않는다.** 리뷰 원문은 LLM의 근거 입력이고, 화면에는 예측·근거 요약·추천 이유만 노출한다(2단계).
+
+### 알려진 한계 / 다음 할 일
+- 적재는 매번 전체 삭제 후 재적재(TRUNCATE)다. **2단계에서 사용자 기록 테이블이 `coffees`를 참조하기 전에 key 기반 upsert로 바꿔야 한다.**
+- 규칙 태그의 부정 표현·일반어 오탐 개선, 원본 점수의 절대 척도 보정.
+- 리뷰 코퍼스가 영어라 한국어 질의 검색 품질이 낮다 → 2단계에서 질의 번역 또는 한국어 요약 임베딩.
+- 프랜차이즈 음료 단위 수집은 3개 브랜드뿐(나머지 7개는 브랜드 정보만).
+
+## 데이터 출처
+
+| 소스 | 내용 | 라이선스·비고 |
+|---|---|---|
+| [CQI 2018](https://github.com/jldbc/coffee-quality-database), [CQI 2023](https://github.com/fatih-boyar/coffee-quality-data-CQI) | 산지·가공·산미/바디 점수 | MIT |
+| Kaggle: [patkle](https://www.kaggle.com/datasets/patkle/coffeereviewcom-over-7000-ratings-and-reviews), [hanifalirsyad](https://www.kaggle.com/datasets/hanifalirsyad/coffee-scrap-coffeereview), [schmoyote](https://www.kaggle.com/datasets/schmoyote/coffee-reviews-dataset) | coffeereview.com 리뷰 스크랩 | 원 저작권은 Coffee Review에 있음. 비상업 포트폴리오 용도로만 사용, 원본 데이터는 레포에 포함하지 않음 |
+| [RoasterDB 샘플](https://github.com/RoasterDB/specialty-coffee-roasterdb) | 로스터리 원두 + SCA 노트 | CC BY-NC 4.0 |
+| [SCA 플레이버 휠 JSON](https://github.com/fschlz/coffee-flavor-api) | 향미 분류 체계 | © SCA/WCR 2016, CC BY-NC-ND 4.0 (원본 수정 없이 별도 한국어 매핑) |
+| 스타벅스·메가MGC·빽다방 공식 메뉴 | 음료, 카페인 mg | robots.txt 허용 범위, 1회 스냅샷 |
+| 블루보틀 코리아 `products.json` | 원두 상품 설명 | Shopify 공개 엔드포인트 |
+| `data/curated/brands.yaml` | 10개 브랜드 디카페인 정보 | 공식 페이지·뉴스 수기 정리(확인 수준 표기) |
+
+coffeereview.com 원본 사이트, 투썸플레이스(봇 차단), 컴포즈커피(캡차)는 직접 수집하지 않았다.
+
+## 와인 v1에서 배운 점
+
+이 레포는 원래 LangChain + Pinecone 기반 와인 추천 RAG였다(태그 [`wine-v1`](../../tree/wine-v1)). 거기서 얻은 교훈을 이번에 반영했다.
+- 사이드바 필터가 프롬프트 텍스트로만 전달돼 실제로는 걸러지지 않았다 → 이번엔 **DB 필터(SQL WHERE)**로 강제한다.
+- 평가 체계가 없어 "정확도 100%" 같은 주장을 검증할 수 없었다 → 이번엔 **품질 리포트와 정답셋 수치를 먼저** 만들었다.
+- README에는 "맛 태그 12개"라고 적었지만 실제 적재된 태그는 2개였다 → 이번엔 README의 모든 숫자를 리포트 파일에서 옮겼다.

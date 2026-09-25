@@ -1,0 +1,25 @@
+{
+  "acidity": {
+    "n": 23,
+    "exact": 0.7826,
+    "within1": 1.0
+  },
+  "body": {
+    "n": 24,
+    "exact": 0.75,
+    "within1": 1.0
+  },
+  "sweetness": {
+    "n": 24,
+    "exact": 0.6667,
+    "within1": 0.9583
+  },
+  "is_decaf": {
+    "n": 27,
+    "agreement": 1.0
+  },
+  "tags": {
+    "n": 27,
+    "jaccard": 0.806
+  }
+}
