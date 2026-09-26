@@ -1,7 +1,7 @@
 import json
 
 from pipeline.normalize.datasets import (
-    normalize_coffeereview, normalize_cqi, normalize_roasterdb, normalize_sca, parse_sca_nodes,
+    normalize_coffeereview, normalize_cqi, normalize_roasterdb, normalize_roasters_kr, normalize_sca, parse_sca_nodes,
 )
 
 PATKLE = (
@@ -105,3 +105,36 @@ def test_sca_walks_tree_with_korean(tmp_path):
     assert by["sca:fruity>berry>blackberry"].parent_key == "sca:fruity>berry"
     assert by["sca:fruity>berry>blackberry"].level == 3
     assert by["sca:fruity>berry"].name_ko == "베리"
+
+
+def _bean(key, **kw):
+    base = {"key": key, "site": "s", "roaster": "로스터", "name": key, "origin_country": None, "origin_region": None,
+            "origin_farm": None, "process": None, "roast_level": None, "is_decaf": False, "decaf_process": None,
+            "flavor_notes": [], "price_krw": 20000, "weight_g": 200, "product_url": f"https://r.test/{key}",
+            "collected_at": "2026-09-26"}
+    return json.dumps(base | kw, ensure_ascii=False)
+
+
+def test_roasters_kr_maps_korean_facts(tmp_path):
+    (tmp_path / "beans.jsonl").write_text("\n".join([
+        _bean("a:1", name="게뎁 첼베사 워시드", origin_country="에티오피아", origin_region="게뎁", process="워시드",
+              roast_level="시티(중간볶음) or 풀시티(강한볶음)", flavor_notes=["레몬", "청사과"]),
+        _bean("a:2", name="[디카페인] 콜롬비아", origin_country="콜롬비아", is_decaf=True,
+              decaf_process="Mountain Water Process", roast_level="Dark"),
+        _bean("a:3", name="블렌드", origin_country="브라질산, 콜롬비아산, 인도", process="무산소 내추럴",
+              roast_level="시티(중간볶음)", is_decaf=True, decaf_process="Sugarcane Process"),
+        _bean("a:4", name="하우스", roast_level="프렌치(강한볶음)"),
+    ]) + "\n", encoding="utf-8")
+    by = {c.key: c for c in normalize_roasters_kr(tmp_path, "unused").coffees}
+    a = by["roasters_kr:a:1"]
+    assert (a.source, a.origin_country, a.origin_region, a.process, a.roast_level) == (
+        "roasters_kr", "Ethiopia", "게뎁", "washed", "medium-dark")
+    assert (a.flavor_summary, a.flavor_tags, a.acidity, a.collected_at) == ("레몬, 청사과", [], None, "2026-09-26")
+    b = by["roasters_kr:a:2"]
+    assert (b.is_decaf, b.decaf_process, b.roast_level, b.flavor_summary) == (True, "mountain-water", "dark", None)
+    c = by["roasters_kr:a:3"]
+    assert (c.origin_country, c.origin_region, c.process, c.roast_level) == (
+        "Brazil", "브라질산, 콜롬비아산, 인도", "anaerobic", "medium")
+    assert (c.is_decaf, c.decaf_process) == (True, "sugarcane-ea")
+    assert by["roasters_kr:a:4"].roast_level == "dark"
+    assert normalize_roasters_kr(tmp_path / "missing", "x").coffees == []

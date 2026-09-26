@@ -5,7 +5,7 @@ from pipeline.normalize import run_normalize
 from pipeline.normalize.menus import (
     normalize_brands, normalize_mega, normalize_paik, normalize_shopify, normalize_starbucks,
 )
-from pipeline.records import BrandRecord, MenuItemRecord, read_jsonl
+from pipeline.records import BrandRecord, CoffeeRecord, MenuItemRecord, read_jsonl
 
 MEGA_HTML = """
 <ul><li><a class="inner_modal_open"></a>
@@ -129,3 +129,29 @@ def test_bean_profile_range_is_validated():
     from pipeline.records import BeanProfile
     with pytest.raises(ValidationError):
         BeanProfile(acidity=6, body=3, sweetness=3, flavor_tags=[])
+
+
+def test_run_normalize_reads_flat_roasters_kr_and_drops_url_duplicates(tmp_path, monkeypatch):
+    raw = tmp_path / "raw"
+    shop = raw / "shopify" / "2026-09-24"
+    shop.mkdir(parents=True)
+    (shop / "manifest.json").write_text('{"ok": true}', encoding="utf-8")
+    (shop / "shop.test.json").write_text(json.dumps({"products": [
+        {"handle": "night", "title": "나이트", "product_type": "원두", "body_html": "<p>당밀</p>"}]}), encoding="utf-8")
+    (raw / "roasters_kr").mkdir()
+    beans = [{"key": "bb:night", "name": "나이트", "product_url": "https://shop.test/products/night",
+              "flavor_notes": ["당밀"], "is_decaf": False, "collected_at": "2026-09-26"},
+             {"key": "fritz:1", "name": "첼베사", "product_url": "https://fritz.test/1",
+              "flavor_notes": ["레몬"], "is_decaf": False, "collected_at": "2026-09-26"}]
+    (raw / "roasters_kr" / "beans.jsonl").write_text(
+        "\n".join(json.dumps(b, ensure_ascii=False) for b in beans), encoding="utf-8")
+    curated = tmp_path / "curated"
+    curated.mkdir()
+    (curated / "brands.yaml").write_text("[]\n", encoding="utf-8")
+    import pipeline.normalize.menus as menus
+    shops = [{"domain": "shop.test", "roaster": "Shop", "product_types": ["원두"]}]
+    monkeypatch.setattr(menus.settings, "load_config", lambda name: {"shopify": shops})
+    counts = run_normalize(raw, tmp_path / "norm", curated)
+    keys = [c.key for c in read_jsonl(tmp_path / "norm" / "coffees.jsonl", CoffeeRecord)]
+    assert keys == ["shopify:shop.test:night", "roasters_kr:fritz:1"]      # same product URL: first source wins
+    assert counts["src:roasters_kr"] == 2 and counts["dropped_url_duplicates"] == 1

@@ -29,14 +29,28 @@ from pipeline.records import write_jsonl  # noqa: E402
 
 
 def _normalizers():
-    from pipeline.normalize.datasets import normalize_coffeereview, normalize_cqi, normalize_roasterdb, normalize_sca
+    from pipeline.normalize.datasets import (
+        normalize_coffeereview, normalize_cqi, normalize_roasterdb, normalize_roasters_kr, normalize_sca,
+    )
     from pipeline.normalize.menus import normalize_mega, normalize_paik, normalize_shopify, normalize_starbucks
 
     return {
         "coffeereview_kaggle": normalize_coffeereview, "cqi": normalize_cqi, "roasterdb": normalize_roasterdb,
         "sca_wheel": normalize_sca, "starbucks": normalize_starbucks, "mega": normalize_mega,
         "paik": normalize_paik, "shopify": normalize_shopify,
+        "roasters_kr": normalize_roasters_kr,   # last: its URL duplicates of earlier sources are dropped
     }
+
+
+# Sources written as one flat folder by their own command (no dated snapshot + manifest).
+FLAT_SOURCES = {"roasters_kr": "beans.jsonl"}
+
+
+def _source_dir(raw_root: Path, name: str) -> Path | None:
+    if name in FLAT_SOURCES:
+        d = raw_root / name
+        return d if (d / FLAT_SOURCES[name]).exists() else None
+    return latest_snapshot(raw_root, name)
 
 
 def _dedupe(records):
@@ -48,12 +62,24 @@ def _dedupe(records):
     return out
 
 
+def drop_cross_source_url_duplicates(coffees):
+    """Keep the first coffee per product URL across sources (one source may repeat a URL, e.g. CQI's repo link)."""
+    owner: dict[str, str] = {}
+    out, dropped = [], 0
+    for c in coffees:
+        if c.source_url and owner.setdefault(c.source_url, c.source) != c.source:
+            dropped += 1
+            continue
+        out.append(c)
+    return out, dropped
+
+
 def run_normalize(raw_root: Path, out_dir: Path, curated_dir: Path) -> dict[str, int]:
     from pipeline.normalize.menus import normalize_brands
 
     total, per_source = Normalized(), {}
     for name, fn in _normalizers().items():
-        snap = latest_snapshot(raw_root, name)
+        snap = _source_dir(raw_root, name)
         if snap is None:
             per_source[f"src:{name}"] = 0
             continue
@@ -63,7 +89,8 @@ def run_normalize(raw_root: Path, out_dir: Path, curated_dir: Path) -> dict[str,
     total.brands = normalize_brands(curated_dir)
     brand_keys = {b.key for b in total.brands}
     total.menu_items = [m for m in total.menu_items if m.brand_key in brand_keys]
-    counts = {}
+    total.coffees, dropped = drop_cross_source_url_duplicates(total.coffees)
+    counts = {"dropped_url_duplicates": dropped}
     for field_name in ("coffees", "reviews", "brands", "menu_items", "taxonomy"):
         records = _dedupe(getattr(total, field_name))
         counts[field_name] = write_jsonl(out_dir / f"{field_name}.jsonl", records)

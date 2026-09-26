@@ -186,6 +186,52 @@ def normalize_roasterdb(snap: Path, collected_at: str) -> Normalized:
     return out
 
 
+# --- Korean roastery facts (pipeline/collect/roasters_kr.py) ------------------
+# Roast labels these shops use that the shared normalize_roast() doesn't know (city/full city/french scale).
+# Checked in order, so a range like "시티 or 풀시티" lands on the darker end.
+_KO_ROAST = [
+    ("medium-dark", re.compile(r"풀\s*시티|중강배전", re.I)),
+    ("dark", re.compile(r"프렌치|웰던|well[\s-]?done", re.I)),
+    ("medium", re.compile(r"시티|중간\s*볶음", re.I)),
+]
+_BLEND_SEP = re.compile(r"[,·]")
+
+
+def roasters_kr_roast(label) -> str | None:
+    t = clean(label)
+    if not t:
+        return None
+    return next((name for name, pat in _KO_ROAST if pat.search(t)), None) or normalize_roast(t)
+
+
+def normalize_roasters_kr(snap: Path, collected_at: str) -> Normalized:
+    """Facts-only bean records (no prose): the flavor note words become the enrichment text (flavor_summary)."""
+    out = Normalized()
+    p = snap / "beans.jsonl"
+    if not p.exists():
+        return out
+    for line in p.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        r = json.loads(line)
+        name = clean(r.get("name")) or "(unknown)"
+        raw_country = clean(r.get("origin_country"))
+        is_decaf, decaf_process = detect_decaf(name, r.get("decaf_process"), "decaf" if r.get("is_decaf") else None)
+        notes = [n for n in (clean(x) for x in r.get("flavor_notes") or []) if n]
+        region = clean(r.get("origin_region"))
+        if region is None and raw_country and _BLEND_SEP.search(raw_country):
+            region = raw_country                 # blend: keep every origin; origin_country is the first one
+        out.coffees.append(CoffeeRecord(
+            key=f"roasters_kr:{r['key']}", name=name, roaster=clean(r.get("roaster")),
+            origin_country=normalize_country(raw_country), origin_region=region,
+            process=normalize_process(r.get("process")), roast_level=roasters_kr_roast(r.get("roast_level")),
+            is_decaf=is_decaf, decaf_process=decaf_process,
+            flavor_summary=", ".join(notes) or None, source="roasters_kr", source_url=clean(r.get("product_url")),
+            collected_at=clean(r.get("collected_at")) or collected_at,
+        ))
+    return out
+
+
 # --- SCA flavor wheel ------------------------------------------------------
 def normalize_sca(snap: Path, collected_at: str, ko_path: Path | None = None) -> Normalized:
     out = Normalized()

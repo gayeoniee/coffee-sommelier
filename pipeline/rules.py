@@ -81,6 +81,7 @@ _KO = {
     "우간다": "Uganda", "탄자니아": "Tanzania", "예멘": "Yemen", "인도네시아": "Indonesia",
     "파푸아뉴기니": "Papua New Guinea", "베트남": "Vietnam", "중국": "China", "하와이": "United States",
     "예가체프": "Ethiopia", "시다마": "Ethiopia", "구지": "Ethiopia",
+    "인도": "India",   # after 인도네시아: on a tie at the same position the earlier entry wins
 }
 _COUNTRY_PATTERNS = [(re.compile(rf"(?<![a-z]){re.escape(c.lower())}(?![a-z])"), c) for c in _COUNTRIES]
 _COUNTRY_PATTERNS += [(re.compile(rf"(?<![a-z]){re.escape(a)}(?![a-z])"), c) for a, c in _ALIASES.items()]
