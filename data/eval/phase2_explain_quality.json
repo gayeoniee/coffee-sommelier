@@ -1,0 +1,928 @@
+{
+  "models": {
+    "explain": "nvidia/nemotron-3-super-120b-a12b",
+    "judge": "deepseek-ai/deepseek-v4.1-flash",
+    "judge2": "nvidia/nemotron-3-super-120b-a12b"
+  },
+  "deadline_s": 12.0,
+  "cases_file": "data/eval/explain_cases.yaml",
+  "summary": {
+    "n": 24,
+    "generated": 22,
+    "fallbacks": 2,
+    "rule_pass": 10,
+    "rule_pass_rate": 0.4545,
+    "rule_failures": {
+      "foreign_words": 5,
+      "length": 10,
+      "numbers_grounded": 0,
+      "condition_mentioned": 0,
+      "polarity": 1
+    },
+    "judged_both": 21,
+    "no_contradiction_both": 19,
+    "no_contradiction_rate_both": 0.9048,
+    "no_hallucination_both": 10,
+    "no_hallucination_rate_both": 0.4762,
+    "helpful_mean": {
+      "judge": 4.24,
+      "judge2": 4.45
+    },
+    "judge_agreement": {
+      "contradiction": 0.9048,
+      "hallucination": 0.5714
+    },
+    "judge_failures": {
+      "judge": 1,
+      "judge2": 0
+    },
+    "first_token_p50": 0.72,
+    "first_token_p95": 6.22
+  },
+  "cases": [
+    {
+      "id": "hollys_menu_decaforder_mid",
+      "persona": "디카페인+산미",
+      "source": "brand_bean",
+      "score": 69,
+      "violation": null,
+      "fallback": false,
+      "error": null,
+      "first_token_s": 7.74,
+      "total_s": 9.42,
+      "text": "흑임자 버터크림 라떼는 손님 선호의 디카페인 및 우유 조건을 모두 충족하고 바디감도 2.5 에 가까운 수준으로 적합합니다. 다만 산미가 2 로 낮아 손님에게 가장 중요한 산미를 강하게 원하시는 취향과는 다소 거리가 있습니다.",
+      "rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": true,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": true,
+          "hallucination_why": "사실에는 산미가 손님에게 '가장 중요한' 취향이라는 내용이 없습니다.",
+          "helpful": 4
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 4
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "bluebottle_brandbean_decaforder_mid",
+      "persona": "디카페인+산미",
+      "source": "brand_bean",
+      "score": 72,
+      "violation": null,
+      "fallback": false,
+      "error": null,
+      "first_token_s": 1.79,
+      "total_s": 3.8,
+      "text": "산미와 단맛 수치가 손님 선호도와 매우 잘 맞으며, 디카페인 조건도 충족되지만 우유를 넣지 않아 바디감이 약한 편을 선호하는 취향과는 다소 차이가 있습니다. 과일과 꽃 향미가 아닌 바닐라 및 카라멜라이즈드 향이 주를 이루므로, 이 향미를 좋아하지 않는다면 적합하지 않을 수 있습니다.",
+      "rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": true,
+      "judges": {
+        "judge": {
+          "contradiction": true,
+          "contradiction_why": "사실에는 산미 3(선호 4.5), 단맛 4(선호 3)로 선호와 매우 잘 맞지 않고, 향미에 라임(과일)이 포함되어 있으나 과일 향미가 아니라고 단정함.",
+          "hallucination": true,
+          "hallucination_why": "우유를 넣지 않아 바디감이 약해진다는 인과관계나 향미가 '주를 이룬다'는 정도는 사실에 명시되지 않음.",
+          "helpful": 2
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 4
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "db_decaf_yirgacheffe_high",
+      "persona": "디카페인+산미",
+      "source": "db",
+      "score": 88,
+      "violation": null,
+      "fallback": false,
+      "error": null,
+      "first_token_s": 0.83,
+      "total_s": 1.61,
+      "text": "Decaf Ethiopia Yirgacheffe는 산미(4)와 단맛(4)이 손님 선호(산미 4.5, 단맛 3)와 잘 맞으며, 바디(2)는 약한 편을 선호하는 손님 취향과 일치합니다. 또한 꽃향(floral, jasmine)과 레몬 향미가 손님이 좋아하는 '꽃'과 '과일' 향미와 일치하며, 디카페인 조건도 정확히 충족합니다.",
+      "rules": {
+        "foreign_words": false,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": false,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 5
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 5
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "predicted_decaf_yirgacheffe_natural_high",
+      "persona": "디카페인+산미",
+      "source": "predicted",
+      "score": 92,
+      "violation": null,
+      "fallback": false,
+      "error": null,
+      "first_token_s": 1.63,
+      "total_s": 2.88,
+      "text": "산미를 강하게 선호하시는 취향과 디카페인 조건을 모두 충족하며, 블루베리 및 꽃 향이 풍부한 이 음료가 손님에게 매우 적합합니다. 바디감이 약한 편인 점도 고객님의 선호도와 잘 맞습니다.",
+      "rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": true,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": true,
+          "hallucination_why": "사실에는 블루베리와 꽃 향미가 있다고만 되어 있을 뿐, '풍부한' 정도라는 향의 강도는 명시되어 있지 않다.",
+          "helpful": 4
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 5
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "db_not_decaf_adado_violation",
+      "persona": "디카페인+산미",
+      "source": "db",
+      "score": 64,
+      "violation": "디카페인이 아니에요",
+      "fallback": false,
+      "error": null,
+      "first_token_s": 1.73,
+      "total_s": 2.37,
+      "text": "이 음료가 디카페인이지 않다는 점으로 인해 손님 선호 조건을 위반하고 있습니다. 따라서 추천할 수 없습니다.",
+      "rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": true,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 5
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 5
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "db_decaf_french_roast_low",
+      "persona": "디카페인+산미",
+      "source": "db",
+      "score": 33,
+      "violation": null,
+      "fallback": false,
+      "error": null,
+      "first_token_s": 0.62,
+      "total_s": 1.29,
+      "text": "Decaf French Roast는 디카페인이라는 손님의 조건을 충족하지만, 산미가 1로 매우 낮아 손님이 강하게 선호하는 산미(4.5)와 크게 어긋납니다. 또한 바디가 5로 높아 손님이 선호하는 약한 바디(2.5)와 반대되는 특성을 보여, 전체적인 취향과 맞지 않습니다. (적합도 33은 이 점을 반영한 것입니다.)",
+      "rules": {
+        "foreign_words": false,
+        "length": false,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": false,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 5
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 5
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "paulbassett_menu_lungo_decaforder_high",
+      "persona": "저카페인+우유X",
+      "source": "brand_bean",
+      "score": 84,
+      "violation": null,
+      "fallback": true,
+      "error": "TimeoutError: ",
+      "first_token_s": null,
+      "total_s": null,
+      "text": "취향 적합도 84%. 단맛이(가) 선호와 가까워요. 향미: 초콜릿, 시트러스. 디카페인으로 변경해서 주문하세요.",
+      "rules": {
+        "foreign_words": true,
+        "length": false,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": false,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 3
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": true,
+          "hallucination_why": "설명에서 '디카페인으로 변경해서 주문하세요'라고 했지만, 사실에 따르면 해당 음료는 이미 디카페인(true)이므로 '변경'이라는 표현은 사실이 아님. 이미 디카페인 상태이므로 변경이 필요하지 않음.",
+          "helpful": 3
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "twosome_brandbean_decaforder_high",
+      "persona": "저카페인+우유X",
+      "source": "brand_bean",
+      "score": 95,
+      "violation": null,
+      "fallback": true,
+      "error": "TimeoutError: ",
+      "first_token_s": null,
+      "total_s": null,
+      "text": "취향 적합도 95%. 산미, 단맛이(가) 선호와 가까워요. 향미: 초콜릿, 견과. 디카페인으로 변경해서 주문하세요 (+200원).",
+      "rules": {
+        "foreign_words": true,
+        "length": false,
+        "numbers_grounded": false,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": false,
+      "judges": {
+        "judge": {
+          "contradiction": true,
+          "contradiction_why": "사실에는 이미 디카페인(true)으로 되어 있는데, 설명은 디카페인으로 변경하라고 하여 모순됩니다.",
+          "hallucination": true,
+          "hallucination_why": "사실에 없는 '+200원' 요금 정보를 단정했습니다.",
+          "helpful": 3
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": true,
+          "hallucination_why": "설명에 '디카페인으로 변경해서 주문하세요 (+200원)'이라는 내용이 포함되어 있으나, 사실에는 디카페인 옵션 변경 시 추가 비용(+200원)에 대한 정보가 없음. 이는 사실에 없는 내용을 단정한 것으로 hallucination에 해당.",
+          "helpful": 4
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "db_decaf_las_nubes_high",
+      "persona": "저카페인+우유X",
+      "source": "db",
+      "score": 89,
+      "violation": null,
+      "fallback": false,
+      "error": null,
+      "first_token_s": 0.68,
+      "total_s": 2.54,
+      "text": "Decaf Colombia Finca Las Nubes는 산미가 2로 낮아 손님이 산미를 싫어하는 취향과 잘 맞으며, 바디가 5로 강해 손님이 바디를 강하게 좋아하는 조건을 충족합니다. 단맛은 3으로 보통 수준이고, 향미에 chocolate가 포함되어 손님이 좋아하는 견과/코코아 계열 향미와 유사해 적합도가 높습니다. 디카페인 특성도 손님의 저카페인 선호와 일치하며, 우유가 포함되지 않아 손님의 우유 불가 조건도 만족합니다. 따라서 이 음료는 손님 취향에 매우 잘 맞습니다.",
+      "rules": {
+        "foreign_words": false,
+        "length": false,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": false,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 5
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 5
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "predicted_decaf_supremo_high",
+      "persona": "저카페인+우유X",
+      "source": "predicted",
+      "score": 95,
+      "violation": null,
+      "fallback": false,
+      "error": null,
+      "first_token_s": 0.62,
+      "total_s": 3.01,
+      "text": "이 음료는 산미가 2.38로 손님 선호도(2)와 매우 가까워 산미를 싫어하는 취향에 잘 맞으며, 바디가 3.84로 손님이 강하게 선호하는 바디 수준(4)에 근접해 만족도를 높입니다. 단맛은 3.1로 보통 수준(3)과 일치하고, 향미에 nutty와 chocolate가 포함되어 손님이 좋아하는 견과/코코아 계열 향미와 정확히 일치합니다. 디카페인 특성은 손님의 저카페인 조건을 충족하며, 우유 불가 조건에도 어긋나지 않습니다. 따라서 전체적으로 손님 취향에 매우 적합한 음료입니다.",
+      "rules": {
+        "foreign_words": true,
+        "length": false,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": false,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 5
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 5
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "predicted_antigua_caffeine_violation",
+      "persona": "저카페인+우유X",
+      "source": "predicted",
+      "score": 86,
+      "violation": "카페인이 100mg을 넘거나 알 수 없어요",
+      "fallback": false,
+      "error": null,
+      "first_token_s": 0.7,
+      "total_s": 1.6,
+      "text": "산미 3.08은 손님이 싫어하는 수준(선호도 2)과 비슷하거나 약간 높아 맞지 않을 수 있습니다.  \n하지만 바디 3.92는 손님이 강하게 선호하는 수준(4)에 매우 가까우며, 단맛 3.0은 보통 선호와 일치하고, 향미에 cocoa가 포함되어 손님이 좋아하는 견과/코코아 향과 잘 어울립니다.  \n단, 카페인 조건 위반(저카페인 선호인데 디카페인 여부 unknown)이 있어 주의가 필요합니다.",
+      "rules": {
+        "foreign_words": false,
+        "length": false,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": false
+      },
+      "rule_pass": false,
+      "judges": {
+        "judge": {
+          "contradiction": true,
+          "contradiction_why": "설명은 '디카페인 여부 unknown'이라고 했지만, 사실에는 디카페인=false로 명시되어 있습니다.",
+          "hallucination": true,
+          "hallucination_why": "사실에 없는 '디카페인 여부 unknown'을 단정했습니다.",
+          "helpful": 3
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": true,
+          "hallucination_why": "설명에서 '디카페인 여부 unknown'이라고 주장했으나, 사실에는 '디카페인': false로 명시되어 있어 카페인 함유 상태는 알려져 있음. 따라서 'unknown'은 사실이 아닌 단정으로 hallucination에 해당.",
+          "helpful": 4
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "predicted_decaf_gedeb_low",
+      "persona": "저카페인+우유X",
+      "source": "predicted",
+      "score": 33,
+      "violation": null,
+      "fallback": false,
+      "error": null,
+      "first_token_s": 0.76,
+      "total_s": 2.6,
+      "text": "산미가 4.71로 매우 높아 손님이 산미를 싫어하는 취향과 정반대이며, 바디가 1.32로 매우 약해 손님이 강하게 좋아하는 바디 조건과도 맞지 않습니다. 향미 정보가 제공되지 않아 견과/코코아 선호를 확인할 수 없으며, 디카페인임에도 불구하고 전체적인 맛 프로파일이 손님 취향과 크게 어긋납니다.",
+      "rules": {
+        "foreign_words": true,
+        "length": false,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": false,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 4
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 5
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "coffeebean_menu_mocha_blended_mid",
+      "persona": "제한없음",
+      "source": "brand_bean",
+      "score": 75,
+      "violation": null,
+      "fallback": false,
+      "error": null,
+      "first_token_s": 0.63,
+      "total_s": 1.33,
+      "text": "산미(2), 바디(4), 단맛(2)가 손님 선호(산미 3.0, 바디 3.0, 단맛 3.0)와 비교해 산미와 단맛은 약간 낮고 바디는 높지만, 전체적으로 균형이 맞춰져 적합도 75점으로 보통 수준입니다. 향미(dark chocolate, caramelized)는 손님 선호 향미 목록에 없지만, 우유 사용 가능 및 카페인 제한 없음 조건을 충족해 무난한 선택입니다.",
+      "rules": {
+        "foreign_words": true,
+        "length": false,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": false,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 4
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 4
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "ediya_brandbean_latte_high",
+      "persona": "제한없음",
+      "source": "brand_bean",
+      "score": 85,
+      "violation": null,
+      "fallback": false,
+      "error": null,
+      "first_token_s": 0.72,
+      "total_s": 1.48,
+      "text": "카페라떼는 산미 2, 바디 3, 단맛 2로 손님 취향 요약(산미 보통, 바디 보통, 단맛 보통)과 대체로 일치하며, 우유 포함 및 카페인 제한 없음 조건도 충족합니다. 향미(chocolate, nutty)는 손님 선호 향미 목록이 비어있어 특별히 선호하지 않더라도 거부감 없이 즐길 수 있어 적합합니다.",
+      "rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": true,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": true,
+          "hallucination_why": "손님 선호 향미 목록이 비어 있다는 사실만으로 chocolate, nutty 향미에 '거부감 없이 즐길 수 있다'고 단정한 내용은 사실에 없다.",
+          "helpful": 4
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 5
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "db_sidamo_mid",
+      "persona": "제한없음",
+      "source": "db",
+      "score": 75,
+      "violation": null,
+      "fallback": false,
+      "error": null,
+      "first_token_s": 3.22,
+      "total_s": 4.33,
+      "text": "산미와 바디가 손님 선호보다 높지만, 단맛은 선호와 일치해 전반적인 균형이 적절합니다. 향미가 플로럴하고 시트러스한 특성을 가지고 있어, 손님이 향미 선호를 명시하지 않았으므로 무난하게 어울릴 수 있습니다.",
+      "rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": true,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": true,
+          "hallucination_why": "사실에 없는 '전반적인 균형이 적절하다'는 평가를 단정했습니다.",
+          "helpful": 4
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 4
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "predicted_kenya_aa_high",
+      "persona": "제한없음",
+      "source": "predicted",
+      "score": 87,
+      "violation": null,
+      "fallback": false,
+      "error": null,
+      "first_token_s": 0.63,
+      "total_s": 2.87,
+      "text": "산미가 4.31로 손님 선호(3.0)보다 높아 산미가 강한 편이지만, 향미에 black tea(홍차)와 grapefruit(자몽)가 있어 손님이 선호하는 보통 수준의 산미와도 조화롭게 느껴질 수 있습니다. 단맛은 2.9로 손님 선호(3.0)와 거의 유사해 전반적인 균형이 맞으며, 우유나 디카페인 조건도 손님 취향과 충돌하지 않습니다.",
+      "rules": {
+        "foreign_words": true,
+        "length": false,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": false,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "산미 4.31은 손님 선호 3.0보다 높고, 단맛 2.9는 3.0과 거의 유사하며, 우유/디카페인 조건도 사실과 충돌하지 않습니다.",
+          "hallucination": true,
+          "hallucination_why": "사실에는 향미가 보통 수준의 산미와 조화롭게 느껴진다거나 전반적인 균형이 맞는다는 정보가 없습니다.",
+          "helpful": 4
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 4
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "bluebottle_brandbean_americano_top",
+      "persona": "제한없음",
+      "source": "brand_bean",
+      "score": 100,
+      "violation": null,
+      "fallback": false,
+      "error": null,
+      "first_token_s": 0.67,
+      "total_s": 1.49,
+      "text": "아메리카노는 산미, 바디, 단맛이 모두 3점으로 손님 취향 요약과 정확히 일치하며, 카페인 제한이 없고 우유 사용도 가능해 조건을 모두 만족합니다. 따라서 이 음료는 손님의 취향에 완벽히 맞습니다.",
+      "rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": true,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 5
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 5
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "mega_menu_decaf_honey_americano_mid",
+      "persona": "디카페인+우유X+단맛",
+      "source": "brand_bean",
+      "score": 62,
+      "violation": null,
+      "fallback": false,
+      "error": null,
+      "first_token_s": 0.61,
+      "total_s": 1.62,
+      "text": "디카페인 꿀아메리카노는 손님이 싫어하는 산미(1점)를 거의 없애고, 바디(3점)는 보통 수준으로 맞아떨어지며, 단맛(2점)은 손님이 강하게 선호하는 수준(4.5점)보다 낮아 아쉽습니다. 향미는 nutty와 chocolate로 구성되어 손님이 선호하는 '단맛' 계열과 직접적으로 일치하지는 않지만, 꿀의 자연스러운 단맛이 베이스가 되어 전체적인 단맛 인식을 보완할 수 있어 부분적으로 적합합니다.",
+      "rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": true,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": true,
+          "hallucination_why": "사실에는 꿀의 자연스러운 단맛이 베이스가 되어 전체적인 단맛 인식을 보완한다는 내용이 없으며, 이를 단정했다.",
+          "helpful": 4
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 3
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "ediya_brandbean_decaforder_high",
+      "persona": "디카페인+우유X+단맛",
+      "source": "brand_bean",
+      "score": 87,
+      "violation": null,
+      "fallback": false,
+      "error": null,
+      "first_token_s": 0.8,
+      "total_s": 5.64,
+      "text": "아메리카노는 산미가 2로 낮아 손님이 싫어하는 산미를 최소화했으며, 바디는 3으로 보통 수준이므로 손님의 '바디는 보통'이라는 취향과 일치합니다. 단맛은 3으로 중간 수준이지만, 손님이 단맛을 강하게 선호하는 점(선호도 4.5)과 향미에 'chocolate', 'caramelized'가 포함되어 단맛과 관련된 풍미를 제공하므로, 전체적으로 취향에 적합하다고 판단됩니다. 디카페인이며 우유가 없어 손님의 조건을 모두 만족합니다. (적합도 87은 이러한 근거를 반영한 점수입니다.)",
+      "rules": {
+        "foreign_words": true,
+        "length": false,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": false,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": true,
+          "hallucination_why": "사실에는 'chocolate', 'caramelized' 향미가 단맛과 관련된 풍미를 제공한다는 정보가 없음",
+          "helpful": 4
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 4
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "db_decaf_guatemala_mid",
+      "persona": "디카페인+우유X+단맛",
+      "source": "db",
+      "score": 68,
+      "violation": null,
+      "fallback": false,
+      "error": null,
+      "first_token_s": 0.62,
+      "total_s": 1.09,
+      "text": "산미가 4로 손님 선호도(2)보다 높아 산미를 싫어하는 손님에게는 맞지 않습니다. 단맛이 5로 강하고 디카페인 조건을 만족하지만, 산미가 높아 전체적인 적합도는 낮습니다.",
+      "rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": true,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": true,
+          "hallucination_why": "사실에는 적합도가 68이라고만 제시되어 있을 뿐, 이를 '낮다'고 단정할 근거가 없습니다.",
+          "helpful": 4
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 4
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "predicted_decaf_cerrado_high",
+      "persona": "디카페인+우유X+단맛",
+      "source": "predicted",
+      "score": 94,
+      "violation": null,
+      "fallback": false,
+      "error": null,
+      "first_token_s": 0.68,
+      "total_s": 1.5,
+      "text": "산미가 1.94로 낮아 손님이 싫어하는 산미 조건에 잘 맞으며, 단맛이 4.18로 높아 손님이 강하게 선호하는 단맛에 부합합니다. 향미에 brown sugar와 caramelized가 포함되어 손님이 좋아하는 '단맛' 계열 향미와 일치하며, 디카페인이므로 카페인 조건도 만족합니다. 우유 불가 조건에도 해당 음료는 우유를 사용하지 않아 적합합니다. 따라서 이 음료는 손님 취향에 매우 잘 맞습니다.",
+      "rules": {
+        "foreign_words": true,
+        "length": false,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": false,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "설명의 모든 내용이 제공된 사실과 모순되지 않습니다.",
+          "hallucination": false,
+          "hallucination_why": "사실에 없는 내용을 단정하지 않았습니다.",
+          "helpful": 5
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 5
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "predicted_guji_not_decaf_violation",
+      "persona": "디카페인+우유X+단맛",
+      "source": "predicted",
+      "score": 62,
+      "violation": "디카페인이 아니에요",
+      "fallback": false,
+      "error": null,
+      "first_token_s": 0.72,
+      "total_s": 1.7,
+      "text": "조건 위반: 디카페인이 아니에요.  \n손님은 산미를 싫어하고 단맛을 강하게 좋아하지만, 이 음료는 산미가 4.2로 높고 단맛은 3.8로 선호도 4.5에 미치지 못하며, 디카페인도 아니라 취향에 맞지 않습니다.",
+      "rules": {
+        "foreign_words": true,
+        "length": false,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": false,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 5
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 5
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "db_not_decaf_brazil_violation",
+      "persona": "디카페인+우유X+단맛",
+      "source": "db",
+      "score": 81,
+      "violation": "디카페인이 아니에요",
+      "fallback": false,
+      "error": null,
+      "first_token_s": 3.55,
+      "total_s": 10.2,
+      "text": "산미를 싫어하는 손님에게 산미 2는 낮은 편으로 적절하지만, 디카페인이 아닌 점과 우유 불가 조건에도 우유 사용 여부가 명시되지 않아 조건에 위배됩니다. 단맛 5와 바디 4는 손님 선호(단맛 4.5, 바디 3)와 parcialmente 일치하지만, 디카페인 조건 위반으로 인해 추천하기 어렵습니다.",
+      "rules": {
+        "foreign_words": false,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": false,
+      "judges": {
+        "judge": null,
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 4
+        }
+      },
+      "judge_errors": {
+        "judge": "achat_json failed for judge: ReadTimeout from deepseek-ai/deepseek-v4.1-flash: "
+      }
+    },
+    {
+      "id": "db_decaf_huehuetenango_top",
+      "persona": "디카페인+우유X+단맛",
+      "source": "db",
+      "score": 97,
+      "violation": null,
+      "fallback": false,
+      "error": null,
+      "first_token_s": 6.36,
+      "total_s": 7.19,
+      "text": "이 음료가 단맛을 매우 좋아하시는 취향과 디카페인 조건을 완벽하게 만족하며, 단짠한 향미까지 갖추고 있어 추천드립니다.",
+      "rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": true,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": true,
+          "hallucination_why": "사실의 향미 목록에는 brown sugar, caramelized, honey만 있고 '단짠한' 향미(짠맛)는 언급되어 있지 않다.",
+          "helpful": 4
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": true,
+          "hallucination_why": "설명에서 '단짠한 향미'라고 표현했으나, 사실에 명시된 향미는 'brown sugar', 'caramelized', 'honey'로, 단맛 계열의 향미만 존재하며 '짠' 맛이나 향미에 대한 언급은 전혀 없음. 따라서 '단짠한 향미'는 사실에 없는 내용을 단정한 것으로 환각(hallucination)에 해당함.",
+          "helpful": 4
+        }
+      },
+      "judge_errors": null
+    }
+  ]
+}

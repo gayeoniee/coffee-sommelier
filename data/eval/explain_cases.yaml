@@ -1,0 +1,238 @@
+# 설명 품질 평가 케이스 (손으로 작성, 24개) — `python -m app.eval explain_quality`
+# 손님은 app.eval.PERSONAS의 가상 페르소나, 항목 값은 DB에서 본 것과 비슷하게 적은 것(개인 데이터 없음).
+# score는 app.core.scoring.score_item이 이 항목·페르소나에 주는 값(소수 2자리), violation은 app.core.scoring.passes의 문구.
+# id = <브랜드|출처>_<조건>_<점수대>
+# 구성: 페르소나 4 × {메뉴 실측, 브랜드 원두 추정, DB 원두, 예측 원두} = 16
+#       + 조건 위반 4 (DB/예측 원두; '제한없음'은 위반이 불가능해 '디카페인+우유X+단맛'에 2개)
+#       + 극단 점수 4 (≤0.35 두 개 *_low, ≥0.95 두 개 *_top)
+# 점수 공식이 관대해(향미 적합도 최저 0.5) 기본 케이스도 절반가량 0.85를 넘는다. 0.35 이하는 태그 없는 원두에서만 나온다.
+
+# ── 디카페인+산미 (decaf_only, 우유 가능, 산미 4.5, 과일·꽃) ─────────────────────────────
+- id: hollys_menu_decaforder_mid
+  persona: 디카페인+산미
+  item: {key: "menu:2433", name: "흑임자 버터크림 라떼", source: brand_bean, brand: 할리스, acidity: 2, body: 2, sweetness: 3,
+         tags: [brown sugar], is_decaf: false, decaf_option: true, order_decaf: true, caffeine_mg: 93, is_milk: true,
+         confidence: medium, menu_item_id: 2433}
+  score: 0.69
+  violation: null
+  prediction: null
+
+- id: bluebottle_brandbean_decaforder_mid
+  persona: 디카페인+산미
+  item: {key: "brand:bluebottle:아메리카노", name: "아메리카노", source: brand_bean, brand: 블루보틀, acidity: 3, body: 3,
+         sweetness: 4, tags: [vanilla, caramelized, lime], is_decaf: false, decaf_option: true, order_decaf: true,
+         is_milk: false, confidence: medium}
+  score: 0.72
+  violation: null
+  prediction: null
+
+- id: db_decaf_yirgacheffe_high
+  persona: 디카페인+산미
+  item: {key: "coffee:5120", name: "Decaf Ethiopia Yirgacheffe", source: db, brand: Counter Culture Coffee, acidity: 4,
+         body: 2, sweetness: 4, tags: [floral, lemon, jasmine], is_decaf: true, is_milk: false, confidence: high,
+         coffee_id: 5120, origin_country: Ethiopia, process: washed}
+  score: 0.88
+  violation: null
+  prediction: null
+
+- id: predicted_decaf_yirgacheffe_natural_high
+  persona: 디카페인+산미
+  item: {key: "input", name: "에티오피아 예가체프 할로 베리티 내추럴 디카페인", source: predicted, acidity: 4.12, body: 2.61,
+         sweetness: 3.44, tags: [blueberry, floral, winey], is_decaf: true, confidence: medium,
+         origin_country: Ethiopia, process: natural}
+  score: 0.92
+  violation: null
+  prediction: {acidity: 4.12, body: 2.61, sweetness: 3.44, confidence: medium, tags: [blueberry, floral, winey],
+               evidence: ["유사 원두 10개 중 6개에서 '블루베리' 언급", "유사 원두 10개 중 5개에서 '꽃향' 언급", "유사 원두 산미 평균 4.1/5"],
+               n_neighbors: 10}
+
+- id: db_not_decaf_adado_violation
+  persona: 디카페인+산미
+  item: {key: "coffee:3344", name: "Ethiopia Adado Sulula", source: db, brand: Coffee Factorial, acidity: 4, body: 5,
+         sweetness: 5, tags: [floral, chocolate], is_decaf: false, is_milk: false, confidence: high, coffee_id: 3344,
+         origin_country: Ethiopia, process: natural}
+  score: 0.64
+  violation: 디카페인이 아니에요
+  prediction: null
+
+- id: db_decaf_french_roast_low
+  persona: 디카페인+산미
+  item: {key: "coffee:6210", name: "Decaf French Roast", source: db, brand: Peet's Coffee, acidity: 1, body: 5,
+         sweetness: 1, tags: [], is_decaf: true, is_milk: false, confidence: high, coffee_id: 6210}
+  score: 0.33
+  violation: null
+  prediction: null
+
+# ── 저카페인+우유X (low, 우유 불가, 산미 2, 바디 4, 견과·코코아) ─────────────────────────
+- id: paulbassett_menu_lungo_decaforder_high
+  persona: 저카페인+우유X
+  item: {key: "menu:2545", name: "룽고", source: brand_bean, brand: 폴바셋, acidity: 3, body: 3, sweetness: 3,
+         tags: [chocolate, citrus fruit], is_decaf: false, decaf_option: true, order_decaf: true, caffeine_mg: 225,
+         is_milk: false, confidence: medium, menu_item_id: 2545}
+  score: 0.84
+  violation: null
+  prediction: null
+
+- id: twosome_brandbean_decaforder_high
+  persona: 저카페인+우유X
+  item: {key: "brand:twosome:아메리카노", name: "아메리카노", source: brand_bean, brand: 투썸플레이스, acidity: 2, body: 3,
+         sweetness: 3, tags: [chocolate, nutty], is_decaf: false, decaf_option: true, order_decaf: true, is_milk: false,
+         confidence: medium, decaf_surcharge_krw: 200}
+  score: 0.95
+  violation: null
+  prediction: null
+
+- id: db_decaf_las_nubes_high
+  persona: 저카페인+우유X
+  item: {key: "coffee:4471", name: "Decaf Colombia Finca Las Nubes", source: db, brand: Hub Coffee Roasters, acidity: 2,
+         body: 5, sweetness: 3, tags: [chocolate, fresh], is_decaf: true, is_milk: false, confidence: high,
+         coffee_id: 4471, origin_country: Colombia}
+  score: 0.89
+  violation: null
+  prediction: null
+
+- id: predicted_decaf_supremo_high
+  persona: 저카페인+우유X
+  item: {key: "input", name: "콜롬비아 수프리모 스위스워터 디카페인", source: predicted, acidity: 2.38, body: 3.84,
+         sweetness: 3.1, tags: [nutty, chocolate, caramelized], is_decaf: true, confidence: high,
+         origin_country: Colombia, process: washed}
+  score: 0.95
+  violation: null
+  prediction: {acidity: 2.38, body: 3.84, sweetness: 3.1, confidence: high, tags: [nutty, chocolate, caramelized],
+               evidence: ["유사 원두 10개 중 7개에서 '견과' 언급", "유사 원두 10개 중 6개에서 '초콜릿' 언급", "유사 원두 산미 평균 2.4/5"],
+               n_neighbors: 10}
+
+- id: predicted_antigua_caffeine_violation
+  persona: 저카페인+우유X
+  item: {key: "input", name: "과테말라 안티구아 워시드", source: predicted, acidity: 3.08, body: 3.92, sweetness: 3.0,
+         tags: [cocoa, brown sugar, orange], is_decaf: false, confidence: medium, origin_country: Guatemala,
+         process: washed}
+  score: 0.86
+  violation: 카페인이 100mg을 넘거나 알 수 없어요
+  prediction: {acidity: 3.08, body: 3.92, sweetness: 3.0, confidence: medium, tags: [cocoa, brown sugar, orange],
+               evidence: ["유사 원두 10개 중 6개에서 '코코아' 언급", "유사 원두 10개 중 4개에서 '흑설탕' 언급", "유사 원두 산미 평균 3.1/5"],
+               n_neighbors: 10}
+
+- id: predicted_decaf_gedeb_low
+  persona: 저카페인+우유X
+  # 이웃이 태그·단맛 없는 커핑 점수 원두(CQI)뿐인 경우: 산미·바디만 예측되고 향미 근거가 없다
+  item: {key: "input", name: "에티오피아 게뎁 워시드 디카페인", source: predicted, acidity: 4.71, body: 1.32, sweetness: null,
+         tags: [], is_decaf: true, confidence: medium, origin_country: Ethiopia, process: washed}
+  score: 0.33
+  violation: null
+  prediction: {acidity: 4.71, body: 1.32, sweetness: null, confidence: medium, tags: [],
+               evidence: ["유사 원두 산미 평균 4.7/5"], n_neighbors: 10}
+
+# ── 제한없음 (any, 우유 가능, 3/3/3, 향미 선호 없음) ─────────────────────────────────────
+- id: coffeebean_menu_mocha_blended_mid
+  persona: 제한없음
+  item: {key: "menu:2503", name: "카페모카 아이스 블렌디드", source: brand_bean, brand: 커피빈, acidity: 2, body: 4,
+         sweetness: 2, tags: [dark chocolate, caramelized], is_decaf: false, decaf_option: false, caffeine_mg: 148,
+         is_milk: true, confidence: medium, decaf_surcharge_krw: 500, menu_item_id: 2503}
+  score: 0.75
+  violation: null
+  prediction: null
+
+- id: ediya_brandbean_latte_high
+  persona: 제한없음
+  item: {key: "brand:ediya:카페라떼", name: "카페라떼", source: brand_bean, brand: 이디야커피, acidity: 2, body: 3,
+         sweetness: 2, tags: [chocolate, nutty], is_decaf: false, decaf_option: true, is_milk: true, confidence: medium}
+  score: 0.85
+  violation: null
+  prediction: null
+
+- id: db_sidamo_mid
+  persona: 제한없음
+  item: {key: "coffee:2987", name: "Ethiopia Washed Sidamo", source: db, brand: Temple Coffee Roasters, acidity: 4,
+         body: 5, sweetness: 3, tags: [floral, jasmine, lemon], is_decaf: false, is_milk: false, confidence: high,
+         coffee_id: 2987, origin_country: Ethiopia, process: washed}
+  score: 0.75
+  violation: null
+  prediction: null
+
+- id: predicted_kenya_aa_high
+  persona: 제한없음
+  item: {key: "input", name: "케냐 AA 키암부 워시드", source: predicted, acidity: 4.31, body: 3.2, sweetness: 2.9,
+         tags: [black tea, grapefruit, berry], is_decaf: false, confidence: medium, origin_country: Kenya,
+         process: washed}
+  score: 0.87
+  violation: null
+  prediction: {acidity: 4.31, body: 3.2, sweetness: 2.9, confidence: medium, tags: [black tea, grapefruit, berry],
+               evidence: ["유사 원두 10개 중 5개에서 '홍차' 언급", "유사 원두 10개 중 4개에서 '자몽' 언급", "유사 원두 산미 평균 4.3/5"],
+               n_neighbors: 10}
+
+- id: bluebottle_brandbean_americano_top
+  persona: 제한없음
+  item: {key: "brand:bluebottle:아메리카노", name: "아메리카노", source: brand_bean, brand: 블루보틀, acidity: 3, body: 3,
+         sweetness: 3, tags: [chocolate, berry], is_decaf: false, decaf_option: true, is_milk: false,
+         confidence: medium}
+  score: 1.0
+  violation: null
+  prediction: null
+
+# ── 디카페인+우유X+단맛 (decaf_only, 우유 불가, 산미 2, 단맛 4.5, 단 향) ──────────────────────
+- id: mega_menu_decaf_honey_americano_mid
+  persona: 디카페인+우유X+단맛
+  item: {key: "menu:120", name: "디카페인 꿀아메리카노", source: brand_bean, brand: 메가MGC커피, acidity: 1, body: 3,
+         sweetness: 2, tags: [nutty, chocolate], is_decaf: true, decaf_option: false, caffeine_mg: 8.7, is_milk: false,
+         confidence: medium, menu_item_id: 120}
+  score: 0.62
+  violation: null
+  prediction: null
+
+- id: ediya_brandbean_decaforder_high
+  persona: 디카페인+우유X+단맛
+  item: {key: "brand:ediya:아메리카노", name: "아메리카노", source: brand_bean, brand: 이디야커피, acidity: 2, body: 3,
+         sweetness: 3, tags: [chocolate, caramelized], is_decaf: false, decaf_option: true, order_decaf: true,
+         is_milk: false, confidence: medium}
+  score: 0.87
+  violation: null
+  prediction: null
+
+- id: db_decaf_guatemala_mid
+  persona: 디카페인+우유X+단맛
+  item: {key: "coffee:1893", name: "Decaffeinated Guatemala", source: db, brand: Ancora Coffee Roasters, acidity: 4,
+         body: 3, sweetness: 5, tags: [chocolate, prune], is_decaf: true, is_milk: false, confidence: high,
+         coffee_id: 1893, origin_country: Guatemala}
+  score: 0.68
+  violation: null
+  prediction: null
+
+- id: predicted_decaf_cerrado_high
+  persona: 디카페인+우유X+단맛
+  item: {key: "input", name: "브라질 세하도 슈가케인 디카페인", source: predicted, acidity: 1.94, body: 3.42, sweetness: 4.18,
+         tags: [brown sugar, caramelized, nutty], is_decaf: true, confidence: high, origin_country: Brazil}
+  score: 0.94
+  violation: null
+  prediction: {acidity: 1.94, body: 3.42, sweetness: 4.18, confidence: high, tags: [brown sugar, caramelized, nutty],
+               evidence: ["유사 원두 10개 중 8개에서 '흑설탕' 언급", "유사 원두 10개 중 6개에서 '캐러멜' 언급", "유사 원두 산미 평균 1.9/5"],
+               n_neighbors: 10}
+
+- id: predicted_guji_not_decaf_violation
+  persona: 디카페인+우유X+단맛
+  item: {key: "input", name: "에티오피아 구지 우라가 내추럴", source: predicted, acidity: 4.2, body: 2.4, sweetness: 3.8,
+         tags: [strawberry, blueberry, winey], is_decaf: false, confidence: low, origin_country: Ethiopia,
+         process: natural}
+  score: 0.62
+  violation: 디카페인이 아니에요
+  prediction: {acidity: 4.2, body: 2.4, sweetness: 3.8, confidence: low, tags: [strawberry, blueberry, winey],
+               evidence: ["유사 원두 10개 중 4개에서 '딸기' 언급", "유사 원두 10개 중 3개에서 '블루베리' 언급", "유사 원두 산미 평균 4.2/5"],
+               n_neighbors: 10}
+
+- id: db_not_decaf_brazil_violation
+  persona: 디카페인+우유X+단맛
+  item: {key: "coffee:7702", name: "Brazil Mogiana Pulped Natural", source: db, brand: Olympia Coffee, acidity: 2,
+         body: 4, sweetness: 5, tags: [brown sugar, nutty, cocoa], is_decaf: false, is_milk: false, confidence: high,
+         coffee_id: 7702, origin_country: Brazil, process: pulped natural}
+  score: 0.81
+  violation: 디카페인이 아니에요
+  prediction: null
+
+- id: db_decaf_huehuetenango_top
+  persona: 디카페인+우유X+단맛
+  item: {key: "coffee:3508", name: "Decaf Guatemala Huehuetenango", source: db, brand: Kickapoo Coffee, acidity: 2,
+         body: 3, sweetness: 5, tags: [brown sugar, caramelized, honey], is_decaf: true, is_milk: false,
+         confidence: high, coffee_id: 3508, origin_country: Guatemala}
+  score: 0.97
+  violation: null
+  prediction: null

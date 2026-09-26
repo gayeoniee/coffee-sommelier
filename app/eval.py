@@ -13,7 +13,7 @@ from app.core.explain import explain_messages
 from app.core.predict import predict_from_neighbors
 from app.core.scoring import mmr_top_k, passes, score_item
 from app.core.simulate import simulate_convergence
-from app.models import ATTRS, Item, Profile
+from app.models import ATTRS, Item, Prediction, Profile
 from pipeline import settings
 from pipeline.llm import embed_model
 
@@ -251,6 +251,134 @@ def bench(repo) -> dict:
             "full_answer_s": [round(t, 2) for _, t in seq]}
 
 
+EXPLAIN_CASES = settings.EVAL_DIR / "explain_cases.yaml"
+JUDGES = ("judge", "judge2")
+JUDGE_ATTEMPTS = 3
+RULE_CHECKS = ("foreign_words", "length", "numbers_grounded", "condition_mentioned", "polarity")
+
+
+def load_explain_cases(path=EXPLAIN_CASES) -> list[dict]:
+    """Hand-written guests × items (no DB, no personal data): each case can build explain_messages on its own."""
+    profiles = dict(PERSONAS)
+    out = []
+    for c in yaml.safe_load(path.read_text(encoding="utf-8")):
+        it = dict(c["item"])
+        it["tags"] = tuple(it.get("tags") or ())
+        pred = Prediction(**c["prediction"]) if c.get("prediction") else None
+        out.append({"id": c["id"], "persona": c["persona"], "profile": profiles[c["persona"]], "item": Item(**it),
+                    "score": float(c["score"]), "violation": c.get("violation"), "prediction": pred})
+    return out
+
+
+def _percentile(xs: list[float], q: float) -> float | None:
+    if not xs:
+        return None
+    s = sorted(xs)
+    pos = q * (len(s) - 1)
+    lo = int(pos)
+    hi = min(lo + 1, len(s) - 1)
+    return round(s[lo] + (s[hi] - s[lo]) * (pos - lo), 2)
+
+
+def summarize_explain_quality(rows: list[dict]) -> dict:
+    """Headline numbers over LLM-generated rows only (template fallbacks are counted, not scored)."""
+    gen = [r for r in rows if not r["fallback"]]
+    both = [r for r in gen if all(r["judges"][j] is not None for j in JUDGES)]
+
+    def rate(k: int, n: int) -> float | None:
+        return round(k / n, 4) if n else None
+
+    def mean(xs: list[float]) -> float | None:
+        return round(sum(xs) / len(xs), 2) if xs else None
+
+    return {
+        "n": len(rows), "generated": len(gen), "fallbacks": len(rows) - len(gen),
+        "rule_pass": sum(all(r["rules"].values()) for r in gen),
+        "rule_pass_rate": rate(sum(all(r["rules"].values()) for r in gen), len(gen)),
+        "rule_failures": {c: sum(not r["rules"][c] for r in gen) for c in RULE_CHECKS},
+        "judged_both": len(both),
+        "no_contradiction_both": sum(not any(r["judges"][j]["contradiction"] for j in JUDGES) for r in both),
+        "no_contradiction_rate_both": rate(sum(not any(r["judges"][j]["contradiction"] for j in JUDGES)
+                                               for r in both), len(both)),
+        "no_hallucination_both": sum(not any(r["judges"][j]["hallucination"] for j in JUDGES) for r in both),
+        "no_hallucination_rate_both": rate(sum(not any(r["judges"][j]["hallucination"] for j in JUDGES)
+                                               for r in both), len(both)),
+        "helpful_mean": {j: mean([r["judges"][j]["helpful"] for r in gen if r["judges"][j] is not None])
+                         for j in JUDGES},
+        "judge_agreement": {k: rate(sum(r["judges"]["judge"][k] == r["judges"]["judge2"][k] for r in both), len(both))
+                            for k in ("contradiction", "hallucination")},
+        "judge_failures": {j: sum(r["judges"][j] is None for r in rows) for j in JUDGES},
+        "first_token_p50": _percentile([r["first_token_s"] for r in gen if r["first_token_s"] is not None], 0.5),
+        "first_token_p95": _percentile([r["first_token_s"] for r in gen if r["first_token_s"] is not None], 0.95),
+    }
+
+
+def explain_quality(repo) -> dict:
+    """24 hand-written cases → one real explanation each (same path and deadline as the app) → deterministic rule
+    checks + two LLM judges. Costs ~72 LLM calls, so it is not part of `all`."""
+    import httpx
+
+    from app import config, llm
+    from app.core.explain import template_explanation
+    from app.core.explain_check import check_explanation
+    from app.core.judge import Verdict, judge_messages
+    from pipeline.llm import LLMError
+
+    _, tag_ko = repo.taxonomy()
+    tasks = settings.load_config("models.yaml")["tasks"]
+
+    async def generate(msgs):
+        start, first, parts = time.perf_counter(), None, []
+        async with asyncio.timeout(config.EXPLAIN_DEADLINE_S):
+            async for tok in llm.astream_text(config.EXPLAIN_TASK, msgs):
+                first = first if first is not None else time.perf_counter() - start
+                parts.append(tok)
+        text = "".join(parts).strip()
+        if not text:
+            raise LLMError("empty explanation")
+        return text, round(first, 2), round(time.perf_counter() - start, 2)
+
+    async def judge(task, payload, text):
+        last = None
+        for _ in range(JUDGE_ATTEMPTS):
+            try:
+                return (await llm.achat_json(task, judge_messages(payload, text), Verdict)).model_dump(), None
+            except LLMError as e:
+                last = str(e)
+        return None, last
+
+    async def run():
+        rows = []
+        for c in load_explain_cases():
+            msgs = explain_messages(c["item"], c["profile"], c["score"], c["prediction"], c["violation"])
+            payload = json.loads(msgs[1]["content"])
+            try:
+                text, first, total = await generate(msgs)
+                fallback, error = False, None
+            except (LLMError, httpx.HTTPError, TimeoutError) as e:    # same failures the app turns into its template
+                text = template_explanation(c["item"], c["profile"], c["score"], tag_ko, c["violation"])
+                first, total, fallback, error = None, None, True, f"{type(e).__name__}: {e}"
+            rules = check_explanation(text, payload, round(c["score"] * 100), c["violation"])
+            judges, judge_errors = {}, {}
+            for j in JUDGES:
+                judges[j], err = await judge(j, payload, text)
+                if err:
+                    judge_errors[j] = err
+            rows.append({"id": c["id"], "persona": c["persona"], "source": c["item"].source,
+                         "score": round(c["score"] * 100), "violation": c["violation"], "fallback": fallback,
+                         "error": error, "first_token_s": first, "total_s": total, "text": text, "rules": rules,
+                         "rule_pass": all(rules.values()), "judges": judges, "judge_errors": judge_errors or None})
+            brief = [None if v is None else (v["contradiction"], v["hallucination"], v["helpful"])
+                     for v in judges.values()]
+            print(f"  {c['id']}: fallback={fallback} rules={all(rules.values())} judges={brief}", flush=True)
+        return rows
+
+    rows = asyncio.run(run())
+    return {"models": {t: tasks[t]["model"] for t in (config.EXPLAIN_TASK, *JUDGES)},
+            "deadline_s": config.EXPLAIN_DEADLINE_S, "cases_file": "data/eval/explain_cases.yaml",
+            "summary": summarize_explain_quality(rows), "cases": rows}
+
+
 def main(argv: list[str]) -> int:
     from app.repo import Repo
     names = argv or ["all"]
@@ -268,6 +396,7 @@ def main(argv: list[str]) -> int:
         "loo_repro": loo_repro,
         "convergence": convergence,
         "bench": bench,
+        "explain_quality": explain_quality,          # real LLM calls; run by name only, not in `all`
     }
     try:
         for name in targets:
