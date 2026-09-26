@@ -3,7 +3,7 @@
 - 상태: 채택 (2026-09-26)
 
 ## 맥락
-2단계의 AI 흐름에는 분기("DB에 있는 원두인가?"), 폴백(LLM 실패 → 템플릿, 임베딩 실패 → 산지·가공 평균), 병렬(설명 3개), 단계별 트레이싱·스트리밍이 있다.
+2단계의 AI 흐름에는 분기("DB에 있는 원두인가?"), 폴백(LLM 실패·설명 12초 마감 초과 → 템플릿, 임베딩 실패 → 산지·가공 평균), 병렬(설명 3개), 단계별 트레이싱·스트리밍이 있다.
 4단계에서는 이 흐름들을 도구로 쓰는 멀티턴 에이전트가 필요하다.
 
 ## 대안
@@ -23,7 +23,8 @@ LangGraph 1.2만 쓴다. LLM 호출은 1단계 자체 클라이언트(`pipeline/
 ## 증거
 - 구조: `docs/graphs.md` (자동 생성 다이어그램 3개)
 - 폴백 동작: `tests/app/test_graph_recommend.py::test_one_failed_explanation_falls_back_others_stream`,
-  `tests/app/test_graph_analyze.py::test_parse_failure_and_embedding_failure_degrade_to_low_confidence`
+  `tests/app/test_graph_analyze.py::test_parse_failure_and_embedding_failure_degrade_to_low_confidence`,
+  `tests/app/test_graph_analyze.py::test_explanation_past_deadline_falls_back_to_template`
 - 병렬 효과: ADR 0001 실측 표(순차 vs 병렬)
 - 노드별 시간: Langfuse 트레이스(키 설정 시). 스크린샷은 배포 후 README에 추가.
 
