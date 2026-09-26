@@ -56,3 +56,22 @@ def test_card_shape():
     c = card(it, 0.834, "t")
     assert c["score"] == 83 and c["key"] == "coffee:7" and c["coffee_id"] == 7 and c["template"] == "t"
     assert c["violation"] is None and "evidence" not in c
+
+
+def test_template_explanation_predicted_source_shows_confidence():
+    low = Item(key="input", name="예가체프", source="predicted", confidence="low", acidity=4)
+    text = template_explanation(low, Profile(), 0.5, {})
+    assert "유사 원두 기반 예측이에요(신뢰도 낮음)." in text
+
+    high = Item(key="input", name="예가체프", source="predicted", confidence="high", acidity=4)
+    text = template_explanation(high, Profile(), 0.5, {})
+    assert "유사 원두 기반 예측이에요(신뢰도 높음)." in text
+
+
+def test_card_includes_prediction_evidence_and_neighbors():
+    it = Item(key="input", name="예가체프", source="predicted", acidity=4.2, confidence="medium")
+    pred = Prediction(acidity=4.2, body=None, sweetness=None, confidence="medium", tags=["lemon"],
+                      evidence=["유사 원두 10개 중 8개에서 '레몬' 언급"], n_neighbors=10)
+    c = card(it, 0.8, "t", prediction=pred)
+    assert c["evidence"] == pred.evidence
+    assert c["n_neighbors"] == pred.n_neighbors
