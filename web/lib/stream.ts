@@ -18,7 +18,7 @@ function setExplanation(state: StreamState, key: string, ex: Explanation): Strea
 }
 
 // An explanation still streaming when the stream ends will never finish: show the card's template instead.
-function settle(state: StreamState): StreamState {
+export function settle(state: StreamState): StreamState {
   const explanations = { ...state.explanations };
   for (const c of state.cards) {
     if (explanations[c.key]?.status === "streaming") explanations[c.key] = { text: c.template, status: "fallback" };
