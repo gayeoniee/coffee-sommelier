@@ -264,6 +264,9 @@ def normalize_compose(snap: Path, collected_at: str) -> Normalized:
                 source_url="https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition",
                 collected_at=collected_at,
             )
+    return Normalized(menu_items=list(items.values()))
+
+
 PAULBASSETT_CATEGORY = "커피"  # the site's single coffee tab (cid1=A) covers every coffee sub-category
 
 
