@@ -225,10 +225,13 @@ def test_embed_task_is_switchable_by_env(monkeypatch):
     from pipeline.llm import embed_model, embed_task, embedder_for
     monkeypatch.delenv("EMBED_TASK", raising=False)
     assert embed_task() == "embed"
-    monkeypatch.setenv("EMBED_TASK", "embed_nemotron")
     assert embed_model() == "nvidia/nemotron-3-embed-1b"
     t = embedder_for().target
-    assert (t.dims, t.asymmetric, t.provider) == (1024, True, "nvidia")
+    assert (t.dims, t.asymmetric, t.provider, t.batch) == (1024, True, "nvidia", 32)
+    monkeypatch.setenv("EMBED_TASK", "embed_bge_m3")
+    assert embed_model() == "bge-m3"
+    t = embedder_for().target
+    assert (t.dims, t.asymmetric, t.provider) == (None, False, "ollama")
 
 
 def test_embedded_dir_is_per_model():

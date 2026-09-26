@@ -15,12 +15,9 @@ tasks:
     extra: {reasoning_effort: "none"}
   # Embedding model used everywhere (pipeline embed/load, app queries, eval) = task "embed",
   # or the task named by $EMBED_TASK. Vectors are cached per model under data/embedded/<model>/.
+  # Switching models means re-running `pipeline run --only embed --only load` (see docs/adr/0003).
+  # Hosted, asymmetric (passage/query); native 2048 dims, Matryoshka-trained -> sliced to 1024 for vector(1024).
   embed:
-    provider: ollama
-    model: bge-m3
-    timeout: 120
-  # hosted, asymmetric (passage/query); native 2048 dims, Matryoshka-trained -> sliced to 1024 for vector(1024)
-  embed_nemotron:
     provider: nvidia
     model: nvidia/nemotron-3-embed-1b
     timeout: 60
@@ -28,6 +25,11 @@ tasks:
     asymmetric: true
     batch: 32
     rpm: 35
+  # previous default, local only (Ollama): EMBED_TASK=embed_bge_m3
+  embed_bge_m3:
+    provider: ollama
+    model: bge-m3
+    timeout: 120
   vision:
     provider: nvidia
     model: meta/llama-3.2-11b-vision-instruct
