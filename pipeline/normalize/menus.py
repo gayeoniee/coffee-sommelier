@@ -109,7 +109,7 @@ def normalize_hollys(snap: Path, collected_at: str) -> Normalized:
     soup = _soup(p)
     for br in soup.find_all("br"):
         br.replace_with(" ")  # e.g. "디카페인<br>콜드브루" -> one name, not two
-    brand = brands_by_key(settings.CURATED_DIR).get("brand:hollys")
+    brand = brands_by_key(settings.CURATED_DIR)["brand:hollys"]
     for view in soup.select("div.menu_view01"):
         idx = (view.get("id") or "").removeprefix("menuView1_")
         span = view.select_one("p span")
@@ -129,7 +129,7 @@ def normalize_hollys(snap: Path, collected_at: str) -> Normalized:
         items[key] = MenuItemRecord(
             key=key, brand_key="brand:hollys", name=name, name_en=name_en,
             category=HOLLYS_CATEGORY, is_decaf=is_decaf,
-            decaf_option=menu_decaf_option(brand, HOLLYS_CATEGORY, is_decaf, name) if brand else False,
+            decaf_option=menu_decaf_option(brand, HOLLYS_CATEGORY, is_decaf, name),
             caffeine_mg=caffeine, source_url="https://www.hollys.co.kr/menu/espresso.do",
             collected_at=collected_at,
         )

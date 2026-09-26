@@ -2,6 +2,8 @@ import json
 import shutil
 from pathlib import Path
 
+import pytest
+
 FIXTURES = Path(__file__).parent / "fixtures"
 
 
@@ -227,6 +229,25 @@ def test_brands_yaml_has_decaf_option_categories_for_menu_brands():
     b = brands_by_key(settings.CURATED_DIR)
     for k in ("brand:hollys", "brand:coffeebean", "brand:ediya", "brand:paulbassett", "brand:compose"):
         assert k in b and isinstance(b[k].decaf_option_categories, list)
+
+
+def test_menu_normalizers_use_strict_brand_lookup(tmp_path, monkeypatch):
+    """brands.yaml always has an entry for every menu brand (guarded by
+    test_brands_yaml_has_decaf_option_categories_for_menu_brands above), so all four menu-brand
+    normalizers look their brand up the same way, brands_by_key(...)[key] (raises loudly if it's
+    ever missing) rather than .get(...) with a silent decaf_option=False fallback."""
+    import pipeline.normalize.menus as menus
+
+    monkeypatch.setattr(menus, "brands_by_key", lambda curated_dir: {})
+
+    with pytest.raises(KeyError):
+        menus.normalize_hollys(_copy_fixture("menus/hollys", tmp_path), "2026-09-27")
+    with pytest.raises(KeyError):
+        menus.normalize_coffeebean(_copy_fixture("menus/coffeebean", tmp_path), "2026-09-27")
+    with pytest.raises(KeyError):
+        menus.normalize_compose(_copy_fixture("menus/compose", tmp_path), "2026-09-27")
+    with pytest.raises(KeyError):
+        menus.normalize_paulbassett(_copy_fixture("menus/paulbassett", tmp_path), "2026-09-27")
 
 
 def test_hollys_parses_names_caffeine_decaf(tmp_path):
