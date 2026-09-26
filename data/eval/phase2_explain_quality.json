@@ -10,11 +10,11 @@
     "n": 24,
     "generated": 24,
     "fallbacks": 0,
-    "rule_pass": 21,
-    "rule_pass_rate": 0.875,
+    "rule_pass": 18,
+    "rule_pass_rate": 0.75,
     "rule_failures": {
       "foreign_words": 2,
-      "length": 0,
+      "length": 3,
       "numbers_grounded": 0,
       "condition_mentioned": 1,
       "polarity": 1
@@ -90,12 +90,12 @@
       "text": "산미와 단맛이 손님 취향에 가까워 향미도 과일과 꽃 향을 떠올리게 해 잘 맞아요. 바디는 조금 더 무거운 편이라 가벼운 맛을 선호하신다면 약간 아쉬울 수 있어요. 디카페인으로 바꿔 주문하면 손님의 카페인 조건에 정확히 맞춰 드릴 수 있어요.",
       "rules": {
         "foreign_words": true,
-        "length": true,
+        "length": false,
         "numbers_grounded": true,
         "condition_mentioned": true,
         "polarity": true
       },
-      "rule_pass": true,
+      "rule_pass": false,
       "judges": {
         "judge": {
           "contradiction": false,
@@ -201,12 +201,12 @@
       "text": "디카페인이 아니에요. 손님이 디카페인만 원하시는데 이 음료는 카페인이 있어요. 산미와 향미(floral, chocolate)는 과일과 꽃 향을 좋아하시는 취향과 잘 맞지만, 바디가 5로 너무 무겁고 단맛도 5로 평소보다 강해서 선호하시는 약한 바디와 보통 단맛과는 차이가 있어요.",
       "rules": {
         "foreign_words": true,
-        "length": true,
+        "length": false,
         "numbers_grounded": true,
         "condition_mentioned": true,
         "polarity": true
       },
-      "rule_pass": true,
+      "rule_pass": false,
       "judges": {
         "judge": {
           "contradiction": false,
@@ -826,12 +826,12 @@
       "text": "디카페인이 아니에요. 손님이 디카페인만 원하시므로 이 음료는 취향에 맞지 않아요. 산미가 4.2로 강해 손님이 싫어하시는 산미 조건과도 맞지 않아요.",
       "rules": {
         "foreign_words": true,
-        "length": true,
+        "length": false,
         "numbers_grounded": true,
         "condition_mentioned": true,
         "polarity": true
       },
-      "rule_pass": true,
+      "rule_pass": false,
       "judges": {
         "judge": {
           "contradiction": false,
@@ -920,5 +920,19 @@
       },
       "judge_errors": null
     }
-  ]
+  ],
+  "rules_rescored": {
+    "note": "rule checks re-run offline over the saved texts with the current app/core/explain_check.py (`python -m app.eval explain_recheck`); generation and judge fields are from the original run",
+    "before": {
+      "rule_pass": 21,
+      "rule_pass_rate": 0.875,
+      "rule_failures": {
+        "foreign_words": 2,
+        "length": 0,
+        "numbers_grounded": 0,
+        "condition_mentioned": 1,
+        "polarity": 1
+      }
+    }
+  }
 }

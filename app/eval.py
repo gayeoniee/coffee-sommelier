@@ -317,6 +317,39 @@ def summarize_explain_quality(rows: list[dict]) -> dict:
     }
 
 
+EXPLAIN_QUALITY_OUT = settings.EVAL_DIR / "phase2_explain_quality.json"
+RULE_SUMMARY_FIELDS = ("rule_pass", "rule_pass_rate", "rule_failures")
+
+
+def rescore_explain_quality(doc: dict, cases: list[dict]) -> dict:
+    """Re-run the deterministic rule checks over saved explanations (no LLM calls) after the checker changed.
+
+    Only the rule fields change (each case's `rules`/`rule_pass`, the summary's RULE_SUMMARY_FIELDS); the text,
+    timings and judge verdicts are the ones recorded at generation time. `rules_rescored.before` keeps the
+    rule numbers as first recorded, so repeated re-scores still compare against the generation run."""
+    from app.core.explain_check import check_explanation
+
+    by_id = {c["id"]: c for c in cases}
+    rows = []
+    for r in doc["cases"]:
+        c = by_id[r["id"]]
+        msgs = explain_messages(c["item"], c["profile"], c["score"], c["prediction"], c["violation"])
+        rules = check_explanation(r["text"], json.loads(msgs[1]["content"]), r["score"], r["violation"])
+        rows.append({**r, "rules": rules, "rule_pass": all(rules.values())})
+    fresh = summarize_explain_quality(rows)
+    before = (doc.get("rules_rescored") or {}).get("before") or {k: doc["summary"][k] for k in RULE_SUMMARY_FIELDS}
+    return {**doc, "summary": {**doc["summary"], **{k: fresh[k] for k in RULE_SUMMARY_FIELDS}},
+            "rules_rescored": {"note": "rule checks re-run offline over the saved texts with the current "
+                                       "app/core/explain_check.py (`python -m app.eval explain_recheck`); "
+                                       "generation and judge fields are from the original run",
+                               "before": before},
+            "cases": rows}
+
+
+def explain_recheck(_repo=None) -> dict:
+    return rescore_explain_quality(json.loads(EXPLAIN_QUALITY_OUT.read_text(encoding="utf-8")), load_explain_cases())
+
+
 def explain_quality(repo) -> dict:
     """24 hand-written cases → one real explanation each (same path and deadline as the app) → deterministic rule
     checks + two LLM judges. Costs ~72 LLM calls, so it is not part of `all`."""
@@ -389,7 +422,9 @@ def main(argv: list[str]) -> int:
     order = ["violations", "loo", "loo_open", "coverage", "coverage_open", "compare3", "loo_repro", "convergence",
              "bench"]
     targets = order if names == ["all"] else names
-    repo = Repo(settings.DATABASE_URL)
+    offline = {"explain_recheck"}                     # no DB, no LLM
+    repo = None if set(targets) <= offline else Repo(settings.DATABASE_URL)
+    outputs = {"explain_recheck": "explain_quality"}  # the re-score rewrites the saved explain_quality result
     fns = {
         "violations": violation_rate,
         "loo": loo_accuracy,
@@ -401,15 +436,17 @@ def main(argv: list[str]) -> int:
         "convergence": convergence,
         "bench": bench,
         "explain_quality": explain_quality,          # real LLM calls; run by name only, not in `all`
+        "explain_recheck": explain_recheck,          # offline re-score of the saved explain_quality texts
     }
     try:
         for name in targets:
             result = fns[name](repo)
-            out = settings.EVAL_DIR / f"phase2_{name}.json"
+            out = settings.EVAL_DIR / f"phase2_{outputs.get(name, name)}.json"
             out.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
             print(f"[{name}] {json.dumps(result, ensure_ascii=False)[:400]}")
     finally:
-        repo.close()
+        if repo is not None:
+            repo.close()
     return 0
 
 

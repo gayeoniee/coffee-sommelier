@@ -132,3 +132,29 @@ def test_summarize_explain_quality_counts_generated_only():
     assert s["helpful_mean"] == {"judge": 4.0, "judge2": 3.0}
     assert s["judge_failures"] == {"judge": 0, "judge2": 1}
     assert s["first_token_p50"] == 2.0 and s["first_token_p95"] == 2.9
+
+
+def test_rescore_explain_quality_reruns_rules_and_keeps_generation_and_judges():
+    from app.eval import load_explain_cases, rescore_explain_quality
+    cases = load_explain_cases()
+    three = "하나예요. 둘이에요. 셋이에요."            # 3 sentences: passed the old 3-sentence limit, fails now
+    ok = "취향 적합도 72%로 산미가 선호와 가까워요."
+    stale = {"foreign_words": True, "length": True, "numbers_grounded": True, "condition_mentioned": True,
+             "polarity": True}
+    rows = [dict(_row(j1=_v(), j2=_v(helpful=2)), id=cases[0]["id"], score=round(cases[0]["score"] * 100),
+                 violation=cases[0]["violation"], text=three, rules=dict(stale), rule_pass=True, total_s=1.2),
+            dict(_row(fallback=True, j1=_v(), j2=_v()), id=cases[1]["id"], score=round(cases[1]["score"] * 100),
+                 violation=cases[1]["violation"], text=ok, rules=dict(stale), rule_pass=True, total_s=None)]
+    doc = {"models": {"explain": "m"}, "summary": summarize_explain_quality(rows), "cases": rows}
+    before = doc["summary"]
+    out = rescore_explain_quality(doc, cases)
+    assert out["cases"][0]["rules"]["length"] is False and out["cases"][0]["rule_pass"] is False
+    assert out["cases"][0]["judges"] == rows[0]["judges"] and out["cases"][0]["total_s"] == 1.2
+    s = out["summary"]
+    assert (s["rule_pass"], s["rule_failures"]["length"]) == (0, 1)
+    for k in ("generated", "fallbacks", "judged_both", "helpful_mean", "judge_agreement", "first_token_p50"):
+        assert s[k] == before[k]
+    assert out["rules_rescored"]["before"] == {"rule_pass": 1, "rule_pass_rate": 1.0,
+                                               "rule_failures": before["rule_failures"]}
+    assert out["models"] == {"explain": "m"}
+    assert doc["cases"][0]["rules"] == stale          # the input document is not mutated

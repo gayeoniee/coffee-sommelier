@@ -107,7 +107,7 @@ $ python -m pipeline query "bright citrus floral Ethiopia washed" -k 5 --decaf
 | 원두 예측 leave-one-out, 바디 ±1 이내 | 0.64 |
 | 학습 수렴: 모의 사용자 10회 기록 후 프로필 오차 | 0.7792 → 0.7117 |
 | 설명 3개 순차 vs 병렬 (thinking 끔, 최대 2문장, 첫 토큰 0.81~0.99초) | 4.59초 → 2.03초 |
-| 설명 품질(24케이스, `explain_quality`, [ADR 0005](docs/adr/0005-explain-quality-eval.md)) | 규칙 통과 21/24(1차 10/22; 길이 초과 10→0, 폴백 2→0), 모순 없음 deepseek 20/22·판정자 2명 합의 17/22, 도움 평균 4.00·3.21/5 (judge2 = gpt-oss-20b, 생성 모델과 다른 벤더) |
+| 설명 품질(24케이스, `explain_quality`, [ADR 0005](docs/adr/0005-explain-quality-eval.md)) | 규칙 통과 18/24 — 2문장 한도·첫 문장 극성으로 고친 검사기로 저장된 설명을 다시 채점한 값(재채점 전 21/24, 1차 10/22; 폴백 2→0), 모순 없음 deepseek 20/22·판정자 2명 합의 17/22, 도움 평균 4.00·3.21/5 (judge2 = gpt-oss-20b, 생성 모델과 다른 벤더) |
 
 **데이터 출처별 성능 (포트폴리오판 vs 공개·오픈 라이선스판)** — coffeereview(Kaggle) 데이터는 라이선스상 비상업 포트폴리오 용도로만 쓰므로, 그 데이터를 뺀 공개·오픈 라이선스 소스(CQI·RoasterDB·블루보틀)만으로도 같은 평가를 다시 돌렸다.
 
