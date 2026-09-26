@@ -1,6 +1,7 @@
 from dataclasses import replace
 
-from app.eval import LOO_TARGET_SOURCES, NEVER_LOO_TARGETS, OPEN_LICENSE_EXCLUDE, VARIANTS, independent_ok, rank_decaf, violation_rate
+from app.eval import (LOO_TARGET_SOURCES, NEVER_LOO_TARGETS, OPEN_LICENSE_EXCLUDE, PERSONAS, VARIANTS, independent_ok,
+                      rank_decaf, summarize_explain_quality, violation_rate)
 from app.models import Item, Profile
 from tests.app.fakes import FakeRepo
 
@@ -81,3 +82,42 @@ def test_rank_decaf_counts_candidates_and_ranks_by_fit():
     assert (r["candidates"], r["with_evidence"]) == (3, 2)
     assert r["by_source"] == {"roasters_kr": 2, "cqi": 1}
     assert [t["name"] for t in r["top"]] == ["bright", "dark"] and r["top"][0]["source"] == "roasters_kr"
+
+
+def test_explain_cases_file_is_well_formed():
+    from app.eval import load_explain_cases
+    cases = load_explain_cases()
+    assert len(cases) == 24 and len({c["id"] for c in cases}) == 24
+    assert {c["persona"] for c in cases} == {p for p, _ in PERSONAS}
+    assert sum(1 for c in cases if c["violation"]) >= 4
+    assert all(isinstance(c["item"], Item) for c in cases)
+    assert {c["item"].source for c in cases} == {"db", "brand_bean", "predicted"}
+    assert sum(1 for c in cases if c["score"] <= 0.35) >= 2 and sum(1 for c in cases if c["score"] >= 0.85) >= 2
+    assert all(c["prediction"] is not None for c in cases if c["item"].source == "predicted")
+
+
+def _row(fallback=False, rules_ok=True, j1=None, j2=None, first=1.0):
+    rules = {"foreign_words": True, "length": rules_ok, "numbers_grounded": True, "condition_mentioned": True,
+             "polarity": True}
+    return {"fallback": fallback, "first_token_s": None if fallback else first, "rules": rules,
+            "judges": {"judge": j1, "judge2": j2}}
+
+
+def _v(c=False, h=False, helpful=4):
+    return {"contradiction": c, "hallucination": h, "helpful": helpful}
+
+
+def test_summarize_explain_quality_counts_generated_only():
+    rows = [_row(j1=_v(), j2=_v(helpful=2), first=1.0),
+            _row(rules_ok=False, j1=_v(c=True), j2=_v(), first=3.0),
+            _row(j1=_v(h=True), j2=None, first=2.0),
+            _row(fallback=True, j1=_v(c=True), j2=_v(c=True))]
+    s = summarize_explain_quality(rows)
+    assert (s["n"], s["generated"], s["fallbacks"]) == (4, 3, 1)
+    assert s["rule_pass_rate"] == round(2 / 3, 4) and s["rule_failures"]["length"] == 1
+    assert s["judged_both"] == 2                     # the judge2=None row is left out of two-judge rates
+    assert s["no_contradiction_rate_both"] == 0.5 and s["no_hallucination_rate_both"] == 1.0
+    assert s["judge_agreement"] == {"contradiction": 0.5, "hallucination": 1.0}
+    assert s["helpful_mean"] == {"judge": 4.0, "judge2": 3.0}
+    assert s["judge_failures"] == {"judge": 0, "judge2": 1}
+    assert s["first_token_p50"] == 2.0 and s["first_token_p95"] == 2.9
