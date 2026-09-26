@@ -1,0 +1,122 @@
+﻿key,name_en,name_ko,level
+fruity,fruity,과일,1
+fruity>berry,berry,베리,2
+fruity>dried fruit,dried fruit,말린 과일,2
+fruity>other fruit,other fruit,기타 과일,2
+fruity>citrus fruit,citrus fruit,시트러스,2
+sour/fermented,sour/fermented,신맛/발효,1
+sour/fermented>sour,sour,신맛,2
+sour/fermented>alcohol fermented,alcohol fermented,알코올/발효,2
+green/vegetative,green/vegetative,풀/채소,1
+green/vegetative>olive oil,olive oil,올리브유,2
+green/vegetative>raw,raw,날것,2
+green/vegetative>green vegetative,green vegetative,풋내,2
+green/vegetative>beany,beany,콩비린내,2
+other,other,기타,1
+other>chemical,chemical,화학적,2
+other>papery/musty,papery/musty,종이/곰팡내,2
+roasted,roasted,로스팅,1
+roasted>cereal,cereal,곡물,2
+roasted>burnt,burnt,탄맛,2
+roasted>tobacco,tobacco,담배,2
+roasted>pipe tobacco,pipe tobacco,파이프 담배,2
+spices,spices,향신료,1
+spices>brown spice,brown spice,브라운 스파이스,2
+spices>pepper,pepper,후추,2
+spices>pungent,pungent,자극적,2
+nutty/cocoa,nutty/cocoa,견과/코코아,1
+nutty/cocoa>cocoa,cocoa,코코아,2
+nutty/cocoa>nutty,nutty,견과,2
+sweet,sweet,단맛,1
+sweet>brown sugar,brown sugar,흑설탕,2
+sweet>vanilla,vanilla,바닐라,2
+sweet>vanillin,vanillin,바닐린,2
+sweet>overall sweet,overall sweet,전반적 단맛,2
+sweet>sweet aromatics,sweet aromatics,달콤한 향,2
+floral,floral,꽃,1
+floral>black tea,black tea,홍차,2
+floral>floral,floral,꽃향,2
+fruity>berry>blackberry,blackberry,블랙베리,3
+fruity>berry>blueberry,blueberry,블루베리,3
+fruity>berry>strawberry,strawberry,딸기,3
+fruity>berry>raspberry,raspberry,라즈베리,3
+fruity>dried fruit>raisin,raisin,건포도,3
+fruity>dried fruit>prune,prune,말린 자두,3
+fruity>other fruit>coconut,coconut,코코넛,3
+fruity>other fruit>cherry,cherry,체리,3
+fruity>other fruit>pomegranate,pomegranate,석류,3
+fruity>other fruit>pinapple,pinapple,파인애플,3
+fruity>other fruit>grape,grape,포도,3
+fruity>other fruit>apple,apple,사과,3
+fruity>other fruit>peach,peach,복숭아,3
+fruity>other fruit>pear,pear,배,3
+fruity>citrus fruit>grapefruit,grapefruit,자몽,3
+fruity>citrus fruit>orange,orange,오렌지,3
+fruity>citrus fruit>lemon,lemon,레몬,3
+fruity>citrus fruit>lime,lime,라임,3
+sour/fermented>sour>sour aromatic,sour aromatic,새콤한 향,3
+sour/fermented>sour>acetic acid,acetic acid,식초산,3
+sour/fermented>sour>butyric acid,butyric acid,버터산,3
+sour/fermented>sour>isovaleric acid,isovaleric acid,이소발레르산,3
+sour/fermented>sour>citric acid,citric acid,구연산,3
+sour/fermented>sour>malic acid,malic acid,사과산,3
+sour/fermented>alcohol fermented>winey,winey,와인,3
+sour/fermented>alcohol fermented>whiskey,whiskey,위스키,3
+sour/fermented>alcohol fermented>overripe,overripe,과숙,3
+sour/fermented>alcohol fermented>fermented,fermented,발효,3
+green/vegetative>olive oil>olive oil,olive oil,올리브유,3
+green/vegetative>raw>raw,raw,날것,3
+green/vegetative>green vegetative>under-ripe,under-ripe,덜 익은,3
+green/vegetative>green vegetative>peapod,peapod,완두콩 꼬투리,3
+green/vegetative>green vegetative>fresh,fresh,신선한 풀,3
+green/vegetative>green vegetative>dark green,dark green,짙은 풀,3
+green/vegetative>green vegetative>vegetative,vegetative,채소,3
+green/vegetative>green vegetative>hay-like,hay-like,건초,3
+green/vegetative>green vegetative>herb-like,herb-like,허브,3
+green/vegetative>beany>beany,beany,콩비린내,3
+other>chemical>rubber,rubber,고무,3
+other>chemical>skunky,skunky,스컹크,3
+other>chemical>petroleum,petroleum,석유,3
+other>chemical>medicinal,medicinal,약품,3
+other>chemical>salty,salty,짠맛,3
+other>chemical>bitter,bitter,쓴맛,3
+other>papery/musty>phenolic,phenolic,페놀,3
+other>papery/musty>meaty/brothy,meaty/brothy,고기/육수,3
+other>papery/musty>animalic,animalic,동물성,3
+other>papery/musty>musty/earthy,musty/earthy,흙내,3
+other>papery/musty>musty/dusty,musty/dusty,먼지내,3
+other>papery/musty>moldy/damp,moldy/damp,곰팡이,3
+other>papery/musty>woody,woody,나무,3
+other>papery/musty>papery,papery,종이,3
+other>papery/musty>stale,stale,묵은 맛,3
+roasted>cereal>malt,malt,몰트,3
+roasted>cereal>grain,grain,곡물,3
+roasted>burnt>brown roast,brown roast,진한 로스팅,3
+roasted>burnt>smoky,smoky,스모키,3
+roasted>burnt>ashy,ashy,재,3
+roasted>burnt>acrid,acrid,매캐함,3
+roasted>tobacco>tobacco,tobacco,담배,3
+roasted>pipe tobacco>pipe tobacco,pipe tobacco,파이프 담배,3
+spices>brown spice>clove,clove,정향,3
+spices>brown spice>cinnamon,cinnamon,시나몬,3
+spices>brown spice>nutmeg,nutmeg,육두구,3
+spices>brown spice>anise,anise,아니스,3
+spices>pepper>pepper,pepper,후추,3
+spices>pungent>pungent,pungent,자극적,3
+nutty/cocoa>cocoa>dark chocolate,dark chocolate,다크 초콜릿,3
+nutty/cocoa>cocoa>chocolate,chocolate,초콜릿,3
+nutty/cocoa>nutty>hazelnut,hazelnut,헤이즐넛,3
+nutty/cocoa>nutty>peanuts,peanuts,땅콩,3
+nutty/cocoa>nutty>almonds,almonds,아몬드,3
+sweet>brown sugar>molasses,molasses,당밀,3
+sweet>brown sugar>caramelized,caramelized,캐러멜,3
+sweet>brown sugar>maple syrup,maple syrup,메이플 시럽,3
+sweet>brown sugar>honey,honey,꿀,3
+sweet>vanilla>vanilla,vanilla,바닐라,3
+sweet>vanillin>vanillin,vanillin,바닐린,3
+sweet>overall sweet>overall sweet,overall sweet,전반적 단맛,3
+sweet>sweet aromatics>sweet aromatics,sweet aromatics,달콤한 향,3
+floral>black tea>black tea,black tea,홍차,3
+floral>floral>chamomile,chamomile,캐모마일,3
+floral>floral>rose,rose,장미,3
+floral>floral>jasmine,jasmine,재스민,3

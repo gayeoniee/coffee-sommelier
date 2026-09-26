@@ -215,6 +215,7 @@ data/enriched/
 data/embedded/
 data/reports/
 !data/eval/*.csv
+!data/competition/*.csv
 
 # web
 web/node_modules/

@@ -1,0 +1,32 @@
+﻿변수번호,타깃여부,타입,컬럼명,비고
+1,N,text,coffees.key,원두 고유 식별자(예: cqi:xyz)
+2,N,text,coffees.name,원두 이름
+3,N,text,coffees.roaster,로스터리/브랜드명
+4,N,text,coffees.origin_country,원산지 국가
+5,N,text,coffees.origin_region,원산지 지역
+6,N,text,coffees.process,"가공 방식(예: washed, natural)"
+7,N,text,coffees.roast_level,로스팅 정도
+8,N,boolean,coffees.is_decaf,디카페인 원두 여부
+9,N,text,coffees.decaf_process,디카페인 처리 공정(해당 시)
+10,N,integer,coffees.acidity,산미 강도 1~5
+11,N,integer,coffees.body,바디감 1~5
+12,N,integer,coffees.sweetness,단맛 1~5
+13,N,text[],coffees.flavor_tags,플레이버 태그 목록(세미콜론 구분)
+14,N,text,coffees.source,"데이터 출처(cqi, roasters_kr, shopify)"
+15,N,text,coffees.source_url,출처 URL
+16,N,date,coffees.collected_at,수집일(YYYY-MM-DD)
+17,N,text,menu_items.brand_key,브랜드 고유 식별자(05_데이터셋_brands.csv의 key)
+18,N,text,menu_items.name,메뉴명
+19,N,text,menu_items.name_en,메뉴 영문명(있는 경우)
+20,N,text,menu_items.category,메뉴 카테고리
+21,N,boolean,menu_items.is_decaf,디카페인 메뉴 여부
+22,N,boolean,menu_items.decaf_option,디카페인 옵션 제공 여부
+23,N,real,menu_items.caffeine_mg,"카페인 함량(mg, 공식 고시 기준)"
+24,N,text,menu_items.source_url,출처 URL(브랜드 공식 사이트)
+25,N,date,menu_items.collected_at,수집일(YYYY-MM-DD)
+26,N,text,brands.key,브랜드 고유 식별자
+27,N,text,brands.name,브랜드명
+28,N,boolean,brands.decaf_available,디카페인 옵션 제공 여부
+29,N,integer,brands.decaf_surcharge_krw,"디카페인 추가 요금(원, 없으면 공란)"
+30,N,text,brands.source_url,출처 URL(브랜드 공식 사이트)
+31,N,date,brands.verified_at,확인일(YYYY-MM-DD)
