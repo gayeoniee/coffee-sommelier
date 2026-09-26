@@ -208,8 +208,12 @@ def compare3(repo, n: int = 200, seed: int = 42) -> dict:
 
 
 def loo_repro(repo, n: int = 200, seed: int = 42) -> dict:
-    """Run loo_accuracy twice and check the JSON output is byte-identical — proves neighbor tie-break by id
-    (ADR 0006) makes leave-one-out results reproducible run to run, not just stable in aggregate."""
+    """Run loo_accuracy twice and check the JSON output is byte-identical.
+
+    What this shows: on the same index and the same queries the results are identical, and the id tie-break
+    (ADR 0006) removes the dependence on physical row order among equal distances. What it does not show:
+    identity across a reload — HNSW graph construction is randomised, so a rebuilt index can return a
+    different candidate set; the tie-break only reduces that noise, it does not guarantee equality."""
     dumps = [json.dumps(loo_accuracy(repo, n, seed), ensure_ascii=False, sort_keys=True) for _ in range(2)]
     hashes = [hashlib.sha256(d.encode()).hexdigest() for d in dumps]
     return {"runs": 2, "identical": hashes[0] == hashes[1], "sha256": hashes}
