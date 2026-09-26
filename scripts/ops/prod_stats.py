@@ -61,10 +61,10 @@ def parse_events(lines: Iterable[str]) -> list[dict]:
     return events
 
 
-def _percentile(values: list[float], pct: float) -> float:
-    """선형 보간 백분위수(numpy.percentile 기본값과 동일한 방식). 값이 없으면 0.0."""
+def _percentile(values: list[float], pct: float) -> float | None:
+    """선형 보간 백분위수(numpy.percentile 기본값과 동일한 방식). 값이 없으면 None(0ms로 읽히지 않게)."""
     if not values:
-        return 0.0
+        return None
     ordered = sorted(values)
     if len(ordered) == 1:
         return float(ordered[0])
@@ -85,6 +85,9 @@ def summarize(events: list[dict], window: dict | None = None) -> dict:
     - `first_token_ms_p50`/`first_token_ms_p95`: 모든 이벤트의 `ms_first_token`을 합친 분포
     - `error_rate`: `error: true`인 이벤트 비율
     - `window`: 호출자가 넘긴 조회 구간 메타데이터(그대로 반영, 없으면 `{}`)
+    - `hedged`/`hedge_won`: 헤지 요청을 보낸 횟수 / 헤지 쪽이 이긴 횟수(로그에 해당 필드가 있을 때만)
+
+    분모가 없으면(카드 0장, 첫 토큰 기록 없음, 이벤트 0개) 해당 지표는 0이 아니라 None — "데이터 없음"이다.
     """
     requests_by_evt: dict[str, int] = {}
     total_cards = 0
@@ -102,32 +105,30 @@ def summarize(events: list[dict], window: dict | None = None) -> dict:
             error_count += 1
 
     total_events = len(events)
-    return {
+    summary = {
         "requests_by_evt": requests_by_evt,
-        "fallback_rate": (total_fallback / total_cards) if total_cards else 0.0,
+        "fallback_rate": (total_fallback / total_cards) if total_cards else None,
         "first_token_ms_p50": _percentile(first_tokens, 0.5),
         "first_token_ms_p95": _percentile(first_tokens, 0.95),
-        "error_rate": (error_count / total_events) if total_events else 0.0,
+        "error_rate": (error_count / total_events) if total_events else None,
         "window": dict(window) if window else {},
     }
+    # 헤지 요청(ADR 0004) 카운터: 이를 기록하는 버전의 로그가 있을 때만 싣는다.
+    if any("hedged" in e or "hedge_won" in e for e in events):
+        summary["hedged"] = sum(int(e.get("hedged") or 0) for e in events)
+        summary["hedge_won"] = sum(int(e.get("hedge_won") or 0) for e in events)
+    return summary
 
 
-def _get_owner_id(client: httpx.Client) -> str:
-    resp = client.get(f"{RENDER_API_BASE}/owners", params={"limit": 1})
-    resp.raise_for_status()
-    data = resp.json()
-    if not data:
-        raise RuntimeError("Render 계정에 접근 가능한 owner가 없습니다.")
-    return data[0]["owner"]["id"]
-
-
-def _get_service_id(client: httpx.Client, service_name: str) -> str:
+def _get_service(client: httpx.Client, service_name: str) -> tuple[str, str]:
+    """(service id, 그 서비스의 ownerId). owner는 서비스 응답에서 가져온다 — `/owners`의 첫 항목은 다른 팀일 수 있다."""
     resp = client.get(f"{RENDER_API_BASE}/services", params={"name": service_name, "limit": 1})
     resp.raise_for_status()
     data = resp.json()
     if not data:
         raise RuntimeError(f"Render 서비스 '{service_name}'를 찾을 수 없습니다.")
-    return data[0]["service"]["id"]
+    service = data[0]["service"]
+    return service["id"], service["ownerId"]
 
 
 def fetch_logs(
@@ -140,15 +141,14 @@ def fetch_logs(
 ) -> list[str]:
     """Render 로그 API에서 최근 `hours`시간의 로그 메시지를 모두 가져온다(페이지네이션 포함).
 
-    서비스 id는 `/v1/services?name=<service_name>`, owner id는 `/v1/owners`로 조회한 뒤
+    서비스 id와 그 서비스의 ownerId를 `/v1/services?name=<service_name>` 한 번으로 조회한 뒤
     `/v1/logs`를 `hasMore`가 꺼질 때까지 `nextStartTime`/`nextEndTime`으로 계속 요청한다.
     """
     owns_client = client is None
     if client is None:
         client = httpx.Client(headers={"Authorization": f"Bearer {api_key}"}, timeout=30.0)
     try:
-        owner_id = _get_owner_id(client)
-        service_id = _get_service_id(client, service_name)
+        service_id, owner_id = _get_service(client, service_name)
 
         end_time = now or dt.datetime.now(dt.timezone.utc)
         start_time = end_time - dt.timedelta(hours=hours)
@@ -181,6 +181,10 @@ def fetch_logs(
             client.close()
 
 
+def _fmt(value: float | None, spec: str) -> str:
+    return "데이터 없음" if value is None else format(value, spec)
+
+
 def _format_table(summary: dict) -> str:
     lines = ["| 지표 | 값 |", "|---|---|"]
     window = summary.get("window", {})
@@ -189,10 +193,12 @@ def _format_table(summary: dict) -> str:
     total_requests = sum(summary["requests_by_evt"].values())
     by_evt = ", ".join(f"{k}={v}" for k, v in sorted(summary["requests_by_evt"].items())) or "-"
     lines.append(f"| 요청 수 | {total_requests} ({by_evt}) |")
-    lines.append(f"| 폴백 비율 | {summary['fallback_rate']:.3f} |")
-    lines.append(f"| 첫 토큰 p50 (ms) | {summary['first_token_ms_p50']:.1f} |")
-    lines.append(f"| 첫 토큰 p95 (ms) | {summary['first_token_ms_p95']:.1f} |")
-    lines.append(f"| 에러율 | {summary['error_rate']:.3f} |")
+    lines.append(f"| 폴백 비율 | {_fmt(summary['fallback_rate'], '.3f')} |")
+    lines.append(f"| 첫 토큰 p50 (ms) | {_fmt(summary['first_token_ms_p50'], '.1f')} |")
+    lines.append(f"| 첫 토큰 p95 (ms) | {_fmt(summary['first_token_ms_p95'], '.1f')} |")
+    lines.append(f"| 에러율 | {_fmt(summary['error_rate'], '.3f')} |")
+    if "hedged" in summary:
+        lines.append(f"| 헤지 발사 / 헤지 승 | {summary['hedged']} / {summary['hedge_won']} |")
     return "\n".join(lines)
 
 

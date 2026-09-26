@@ -163,7 +163,7 @@ gh variable delete KEEP_WARM_URL                                                
 
 ## 8. 운영 통계 (Render 로그)
 
-`app/telemetry.py`가 추천·분석 스트림이 끝날 때마다 JSON 한 줄(`evt`, `cards`, `ms_total`, `ms_first_token`, `fallback`, `error`)을 `logging`으로 남긴다. `scripts/ops/prod_stats.py`가 Render 로그 API로 최근 N시간의 로그를 받아 그 줄만 골라 폴백 비율·첫 토큰 p50/p95·에러율을 집계한다.
+`app/telemetry.py`가 추천·분석 스트림이 끝날 때마다 JSON 한 줄(`evt`, `cards`, `ms_total`, `ms_first_token`, `fallback`, `error`, `aborted` — 클라이언트가 스트림 도중 끊으면 true)을 `create_app`이 붙인 전용 stdout 핸들러로 남긴다(uvicorn 기본 설정에선 루트 로거가 WARNING이라 핸들러 없이는 INFO 줄이 버려진다). `scripts/ops/prod_stats.py`가 Render 로그 API로 최근 N시간의 로그를 받아 그 줄만 골라 폴백 비율·첫 토큰 p50/p95·에러율을 집계한다.
 
 ```bash
 uv run python scripts/ops/prod_stats.py --hours 24

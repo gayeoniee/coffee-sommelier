@@ -49,11 +49,18 @@ tasks:
     timeout: 120
     max_tokens: 3000
   # second judge from a different vendor, for inter-judge agreement.
-  # 1단계 골드셋 라벨링(data/eval/gold_enrich_judge2.csv)은 judge2 = nvidia/nemotron-3-super-120b-a12b로 만들었다(재라벨링 안 함).
-  # 설명 품질 평가에서 nemotron은 설명 생성 모델(explain)과 같아 자기 채점이 되므로 다른 벤더로 교체(ADR 0005 "2차").
+  # 1단계 골드셋 라벨링(data/eval/gold_enrich_judge2.csv)을 만든 모델 — 재현성을 위해 그대로 둔다.
+  judge2:
+    provider: nvidia
+    model: nvidia/nemotron-3-super-120b-a12b
+    timeout: 120
+    max_tokens: 4000
+    extra: {chat_template_kwargs: {enable_thinking: false}}
+  # 설명 품질 평가(app.eval explain_quality)의 두 번째 판정자. judge2(nemotron)는 설명 생성 모델(explain)과 같아
+  # 자기 채점이 되므로 다른 벤더로 따로 둔다(ADR 0005 "2차"; 결과 JSON에서는 "judge2" 자리에 기록).
   # 후보 탐침: gemma-4-31b 55~98초, kimi-k3 138초(thinking 켜면 JSON 깨짐), glm-5.3-flash 180초 타임아웃,
   # gpt-oss-20b 2.4~3.0초·JSON 준수 → 채택. thinking을 끌 수 없는 모델이라 reasoning_effort를 low로.
-  judge2:
+  judge_explain2:
     provider: nvidia
     model: openai/gpt-oss-20b
     timeout: 120

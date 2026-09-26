@@ -174,3 +174,5 @@ def test_length_rule_is_last_with_example():
     assert "최대 2문장" in rule and "첫 문장은 결론과 가장 큰 이유" in rule and "true/false" in rule
     example = rule.split("예:")[1]
     assert example.count(".") == 2 and not any(ch.isdigit() for ch in example)   # no numbers to copy
+    # placeholders only: a concrete example ("강한 산미와 과일 향") got copied into explanations as if it were fact
+    assert example.count("〔") >= 3 and "산미" not in example and "과일" not in example

@@ -36,7 +36,7 @@ def test_condition_and_polarity():
 
 
 def test_sentence_splitter_ignores_fragments_without_hangul():
-    t = "산미 4.5를 좋아하는 손님께 맞아요. 바디 2.5도 가까워요. 향미도 좋아요. (72%)."
+    t = "산미 4.5를 좋아하는 손님께 맞아요. 바디 2.5도 가까워요. (72%)."
     assert check_explanation(t, P, 72, None)["length"] is True       # decimals and "(72%)." are not sentences
     assert check_explanation("하나예요. 둘이에요. 셋이에요. 넷이에요.", P, 72, None)["length"] is False
 
@@ -46,3 +46,41 @@ def test_polarity_relaxed_when_violation_set():
     assert check_explanation("카페인 조건에 맞지 않아요.", P, 86, v)["polarity"] is True
     assert check_explanation("취향에 잘 맞아 추천해요.", P, 30, v)["polarity"] is True
     assert check_explanation("취향과 맞지 않아요.", P, 86, None)["polarity"] is False
+
+
+def test_negative_patterns_win_over_positive_substrings():
+    # "잘 맞지 않" contains the positive "잘 맞" but is a negative conclusion
+    assert check_explanation("산미가 약해 손님 취향과 잘 맞지 않아요.", P, 30, None)["polarity"] is True
+
+
+def test_polarity_is_judged_on_the_first_sentence_only():
+    t = "과일 향과 강한 산미가 취향에 잘 맞아요. 바디만 선호와 조금 거리가 있지만 큰 차이는 아니에요."
+    assert check_explanation(t, P, 85, None)["polarity"] is True
+    assert check_explanation("취향과 거리가 있어요. 그래도 향은 잘 맞아요.", P, 30, None)["polarity"] is True
+
+
+def test_fit_score_described_as_low_or_high_is_a_polarity_signal():
+    assert check_explanation("적합도가 90%로 낮아 추천하기 어려워요.", P, 90, None)["polarity"] is False
+    assert check_explanation("적합도가 30%로 높아 부담 없이 드실 수 있어요.", P, 30, None)["polarity"] is False
+    assert check_explanation("적합도가 90%로 높아 취향에 가까워요.", P, 90, None)["polarity"] is True
+
+
+def test_thousands_separators_are_grounded():
+    p = P | {"디카페인 추가요금(원)": 1500}
+    assert check_explanation("디카페인으로 바꿔 주문하면 +1,500원이에요.", p, 72, None)["numbers_grounded"] is True
+    assert check_explanation("디카페인으로 바꿔 주문하면 +2,500원이에요.", p, 72, None)["numbers_grounded"] is False
+
+
+def test_condition_mentioned_requires_the_violated_conditions_own_keyword():
+    milk = "우유가 들어가요"
+    assert check_explanation("디카페인이라 카페인 걱정은 없어요.", P, 50, milk)["condition_mentioned"] is False
+    assert check_explanation("우유가 들어가 조건에 맞지 않아요.", P, 50, milk)["condition_mentioned"] is True
+    caf = "카페인이 100mg을 넘거나 알 수 없어요"
+    assert check_explanation("우유가 없어 가볍게 즐기기 좋아요.", P, 50, caf)["condition_mentioned"] is False
+    assert check_explanation("카페인이 많을 수 있어 확인이 필요해요.", P, 50, caf)["condition_mentioned"] is True
+    assert check_explanation("디카페인으로 바꿔 드세요.", P, 50, "디카페인이 아니에요")["condition_mentioned"] is True
+
+
+def test_max_sentences_matches_the_two_sentence_product_rule():
+    assert check_explanation("하나예요. 둘이에요.", P, 72, None)["length"] is True
+    assert check_explanation("하나예요. 둘이에요. 셋이에요.", P, 72, None)["length"] is False

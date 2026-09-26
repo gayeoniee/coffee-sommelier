@@ -148,6 +148,26 @@ def test_filtered_query_returns_k_rows_through_hnsw(db_conn):
     assert [h["score"] for h in hits] == sorted((h["score"] for h in hits), reverse=True)
 
 
+def test_similar_excludes_inactive_coffees(db_conn):
+    """similar() should not return retired (active=false) coffees."""
+    v = vec(0)
+    db_conn.execute(
+        "INSERT INTO coffees (key, name, is_decaf, embedding, source, collected_at, active) "
+        "VALUES (%s, %s, %s, %s::vector, 't', '2026-09-26', %s)",
+        ("active-coffee", "Active Coffee", False, to_vector_literal(v), True)
+    )
+    db_conn.execute(
+        "INSERT INTO coffees (key, name, is_decaf, embedding, source, collected_at, active) "
+        "VALUES (%s, %s, %s, %s::vector, 't', '2026-09-26', %s)",
+        ("inactive-coffee", "Inactive Coffee", False, to_vector_literal(v), False)
+    )
+    db_conn.commit()
+
+    hits = similar(db_conn, FixedEmbedder(), "test", k=10)
+    assert len(hits) == 1
+    assert hits[0]["name"] == "Active Coffee"
+
+
 def _add_tasting(conn, coffee_key=None, menu_key=None):
     uid = conn.execute("INSERT INTO users DEFAULT VALUES RETURNING id").fetchone()[0]
     cid = conn.execute("SELECT id FROM coffees WHERE key = %s", (coffee_key,)).fetchone()[0] if coffee_key else None
