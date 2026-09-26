@@ -222,3 +222,6 @@ web/test-results/
 web/playwright-report/
 web/.env*.local
 !web/lib/
+
+# deploy
+.vercel
