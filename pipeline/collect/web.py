@@ -144,6 +144,9 @@ class HollysCollector:
         p = out_dir / "espresso.html"
         p.write_text(http.get(HOLLYS_URL).text, encoding="utf-8")
         return [p]
+
+
+@dataclass
 class PaulbassettCollector:
     """The site's TLS chain is self-signed, so this collector builds its own client with
     verify=False (the only place this project does that) instead of using the passed-in http
@@ -152,15 +155,15 @@ class PaulbassettCollector:
     name: str = "paulbassett"
 
     def collect(self, out_dir: Path, http) -> list[Path]:
-        pb_http = PoliteClient(delay=http._delay, verify=False)
         files = []
-        list_html = pb_http.get(PAULBASSETT_LIST_URL, params={"cid1": "A"}).text
-        p = out_dir / "list.html"
-        p.write_text(list_html, encoding="utf-8")
-        files.append(p)
-        for dpid in dict.fromkeys(PAULBASSETT_DPID_RE.findall(list_html)):
-            detail = pb_http.get(PAULBASSETT_VIEW_URL, params={"dpid": dpid}).text
-            dp = out_dir / f"{dpid}.html"
-            dp.write_text(detail, encoding="utf-8")
-            files.append(dp)
+        with PoliteClient(delay=http.delay, verify=False) as pb_http:
+            list_html = pb_http.get(PAULBASSETT_LIST_URL, params={"cid1": "A"}).text
+            p = out_dir / "list.html"
+            p.write_text(list_html, encoding="utf-8")
+            files.append(p)
+            for dpid in dict.fromkeys(PAULBASSETT_DPID_RE.findall(list_html)):
+                detail = pb_http.get(PAULBASSETT_VIEW_URL, params={"dpid": dpid}).text
+                dp = out_dir / f"{dpid}.html"
+                dp.write_text(detail, encoding="utf-8")
+                files.append(dp)
         return files

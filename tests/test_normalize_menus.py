@@ -2,6 +2,8 @@ import json
 import shutil
 from pathlib import Path
 
+import pytest
+
 FIXTURES = Path(__file__).parent / "fixtures"
 
 
@@ -27,6 +29,13 @@ MEGA_HTML = """
    <div class="cont_text_inner cont_text_title"><b>디카페인 아메리카노</b></div>
    <div class="cont_text_inner cont_text_info">Decaf Americano</div></div>
  </div><div class="cont_list"><ul><li>당류 0g</li><li>카페인 11.4mg</li></ul></div></div>
+</li>
+<li><a class="inner_modal_open"></a>
+ <div class="inner_modal"><div class="cont_text_box">
+  <div class="cont_text inner_modal_title">
+   <div class="cont_text_inner cont_text_title"><b>레몬에이드</b></div>
+   <div class="cont_text_inner cont_text_info">Lemon Ade</div></div>
+ </div><div class="cont_list"><ul><li>당류 32g</li><li>카페인 0mg</li></ul></div></div>
 </li></ul>
 """
 PAIK_HTML = """
@@ -44,16 +53,28 @@ def test_starbucks(tmp_path):
         {"product_CD": "1", "product_NM": "아메리카노", "product_ENGNM": "", "cate_NAME": "아메리카노", "caffeine": "150"},
         {"product_CD": "2", "product_NM": "디카페인 카페 라떼", "cate_NAME": "라떼", "caffeine": ""},
     ]}, ensure_ascii=False), encoding="utf-8")
+    # W0000004 (블렌디드 커피) also carries non-coffee cream frappuccinos with 0mg caffeine, e.g. the real
+    # "화이트 타이거 프라푸치노": menu_is_decaf's <=15mg rule must not brand these "decaf" (they were never
+    # coffee to begin with), so starbucks stays on name-only detect_decaf for is_decaf.
+    (tmp_path / "W0000004.json").write_text(json.dumps({"list": [
+        {"product_CD": "3", "product_NM": "화이트 타이거 프라푸치노", "cate_NAME": "블렌디드 커피", "caffeine": "0"},
+    ]}, ensure_ascii=False), encoding="utf-8")
     items = normalize_starbucks(tmp_path, "2026-09-24").menu_items
     assert [(i.key, i.caffeine_mg, i.is_decaf, i.decaf_option) for i in items] == [
-        ("menu:starbucks:1", 150.0, False, True), ("menu:starbucks:2", None, True, True)]
+        ("menu:starbucks:1", 150.0, False, True), ("menu:starbucks:2", None, True, True),
+        ("menu:starbucks:3", 0.0, False, False)]
     assert items[0].name_en is None
 
 
 def test_mega(tmp_path):
     (tmp_path / "page_1.html").write_text(MEGA_HTML, encoding="utf-8")
-    [item] = normalize_mega(tmp_path, "2026-09-24").menu_items
-    assert (item.name, item.name_en, item.caffeine_mg, item.is_decaf) == ("디카페인 아메리카노", "Decaf Americano", 11.4, True)
+    items = normalize_mega(tmp_path, "2026-09-24").menu_items
+    by = {i.name: i for i in items}
+    assert (by["디카페인 아메리카노"].name_en, by["디카페인 아메리카노"].caffeine_mg, by["디카페인 아메리카노"].is_decaf) == ("Decaf Americano", 11.4, True)
+    # mega's single collected URL (menu_category1=1&menu_category2=1) also lists non-coffee drinks (ades,
+    # smoothies, teas) with 0mg caffeine, e.g. the real "레몬에이드": the <=15mg rule must not brand these
+    # "decaf" either, so mega also stays on name-only detect_decaf for is_decaf.
+    assert by["레몬에이드"].is_decaf is False
 
 
 def test_paik_dedupes_and_reads_caffeine(tmp_path):
@@ -68,12 +89,14 @@ def test_compose_parses_names_caffeine_decaf(tmp_path):
     snap = _copy_fixture("menus/compose", tmp_path)
     items = normalize_compose(snap, "2026-09-27").menu_items
     by = {i.name: i for i in items}
-    assert len(items) == 4       # H-/I-아메리카노 and H-/I-디카페인 아메리카노 each merge into one
+    assert len(items) == 5       # H-/I-아메리카노 and H-/I-디카페인 아메리카노 each merge into one
     assert by["아메리카노"].caffeine_mg == 185.81      # larger of HOT (150.00) / ICED (185.81)
     assert by["디카페인 아메리카노"].is_decaf and not by["디카페인 아메리카노"].decaf_option
     assert by["아메리카노"].decaf_option is True        # 커피ㆍ콜드브루 is compose's decaf-shot category
     assert by["쫀득카노"].caffeine_mg == 85.0            # no H-/I- prefix: kept as-is, not merged away
     assert by["빅포즈 아메리카노"].caffeine_mg == 371.62  # ICED-only size: no HOT counterpart to merge with
+    # not named decaf, but 9.16mg caffeine is <= the 15mg menu_is_decaf threshold
+    assert by["올데이 오트"].caffeine_mg == 9.16 and by["올데이 오트"].is_decaf
     assert all(i.brand_key == "brand:compose" and i.key.startswith("menu:compose:") for i in items)
     assert all(i.category == "커피ㆍ콜드브루" for i in items)
 def test_paulbassett_parses_names_caffeine_decaf(tmp_path):
@@ -208,12 +231,56 @@ def test_menu_decaf_option_rule():
     assert menu_decaf_option(b.model_copy(update={"decaf_available": False}), "에스프레소", False) is False
 
 
+def test_menu_is_decaf_by_caffeine_threshold():
+    """A coffee-category drink can be decaf without the word appearing in its name (컴포즈 「올데이 오트」
+    9.16 mg): caffeine_mg <= 15 counts as decaf too, on top of the name-word check."""
+    from pipeline.normalize.menus import menu_is_decaf
+    assert menu_is_decaf("아메리카노", 182.0) is False
+    assert menu_is_decaf("디카페인 아메리카노", 182.0) is True    # named decaf regardless of caffeine
+    assert menu_is_decaf("올데이 오트", 9.16) is True             # not named decaf, but caffeine <= 15mg
+    assert menu_is_decaf("올데이 오트", 15.0) is True             # boundary: <= 15 counts
+    assert menu_is_decaf("올데이 오트", 15.01) is False
+    assert menu_is_decaf("올데이 오트", None) is False            # no caffeine reading: can't tell from mg
+
+
+def test_menu_decaf_option_no_shot_words():
+    """A decaf espresso shot doesn't make these drinks decaf: they either have no espresso shot to swap
+    (말차/큐브/믹스커피 are not espresso-based) or are already a fixed daily-brew blend (데일리커피)."""
+    from pipeline.normalize.menus import menu_decaf_option
+    from pipeline.records import BrandRecord
+    b = BrandRecord(key="brand:x", name="x", decaf_available=True, verified_at="2026-09-27",
+                    decaf_option_categories=["에스프레소"])
+    for word in ("말차", "큐브", "믹스커피", "데일리커피"):
+        assert menu_decaf_option(b, "에스프레소", False, name=word) is False
+        assert menu_decaf_option(b, "에스프레소", False, name=f"{word} 라떼") is False
+        assert menu_decaf_option(b, "에스프레소", False, name=f"아이스 {word}") is False
+
+
 def test_brands_yaml_has_decaf_option_categories_for_menu_brands():
     from pipeline.normalize.menus import brands_by_key
     from pipeline import settings
     b = brands_by_key(settings.CURATED_DIR)
     for k in ("brand:hollys", "brand:coffeebean", "brand:ediya", "brand:paulbassett", "brand:compose"):
         assert k in b and isinstance(b[k].decaf_option_categories, list)
+
+
+def test_menu_normalizers_use_strict_brand_lookup(tmp_path, monkeypatch):
+    """brands.yaml always has an entry for every menu brand (guarded by
+    test_brands_yaml_has_decaf_option_categories_for_menu_brands above), so all four menu-brand
+    normalizers look their brand up the same way, brands_by_key(...)[key] (raises loudly if it's
+    ever missing) rather than .get(...) with a silent decaf_option=False fallback."""
+    import pipeline.normalize.menus as menus
+
+    monkeypatch.setattr(menus, "brands_by_key", lambda curated_dir: {})
+
+    with pytest.raises(KeyError):
+        menus.normalize_hollys(_copy_fixture("menus/hollys", tmp_path), "2026-09-27")
+    with pytest.raises(KeyError):
+        menus.normalize_coffeebean(_copy_fixture("menus/coffeebean", tmp_path), "2026-09-27")
+    with pytest.raises(KeyError):
+        menus.normalize_compose(_copy_fixture("menus/compose", tmp_path), "2026-09-27")
+    with pytest.raises(KeyError):
+        menus.normalize_paulbassett(_copy_fixture("menus/paulbassett", tmp_path), "2026-09-27")
 
 
 def test_hollys_parses_names_caffeine_decaf(tmp_path):
@@ -224,7 +291,11 @@ def test_hollys_parses_names_caffeine_decaf(tmp_path):
     assert by["아메리카노"].caffeine_mg == 114.0
     assert by["카페 라떼"].caffeine_mg == 127.0
     assert by["디카페인 콜드브루"].is_decaf and not by["디카페인 콜드브루"].decaf_option
-    assert by["아메리카노"].decaf_option is True                # 에스프레소 카테고리는 디카페인 샷 변경 가능
+    # 2026-09-27 공식 페이지 재확인: 할리스의 디카페인은 콜드브루 계열 전용 SKU뿐이고(디카페인 콜드브루/라떼/
+    # 아샷추), 아메리카노 등 에스프레소(HOT) 음료에는 디카페인 표기·옵션이 전혀 없다(brands.yaml 참고) — 즉
+    # 에스프레소 샷을 디카페인으로 바꿔주는 옵션은 없으므로 decaf_option_categories == [] 이고, 아메리카노도
+    # decaf_option=False 이어야 한다.
+    assert by["아메리카노"].decaf_option is False
     assert by["에스프레소"].caffeine_mg == 61.0                 # HOT만 있는 항목
     assert by["콜드브루"].caffeine_mg == 195.0                  # ICED만 있는 항목
     assert all(i.brand_key == "brand:hollys" and i.key.startswith("menu:hollys:") for i in items)
@@ -236,11 +307,21 @@ def test_coffeebean_parses_names_caffeine_and_decaf_option(tmp_path):
     snap = _copy_fixture("menus/coffeebean", tmp_path)
     items = normalize_coffeebean(snap, "2026-09-27").menu_items
     by = {i.name: i for i in items}
-    assert len(items) == 6
+    assert len(items) == 7
     # coffeebeankorea.com writes HOT/ICED as different names ("아메리카노" vs "아이스 아메리카노"),
     # never a HOT/ICED suffix on the same name, so they are kept as separate items (not merged).
     assert by["아메리카노"].caffeine_mg == 182.0
-    assert by["아이스 아메리카노"].caffeine_mg == 91.0
+    # Regression for the unclosed <div> before </li>: lxml nests each following <li> inside the current
+    # one, so a naive `li.select("div.info dl")` walks into every later item's div.info too, and (since
+    # the loop never breaks) ends up keeping the LAST matched dl — i.e. every non-last item in a page
+    # wrongly reports the page's very last item's caffeine. cat13_page1.html chains three items (아이스
+    # 아메리카노, 아이스 헤이즐넛 라떼, 카페수아) with three different caffeine values so both non-last
+    # items are wrong (and provably different from their own correct value) under the bug.
+    assert by["아이스 아메리카노"].caffeine_mg == 91.0        # would read 182 (카페수아's, the page's last item) if buggy
+    assert by["아이스 헤이즐넛 라떼"].caffeine_mg == 130.0    # would also read 182 (카페수아's) if buggy
+    assert by["카페수아"].caffeine_mg == 182.0
+    assert by["카페라떼"].caffeine_mg == 91.0                 # would read 182 (아메리카노's, the page's last item) if buggy
+    assert by["드립커피"].caffeine_mg == 148.0                # would read 190 (콜드브루's, the page's last item) if buggy
     # The site's coffee menu has no item literally named decaf: decaf is a paid shot-swap option on
     # espresso drinks, never a distinct product, so is_decaf is False for every scraped item.
     assert all(not i.is_decaf for i in items)

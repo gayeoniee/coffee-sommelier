@@ -31,9 +31,16 @@
   name: 컴포즈커피
   decaf_available: true
   decaf_surcharge_krw: null
-  notes: "[뉴스] 디카페인 아메리카노. 콜롬비아 슈가케인 공법, 묵직한 바디·견과·다크초콜릿(산미 낮은 편). [공식] /compose 영양성분표(품목별 카페인 mg 표기, tab=nutrition) 확인 완료 — 디카페인 샷 변경 카테고리: 커피ㆍ콜드브루(사이트 카테고리 태그명 그대로)."
+  notes: >-
+    [공식] https://composecoffee.com/compose?search_tag=02.+커피ㆍ콜드브루&tab=nutrition (2026-09-27 재확인):
+    "샷 변경" 방식이 아니라 H/I-디카페인 아메리카노, H/I-빅포즈 디카페인 아메리카노, H/I-디카페인 카페라떼,
+    H/I-빅포즈 디카페인라떼, H/I-디카페인 바닐라라떼, H/I-디카페인 헤이즐넛라떼, H/I-디카페인 돌체라떼,
+    H/I-디카페인콜드브루, H/I-디카페인콜드브루라떼 등 총 16개 HOT/ICED 품목을 별도 디카페인 메뉴명으로 직접
+    판매(영양성분표 실측, "샷"·"변경" 문구는 없음). 커피ㆍ콜드브루 카테고리의 대표 음료 대부분에 디카페인 짝이
+    있어 decaf_option_categories는 유지하되, 짝이 없는 개별 품목(쫀득카노 등)까지 보장하는지는 [미확인]. 콜롬비아
+    슈가케인 공법, 묵직한 바디·견과·다크초콜릿(산미 낮은 편)은 [뉴스].
   source_url: https://composecoffee.com/compose
-  verified_at: "2026-09-26"
+  verified_at: "2026-09-27"
   bean: {acidity: 1, body: 4, sweetness: 2, flavor_tags: [nutty, dark chocolate]}
   decaf_bean: {acidity: 2, body: 4, sweetness: 2, flavor_tags: [nutty, dark chocolate]}
   decaf_option_categories: [커피ㆍ콜드브루]
@@ -60,19 +67,34 @@
   name: 할리스
   decaf_available: true
   decaf_surcharge_krw: null
-  notes: "[공식] 디카페인 콜드브루 계열(라떼, 아샷추 등), '할리스 블렌딩 디카페인 원액 — 깔끔한 후미, 은은한 단맛'. [공식] 디카페인 샷 변경 카테고리: 에스프레소 (조사 기준 초안)."
+  notes: >-
+    [공식] https://www.hollys.co.kr/menu/espresso.do (2026-09-27 재확인): 페이지 전체에서 "디카페인"이 붙는
+    품목은 디카페인 콜드브루, 디카페인 콜드브루 라떼, 디카페인 콜드브루 아샷추, 그리고 그 콜드브루를 베이스로 한
+    바닐라 라떼뿐 — "할리스만의 노하우로 블렌딩한 디카페인 원액을 더해, 깔끔한 후미와 은은한 단맛을 느낄 수 있는
+    디카페인 콜드브루"(품목 설명 인용). 페이지에 "샷"/"변경" 문구는 전혀 없고, 아메리카노·카페라떼 등 에스프레소
+    (HOT) 음료에는 디카페인 표기나 옵션이 전혀 없음 — 즉 에스프레소 샷을 디카페인으로 바꿔주는 옵션이 아니라
+    콜드브루 계열만 별도 디카페인 SKU로 판매. 디카페인 샷 변경 카테고리 없음(해당 품목은 이름으로 이미
+    is_decaf=True 처리, NO_SHOT_WORDS의 "콜드브루").
   source_url: https://www.hollys.co.kr/menu/espresso.do
-  verified_at: "2026-09-24"
+  verified_at: "2026-09-27"
   bean: {acidity: 2, body: 3, sweetness: 2, flavor_tags: [chocolate, nutty]}
   decaf_bean: {acidity: 2, body: 2, sweetness: 3, flavor_tags: [brown sugar]}
-  decaf_option_categories: [에스프레소]
+  decaf_option_categories: []
 - key: brand:paulbassett
   name: 폴바셋
   decaf_available: true
   decaf_surcharge_krw: null
-  notes: "[공식] Decaf 카테고리(아메리카노·라떼·플랫화이트 등), 시그니처 블렌드=브라질+에티오피아 '밝은 산미, 초콜릿', 디카페인 아메리카노 카페인 10mg 이하. [뉴스] 디카페인 블렌드도 브라질+에티오피아. [공식] 디카페인 샷 변경 카테고리: 에스프레소 (조사 기준 초안)."
+  notes: >-
+    [공식] https://www.baristapaulbassett.co.kr/menu/List.pb?cid1=A (2026-09-27 재확인): "샷 변경" 방식이
+    아니라 Decaf Americano, Decaf Cafe Latte, Decaf Cafe Oat, Decaf Cappuccino, Decaf Caramel Macchiato,
+    Decaf Cinnamon Cafe Latte, Decaf Flat White, Decaf Ice Cream Cafe Latte, Decaf Iced Cinnamon Cafe
+    Latte, Decaf Lactose-free Cafe Latte, Decaf Milk Soft Affogato, Decaf Spanish Cafe Latte, Decaf
+    VanillaBean Cafe Latte 등 13개 품목을 별도 디카페인 메뉴명으로 직접 판매(리스트/상세 페이지 모두 "샷"·"변경"
+    문구 없음). 커피 카테고리의 대표 음료 대부분에 디카페인 짝이 있어 decaf_option_categories는 유지하되, 짝이
+    없는 개별 품목까지 전부 보장하는지는 [미확인]. 시그니처 블렌드=브라질+에티오피아 '밝은 산미, 초콜릿', 디카페인
+    아메리카노 카페인 10mg 이하. [뉴스] 디카페인 블렌드도 브라질+에티오피아.
   source_url: https://www.baristapaulbassett.co.kr/menu/List.pb?cid1=A&cid2=F
-  verified_at: "2026-09-24"
+  verified_at: "2026-09-27"
   bean: {acidity: 4, body: 3, sweetness: 3, flavor_tags: [chocolate, citrus fruit]}
   decaf_bean: {acidity: 3, body: 3, sweetness: 3, flavor_tags: [chocolate, citrus fruit]}
   decaf_option_categories: [커피]
@@ -89,9 +111,15 @@
   name: 커피빈
   decaf_available: true
   decaf_surcharge_krw: 500
-  notes: "[공식] 원두 가이드 로스트 단계 분류, 디카페인 원두 Espresso Roast Blend Decaf. [뉴스] 디카페인 변경 500원(2026-01). [공식] 메뉴에는 디카페인 단일 항목 없음 — 에스프레소 음료 카테고리에서 샷 변경으로만 제공(coffeebeankorea.com/menu/app.asp?category=13 실사용 확인, 2026-09-26)."
+  notes: >-
+    [공식] https://www.coffeebeankorea.com/menu/app.asp?category=13 (2026-09-27 재확인): 메뉴 페이지 전체에
+    "디카페인"/"decaf" 문자열이 전혀 없음(디카페인 단일 항목 없음, 재확인 완료). https://www.coffeebeankorea.com
+    /product/bean_guide.asp 에는 "Espresso Roast Blend Decaf" 원두만 확인되고 매장 내 샷 변경 안내 문구는 두
+    페이지 어디에도 없음 — 즉 "에스프레소 음료 카테고리에서 샷 변경 제공"은 [뉴스] 디카페인 변경 500원(2026-01)
+    보도에 기댄 추정이며 공식 페이지로는 [미확인]. 디카페인 원두가 존재하는 점에 근거해 카테고리는 보수적으로
+    에스프레소 기반 카테고리만 유지.
   source_url: https://www.coffeebeankorea.com/product/bean_guide.asp
-  verified_at: "2026-09-24"
+  verified_at: "2026-09-27"
   bean: {acidity: 2, body: 4, sweetness: 2, flavor_tags: [dark chocolate, caramelized]}
   decaf_bean: {acidity: 2, body: 3, sweetness: 2, flavor_tags: [dark chocolate]}
   decaf_option_categories: [에스프레소 음료]
