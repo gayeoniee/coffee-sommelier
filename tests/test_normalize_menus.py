@@ -208,6 +208,19 @@ def test_menu_decaf_option_rule():
     assert menu_decaf_option(b.model_copy(update={"decaf_available": False}), "에스프레소", False) is False
 
 
+def test_menu_decaf_option_no_shot_words():
+    """A decaf espresso shot doesn't make these drinks decaf: they either have no espresso shot to swap
+    (말차/큐브/믹스커피 are not espresso-based) or are already a fixed daily-brew blend (데일리커피)."""
+    from pipeline.normalize.menus import menu_decaf_option
+    from pipeline.records import BrandRecord
+    b = BrandRecord(key="brand:x", name="x", decaf_available=True, verified_at="2026-09-27",
+                    decaf_option_categories=["에스프레소"])
+    for word in ("말차", "큐브", "믹스커피", "데일리커피"):
+        assert menu_decaf_option(b, "에스프레소", False, name=word) is False
+        assert menu_decaf_option(b, "에스프레소", False, name=f"{word} 라떼") is False
+        assert menu_decaf_option(b, "에스프레소", False, name=f"아이스 {word}") is False
+
+
 def test_brands_yaml_has_decaf_option_categories_for_menu_brands():
     from pipeline.normalize.menus import brands_by_key
     from pipeline import settings

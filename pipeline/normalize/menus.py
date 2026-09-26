@@ -227,7 +227,10 @@ def normalize_brands(curated_dir: Path) -> list[BrandRecord]:
     return [BrandRecord.model_validate(b) for b in yaml.safe_load(p.read_text(encoding="utf-8"))]
 
 
-NO_SHOT_WORDS = ("콜드브루", "더치", "드립커피", "브루드")   # brewed coffees have no espresso shot to swap for decaf
+NO_SHOT_WORDS = (
+    "콜드브루", "더치", "드립커피", "브루드",  # brewed coffees have no espresso shot to swap for decaf
+    "말차", "큐브", "믹스커피", "데일리커피",  # not espresso-based (or a fixed blend): a decaf shot swap doesn't apply
+)
 
 
 def menu_decaf_option(brand: BrandRecord, category: str | None, is_decaf: bool, name: str = "") -> bool:
