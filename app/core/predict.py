@@ -42,7 +42,7 @@ def predict_from_neighbors(neighbors: list[Neighbor], tag_ko: dict[str, str] | N
             weight_by_tag[t] = weight_by_tag.get(t, 0.0) + w
             count_by_tag[t] = count_by_tag.get(t, 0) + 1
     ranked = sorted(weight_by_tag.items(), key=lambda kv: (-kv[1], kv[0]))
-    tags = [t for t, w in ranked if w / total >= TAG_SHARE][:MAX_TAGS]
+    tags = [t for t, _ in ranked if count_by_tag[t] / len(neighbors) >= TAG_SHARE][:MAX_TAGS]
 
     evidence = [f"유사 원두 {len(neighbors)}개 중 {count_by_tag[t]}개에서 '{tag_ko.get(t, t)}' 언급" for t in tags[:2]]
     if values["acidity"] is not None:

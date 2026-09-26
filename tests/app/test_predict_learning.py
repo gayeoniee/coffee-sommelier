@@ -28,6 +28,12 @@ def test_prediction_weighted_mean_confidence_tags_and_evidence():
     assert p.n_neighbors == 4
 
 
+def test_tag_inclusion_is_count_based_not_weighted_share():
+    neigh = [nb(0, 0.99, 4, 2, ("rose",))] + [nb(i, 0.1, 4, 2, ("lemon",)) for i in range(1, 10)]
+    p = predict_from_neighbors(neigh)
+    assert p.tags == ["lemon"]                      # rose is 1/10 by count, despite ~0.52 weighted share
+
+
 def test_too_few_neighbors_is_low_confidence():
     p = predict_from_neighbors([nb(1, 0.9, 4, 2, ()), nb(2, 0.8, 1, 5, ())])
     assert (p.acidity, p.confidence, p.tags) == (None, "low", [])
