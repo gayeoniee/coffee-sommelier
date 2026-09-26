@@ -169,6 +169,33 @@ def test_reload_deletes_missing_rows_but_keeps_referenced(db_conn, tmp_path):
     assert keys == {"c1"}
 
 
+def test_reload_protects_coffee_referenced_by_kept_menu_item(db_conn, tmp_path):
+    norm, enriched, embedded = setup_files(tmp_path)
+    write_jsonl(norm / "menu_items.jsonl", [MenuItemRecord(key="m1", brand_key="brand:x", name="아메리카노",
+                                                           coffee_key="c1", caffeine_mg=150, collected_at="2026-09-24")])
+    run_load(db_conn, norm, enriched, embedded)
+    write_jsonl(enriched / "coffees.jsonl", [
+        CoffeeRecord(key="c2", name="Ethiopia Decaf", origin_country="Ethiopia", is_decaf=True,
+                     decaf_process="swiss-water", source="t", collected_at="2026-09-24")])   # c1 vanishes from source
+    counts = run_load(db_conn, norm, enriched, embedded)                                     # must not raise
+    assert counts["kept_referenced_coffees"] == 1        # c1 kept: m1.coffee_id still points at it
+    assert counts["deleted_coffees"] == 0
+    keys = {k for (k,) in db_conn.execute("SELECT key FROM coffees").fetchall()}
+    assert keys == {"c1", "c2"}
+
+
+def test_reload_drops_review_for_vanished_unreferenced_coffee(db_conn, tmp_path):
+    norm, enriched, embedded = setup_files(tmp_path)
+    run_load(db_conn, norm, enriched, embedded)
+    write_jsonl(enriched / "coffees.jsonl", [
+        CoffeeRecord(key="c2", name="Ethiopia Decaf", origin_country="Ethiopia", is_decaf=True,
+                     decaf_process="swiss-water", source="t", collected_at="2026-09-24")])   # c1 vanishes, unreferenced
+    counts = run_load(db_conn, norm, enriched, embedded)                                    # reviews.jsonl still has r1 (coffee_key c1)
+    assert counts["dropped_reviews"] == 1
+    assert counts["reviews"] == 0
+    assert db_conn.execute("SELECT count(*) FROM reviews").fetchone()[0] == 0
+
+
 def test_updated_values_are_written(db_conn, tmp_path):
     norm, enriched, embedded = setup_files(tmp_path)
     run_load(db_conn, norm, enriched, embedded)

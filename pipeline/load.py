@@ -9,7 +9,8 @@ from pipeline.records import BrandRecord, CoffeeRecord, MenuItemRecord, ReviewRe
 # Rows a user's tasting points at are never deleted, even if they vanish from the source.
 PROTECTED_COFFEES = ("SELECT coffee_id FROM tastings WHERE coffee_id IS NOT NULL "
                      "UNION SELECT default_bean_coffee_id FROM brands WHERE default_bean_coffee_id IS NOT NULL "
-                     "UNION SELECT decaf_bean_coffee_id FROM brands WHERE decaf_bean_coffee_id IS NOT NULL")
+                     "UNION SELECT decaf_bean_coffee_id FROM brands WHERE decaf_bean_coffee_id IS NOT NULL "
+                     "UNION SELECT coffee_id FROM menu_items WHERE coffee_id IS NOT NULL")
 PROTECTED_MENU_ITEMS = "SELECT menu_item_id FROM tastings WHERE menu_item_id IS NOT NULL"
 PROTECTED_BRANDS = f"SELECT brand_id FROM menu_items WHERE id IN ({PROTECTED_MENU_ITEMS})"
 
@@ -59,6 +60,7 @@ def run_load(conn, norm_dir: Path, enriched_dir: Path, embedded_dir: Path) -> di
 
     vectors = {e["key"]: e["vector"] for e in _read_lines(embedded_dir / "embeddings.jsonl")}
     coffees = read_jsonl(enriched_dir / "coffees.jsonl", CoffeeRecord)
+    source_keys = [c.key for c in coffees]
     _upsert(cur, "coffees",
             ["key", "name", "roaster", "origin_country", "origin_region", "process", "roast_level", "is_decaf",
              "decaf_process", "acidity", "body", "sweetness", "flavor_tags", "flavor_summary", "embedding",
@@ -68,23 +70,30 @@ def run_load(conn, norm_dir: Path, enriched_dir: Path, embedded_dir: Path) -> di
               to_vector_literal(vectors[c.key]) if c.key in vectors else None, c.source, c.source_url,
               c.collected_at) for c in coffees],
             casts={"embedding": "::vector"})
+    source_key_set = set(source_keys)
     coffee_ids = _ids(conn, "coffees")
 
     all_reviews = read_jsonl(norm_dir / "reviews.jsonl", ReviewRecord)
-    reviews = [r for r in all_reviews if r.coffee_key in coffee_ids]
+    # Only source coffees keep a review; coffee_ids itself stays unrestricted (it is also used
+    # below for menu_item/brand bean FKs, whose stale-but-still-referenced rows must not be nulled
+    # out before the protected-delete check runs).
+    reviews = [r for r in all_reviews if r.coffee_key in source_key_set]
     _upsert(cur, "reviews", ["key", "coffee_id", "text", "rating", "sub_scores", "source", "source_url", "collected_at"],
             [(r.key, coffee_ids[r.coffee_key], r.text, r.rating, Jsonb(r.sub_scores), r.source, r.source_url,
               r.collected_at) for r in reviews])
 
     brands = read_jsonl(norm_dir / "brands.jsonl", BrandRecord)
+    brand_keys = [b.key for b in brands]
     _upsert(cur, "brands", ["key", "name", "decaf_available", "decaf_surcharge_krw", "default_bean_coffee_id",
                             "decaf_bean_coffee_id", "notes", "source_url", "verified_at"],
             [(b.key, b.name, b.decaf_available, b.decaf_surcharge_krw, coffee_ids.get(b.default_bean_coffee_key),
               coffee_ids.get(b.decaf_bean_coffee_key), b.notes, b.source_url, b.verified_at) for b in brands])
+    brand_key_set = set(brand_keys)
     brand_ids = _ids(conn, "brands")
 
     all_items = read_jsonl(norm_dir / "menu_items.jsonl", MenuItemRecord)
-    items = [m for m in all_items if m.brand_key in brand_ids]
+    # As with reviews above: filter against the current source brands, not the (possibly stale) id map.
+    items = [m for m in all_items if m.brand_key in brand_key_set]
     _upsert(cur, "menu_items", ["key", "brand_id", "name", "name_en", "category", "is_decaf", "decaf_option",
                                 "caffeine_mg", "coffee_id", "source_url", "collected_at"],
             [(m.key, brand_ids[m.brand_key], m.name, m.name_en, m.category, m.is_decaf, m.decaf_option,
@@ -92,8 +101,7 @@ def run_load(conn, norm_dir: Path, enriched_dir: Path, embedded_dir: Path) -> di
 
     deleted_reviews = _delete_missing(cur, "reviews", [r.key for r in reviews])
     deleted_menu = _delete_missing(cur, "menu_items", [m.key for m in items], PROTECTED_MENU_ITEMS)
-    deleted_brands = _delete_missing(cur, "brands", [b.key for b in brands], PROTECTED_BRANDS)
-    source_keys = [c.key for c in coffees]
+    deleted_brands = _delete_missing(cur, "brands", brand_keys, PROTECTED_BRANDS)
     stale = cur.execute("SELECT count(*) FROM coffees WHERE NOT (key = ANY(%s))", (source_keys,)).fetchone()[0]
     deleted_coffees = _delete_missing(cur, "coffees", source_keys, PROTECTED_COFFEES)
 
