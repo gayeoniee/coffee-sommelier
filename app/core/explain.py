@@ -70,6 +70,13 @@ def explain_messages(item: Item, profile: Profile, score: float, prediction: Pre
             {"role": "user", "content": json.dumps(payload, ensure_ascii=False)}]
 
 
+def sample_card(coffee_id: int, name: str, tags: list[str], tag_ko: dict[str, str]) -> dict:
+    """Onboarding sample: only our own tags and a templated sentence — never the review-derived flavor_summary."""
+    tags_ko = [tag_ko.get(t.lower(), t) for t in tags]
+    return {"coffee_id": coffee_id, "name": name, "tags": list(tags), "tags_ko": tags_ko,
+            "description": f"{'·'.join(tags_ko[:3])} 향이 나는 원두"}
+
+
 def card(item: Item, score: float, template: str, violation: str | None = None,
          prediction: Prediction | None = None) -> dict:
     c = {"key": item.key, "name": item.name, "brand": item.brand, "score": round(score * 100),

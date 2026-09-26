@@ -157,3 +157,13 @@ def test_save_tasting_and_recent(repo):
     repo.save_tasting(uid, input_text="동네 블렌드", predicted={"acidity": 3}, rating=2)
     rows = repo.recent_tastings(uid)
     assert [r["name"] for r in rows] == ["동네 블렌드", "Brazil Cerrado"] and rows[1]["id"] == tid
+
+
+def test_sample_coffees_have_korean_tags_and_no_review_text(repo):
+    samples = repo.sample_coffees()
+    assert [s["name"] for s in samples] == ["Ethiopia Yirgacheffe Washed", "Brazil Cerrado"]
+    assert all(set(s) == {"coffee_id", "name", "tags", "tags_ko", "description"} for s in samples)
+    eth, bra = samples
+    assert eth["tags_ko"] == ["시트러스"] and eth["description"] == "시트러스 향이 나는 원두"
+    assert bra["tags_ko"] == ["chocolate"]                   # no taxonomy name -> the tag itself
+    assert "summary" not in str(samples)

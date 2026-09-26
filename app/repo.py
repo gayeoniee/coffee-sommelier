@@ -7,6 +7,7 @@ from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 from psycopg_pool import ConnectionPool
 
+from app.core.explain import sample_card
 from app.core.flavors import build_tag_to_category
 from app.core.scoring import is_milk_drink, needs_decaf_order
 from app.models import Item, Neighbor, Profile
@@ -220,13 +221,13 @@ class Repo:
             "origin_country = 'Brazil' AND acidity <= 2",                               # chocolatey
             "process IN ('natural', 'anaerobic') AND flavor_tags && ARRAY['winey','fermented','alcohol fermented']",
         ]
+        _, tag_ko = self.taxonomy()
         out = []
         for where in queries:
-            r = self._one("SELECT id, name, flavor_summary, flavor_tags FROM coffees WHERE " + where +
+            r = self._one("SELECT id, name, flavor_tags FROM coffees WHERE " + where +
                           " AND cardinality(flavor_tags) > 0 ORDER BY id LIMIT 1")
             if r:
-                out.append({"coffee_id": r["id"], "name": r["name"], "summary": r["flavor_summary"],
-                            "tags": r["flavor_tags"]})
+                out.append(sample_card(r["id"], r["name"], r["flavor_tags"], tag_ko))
         return out
 
     # ---- evaluation helpers -----------------------------------------------

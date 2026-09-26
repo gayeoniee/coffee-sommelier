@@ -3,6 +3,7 @@ import itertools
 import uuid
 from dataclasses import replace
 
+from app.core.explain import sample_card
 from app.core.scoring import needs_decaf_order
 from app.graphs import Deps
 from app.models import Item, Neighbor, Profile
@@ -24,6 +25,9 @@ class FakeRepo:
             2: Item(key="coffee:2", name="Brazil Cerrado", source="db", acidity=1, body=4, sweetness=3,
                     tags=("chocolate",), coffee_id=2, origin_country="Brazil", process="natural"),
         }
+        # review-derived text the DB holds for these coffees; must never reach an API response
+        self.flavor_summaries = {1: "Bright lemon zest and jasmine, per the reviewer's cupping notes",
+                                 2: "Reviewer found heavy cocoa and a syrupy finish"}
         self.menu = {
             "brand:sb": [
                 Item(key="menu:10", name="아메리카노", source="brand_bean", acidity=2, body=4, sweetness=2,
@@ -119,8 +123,7 @@ class FakeRepo:
         return [Neighbor(200 + i, f"f{i}", 1.0, 3, 3, 3, ("chocolate",)) for i in range(4)]
 
     def sample_coffees(self):
-        return [{"coffee_id": 1, "name": "Ethiopia Yirgacheffe Washed", "summary": "bright", "tags": ["lemon"]},
-                {"coffee_id": 2, "name": "Brazil Cerrado", "summary": "choco", "tags": ["chocolate"]}]
+        return [sample_card(c.coffee_id, c.name, list(c.tags), TAG_KO) for c in self.coffees.values()]
 
 
 def fake_deps(repo=None, tokens=("잘 ", "맞아요"), fail_keys=(), parse=None, embed_fails=False,

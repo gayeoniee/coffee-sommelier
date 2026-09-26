@@ -93,6 +93,10 @@ def test_onboarding_samples_roundtrip(client):
     onboard(client)
     samples = client.get("/onboarding/samples").json()
     assert [s["coffee_id"] for s in samples] == [1, 2]
+    assert samples[0]["tags_ko"] == ["레몬", "jasmine"] and samples[0]["description"] == "레몬·jasmine 향이 나는 원두"
+    body = json.dumps(samples, ensure_ascii=False)
+    assert "summary" not in body
+    assert not any(s in body for s in client.repo.flavor_summaries.values())     # review-derived text never leaks
     r = client.post("/onboarding/samples", json=[{"coffee_id": 1, "liked": True}, {"coffee_id": 2, "liked": False}])
     assert r.status_code == 200 and r.json()["profile"]["n_updates"] == 2
     assert client.repo.tastings == []                  # samples don't create tastings
