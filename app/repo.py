@@ -238,12 +238,26 @@ class Repo:
                          " AND sweetness IS NOT NULL ORDER BY id")
         return [_coffee_item(r) for r in random.Random(seed).sample(rows, min(n, len(rows)))]
 
-    def random_coffee_ids_for_loo(self, n: int, seed: int, exclude_sources: tuple[str, ...] = ()) -> list[int]:
-        extra = " AND source <> ALL(%(xs)s)" if exclude_sources else ""
+    def random_coffee_ids_for_loo(self, n: int, seed: int, exclude_sources: tuple[str, ...] = (),
+                                  sources: tuple[str, ...] = ()) -> list[int]:
+        """`sources` (when given) limits the targets to those sources; `exclude_sources` drops sources."""
+        extra = ((" AND source <> ALL(%(xs)s)" if exclude_sources else "")
+                 + (" AND source = ANY(%(only)s)" if sources else ""))
         rows = self._all("SELECT id FROM coffees WHERE active AND embedding IS NOT NULL AND acidity IS NOT NULL"
-                         f" AND body IS NOT NULL{extra} ORDER BY id", {"xs": list(exclude_sources)})
+                         f" AND body IS NOT NULL{extra} ORDER BY id",
+                         {"xs": list(exclude_sources), "only": list(sources)})
         ids = [r["id"] for r in rows]
         return random.Random(seed).sample(ids, min(n, len(ids)))
+
+    def coffee_sources(self, ids: list[int]) -> dict[int, str]:
+        return {r["id"]: r["source"] for r in self._all("SELECT id, source FROM coffees WHERE id = ANY(%s)", (list(ids),))}
+
+    def decaf_coffees(self, exclude_sources: tuple[str, ...] = ()) -> list[tuple[Item, str]]:
+        """Active decaf beans with their source, for the decaf-drinker probe."""
+        extra = " AND source <> ALL(%(xs)s)" if exclude_sources else ""
+        rows = self._all(f"SELECT {COFFEE_COLS}, source FROM coffees WHERE active AND is_decaf{extra} ORDER BY id",
+                         {"xs": list(exclude_sources)})
+        return [(_coffee_item(r), r["source"]) for r in rows]
 
     def coverage_counts(self, exclude_sources: tuple[str, ...] = ()) -> dict:
         extra = " AND source <> ALL(%(xs)s)" if exclude_sources else ""

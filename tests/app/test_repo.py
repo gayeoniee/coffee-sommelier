@@ -200,3 +200,17 @@ def test_pool_replaces_connections_killed_by_the_server(repo, db_conn):
     db_conn.execute("SELECT pg_terminate_backend(%s)", (pid,))
     db_conn.commit()
     assert repo.user_exists(repo.create_user())           # a dead pooled connection is checked and replaced
+
+
+def test_loo_target_filter_sources_and_decaf_beans(repo):
+    with repo.pool.connection() as conn:
+        rid = conn.execute(
+            "INSERT INTO coffees (key, name, roaster, is_decaf, acidity, body, flavor_tags, embedding, source,"
+            " collected_at) VALUES ('k1','디카페인 콜롬비아','프릳츠',true,4,2,%s,%s::vector,'roasters_kr','2026-09-26')"
+            " RETURNING id", (["chocolate"], to_vector_literal(vec(5)))).fetchone()["id"]
+    assert repo.random_coffee_ids_for_loo(10, seed=1, sources=("roasters_kr",)) == [rid]
+    assert rid not in repo.random_coffee_ids_for_loo(10, seed=1, sources=("t",))
+    assert repo.coffee_sources([rid])[rid] == "roasters_kr"
+    assert sorted(src for _, src in repo.decaf_coffees()) == ["roasters_kr", "t"]
+    only_open = repo.decaf_coffees(exclude_sources=("roasters_kr",))
+    assert [(i.name, src) for i, src in only_open] == [("Decaf Ethiopia Sidamo", "t")]

@@ -1,6 +1,6 @@
 from dataclasses import replace
 
-from app.eval import independent_ok, violation_rate
+from app.eval import LOO_TARGET_SOURCES, OPEN_LICENSE_EXCLUDE, VARIANTS, independent_ok, rank_decaf, violation_rate
 from app.models import Item, Profile
 from tests.app.fakes import FakeRepo
 
@@ -56,3 +56,28 @@ def test_decaf_only_needs_decaf_or_order_decaf_flag():
     synthetic = Item(key="brand:x:아메리카노", name="아메리카노", source="brand_bean", decaf_option=True)
     assert not independent_ok(decaf, synthetic, None, True)
     assert independent_ok(decaf, replace(synthetic, order_decaf=True), None, True)
+
+
+def test_variants_keep_open_comparable_and_targets_out_of_every_exclusion():
+    assert VARIANTS["full"] == ()
+    assert set(VARIANTS["open"]) == {"coffeereview_kaggle", "roasters_kr"} and OPEN_LICENSE_EXCLUDE == VARIANTS["open"]
+    assert VARIANTS["open_plus"] == ("coffeereview_kaggle",)
+    assert not any(set(LOO_TARGET_SOURCES) & set(xs) for xs in VARIANTS.values())   # same targets everywhere
+    assert "roasters_kr" not in LOO_TARGET_SOURCES
+
+
+def test_rank_decaf_counts_candidates_and_ranks_by_fit():
+    tag_to_cat = {"lemon": "fruity", "jasmine": "floral", "chocolate": "nutty/cocoa"}
+    decaf = Profile(caffeine_rule="decaf_only", acidity=4.5, body=2.5, sweetness=3,
+                    flavor_weights={"fruity": 0.6, "floral": 0.5})
+
+    def bean(name, **kw):
+        return Item(key=f"coffee:{name}", name=name, source="db", is_decaf=kw.pop("is_decaf", True), **kw)
+    beans = [(bean("bright", acidity=5, body=2, tags=("lemon", "jasmine")), "roasters_kr"),
+             (bean("dark", acidity=1, body=5, tags=("chocolate",)), "cqi"),
+             (bean("bare"), "roasters_kr"),                                # no attrs, no tags
+             (bean("caf", acidity=5, is_decaf=False), "cqi")]              # fails the decaf filter
+    r = rank_decaf(decaf, beans, tag_to_cat, k=5)
+    assert (r["candidates"], r["with_evidence"]) == (3, 2)
+    assert r["by_source"] == {"roasters_kr": 2, "cqi": 1}
+    assert [t["name"] for t in r["top"]] == ["bright", "dark"] and r["top"][0]["source"] == "roasters_kr"

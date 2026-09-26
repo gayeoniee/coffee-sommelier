@@ -1,9 +1,11 @@
 """Phase 2 evaluation: hard-constraint violations, leave-one-out prediction accuracy, learning convergence,
 and latency benchmarks for the ADRs. Results go to data/eval/phase2_<name>.json."""
 import asyncio
+import hashlib
 import json
 import sys
 import time
+from collections import Counter
 
 import yaml
 
@@ -14,7 +16,21 @@ from app.core.simulate import simulate_convergence
 from app.models import ATTRS, Item, Profile
 from pipeline import settings
 
-OPEN_LICENSE_EXCLUDE = ("coffeereview_kaggle",)   # licence-restricted source; excluded for the "open" comparison
+# Knowledge-base variants (sources left out) for the open-data comparison.
+#   full      = everything, incl. the licence-restricted coffeereview (Kaggle) data
+#   open      = open-licence sources only; roasters_kr is left out too, so "open" means exactly what it did
+#               before the Korean roastery data existed and its numbers stay comparable
+#   open_plus = open + Korean roastery facts (roasters_kr)
+VARIANTS: dict[str, tuple[str, ...]] = {
+    "full": (),
+    "open": ("coffeereview_kaggle", "roasters_kr"),
+    "open_plus": ("coffeereview_kaggle",),
+}
+OPEN_LICENSE_EXCLUDE = VARIANTS["open"]
+# Fixed LOO targets for compare3: open-licence beans whose acidity/body are human ratings (CQI Q-grader cupping
+# scores). Never roaster beans (their attributes are LLM estimates from note words, not ratings) and never
+# coffeereview (not open), so the same targets exist in every variant and only the neighbour pool changes.
+LOO_TARGET_SOURCES = ("cqi",)
 
 PERSONAS = [
     ("디카페인+산미", Profile(caffeine_rule="decaf_only", milk_ok=True, acidity=4.5, body=2.5, sweetness=3,
@@ -70,13 +86,19 @@ def violation_rate(repo) -> dict:
             "details": details}
 
 
-def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str, ...] = ()) -> dict:
+def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str, ...] = (),
+                 target_sources: tuple[str, ...] = ()) -> dict:
     stats = {a: {"n": 0, "exact": 0, "within1": 0} for a in ATTRS}
     by_conf: dict[str, dict] = {}
-    for cid in repo.random_coffee_ids_for_loo(n, seed, exclude_sources=exclude_sources):
+    neighbor_sources: Counter = Counter()
+    with_tags = 0
+    ids = repo.random_coffee_ids_for_loo(n, seed, exclude_sources=exclude_sources, sources=target_sources)
+    for cid in ids:
         truth = repo.get_coffee(cid)
-        pred = predict_from_neighbors(
-            repo.neighbors(repo.coffee_embedding(cid), k=10, exclude_id=cid, exclude_sources=exclude_sources))
+        near = repo.neighbors(repo.coffee_embedding(cid), k=10, exclude_id=cid, exclude_sources=exclude_sources)
+        neighbor_sources.update(repo.coffee_sources([x.coffee_id for x in near]).values())
+        pred = predict_from_neighbors(near)
+        with_tags += bool(pred.tags)
         for a in ATTRS:
             t, v = truth.attr(a), getattr(pred, a)
             if t is None or v is None:
@@ -92,7 +114,12 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
     def rate(d: dict, k: str) -> float | None:
         return round(d[k] / d["n"], 4) if d["n"] else None
 
+    total_nb = sum(neighbor_sources.values())
     return {"n": n, "seed": seed, "exclude_sources": list(exclude_sources),
+            "target_sources": list(target_sources) or "all non-excluded sources",
+            "targets": len(ids), "target_ids_sha1": hashlib.sha1(",".join(map(str, sorted(ids))).encode()).hexdigest(),
+            "neighbor_source_share": {k: round(v / total_nb, 4) for k, v in neighbor_sources.most_common()},
+            "predictions_with_tags": round(with_tags / len(ids), 4) if ids else None,
             "embedding_model": settings.load_config("models.yaml")["tasks"]["embed"]["model"],
             **{a: {"n": s["n"], "exact": rate(s, "exact"), "within1": rate(s, "within1")} for a, s in stats.items()},
             "acidity_within1_by_confidence": {k: {"n": v["n"], "within1": rate(v, "within1")} for k, v in by_conf.items()}}
@@ -100,6 +127,47 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
 
 def coverage(repo, exclude_sources: tuple[str, ...] = ()) -> dict:
     return {"exclude_sources": list(exclude_sources), **repo.coverage_counts(exclude_sources=exclude_sources)}
+
+
+def rank_decaf(profile: Profile, beans: list[tuple[Item, str]], tag_to_cat: dict[str, str], k: int = 5) -> dict:
+    """Candidates for a decaf-only drinker among decaf beans, and the top k by the app's fit score.
+
+    "with_evidence" = beans that have an attribute or a flavor tag; the rest can only get the neutral 0.5."""
+    ok = [(i, src) for i, src in beans if passes(profile, i)[0]]
+    evid = [(i, src) for i, src in ok if i.tags or any(i.attr(a) is not None for a in ATTRS)]
+    scored = sorted(((score_item(profile, i, tag_to_cat), i, src) for i, src in evid), key=lambda x: (-x[0], x[1].name))
+    return {"candidates": len(ok), "with_evidence": len(evid),
+            "by_source": dict(Counter(src for _, src in ok).most_common()),
+            "top": [{"name": i.name, "roaster": i.brand, "source": src, "score": round(sc, 4), "acidity": i.acidity,
+                     "body": i.body, "sweetness": i.sweetness, "tags": list(i.tags)} for sc, i, src in scored[:k]]}
+
+
+def decaf_probe(repo, exclude_sources: tuple[str, ...] = (), k: int = 5) -> dict:
+    label, profile = PERSONAS[0]                          # 디카페인+산미: decaf_only, acidity 4.5, fruity/floral
+    tag_to_cat, _ = repo.taxonomy()
+    return {"persona": label, **rank_decaf(profile, repo.decaf_coffees(exclude_sources=exclude_sources), tag_to_cat, k)}
+
+
+def compare3(repo, n: int = 200, seed: int = 42) -> dict:
+    """full vs open vs open_plus on the same fixed LOO targets, plus coverage and the Korean decaf probe."""
+    out: dict = {
+        "variants": {name: {"exclude_sources": list(xs)} for name, xs in VARIANTS.items()},
+        "loo_targets": {
+            "sources": list(LOO_TARGET_SOURCES), "n": n, "seed": seed,
+            "why": "Held fixed across variants: open-licence beans with human-rated acidity/body (CQI cupping). "
+                   "Roaster beans are never targets (no human ratings; their attributes are LLM estimates from "
+                   "flavor note words); only the neighbour pool changes between variants. CQI has no sweetness "
+                   "or flavor tags, so only acidity/body accuracy is measured; predictions_with_tags shows how "
+                   "often the pool can suggest any flavor tags for these targets (no ground truth)."},
+    }
+    hashes = set()
+    for name, xs in VARIANTS.items():
+        loo = loo_accuracy(repo, n, seed, exclude_sources=xs, target_sources=LOO_TARGET_SOURCES)
+        hashes.add(loo["target_ids_sha1"])
+        out["variants"][name].update(coverage=repo.coverage_counts(exclude_sources=xs), loo=loo,
+                                     decaf_probe=decaf_probe(repo, xs))
+    out["loo_targets"]["identical_across_variants"] = len(hashes) == 1
+    return out
 
 
 def convergence(repo, users: int = 200, seed: int = 1) -> dict:
@@ -141,7 +209,7 @@ def bench(repo) -> dict:
 def main(argv: list[str]) -> int:
     from app.repo import Repo
     names = argv or ["all"]
-    order = ["violations", "loo", "loo_open", "coverage", "coverage_open", "convergence", "bench"]
+    order = ["violations", "loo", "loo_open", "coverage", "coverage_open", "compare3", "convergence", "bench"]
     targets = order if names == ["all"] else names
     repo = Repo(settings.DATABASE_URL)
     fns = {
@@ -150,6 +218,7 @@ def main(argv: list[str]) -> int:
         "loo_open": lambda r: loo_accuracy(r, exclude_sources=OPEN_LICENSE_EXCLUDE),
         "coverage": coverage,
         "coverage_open": lambda r: coverage(r, exclude_sources=OPEN_LICENSE_EXCLUDE),
+        "compare3": compare3,
         "convergence": convergence,
         "bench": bench,
     }
