@@ -272,7 +272,11 @@ def test_hollys_parses_names_caffeine_decaf(tmp_path):
     assert by["아메리카노"].caffeine_mg == 114.0
     assert by["카페 라떼"].caffeine_mg == 127.0
     assert by["디카페인 콜드브루"].is_decaf and not by["디카페인 콜드브루"].decaf_option
-    assert by["아메리카노"].decaf_option is True                # 에스프레소 카테고리는 디카페인 샷 변경 가능
+    # 2026-09-27 공식 페이지 재확인: 할리스의 디카페인은 콜드브루 계열 전용 SKU뿐이고(디카페인 콜드브루/라떼/
+    # 아샷추), 아메리카노 등 에스프레소(HOT) 음료에는 디카페인 표기·옵션이 전혀 없다(brands.yaml 참고) — 즉
+    # 에스프레소 샷을 디카페인으로 바꿔주는 옵션은 없으므로 decaf_option_categories == [] 이고, 아메리카노도
+    # decaf_option=False 이어야 한다.
+    assert by["아메리카노"].decaf_option is False
     assert by["에스프레소"].caffeine_mg == 61.0                 # HOT만 있는 항목
     assert by["콜드브루"].caffeine_mg == 195.0                  # ICED만 있는 항목
     assert all(i.brand_key == "brand:hollys" and i.key.startswith("menu:hollys:") for i in items)
