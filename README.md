@@ -93,7 +93,7 @@ cp .env.example .env             # NVIDIA_API_KEY (임베딩 nemotron-3-embed-1b
 uv run python -m pipeline run                    # collect → normalize → enrich → embed → load
 uv run python -m pipeline query "산미 밝은 에티오피아" --decaf
 uv run python -m pipeline gold-sample && uv run python -m pipeline gold-label && uv run python -m pipeline gold-score
-uv run pytest -q                                 # 347 tests (DB 테스트 포함)
+uv run pytest -q                                 # DB 테스트 포함, 전체 실행
 uv run python scripts/check_links.py             # 문서의 깨진 상대 링크 검사
 uv run python scripts/check_readme_numbers.py    # README 수치 ↔ data/eval/*.json 대조
 ```
