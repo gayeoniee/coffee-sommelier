@@ -167,3 +167,36 @@ def test_sample_coffees_have_korean_tags_and_no_review_text(repo):
     assert eth["tags_ko"] == ["시트러스"] and eth["description"] == "시트러스 향이 나는 원두"
     assert bra["tags_ko"] == ["chocolate"]                   # no taxonomy name -> the tag itself
     assert "summary" not in str(samples)
+
+
+def test_retired_catalog_rows_are_hidden_but_still_resolvable(repo):
+    brazil = repo.match_coffee("Brazil Cerrado").coffee_id
+    latte = {i.name: i for i in repo.brand_items("brand:sb", "any")}["카페 라떼"].menu_item_id
+    with repo.pool.connection() as conn:                 # what pipeline.load does to a protected vanished row
+        conn.execute("UPDATE coffees SET active = false WHERE id = %s", (brazil,))
+        conn.execute("UPDATE menu_items SET active = false WHERE id = %s", (latte,))
+        conn.execute("UPDATE brands SET active = false WHERE key = 'brand:tw'")
+    assert repo.search_coffees("brazil") == [] and repo.match_coffee("brazil cerrado") is None
+    assert brazil not in [n.coffee_id for n in repo.neighbors(vec(2), k=10)]
+    assert repo.fallback_neighbors("Brazil", None) == []
+    assert brazil not in repo.random_coffee_ids_for_loo(10, seed=1)
+    assert brazil not in [i.coffee_id for i in repo.random_coffees_with_attrs(10, seed=1)]
+    assert repo.coverage_counts()["total"] == 2
+    assert "Brazil Cerrado" not in [s["name"] for s in repo.sample_coffees()]
+    assert [b["key"] for b in repo.list_brands()] == ["brand:sb"]
+    assert [i.name for i in repo.brand_items("brand:sb", "any")] == ["아메리카노"]
+    assert repo.brand_items("brand:tw", "any") == []
+    # direct lookups (tasting history, logging a past recommendation) still work
+    assert repo.get_coffee(brazil).name == "Brazil Cerrado"
+    assert repo.get_menu_item(latte, "decaf_only").name == "카페 라떼"
+    assert repo.get_menu_item(latte, "decaf_only").order_decaf is True
+    assert repo.raw_menu(latte)["name"] == "카페 라떼"
+
+
+def test_pool_replaces_connections_killed_by_the_server(repo, db_conn):
+    assert repo.pool.max_idle == 300
+    with repo.pool.connection() as conn:
+        pid = conn.info.backend_pid
+    db_conn.execute("SELECT pg_terminate_backend(%s)", (pid,))
+    db_conn.commit()
+    assert repo.user_exists(repo.create_user())           # a dead pooled connection is checked and replaced

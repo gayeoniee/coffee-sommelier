@@ -1,11 +1,17 @@
+import json
+
 import pytest
 
 from pipeline.load import run_load
 from pipeline.query import similar, to_vector_literal
 from pipeline.records import (
-    BrandRecord, CoffeeRecord, MenuItemRecord, ReviewRecord, TaxonomyNode, write_jsonl,
+    BrandRecord,
+    CoffeeRecord,
+    MenuItemRecord,
+    ReviewRecord,
+    TaxonomyNode,
+    write_jsonl,
 )
-import json
 
 pytestmark = pytest.mark.db
 
@@ -53,7 +59,9 @@ def test_load_and_query(db_conn, tmp_path):
     assert counts == {"coffees": 2, "reviews": 1, "brands": 1, "menu_items": 1, "flavor_taxonomy": 2,
                       "enrich_log": 1, "dropped_reviews": 0, "dropped_menu_items": 0,
                       "deleted_coffees": 0, "deleted_reviews": 0, "deleted_menu_items": 0, "deleted_brands": 0,
-                      "kept_referenced_coffees": 0}
+                      "kept_referenced_coffees": 0, "kept_referenced_menu_items": 0, "kept_referenced_brands": 0}
+    for table in ("coffees", "menu_items", "brands"):
+        assert db_conn.execute(f"SELECT bool_and(active) FROM {table}").fetchone() == (True,)
     parent = db_conn.execute("SELECT p.key FROM flavor_taxonomy c JOIN flavor_taxonomy p ON c.parent_id = p.id").fetchone()
     assert parent == ("sca:fruity",)
     hits = similar(db_conn, FixedEmbedder(), "decaf ethiopia", k=2)
@@ -155,18 +163,53 @@ def test_reload_keeps_ids_and_user_data(db_conn, tmp_path):
     assert db_conn.execute("SELECT count(*) FROM users WHERE id = %s", (uid,)).fetchone()[0] == 1
 
 
-def test_reload_deletes_missing_rows_but_keeps_referenced(db_conn, tmp_path):
+def test_reload_deletes_missing_rows_but_keeps_referenced(db_conn, tmp_path, caplog):
     norm, enriched, embedded = setup_files(tmp_path)
     run_load(db_conn, norm, enriched, embedded)
     _add_tasting(db_conn, coffee_key="c1")
-    write_jsonl(enriched / "coffees.jsonl", [])          # both coffees vanish from the source
+    write_jsonl(enriched / "coffees.jsonl", [          # c1 and c2 vanish from the source, c3 is new
+        CoffeeRecord(key="c3", name="Kenya AA", origin_country="Kenya", source="t", collected_at="2026-09-26")])
     write_jsonl(norm / "reviews.jsonl", [])
-    counts = run_load(db_conn, norm, enriched, embedded)
+    with caplog.at_level("WARNING"):
+        counts = run_load(db_conn, norm, enriched, embedded)
     assert counts["deleted_coffees"] == 1                # c2 deleted
     assert counts["kept_referenced_coffees"] == 1        # c1 kept: a tasting points at it
     assert counts["deleted_reviews"] == 1
-    keys = {k for (k,) in db_conn.execute("SELECT key FROM coffees").fetchall()}
-    assert keys == {"c1"}
+    rows = dict(db_conn.execute("SELECT key, active FROM coffees").fetchall())
+    assert rows == {"c1": False, "c3": True}             # kept but retired from the catalog
+    assert "coffees: kept 1 retired row(s) still referenced: ['c1']" in caplog.text
+    write_jsonl(enriched / "coffees.jsonl", [          # c1 comes back -> active again
+        CoffeeRecord(key="c1", name="Ethiopia Washed", source="t", collected_at="2026-09-26")])
+    run_load(db_conn, norm, enriched, embedded)
+    assert db_conn.execute("SELECT active FROM coffees WHERE key = 'c1'").fetchone() == (True,)
+
+
+def test_reload_retires_referenced_menu_item_and_brand(db_conn, tmp_path):
+    norm, enriched, embedded = setup_files(tmp_path)
+    run_load(db_conn, norm, enriched, embedded)
+    _add_tasting(db_conn, menu_key="m1")
+    write_jsonl(norm / "brands.jsonl", [BrandRecord(key="brand:y", name="Y", decaf_available=False,
+                                                    verified_at="2026-09-26")])
+    write_jsonl(norm / "menu_items.jsonl", [])
+    counts = run_load(db_conn, norm, enriched, embedded)
+    assert (counts["kept_referenced_menu_items"], counts["kept_referenced_brands"]) == (1, 1)
+    assert db_conn.execute("SELECT active FROM menu_items WHERE key = 'm1'").fetchone() == (False,)
+    assert dict(db_conn.execute("SELECT key, active FROM brands").fetchall()) == {"brand:x": False, "brand:y": True}
+
+
+@pytest.mark.parametrize("emptied", ["coffees", "brands"])
+def test_empty_source_list_refuses_to_load(db_conn, tmp_path, emptied):
+    norm, enriched, embedded = setup_files(tmp_path)
+    run_load(db_conn, norm, enriched, embedded)
+    if emptied == "coffees":
+        write_jsonl(enriched / "coffees.jsonl", [])
+    else:
+        write_jsonl(norm / "brands.jsonl", [])
+    with pytest.raises(ValueError, match=f"{emptied}.*비어"):
+        run_load(db_conn, norm, enriched, embedded)
+    db_conn.rollback()
+    assert db_conn.execute("SELECT count(*) FROM coffees").fetchone() == (2,)
+    assert db_conn.execute("SELECT count(*) FROM brands").fetchone() == (1,)
 
 
 def test_reload_protects_coffee_referenced_by_kept_menu_item(db_conn, tmp_path):

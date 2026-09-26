@@ -32,8 +32,8 @@ def _coffee_item(r: dict) -> Item:
 
 class Repo:
     def __init__(self, url: str, min_size: int = 1, max_size: int = 5):
-        self.pool = ConnectionPool(url, min_size=min_size, max_size=max_size,
-                                   kwargs={"row_factory": dict_row}, open=True)
+        self.pool = ConnectionPool(url, min_size=min_size, max_size=max_size, kwargs={"row_factory": dict_row},
+                                   check=ConnectionPool.check_connection, max_idle=300, open=True)
         self._taxonomy: tuple[dict, dict] | None = None
 
     def close(self) -> None:
@@ -113,17 +113,19 @@ class Repo:
         return self._taxonomy
 
     # ---- brands & menus ---------------------------------------------------
+    # Catalog queries (browse, search, recommend, neighbors, eval) skip retired rows (active = false);
+    # direct lookups by id (get_coffee, get_menu_item, raw_menu) don't, so past tastings still resolve.
     def list_brands(self) -> list[dict]:
         return self._all("SELECT b.key, b.name, b.decaf_available, b.decaf_surcharge_krw, b.notes,"
-                         " EXISTS (SELECT 1 FROM menu_items m WHERE m.brand_id = b.id) AS has_menu"
-                         " FROM brands b ORDER BY b.name")
+                         " EXISTS (SELECT 1 FROM menu_items m WHERE m.brand_id = b.id AND m.active) AS has_menu"
+                         " FROM brands b WHERE b.active ORDER BY b.name")
 
     def brand_items(self, brand_key: str, caffeine_rule: str) -> list[Item]:
-        b = self._one("SELECT * FROM brands WHERE key = %s", (brand_key,))
+        b = self._one("SELECT * FROM brands WHERE key = %s AND active", (brand_key,))
         if b is None:
             return []
         menus = self._all("SELECT id, name, is_decaf, decaf_option, caffeine_mg FROM menu_items"
-                          " WHERE brand_id = %s ORDER BY id", (b["id"],))
+                          " WHERE brand_id = %s AND active ORDER BY id", (b["id"],))
         if not menus:
             menus = [{"id": None, "name": n, "is_decaf": False, "decaf_option": b["decaf_available"],
                       "caffeine_mg": None} for n in SYNTHETIC_MENU]
@@ -140,11 +142,11 @@ class Repo:
                     decaf_surcharge_krw=b["decaf_surcharge_krw"], menu_item_id=m["id"])
 
     def get_menu_item(self, menu_item_id: int, caffeine_rule: str) -> Item | None:
-        row = self._one("SELECT b.key FROM menu_items m JOIN brands b ON b.id = m.brand_id WHERE m.id = %s",
-                        (menu_item_id,))
-        if row is None:
+        m = self._one("SELECT id, brand_id, name, is_decaf, decaf_option, caffeine_mg FROM menu_items WHERE id = %s",
+                      (menu_item_id,))
+        if m is None:
             return None
-        return next((i for i in self.brand_items(row["key"], caffeine_rule) if i.menu_item_id == menu_item_id), None)
+        return self._menu_item(self._one("SELECT * FROM brands WHERE id = %s", (m["brand_id"],)), m, caffeine_rule)
 
     def raw_menu(self, menu_item_id: int) -> dict | None:
         return self._one("SELECT m.name, m.is_decaf, m.decaf_option, m.caffeine_mg, b.decaf_available"
@@ -159,8 +161,8 @@ class Repo:
         t = " ".join((text or "").split()).lower()
         if not t:
             return None
-        r = self._one(f"SELECT {COFFEE_COLS} FROM coffees WHERE lower(name) = %s"
-                      " OR lower(coalesce(roaster, '') || ' ' || name) = %s ORDER BY id LIMIT 1", (t, t))
+        r = self._one(f"SELECT {COFFEE_COLS} FROM coffees WHERE active AND (lower(name) = %s"
+                      " OR lower(coalesce(roaster, '') || ' ' || name) = %s) ORDER BY id LIMIT 1", (t, t))
         return _coffee_item(r) if r else None
 
     def search_coffees(self, q: str, limit: int = 8) -> list[dict]:
@@ -171,7 +173,7 @@ class Repo:
         country = normalize_country(q)
         return self._all(
             "SELECT id, name, roaster, origin_country, is_decaf FROM coffees"
-            " WHERE name ILIKE %(like)s OR roaster ILIKE %(like)s OR origin_country = %(country)s"
+            " WHERE active AND (name ILIKE %(like)s OR roaster ILIKE %(like)s OR origin_country = %(country)s)"
             " ORDER BY (name ILIKE %(like)s) DESC, length(name), id LIMIT %(limit)s",
             {"like": like, "country": country, "limit": limit})
 
@@ -191,7 +193,7 @@ class Repo:
                 conn.execute("SET LOCAL hnsw.ef_search = 200")
                 rows = conn.execute(
                     "SELECT id, name, acidity, body, sweetness, flavor_tags, 1 - (embedding <=> %(v)s::vector) AS sim"
-                    f" FROM coffees WHERE embedding IS NOT NULL{base}{extra}"
+                    f" FROM coffees WHERE active AND embedding IS NOT NULL{base}{extra}"
                     " ORDER BY embedding <=> %(v)s::vector LIMIT %(k)s",
                     {"v": v, "k": k, "ex": exclude_id, "o": origin, "p": process,
                      "xs": list(exclude_sources)}).fetchall()
@@ -209,7 +211,7 @@ class Repo:
         if not origin and not process:
             return []
         rows = self._all(
-            "SELECT id, name, acidity, body, sweetness, flavor_tags FROM coffees WHERE true"
+            "SELECT id, name, acidity, body, sweetness, flavor_tags FROM coffees WHERE active"
             + (" AND origin_country = %(o)s" if origin else "") + (" AND process = %(p)s" if process else "")
             + " ORDER BY id LIMIT %(limit)s", {"o": origin, "p": process, "limit": limit})
         return [Neighbor(r["id"], r["name"], 1.0, r["acidity"], r["body"], r["sweetness"],
@@ -224,7 +226,7 @@ class Repo:
         _, tag_ko = self.taxonomy()
         out = []
         for where in queries:
-            r = self._one("SELECT id, name, flavor_tags FROM coffees WHERE " + where +
+            r = self._one("SELECT id, name, flavor_tags FROM coffees WHERE active AND " + where +
                           " AND cardinality(flavor_tags) > 0 ORDER BY id LIMIT 1")
             if r:
                 out.append(sample_card(r["id"], r["name"], r["flavor_tags"], tag_ko))
@@ -232,19 +234,19 @@ class Repo:
 
     # ---- evaluation helpers -----------------------------------------------
     def random_coffees_with_attrs(self, n: int, seed: int) -> list[Item]:
-        rows = self._all(f"SELECT {COFFEE_COLS} FROM coffees WHERE acidity IS NOT NULL AND body IS NOT NULL"
+        rows = self._all(f"SELECT {COFFEE_COLS} FROM coffees WHERE active AND acidity IS NOT NULL AND body IS NOT NULL"
                          " AND sweetness IS NOT NULL ORDER BY id")
         return [_coffee_item(r) for r in random.Random(seed).sample(rows, min(n, len(rows)))]
 
     def random_coffee_ids_for_loo(self, n: int, seed: int, exclude_sources: tuple[str, ...] = ()) -> list[int]:
         extra = " AND source <> ALL(%(xs)s)" if exclude_sources else ""
-        rows = self._all("SELECT id FROM coffees WHERE embedding IS NOT NULL AND acidity IS NOT NULL"
+        rows = self._all("SELECT id FROM coffees WHERE active AND embedding IS NOT NULL AND acidity IS NOT NULL"
                          f" AND body IS NOT NULL{extra} ORDER BY id", {"xs": list(exclude_sources)})
         ids = [r["id"] for r in rows]
         return random.Random(seed).sample(ids, min(n, len(ids)))
 
     def coverage_counts(self, exclude_sources: tuple[str, ...] = ()) -> dict:
-        extra = " WHERE source <> ALL(%(xs)s)" if exclude_sources else ""
+        extra = " AND source <> ALL(%(xs)s)" if exclude_sources else ""
         row = self._one(
             "SELECT count(*) AS total,"
             " count(*) FILTER (WHERE embedding IS NOT NULL) AS with_embedding,"
@@ -252,5 +254,5 @@ class Repo:
             " count(*) FILTER (WHERE acidity IS NOT NULL) AS with_acidity,"
             " count(*) FILTER (WHERE is_decaf) AS decaf,"
             " count(*) FILTER (WHERE is_decaf AND cardinality(flavor_tags) > 0) AS decaf_with_flavor_tags"
-            f" FROM coffees{extra}", {"xs": list(exclude_sources)})
+            f" FROM coffees WHERE active{extra}", {"xs": list(exclude_sources)})
         return dict(row)

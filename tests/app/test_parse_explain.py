@@ -1,7 +1,20 @@
 import json
 
-from app.core.explain import SYSTEM_PROMPT, card, explain_messages, preference_sentence, template_explanation
-from app.core.parse import BeanParse, NoteSignals, merge_llm_parse, needs_llm_parse, note_messages, parse_bean_text
+from app.core.explain import (
+    SYSTEM_PROMPT,
+    card,
+    explain_messages,
+    preference_sentence,
+    template_explanation,
+)
+from app.core.parse import (
+    BeanParse,
+    NoteSignals,
+    merge_llm_parse,
+    needs_llm_parse,
+    note_messages,
+    parse_bean_text,
+)
 from app.models import Item, Prediction, Profile
 
 

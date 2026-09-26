@@ -131,3 +131,8 @@ CREATE INDEX IF NOT EXISTS profile_history_user_idx ON profile_history (user_id,
 
 ALTER TABLE brands ADD COLUMN IF NOT EXISTS bean jsonb;
 ALTER TABLE brands ADD COLUMN IF NOT EXISTS decaf_bean jsonb;
+
+-- 소스에서 사라졌지만 사용자 기록이 가리켜 지우지 못한 행: 카탈로그(검색·추천·이웃)에서 숨긴다.
+ALTER TABLE coffees ADD COLUMN IF NOT EXISTS active boolean NOT NULL DEFAULT true;
+ALTER TABLE menu_items ADD COLUMN IF NOT EXISTS active boolean NOT NULL DEFAULT true;
+ALTER TABLE brands ADD COLUMN IF NOT EXISTS active boolean NOT NULL DEFAULT true;

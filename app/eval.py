@@ -89,7 +89,9 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
             c = by_conf.setdefault(pred.confidence, {"n": 0, "within1": 0})
             c["n"] += 1
             c["within1"] += abs(pred.acidity - truth.acidity) <= 1
-    rate = lambda d, k: round(d[k] / d["n"], 4) if d["n"] else None  # noqa: E731
+    def rate(d: dict, k: str) -> float | None:
+        return round(d[k] / d["n"], 4) if d["n"] else None
+
     return {"n": n, "seed": seed, "exclude_sources": list(exclude_sources),
             "embedding_model": settings.load_config("models.yaml")["tasks"]["embed"]["model"],
             **{a: {"n": s["n"], "exact": rate(s, "exact"), "within1": rate(s, "within1")} for a, s in stats.items()},
@@ -129,7 +131,7 @@ def bench(repo) -> dict:
         parallel = time.perf_counter() - t1
         return seq, sequential, par, parallel
 
-    seq, sequential, par, parallel = asyncio.run(run())
+    seq, sequential, _par, parallel = asyncio.run(run())
     return {"model": settings.load_config("models.yaml")["tasks"][EXPLAIN_TASK]["model"],
             "sequential_total_s": round(sequential, 2), "parallel_total_s": round(parallel, 2),
             "first_token_s": [round(f, 2) for f, _ in seq],
