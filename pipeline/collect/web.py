@@ -7,6 +7,7 @@ from pipeline import settings
 STARBUCKS_URL = "https://www.starbucks.co.kr/upload/json/menu/{code}.js"
 MEGA_URL = "https://www.mega-mgccoffee.com/menu/menu.php"
 PAIK_URL = "https://paikdabang.com/menu/menu_coffee/"
+HOLLYS_URL = "https://www.hollys.co.kr/menu/espresso.do"
 
 
 @dataclass
@@ -77,3 +78,17 @@ class ShopifyCollector:
             p.write_text(json.dumps({"products": products}, ensure_ascii=False), encoding="utf-8")
             files.append(p)
         return files
+
+
+@dataclass
+class HollysCollector:
+    """The single COFFEE (ESPRESSO) menu page: name, HOT/ICED nutrition table (incl. caffeine) are all inline,
+    no pagination and no detail page needed. Other tabs (라떼·초콜릿·티, 할리치노·빙수, 스무디·주스, ...) mix in
+    non-coffee drinks, so only this one category page is collected."""
+
+    name: str = "hollys"
+
+    def collect(self, out_dir: Path, http) -> list[Path]:
+        p = out_dir / "espresso.html"
+        p.write_text(http.get(HOLLYS_URL).text, encoding="utf-8")
+        return [p]

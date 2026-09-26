@@ -14,7 +14,7 @@ def _copy_fixture(name: str, tmp_path: Path) -> Path:
 from pipeline.collect import run_collect
 from pipeline.normalize import run_normalize
 from pipeline.normalize.menus import (
-    normalize_brands, normalize_mega, normalize_paik, normalize_shopify, normalize_starbucks,
+    normalize_brands, normalize_hollys, normalize_mega, normalize_paik, normalize_shopify, normalize_starbucks,
 )
 from pipeline.records import BrandRecord, CoffeeRecord, MenuItemRecord, read_jsonl
 
@@ -185,3 +185,19 @@ def test_brands_yaml_has_decaf_option_categories_for_menu_brands():
     b = brands_by_key(settings.CURATED_DIR)
     for k in ("brand:hollys", "brand:coffeebean", "brand:ediya", "brand:paulbassett", "brand:compose"):
         assert k in b and isinstance(b[k].decaf_option_categories, list)
+
+
+def test_hollys_parses_names_caffeine_decaf(tmp_path):
+    snap = _copy_fixture("menus/hollys", tmp_path)
+    items = normalize_hollys(snap, "2026-09-27").menu_items
+    by = {i.name: i for i in items}
+    assert len(items) == 5   # 아메리카노, 카페 라떼, 디카페인 콜드브루, 에스프레소, 콜드브루 (HOT/ICED merged into one each)
+    assert by["아메리카노"].caffeine_mg == 114.0
+    assert by["카페 라떼"].caffeine_mg == 127.0
+    assert by["디카페인 콜드브루"].is_decaf and not by["디카페인 콜드브루"].decaf_option
+    assert by["아메리카노"].decaf_option is True                # 에스프레소 카테고리는 디카페인 샷 변경 가능
+    assert by["에스프레소"].caffeine_mg == 61.0                 # HOT만 있는 항목
+    assert by["콜드브루"].caffeine_mg == 195.0                  # ICED만 있는 항목
+    assert all(i.brand_key == "brand:hollys" and i.key.startswith("menu:hollys:") for i in items)
+    assert all(i.category == "에스프레소" for i in items)
+    assert sum(i.caffeine_mg is not None for i in items) / len(items) >= 0.9

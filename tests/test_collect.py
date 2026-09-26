@@ -125,4 +125,12 @@ def test_shopify_paginates(tmp_path):
 def test_registry_lists_all_sources():
     from pipeline.collect.registry import ALL_COLLECTORS
     assert [c.name for c in ALL_COLLECTORS] == [
-        "cqi", "roasterdb", "sca_wheel", "coffeereview_kaggle", "starbucks", "mega", "paik", "shopify"]
+        "cqi", "roasterdb", "sca_wheel", "coffeereview_kaggle", "starbucks", "mega", "paik", "shopify", "hollys"]
+
+
+def test_hollys_saves_espresso_page(tmp_path):
+    from pipeline.collect.web import HollysCollector
+
+    files = HollysCollector().collect(tmp_path, mock_http(lambda r: httpx.Response(200, text="<div class='menu_view01'></div>")))
+    assert [f.name for f in files] == ["espresso.html"]
+    assert files[0].read_text(encoding="utf-8") == "<div class='menu_view01'></div>"
