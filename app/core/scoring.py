@@ -36,6 +36,13 @@ def is_milk_drink(name: str) -> bool:
     return any(w in n for w in MILK_WORDS)
 
 
+def needs_decaf_order(caffeine_rule: str, is_decaf: bool, decaf_option: bool, caffeine_mg: float | None) -> bool:
+    """Should the guest order the decaf version? decaf_only: always; low: only if the drink isn't already <=100mg."""
+    low_enough = caffeine_mg is not None and caffeine_mg <= LOW_CAFFEINE_MG
+    return bool(decaf_option and not is_decaf
+                and (caffeine_rule == "decaf_only" or (caffeine_rule == "low" and not low_enough)))
+
+
 def passes(profile: Profile, item: Item) -> tuple[bool, str | None]:
     decaf_ok = item.is_decaf or item.decaf_option
     if profile.caffeine_rule == "decaf_only" and not decaf_ok:

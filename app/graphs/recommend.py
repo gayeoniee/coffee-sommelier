@@ -33,8 +33,8 @@ def empty_reason(profile: Profile, candidates: list[Item]) -> str:
 
 def build_recommend_graph(deps):
     async def load(state: RecommendState) -> dict:
-        want_decaf = state["profile"].caffeine_rule in ("decaf_only", "low")
-        return {"candidates": await asyncio.to_thread(deps.repo.brand_items, state["brand_key"], want_decaf)}
+        return {"candidates": await asyncio.to_thread(deps.repo.brand_items, state["brand_key"],
+                                                      state["profile"].caffeine_rule)}
 
     async def rank(state: RecommendState) -> dict:
         profile, writer = state["profile"], get_stream_writer()

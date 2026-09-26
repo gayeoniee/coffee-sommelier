@@ -185,11 +185,11 @@ def create_app(repo=None, deps=None, cookie_secure: bool | None = None) -> FastA
     @app.post("/tastings")
     async def tastings(body: TastingIn, uid: str = Depends(current_user)):
         p = profile_of(uid)
-        want_decaf = body.order_decaf or p.caffeine_rule in ("decaf_only", "low")
+        rule = "decaf_only" if body.order_decaf else p.caffeine_rule
         if body.coffee_id is not None:
             item, target = repo.get_coffee(body.coffee_id), {"coffee_id": body.coffee_id}
         elif body.menu_item_id is not None:
-            item, target = repo.get_menu_item(body.menu_item_id, want_decaf), {"menu_item_id": body.menu_item_id}
+            item, target = repo.get_menu_item(body.menu_item_id, rule), {"menu_item_id": body.menu_item_id}
         else:
             pred = body.predicted or PredictedIn()
             item = Item(key="input", name=body.input_text, source="predicted", acidity=pred.acidity, body=pred.body,

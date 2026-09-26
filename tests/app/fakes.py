@@ -1,7 +1,9 @@
 import asyncio
 import itertools
 import uuid
+from dataclasses import replace
 
+from app.core.scoring import needs_decaf_order
 from app.graphs import Deps
 from app.models import Item, Neighbor, Profile
 from pipeline.llm import LLMError
@@ -83,18 +85,13 @@ class FakeRepo:
         return [{"key": "brand:sb", "name": "스타벅스", "decaf_available": True, "decaf_surcharge_krw": 300,
                  "notes": "", "has_menu": True}]
 
-    def brand_items(self, brand_key, want_decaf):
-        items = self.menu.get(brand_key, [])
-        if not want_decaf:
-            return list(items)
-        from dataclasses import replace
-        return [replace(i, order_decaf=bool(i.decaf_option and not i.is_decaf
-                                             and not (i.caffeine_mg is not None and i.caffeine_mg <= 100)))
-                for i in items]
+    def brand_items(self, brand_key, caffeine_rule):
+        return [replace(i, order_decaf=needs_decaf_order(caffeine_rule, i.is_decaf, i.decaf_option, i.caffeine_mg))
+                for i in self.menu.get(brand_key, [])]
 
-    def get_menu_item(self, menu_item_id, want_decaf):
+    def get_menu_item(self, menu_item_id, caffeine_rule):
         for brand_key in self.menu:
-            for i in self.brand_items(brand_key, want_decaf):
+            for i in self.brand_items(brand_key, caffeine_rule):
                 if i.menu_item_id == menu_item_id:
                     return i
         return None

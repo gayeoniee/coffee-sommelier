@@ -103,3 +103,13 @@ def test_catalog_endpoints(client):
     assert client.get("/brands").json()[0]["key"] == "brand:sb"
     assert client.get("/coffees/search", params={"q": "brazil"}).json()[0]["name"] == "Brazil Cerrado"
     assert client.get("/health").json() == {"ok": True}
+
+
+def test_tastings_menu_item_uses_order_decaf_or_profile_rule(client):
+    onboard(client, caffeine_rule="low")
+    seen = []
+    real = client.repo.get_menu_item
+    client.repo.get_menu_item = lambda mid, rule: seen.append(rule) or real(mid, rule)
+    assert client.post("/tastings", json={"menu_item_id": 11, "rating": 4}).status_code == 200
+    assert client.post("/tastings", json={"menu_item_id": 11, "order_decaf": True, "rating": 4}).status_code == 200
+    assert seen == ["low", "decaf_only"]

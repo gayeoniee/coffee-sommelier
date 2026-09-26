@@ -8,7 +8,7 @@ from psycopg.types.json import Jsonb
 from psycopg_pool import ConnectionPool
 
 from app.core.flavors import build_tag_to_category
-from app.core.scoring import LOW_CAFFEINE_MG, is_milk_drink
+from app.core.scoring import is_milk_drink, needs_decaf_order
 from app.models import Item, Neighbor, Profile
 from pipeline.query import to_vector_literal
 from pipeline.rules import normalize_country
@@ -117,7 +117,7 @@ class Repo:
                          " EXISTS (SELECT 1 FROM menu_items m WHERE m.brand_id = b.id) AS has_menu"
                          " FROM brands b ORDER BY b.name")
 
-    def brand_items(self, brand_key: str, want_decaf: bool) -> list[Item]:
+    def brand_items(self, brand_key: str, caffeine_rule: str) -> list[Item]:
         b = self._one("SELECT * FROM brands WHERE key = %s", (brand_key,))
         if b is None:
             return []
@@ -126,11 +126,10 @@ class Repo:
         if not menus:
             menus = [{"id": None, "name": n, "is_decaf": False, "decaf_option": b["decaf_available"],
                       "caffeine_mg": None} for n in SYNTHETIC_MENU]
-        return [self._menu_item(b, m, want_decaf) for m in menus]
+        return [self._menu_item(b, m, caffeine_rule) for m in menus]
 
-    def _menu_item(self, b: dict, m: dict, want_decaf: bool) -> Item:
-        low_enough = m["caffeine_mg"] is not None and m["caffeine_mg"] <= LOW_CAFFEINE_MG
-        order_decaf = bool(want_decaf and m["decaf_option"] and not m["is_decaf"] and not low_enough)
+    def _menu_item(self, b: dict, m: dict, caffeine_rule: str) -> Item:
+        order_decaf = needs_decaf_order(caffeine_rule, m["is_decaf"], m["decaf_option"], m["caffeine_mg"])
         bean = (b["decaf_bean"] if (m["is_decaf"] or order_decaf) and b["decaf_bean"] else b["bean"]) or {}
         key = f"menu:{m['id']}" if m["id"] is not None else f"{b['key']}:{m['name']}"
         return Item(key=key, name=m["name"], source="brand_bean", acidity=bean.get("acidity"), body=bean.get("body"),
@@ -139,12 +138,12 @@ class Repo:
                     is_milk=is_milk_drink(m["name"]), confidence="medium", brand=b["name"],
                     decaf_surcharge_krw=b["decaf_surcharge_krw"], menu_item_id=m["id"])
 
-    def get_menu_item(self, menu_item_id: int, want_decaf: bool) -> Item | None:
+    def get_menu_item(self, menu_item_id: int, caffeine_rule: str) -> Item | None:
         row = self._one("SELECT b.key FROM menu_items m JOIN brands b ON b.id = m.brand_id WHERE m.id = %s",
                         (menu_item_id,))
         if row is None:
             return None
-        return next((i for i in self.brand_items(row["key"], want_decaf) if i.menu_item_id == menu_item_id), None)
+        return next((i for i in self.brand_items(row["key"], caffeine_rule) if i.menu_item_id == menu_item_id), None)
 
     def raw_menu(self, menu_item_id: int) -> dict | None:
         return self._one("SELECT m.name, m.is_decaf, m.decaf_option, m.caffeine_mg, b.decaf_available"

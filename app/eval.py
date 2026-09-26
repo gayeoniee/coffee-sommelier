@@ -43,8 +43,9 @@ def has_milk(name: str) -> bool:
 def independent_ok(profile: Profile, item: Item, raw: dict | None, brand_decaf_available: bool) -> bool:
     name = raw["name"] if raw else item.name
     decaf_capable = (raw["is_decaf"] or raw["decaf_option"]) if raw else brand_decaf_available
+    served_decaf = (raw["is_decaf"] or (raw["decaf_option"] and item.order_decaf)) if raw         else (brand_decaf_available and item.order_decaf)
     caffeine = raw["caffeine_mg"] if raw else None
-    if profile.caffeine_rule == "decaf_only" and not decaf_capable:
+    if profile.caffeine_rule == "decaf_only" and not served_decaf:
         return False
     if profile.caffeine_rule == "low" and not (decaf_capable or (caffeine is not None and caffeine <= 100)):
         return False
@@ -57,7 +58,7 @@ def violation_rate(repo) -> dict:
     details = []
     for label, p in PERSONAS:
         for b in repo.list_brands():
-            items = repo.brand_items(b["key"], p.caffeine_rule in ("decaf_only", "low"))
+            items = repo.brand_items(b["key"], p.caffeine_rule)
             top = mmr_top_k([(i, score_item(p, i, tag_to_cat)) for i in items if passes(p, i)[0]], tag_to_cat)
             for i, _ in top:
                 checked += 1

@@ -64,18 +64,33 @@ def test_taxonomy_maps(repo):
 
 
 def test_brand_items_decaf_option_and_synthetic_menu(repo):
-    items = {i.name: i for i in repo.brand_items("brand:sb", want_decaf=True)}
+    items = {i.name: i for i in repo.brand_items("brand:sb", "decaf_only")}
     am = items["아메리카노"]
     assert (am.order_decaf, am.decaf_surcharge_krw, am.brand, am.source) == (True, 300, "스타벅스", "brand_bean")
     assert am.tags == ("caramelized",)                       # decaf bean attributes used
     assert items["카페 라떼"].is_milk is True
-    plain = {i.name: i for i in repo.brand_items("brand:sb", want_decaf=False)}
+    plain = {i.name: i for i in repo.brand_items("brand:sb", "any")}
     assert plain["아메리카노"].order_decaf is False and plain["아메리카노"].tags == ("chocolate",)
-    synthetic = repo.brand_items("brand:tw", want_decaf=True)   # brand without menu rows
+    synthetic = repo.brand_items("brand:tw", "decaf_only")   # brand without menu rows
     assert [i.name for i in synthetic] == ["아메리카노", "카페라떼"]
-    assert all(i.decaf_option and i.menu_item_id is None for i in synthetic)
-    assert repo.brand_items("brand:none", want_decaf=False) == []
-    assert repo.get_menu_item(am.menu_item_id, want_decaf=True).order_decaf is True
+    assert all(i.decaf_option and i.menu_item_id is None and i.order_decaf for i in synthetic)
+    assert repo.brand_items("brand:none", "any") == []
+    assert repo.get_menu_item(am.menu_item_id, "decaf_only").order_decaf is True
+
+
+def test_order_decaf_depends_on_caffeine_rule(repo):
+    def latte(rule):
+        return {i.name: i for i in repo.brand_items("brand:sb", rule)}["카페 라떼"]
+
+    assert latte("decaf_only").order_decaf is True           # 75mg is low, but decaf_only still needs decaf
+    assert latte("decaf_only").tags == ("caramelized",)
+    assert latte("low").order_decaf is False                 # 75mg is already low enough
+    assert latte("low").tags == ("chocolate",)
+    assert latte("any").order_decaf is False
+    americano = {i.name: i for i in repo.brand_items("brand:sb", "low")}["아메리카노"]
+    assert americano.order_decaf is True                     # 150mg > 100mg -> order decaf
+    mid = americano.menu_item_id
+    assert repo.get_menu_item(mid, "low").order_decaf is True and repo.get_menu_item(mid, "any").order_decaf is False
 
 
 def test_coffee_lookup_search_and_match(repo):

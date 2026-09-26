@@ -48,3 +48,13 @@ def test_empty_reasons():
     assert empty_reason(Profile(), []) == "이 브랜드의 메뉴 정보가 없어요"
     items = FakeRepo().menu["brand:sb"]
     assert empty_reason(Profile(milk_ok=False, caffeine_rule="decaf_only"), items[1:2]) == "조건에 맞는 메뉴가 없어요"
+
+
+def test_decaf_only_cards_are_all_decaf_or_ordered_decaf():
+    deps = fake_deps()
+    events = run_events(build_recommend_graph(deps), {"brand_key": "brand:sb",
+                                                       "profile": Profile(caffeine_rule="decaf_only")})
+    cards = next(e for e in events if e["type"] == "cards")["cards"]
+    latte = next(c for c in cards if c["name"] == "카페 라떼")        # 75mg: low, but not decaf
+    assert latte["order_decaf"] is True
+    assert cards and all(c["is_decaf"] or c["order_decaf"] for c in cards)
