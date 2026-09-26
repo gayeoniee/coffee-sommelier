@@ -83,6 +83,8 @@ def test_preference_sentence_levels_and_flavors():
     assert s == "산미를 강하게 좋아함, 바디는 약한 편을 선호, 단맛은 보통. 좋아하는 향미: 과일, 꽃"
     s = preference_sentence(Profile(acidity=1.5, body=3.6, sweetness=2.0))
     assert s == "산미를 싫어함, 바디를 좋아함, 단맛을 싫어함"
+    s = preference_sentence(Profile(acidity=4.0, body=3.5, sweetness=3.4))   # boundaries are inclusive
+    assert s == "산미를 강하게 좋아함, 바디를 좋아함, 단맛은 보통"
 
 
 def test_explain_payload_states_preference_summary():
