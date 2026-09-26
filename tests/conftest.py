@@ -1,3 +1,4 @@
+import logging
 import os
 
 import psycopg
@@ -23,3 +24,16 @@ def db_conn():
     reset_tables(conn)
     yield conn
     conn.close()
+
+
+@pytest.fixture
+def caplog(caplog):
+    """pytest's caplog, also attached to the "telemetry" logger: `telemetry.configure()` (called by create_app)
+    turns propagation off so production lines go only to stdout, which would otherwise hide them from caplog."""
+    lg = logging.getLogger("telemetry")
+    propagate = lg.propagate
+    lg.propagate = False                 # no duplicate record via the root logger when configure() hasn't run
+    lg.addHandler(caplog.handler)
+    yield caplog
+    lg.removeHandler(caplog.handler)
+    lg.propagate = propagate

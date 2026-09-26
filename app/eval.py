@@ -208,8 +208,12 @@ def compare3(repo, n: int = 200, seed: int = 42) -> dict:
 
 
 def loo_repro(repo, n: int = 200, seed: int = 42) -> dict:
-    """Run loo_accuracy twice and check the JSON output is byte-identical — proves neighbor tie-break by id
-    (ADR 0006) makes leave-one-out results reproducible run to run, not just stable in aggregate."""
+    """Run loo_accuracy twice and check the JSON output is byte-identical.
+
+    What this shows: on the same index and the same queries the results are identical, and the id tie-break
+    (ADR 0006) removes the dependence on physical row order among equal distances. What it does not show:
+    identity across a reload — HNSW graph construction is randomised, so a rebuilt index can return a
+    different candidate set; the tie-break only reduces that noise, it does not guarantee equality."""
     dumps = [json.dumps(loo_accuracy(repo, n, seed), ensure_ascii=False, sort_keys=True) for _ in range(2)]
     hashes = [hashlib.sha256(d.encode()).hexdigest() for d in dumps]
     return {"runs": 2, "identical": hashes[0] == hashes[1], "sha256": hashes}
@@ -252,7 +256,10 @@ def bench(repo) -> dict:
 
 
 EXPLAIN_CASES = settings.EVAL_DIR / "explain_cases.yaml"
-JUDGES = ("judge", "judge2")
+JUDGES = ("judge", "judge2")          # labels in the result JSON (kept stable so saved runs stay comparable)
+# label -> models.yaml task. The second explain judge has its own task: `judge2` stays the phase-1 gold-set
+# labeller (nemotron), which is also the explain model and would grade itself here.
+EXPLAIN_JUDGE_TASKS = {"judge": "judge", "judge2": "judge_explain2"}
 JUDGE_ATTEMPTS = 3
 RULE_CHECKS = ("foreign_words", "length", "numbers_grounded", "condition_mentioned", "polarity")
 
@@ -313,6 +320,39 @@ def summarize_explain_quality(rows: list[dict]) -> dict:
     }
 
 
+EXPLAIN_QUALITY_OUT = settings.EVAL_DIR / "phase2_explain_quality.json"
+RULE_SUMMARY_FIELDS = ("rule_pass", "rule_pass_rate", "rule_failures")
+
+
+def rescore_explain_quality(doc: dict, cases: list[dict]) -> dict:
+    """Re-run the deterministic rule checks over saved explanations (no LLM calls) after the checker changed.
+
+    Only the rule fields change (each case's `rules`/`rule_pass`, the summary's RULE_SUMMARY_FIELDS); the text,
+    timings and judge verdicts are the ones recorded at generation time. `rules_rescored.before` keeps the
+    rule numbers as first recorded, so repeated re-scores still compare against the generation run."""
+    from app.core.explain_check import check_explanation
+
+    by_id = {c["id"]: c for c in cases}
+    rows = []
+    for r in doc["cases"]:
+        c = by_id[r["id"]]
+        msgs = explain_messages(c["item"], c["profile"], c["score"], c["prediction"], c["violation"])
+        rules = check_explanation(r["text"], json.loads(msgs[1]["content"]), r["score"], r["violation"])
+        rows.append({**r, "rules": rules, "rule_pass": all(rules.values())})
+    fresh = summarize_explain_quality(rows)
+    before = (doc.get("rules_rescored") or {}).get("before") or {k: doc["summary"][k] for k in RULE_SUMMARY_FIELDS}
+    return {**doc, "summary": {**doc["summary"], **{k: fresh[k] for k in RULE_SUMMARY_FIELDS}},
+            "rules_rescored": {"note": "rule checks re-run offline over the saved texts with the current "
+                                       "app/core/explain_check.py (`python -m app.eval explain_recheck`); "
+                                       "generation and judge fields are from the original run",
+                               "before": before},
+            "cases": rows}
+
+
+def explain_recheck(_repo=None) -> dict:
+    return rescore_explain_quality(json.loads(EXPLAIN_QUALITY_OUT.read_text(encoding="utf-8")), load_explain_cases())
+
+
 def explain_quality(repo) -> dict:
     """24 hand-written cases → one real explanation each (same path and deadline as the app) → deterministic rule
     checks + two LLM judges. Costs ~72 LLM calls, so it is not part of `all`."""
@@ -361,7 +401,7 @@ def explain_quality(repo) -> dict:
             rules = check_explanation(text, payload, round(c["score"] * 100), c["violation"])
             judges, judge_errors = {}, {}
             for j in JUDGES:
-                judges[j], err = await judge(j, payload, text)
+                judges[j], err = await judge(EXPLAIN_JUDGE_TASKS[j], payload, text)
                 if err:
                     judge_errors[j] = err
             rows.append({"id": c["id"], "persona": c["persona"], "source": c["item"].source,
@@ -374,7 +414,8 @@ def explain_quality(repo) -> dict:
         return rows
 
     rows = asyncio.run(run())
-    return {"models": {t: tasks[t]["model"] for t in (config.EXPLAIN_TASK, *JUDGES)},
+    return {"models": {config.EXPLAIN_TASK: tasks[config.EXPLAIN_TASK]["model"],
+                       **{j: tasks[t]["model"] for j, t in EXPLAIN_JUDGE_TASKS.items()}},
             "deadline_s": config.EXPLAIN_DEADLINE_S, "cases_file": "data/eval/explain_cases.yaml",
             "summary": summarize_explain_quality(rows), "cases": rows}
 
@@ -385,7 +426,9 @@ def main(argv: list[str]) -> int:
     order = ["violations", "loo", "loo_open", "coverage", "coverage_open", "compare3", "loo_repro", "convergence",
              "bench"]
     targets = order if names == ["all"] else names
-    repo = Repo(settings.DATABASE_URL)
+    offline = {"explain_recheck"}                     # no DB, no LLM
+    repo = None if set(targets) <= offline else Repo(settings.DATABASE_URL)
+    outputs = {"explain_recheck": "explain_quality"}  # the re-score rewrites the saved explain_quality result
     fns = {
         "violations": violation_rate,
         "loo": loo_accuracy,
@@ -397,15 +440,17 @@ def main(argv: list[str]) -> int:
         "convergence": convergence,
         "bench": bench,
         "explain_quality": explain_quality,          # real LLM calls; run by name only, not in `all`
+        "explain_recheck": explain_recheck,          # offline re-score of the saved explain_quality texts
     }
     try:
         for name in targets:
             result = fns[name](repo)
-            out = settings.EVAL_DIR / f"phase2_{name}.json"
+            out = settings.EVAL_DIR / f"phase2_{outputs.get(name, name)}.json"
             out.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
             print(f"[{name}] {json.dumps(result, ensure_ascii=False)[:400]}")
     finally:
-        repo.close()
+        if repo is not None:
+            repo.close()
     return 0
 
 

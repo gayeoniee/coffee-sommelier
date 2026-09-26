@@ -15,8 +15,13 @@ def test_end_logs_one_json_line(caplog):
     assert rec["ms_first_token"] == [700] and rec["fallback"] == 1 and rec["ms_total"] >= 0
 
 
-def test_add_outside_request_is_noop():
-    telemetry.add("fallback", 1)          # no begin() → must not raise
+def test_add_outside_request_is_noop(caplog):
+    caplog.set_level(logging.INFO, logger="telemetry")
+    telemetry.add("fallback", 1)          # no begin() → must not raise, and must not leak into the next request
+    assert telemetry._ctx.get() is None
+    tok = telemetry.begin("analyze", input="text")
+    telemetry.end(tok)
+    assert json.loads(caplog.records[-1].getMessage())["fallback"] == 0
 
 
 def test_defaults_when_nothing_added(caplog):
@@ -78,7 +83,32 @@ def test_end_swallows_a_raising_logger(monkeypatch):
     telemetry.end(tok, cards=3)          # must not raise
 
 
-def test_context_is_reset_after_end():
+def test_context_is_reset_after_end(caplog):
+    caplog.set_level(logging.INFO, logger="telemetry")
     tok = telemetry.begin("recommend", brand="brand:sb")
     telemetry.end(tok, cards=1)
+    assert telemetry._ctx.get() is None
     telemetry.add("fallback", 1)         # context gone → no-op, must not raise
+    tok = telemetry.begin("recommend", brand="brand:sb")
+    telemetry.end(tok, cards=1)
+    assert json.loads(caplog.records[-1].getMessage())["fallback"] == 0     # no leftover from the stray add
+
+
+def test_end_from_another_context_still_logs_the_request(caplog):
+    # an async generator finalised after a client disconnect can run its `finally` in a different Context
+    import contextvars
+    caplog.set_level(logging.INFO, logger="telemetry")
+    tok = telemetry.begin("recommend", brand="brand:sb")
+    telemetry.add("cards", 2)
+    contextvars.Context().run(telemetry.end, tok, aborted=True)       # must not raise
+    rec = json.loads(caplog.records[-1].getMessage())
+    assert rec["cards"] == 2 and rec["aborted"] is True
+    telemetry._ctx.set(None)             # this test's own Context still holds the record; the real one is gone
+
+
+def test_configure_enables_info_with_one_stdout_handler():
+    lg = logging.getLogger("telemetry")
+    telemetry.configure()
+    telemetry.configure()                # idempotent
+    assert lg.isEnabledFor(logging.INFO) and lg.propagate is False
+    assert len([h for h in lg.handlers if h.get_name() == telemetry.HANDLER_NAME]) == 1
