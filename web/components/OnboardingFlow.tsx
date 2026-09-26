@@ -26,8 +26,11 @@ export function OnboardingFlow({ redo }: { redo: boolean }) {
     try {
       await api.putProfile(profileInput(draft));
       const answers = sampleAnswers(choices);
-      if (!redo && answers.length > 0) await api.postSamples(answers);
-      router.push("/");
+      if (!redo && answers.length > 0) {
+        // 409 = samples were already applied once; the profile itself is saved, so carry on
+        await api.postSamples(answers).catch((e) => { if (!(e instanceof ApiError && e.status === 409)) throw e; });
+      }
+      router.replace("/");
     } catch (e) {
       setError(e instanceof ApiError ? e.message : "저장하지 못했어요");
       setBusy(false);

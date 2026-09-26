@@ -45,4 +45,16 @@ describe("onboarding flow", () => {
     await userEvent.click(screen.getByRole("button", { name: "다음" }));
     expect(screen.getByRole("button", { name: "저장" })).toBeInTheDocument();
   });
+  it("a 409 from samples (already onboarded) still finishes", async () => {
+    vi.stubGlobal("fetch", vi.fn((url: string, init?: RequestInit) => Promise.resolve(
+      url === "/api/onboarding/samples" && init?.method === "POST"
+        ? new Response(JSON.stringify({ detail: "이미 온보딩을 마쳤어요" }), { status: 409 })
+        : route(url, init))));
+    render(<OnboardingFlow redo={false} />);
+    await userEvent.click(screen.getByRole("button", { name: "다음" }));
+    await userEvent.click(screen.getByRole("button", { name: "다음" }));
+    await userEvent.click(await screen.findByRole("button", { name: "Brazil 별로" }));
+    await userEvent.click(screen.getByRole("button", { name: "시작하기" }));
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/"));
+  });
 });
