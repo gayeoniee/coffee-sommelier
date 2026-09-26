@@ -61,3 +61,20 @@ jobs:
       - run: npm run lint
       - run: npx tsc --noEmit
       - run: npm run build
+
+  # Render's GitHub auto-deploy needs its GitHub app on the repo; until then CI triggers the deploy through the API
+  # once every job on main is green (RENDER_API_KEY repo secret; skipped when it is absent).
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [backend, image, web]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render deploy
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: |
+          if [ -z "$RENDER_API_KEY" ]; then echo "no RENDER_API_KEY secret; skipping"; exit 0; fi
+          sid=$(curl -fsS -H "Authorization: Bearer $RENDER_API_KEY" \
+            "https://api.render.com/v1/services?name=coffee-sommelier-api&limit=1" | python3 -c 'import sys,json;print(json.load(sys.stdin)[0]["service"]["id"])')
+          curl -fsS -X POST -H "Authorization: Bearer $RENDER_API_KEY" -H "Content-Type: application/json" \
+            "https://api.render.com/v1/services/$sid/deploys" -d '{}' | python3 -c 'import sys,json;d=json.load(sys.stdin);print("deploy", d["id"], d["status"])'
