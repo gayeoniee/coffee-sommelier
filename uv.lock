@@ -238,15 +238,10 @@ name = "coffee-sommelier"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "beautifulsoup4" },
     { name = "fastapi" },
     { name = "httpx" },
-    { name = "kaggle" },
     { name = "langfuse" },
     { name = "langgraph" },
-    { name = "lxml" },
-    { name = "numpy" },
-    { name = "pandas" },
     { name = "psycopg", extra = ["binary"] },
     { name = "psycopg-pool" },
     { name = "pydantic" },
@@ -259,18 +254,20 @@ dependencies = [
 dev = [
     { name = "pytest" },
 ]
+pipeline = [
+    { name = "beautifulsoup4" },
+    { name = "kaggle" },
+    { name = "lxml" },
+    { name = "numpy" },
+    { name = "pandas" },
+]
 
 [package.metadata]
 requires-dist = [
-    { name = "beautifulsoup4", specifier = ">=4.12" },
     { name = "fastapi", specifier = ">=0.140" },
     { name = "httpx", specifier = ">=0.27" },
-    { name = "kaggle", specifier = ">=1.6" },
     { name = "langfuse", specifier = ">=4.15,<5" },
     { name = "langgraph", specifier = ">=1.2,<2" },
-    { name = "lxml", specifier = ">=5.2" },
-    { name = "numpy", specifier = ">=1.26" },
-    { name = "pandas", specifier = ">=2.2" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
     { name = "psycopg-pool", specifier = ">=3.2" },
     { name = "pydantic", specifier = ">=2.7" },
@@ -281,6 +278,13 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [{ name = "pytest", specifier = ">=8" }]
+pipeline = [
+    { name = "beautifulsoup4", specifier = ">=4.12" },
+    { name = "kaggle", specifier = ">=1.6" },
+    { name = "lxml", specifier = ">=5.2" },
+    { name = "numpy", specifier = ">=1.26" },
+    { name = "pandas", specifier = ">=2.2" },
+]
 
 [[package]]
 name = "colorama"

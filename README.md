@@ -185,6 +185,17 @@ npm run e2e       # 온보딩→추천→기록 스모크 (백엔드·DB 실행 
 ```
 브라우저는 같은 출처의 `/api/*`만 호출하고 Next Route Handler가 FastAPI로 쿠키·SSE를 그대로 중계한다(배포 시 교차 사이트 쿠키 문제 회피).
 
+## 배포
+
+Vercel(웹) + Render(FastAPI 도커) + Neon(Postgres·pgvector), 모두 무료 등급·싱가포르 리전. 계정 로그인(GitHub) 뒤에는 스크립트 하나로 끝난다.
+
+```bash
+npx neonctl auth && npx vercel login     # (선택) export RENDER_API_KEY=...
+bash scripts/deploy/deploy_all.sh        # Neon 생성·DB 이전 → Render → Vercel → 연결 확인
+```
+
+API 이미지는 파이프라인 의존성을 뺀 356 MB, 실행 메모리 약 75 MiB(Render 한도 512 MB). 단계별 수동 절차·환경변수·콜드 스타트 대응은 [docs/deploy.md](docs/deploy.md).
+
 ## 아키텍처
 
 ```
