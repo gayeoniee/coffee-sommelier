@@ -100,3 +100,17 @@ def test_note_messages_few_shot_examples():
     assert "'너무 달고 무거웠어요' → sweetness: \"lower\", body: \"lower\"" in user
     assert "'산미가 약해서 아쉬웠다' → acidity: \"higher\"" in user
     assert "'쓴맛 없이 고소해서 좋았다' → liked_flavors: [\"nutty/cocoa\"]" in user
+
+
+def test_explain_payload_carries_rules_and_violation():
+    item = Item(key="menu:1", name="카페 라떼", source="brand_bean", is_milk=True)
+    ok = explain_messages(item, Profile(caffeine_rule="low", milk_ok=True), 0.7)
+    payload = json.loads(ok[1]["content"])
+    assert payload["손님 선호"]["카페인 조건"] == "저카페인" and payload["손님 선호"]["우유"] == "가능"
+    assert payload["조건 위반"] is None and "조건 위반이 있으면" not in ok[0]["content"]
+    bad = explain_messages(item, Profile(caffeine_rule="decaf_only", milk_ok=False), 0.7, violation="우유가 들어가요")
+    payload = json.loads(bad[1]["content"])
+    assert payload["조건 위반"] == "우유가 들어가요"
+    assert payload["손님 선호"]["카페인 조건"] == "디카페인만" and payload["손님 선호"]["우유"] == "불가"
+    assert bad[0]["content"].endswith("조건 위반이 있으면 먼저 그 사실을 분명히 말하라. /no_think")
+    assert json.loads(explain_messages(item, Profile(), 0.7)[1]["content"])["손님 선호"]["카페인 조건"] == "제한 없음"

@@ -7,6 +7,7 @@ COOKIE_MAX_AGE = 60 * 60 * 24 * 365
 EXPLAIN_TASK = "explain"
 PARSE_NOTE_TASK = "parse_note"
 PARSE_BEAN_TASK = "parse_bean"
+EXPLAIN_DEADLINE_S = 12.0     # whole explanation stream, first token to last
 
 
 def cookie_secure() -> bool:

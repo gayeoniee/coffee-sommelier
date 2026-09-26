@@ -24,3 +24,17 @@ def test_tracing_is_noop_without_keys(monkeypatch):
     assert tracing.traced("n")(f) is f
     with tracing.span("run"):
         pass
+
+
+def test_traced_does_not_capture_inputs_or_outputs(monkeypatch):
+    import langfuse
+    monkeypatch.setenv("LANGFUSE_PUBLIC_KEY", "pk")
+    monkeypatch.setenv("LANGFUSE_SECRET_KEY", "sk")
+    seen = {}
+
+    def fake_observe(**kw):
+        seen.update(kw)
+        return lambda f: f
+    monkeypatch.setattr(langfuse, "observe", fake_observe)
+    tracing.traced("recommend.rank")
+    assert seen == {"name": "recommend.rank", "capture_input": False, "capture_output": False}

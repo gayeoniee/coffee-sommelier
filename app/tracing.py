@@ -11,7 +11,7 @@ def traced(name: str):
     if not enabled():
         return lambda f: f
     from langfuse import observe
-    return observe(name=name)
+    return observe(name=name, capture_input=False, capture_output=False)   # profiles/notes stay out of traces
 
 
 def span(name: str):

@@ -54,3 +54,35 @@ def test_violation_is_reported_not_hidden():
                                                           "profile": Profile(caffeine_rule="decaf_only")}))
     assert c["violation"] == "디카페인이 아니에요"
     assert c["template"].startswith("주의: 디카페인이 아니에요.")
+
+
+def test_violation_reaches_the_llm_prompt():
+    deps = fake_deps()
+    seen = []
+    real = deps.stream_text
+
+    def spy(task, messages):
+        seen.append(messages)
+        return real(task, messages)
+    deps.stream_text = spy
+    run_events(build_analyze_graph(deps), {"coffee_id": 2, "profile": Profile(caffeine_rule="decaf_only")})
+    assert '"조건 위반": "디카페인이 아니에요"' in seen[0][1]["content"]
+    assert "조건 위반이 있으면" in seen[0][0]["content"]
+
+
+def test_explanation_past_deadline_falls_back_to_template(monkeypatch):
+    import asyncio
+
+    from app import config
+    monkeypatch.setattr(config, "EXPLAIN_DEADLINE_S", 0.05)
+    deps = fake_deps()
+
+    async def slow(task, messages):
+        yield "느린 "
+        await asyncio.sleep(1)
+        yield "답변"
+    deps.stream_text = slow
+    events = run_events(build_analyze_graph(deps), {"coffee_id": 2, "profile": Profile()})
+    fb = [e for e in events if e["type"] == "explain_fallback"]
+    assert len(fb) == 1 and fb[0]["text"].startswith("취향 적합도")
+    assert not any(e["type"] == "explain_done" for e in events)
