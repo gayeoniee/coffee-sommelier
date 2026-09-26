@@ -33,6 +33,7 @@ def build_parser() -> argparse.ArgumentParser:
     ga = sub.add_parser("gold-agree", help="inter-judge agreement between two labelled gold sets")
     ga.add_argument("--a", default="gold_enrich.csv", help="first judge's CSV name, relative to the eval dir")
     ga.add_argument("--b", default="gold_enrich_judge2.csv", help="second judge's CSV name, relative to the eval dir")
+    sub.add_parser("roasters-kr", help="collect facts-only Korean roastery bean data (open-data variant)")
     return ap
 
 
@@ -126,6 +127,15 @@ def main(argv: list[str] | None = None) -> int:
         result = agreement(settings.EVAL_DIR / a.a, settings.EVAL_DIR / a.b)
         (settings.EVAL_DIR / "gold_agreement.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
         print(json.dumps(result, indent=2))
+        return 0
+    if a.cmd == "roasters-kr":
+        from pipeline.collect.roasters_kr import run_roasters_kr_collect
+        from pipeline.http import PoliteClient
+
+        http = PoliteClient(delay=2.0)
+        stats, out_path = run_roasters_kr_collect(http, settings.RAW_DIR, dt.date.today().isoformat())
+        print(json.dumps(stats, ensure_ascii=False, indent=2))
+        print(f"wrote {stats['total']['count']} records to {out_path}")
         return 0
     return 1
 

@@ -1,0 +1,40 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "title": "르완다 냐마셰케 냐부메라 내추럴",
+      "handle": "rwanda-nyamasheke-nyabumera-natural",
+      "product_type": "원두",
+      "tags": ["easy-bundle", "베스트셀러", "싱글 오리진"],
+      "body_html": "<p>르완다 냐마셰케 냐부메라 내추럴은 장미를 연상시키는 플로럴한 아로마와 함께 골든 레이즌의 농축된 단맛, 말린 딸기의 선명한 과일 풍미가 시럽처럼 매끄럽게 어우러집니다.</p>",
+      "variants": [{"price": "29500", "grams": 0, "title": "250g"}]
+    },
+    {
+      "id": 2,
+      "title": "나이트 라이트 디카페인",
+      "handle": "night-light-decaf",
+      "product_type": "원두",
+      "tags": ["easy-bundle", "블렌드"],
+      "body_html": "<p>나이트 라이트 디카페인은 스위스 워터 공정으로 카페인을 제거한 블렌드입니다. 당밀의 단맛과 부드러운 질감이 느껴집니다.</p>",
+      "variants": [{"price": "26000", "grams": 0, "title": "250g"}]
+    },
+    {
+      "id": 3,
+      "title": "블루보틀 텀블러",
+      "handle": "bluebottle-tumbler",
+      "product_type": "텀블러",
+      "tags": [],
+      "body_html": "<p>내구성이 좋은 스테인리스 텀블러입니다.</p>",
+      "variants": [{"price": "35000", "grams": 0, "title": "Default Title"}]
+    },
+    {
+      "id": 4,
+      "title": "시그니처 블렌드 세트",
+      "handle": "blend-box",
+      "product_type": "원두",
+      "tags": ["세트"],
+      "body_html": "<p>블루보틀에서 가장 인기 있는 세 가지 블렌드를 100g씩 담았습니다.</p>",
+      "variants": [{"price": "35000", "grams": 0, "title": "Default Title"}]
+    }
+  ]
+}
