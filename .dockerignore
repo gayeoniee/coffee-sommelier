@@ -1,0 +1,11 @@
+# Allow-list: the image needs only the API code, its config and the lockfile.
+*
+!pyproject.toml
+!uv.lock
+!app/
+!pipeline/
+!config/
+**/__pycache__
+**/*.pyc
+pipeline/collect/
+pipeline/normalize/
