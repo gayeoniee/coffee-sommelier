@@ -1,14 +1,25 @@
 import re
+import sys
 
-import numpy as np
-import pandas as pd
+# pandas/numpy stay out of the module import: the API image (see Dockerfile) ships without them,
+# and the app only needs the text rules below. Pipeline code that passes pandas values has pandas loaded.
+
+
+def _isna(v) -> bool:
+    """pd.isna for scalars, without importing pandas."""
+    if v is None:
+        return True
+    pd = sys.modules.get("pandas")
+    if pd is not None:
+        return bool(pd.isna(v))
+    return isinstance(v, float) and v != v
 
 
 def clean(v) -> str | None:
     if v is None:
         return None
     try:
-        if pd.isna(v):
+        if _isna(v):
             return None
     except (TypeError, ValueError):
         pass
@@ -27,7 +38,7 @@ def num(v) -> float | None:
 
 
 def opt_int(v) -> int | None:
-    return None if v is None or pd.isna(v) else int(v)
+    return None if _isna(v) else int(v)
 
 
 def join_text(*parts) -> str | None:
@@ -160,8 +171,11 @@ def normalize_roast(text) -> str | None:
 
 
 # --- scores --------------------------------------------------------------
-def to_quintile(values) -> pd.Series:
-    """Map numeric scores to 1-5 by within-source percentile rank. Missing stays <NA>."""
+def to_quintile(values):
+    """Map numeric scores to 1-5 by within-source percentile rank. Missing stays <NA>. Returns a pd.Series."""
+    import numpy as np
+    import pandas as pd
+
     s = pd.to_numeric(pd.Series(values), errors="coerce")
     ranks = s.rank(pct=True, method="average")
     q = np.ceil(ranks * 5 - 1e-9).clip(1, 5)
