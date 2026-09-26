@@ -3,8 +3,10 @@ from pathlib import Path
 
 from scripts.check_links import find_broken
 from scripts.check_links import main as links_main
-from scripts.check_readme_numbers import check
+from scripts.check_readme_numbers import HEADLINE_CHECKS, check, find_skipped
 from scripts.check_readme_numbers import main as numbers_main
+
+ROOT = Path(__file__).resolve().parent.parent
 
 
 # ---------- check_links ----------
@@ -60,6 +62,16 @@ EVAL = {
     },
     "phase2_loo.json": {"acidity": {"n": 200, "within1": 0.735}, "body": {"n": 200, "within1": 0.64},
                         "tags": {"n": 168, "f1": 0.4082, "category_f1": 0.6418}},
+    # Present so every "headline" check (see HEADLINE_CHECKS) has a matching JSON — otherwise
+    # GOOD_README would make numbers_main() exit 1 (headline check skipped) instead of 0.
+    "phase2_explain_quality.json": {"summary": {"rule_pass": 18, "n": 24}},
+    "phase2_bench.json": {"sequential_total_s": 4.59, "parallel_total_s": 2.03},
+    "phase2_convergence.json": {"mae_by_step": [0.7792, 0.75, 0.7117]},
+    "phase2_compare3.json": {"variants": {
+        "full": {"loo": {"acidity": {"within1": 0.495}, "body": {"within1": 0.595}}},
+        "open": {"loo": {"acidity": {"within1": 0.495}, "body": {"within1": 0.595}}},
+        "open_plus": {"loo": {"acidity": {"within1": 0.495}, "body": {"within1": 0.595}}},
+    }},
 }
 
 GOOD_README = """
@@ -70,6 +82,11 @@ GOOD_README = """
 | 원두 예측 leave-one-out, 산미 ±1 이내 | 0.735 (n=200) |
 | 원두 예측 leave-one-out, 바디 ±1 이내 | 0.64 |
 | LOO 향미 태그 F1 (마이크로) | 0.4082 (n=168) |
+| 설명 품질 | 규칙 통과 18/24 |
+| 설명 3개 순차 vs 병렬 (지연) | 4.59초 → 2.03초 |
+| LOO 산미 ±1 이내 (CQI 고정 200개) | 0.495 | 0.495 | 0.495 |
+| LOO 바디 ±1 이내 | 0.595 | 0.595 | 0.595 |
+| 학습 수렴 프로필 오차 | 0.7792 → 0.7117 |
 """
 
 
@@ -108,3 +125,42 @@ def test_numbers_main_exit_codes(tmp_path):
     bad.write_text(GOOD_README.replace("| 168 |", "| 161 |"), encoding="utf-8")
     assert numbers_main(["--readme", str(good), "--eval-dir", str(d)]) == 0
     assert numbers_main(["--readme", str(bad), "--eval-dir", str(d)]) == 1
+
+
+# ---------- optional-check skips (skipped headline claim -> failure; other skips -> warning) ----------
+
+def test_find_skipped_has_no_headline_checks_when_every_headline_pattern_matches():
+    assert set(find_skipped(GOOD_README)) & HEADLINE_CHECKS == set()
+
+
+def test_rewording_a_headline_sentence_is_reported_as_skipped(tmp_path, capsys):
+    # "규칙 통과 18/24" backs the explain_rule_pass check, a headline claim.
+    reworded = GOOD_README.replace("규칙 통과 18/24", "규칙을 대부분 통과")
+    assert "explain_rule_pass" in find_skipped(reworded)
+
+    d = _eval_dir(tmp_path)
+    readme_path = tmp_path / "README.md"
+    readme_path.write_text(reworded, encoding="utf-8")
+    code = numbers_main(["--readme", str(readme_path), "--eval-dir", str(d)])
+    out = capsys.readouterr().out
+    assert code == 1
+    assert "checks skipped (pattern not found)" in out
+    assert "explain_rule_pass" in out
+
+
+def test_rewording_a_non_headline_sentence_is_only_a_warning(tmp_path, capsys):
+    # "LOO 향미 태그 F1" backs loo_tag_f1 (headline) — instead reword an optional,
+    # non-headline check: loo_category_f1's pattern is never present in GOOD_README at all,
+    # so use coverage_tagged instead, which GOOD_README also never mentions by itself; assert
+    # that a check outside HEADLINE_CHECKS being skipped does not fail the run.
+    assert "coverage_tagged" not in HEADLINE_CHECKS
+    assert "coverage_tagged" in find_skipped(GOOD_README)  # already unmatched in the fixture
+
+    d = _eval_dir(tmp_path)
+    readme_path = tmp_path / "README.md"
+    readme_path.write_text(GOOD_README, encoding="utf-8")
+    code = numbers_main(["--readme", str(readme_path), "--eval-dir", str(d)])
+    out = capsys.readouterr().out
+    assert code == 0
+    assert "checks skipped (pattern not found)" in out
+    assert "coverage_tagged" in out

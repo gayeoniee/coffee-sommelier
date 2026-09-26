@@ -72,9 +72,13 @@ def main() -> None:
     # OS-masking safe zone.
     make_icon(192, 0.09, OUT_DIR / "icon-192.png")
     make_icon(512, 0.09, OUT_DIR / "icon-512.png")
-    # Maskable icon: content must fit inside the central 80% safe area, i.e.
-    # at least 10% padding on every side.
-    make_icon(512, 0.1, OUT_DIR / "maskable-512.png")
+    # Maskable icon: content must fit inside the safe zone, the circle of
+    # radius 0.4 * size inscribed in the icon (an OS mask can clip anything
+    # outside it). A flat 10% rectangular margin still lets the cup's
+    # rounded-rectangle corners poke past that circle along the diagonals, so
+    # this uses a larger margin (0.17), verified empirically (and by
+    # tests/test_make_icons.py) to keep every drawn pixel inside the circle.
+    make_icon(512, 0.17, OUT_DIR / "maskable-512.png")
     # apple-touch-icon: iOS ignores alpha, so render opaque.
     make_icon(180, 0.09, OUT_DIR / "apple-touch-icon.png", opaque=True)
 

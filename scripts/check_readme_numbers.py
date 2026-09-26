@@ -95,8 +95,21 @@ def _checks() -> list[Check]:
     return checks
 
 
+# Optional checks tied to a headline claim: if their pattern isn't found in the README at
+# all (the check is "skipped"), that's not just a stale-README warning — the headline claim
+# itself may have silently disappeared, so treat it as a failure.
+HEADLINE_CHECKS = frozenset({"explain_rule_pass", "bench", "loo_tag_f1", "compare3_acidity", "compare3_body",
+                              "convergence"})
+
+
 def _num(s: str) -> float:
     return float(s.replace(",", ""))
+
+
+def find_skipped(readme: str) -> list[str]:
+    """Names of optional (non-required) checks whose pattern matches nowhere in the README."""
+    return [c.name for c in _checks()
+            if not c.required and not any(re.search(pat, readme) for pat in c.patterns)]
 
 
 def check(readme: str, eval_dir: Path) -> list[str]:
@@ -136,11 +149,16 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--readme", type=Path, default=ROOT / "README.md")
     ap.add_argument("--eval-dir", type=Path, default=ROOT / "data" / "eval")
     a = ap.parse_args(argv)
-    errors = check(a.readme.read_text(encoding="utf-8"), a.eval_dir)
+    readme = a.readme.read_text(encoding="utf-8")
+    errors = check(readme, a.eval_dir)
+    skipped = find_skipped(readme)
     for e in errors:
         print("MISMATCH", e)
+    if skipped:
+        print(f"{len(skipped)} checks skipped (pattern not found): {', '.join(skipped)}")
     print(f"{len(_checks())} checks, {len(errors)} problems")
-    return 1 if errors else 0
+    headline_skipped = [s for s in skipped if s in HEADLINE_CHECKS]
+    return 1 if errors or headline_skipped else 0
 
 
 if __name__ == "__main__":
