@@ -17,7 +17,7 @@
 2. **생성** — 운영과 같은 경로: `explain_messages` → `astream_text("explain")`, 12초 마감, 실패하면 운영과 똑같이
    `template_explanation`으로 폴백(폴백도 결과로 기록하되 품질 수치는 LLM 생성분만으로 계산).
 3. **규칙 검사**(결정적, `app/core/explain_check.py`) — 외국어, 2문장·220자 이내(재채점 전에는 3문장), 숫자 근거, 조건 위반 언급, 극성(첫 문장 기준).
-4. **판정자 2개** — `judge`(deepseek-v4.1-flash)와 `judge2`(1차 nemotron-3-super + `enable_thinking: false` → 2차부터 `openai/gpt-oss-20b`, 아래 "2차 변경")에
+4. **판정자 2개** — `judge`(deepseek-v4.1-flash)와 `judge2`(1차 nemotron-3-super + `enable_thinking: false` → 2차부터 별도 태스크 `judge_explain2` = `openai/gpt-oss-20b`, 아래 "2차 변경"; 결과 JSON에서는 계속 `judge2` 칸)에
    페이로드 사실 + 설명을 주고 `{contradiction, hallucination, helpful 1~5}` JSON(`app/core/judge.py`). 잘못된 JSON·타임아웃은
    3회까지 재시도, 끝내 실패하면 null로 남기고 두 판정자 합의 수치에서 뺀다.
 
@@ -92,7 +92,7 @@
 
   → **`openai/gpt-oss-20b`(reasoning_effort low)** 채택: 가장 빠른 준수 모델이고, nemotron이 놓친 모순을 두 번 다 잡았다. thinking을
   완전히 끌 수 없는 모델이라 effort를 낮췄다. 판정 이유(`*_why`)는 영어로 쓴다. 1단계 골드셋 라벨(`gold_enrich_judge2.csv`)은
-  nemotron으로 만든 그대로 두고 다시 라벨링하지 않았다. (탐침한 날 NVIDIA가 과부하 — 503·타임아웃이 잦았고 지연 수치는 그날 기준.)
+  nemotron으로 만든 그대로 두고 다시 라벨링하지 않았다 — 그래서 `judge2` 태스크는 nemotron으로 두고(골드셋 재현용), 설명 품질의 두 번째 판정자는 새 태스크 `judge_explain2`로 분리했다. (탐침한 날 NVIDIA가 과부하 — 503·타임아웃이 잦았고 지연 수치는 그날 기준.)
 
 ## 2차 결과 (2026-09-27 재실행, 생성 24 / 폴백 0, judge2 = gpt-oss-20b)
 judge2가 바뀌어 "두 판정자 합의" 수치는 1차와 직접 비교할 수 없다. 두 번 다 같은 판정자인 deepseek(judge) 단독 수치를 비교 기준으로 쓴다.

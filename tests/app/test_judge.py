@@ -23,7 +23,19 @@ def test_verdict_rejects_helpful_out_of_range():
 def test_judges_differ_from_the_explain_model_and_explain_is_short():
     from pipeline import settings
     tasks = settings.load_config("models.yaml")["tasks"]
-    assert tasks["judge"]["model"] != tasks["explain"]["model"]
-    assert tasks["judge2"]["model"] != tasks["explain"]["model"]      # no self-grading
-    assert tasks["judge"]["model"].split("/")[0] != tasks["judge2"]["model"].split("/")[0]   # different vendors
+    from app.eval import EXPLAIN_JUDGE_TASKS
+    judges = [tasks[t] for t in EXPLAIN_JUDGE_TASKS.values()]
+    assert EXPLAIN_JUDGE_TASKS == {"judge": "judge", "judge2": "judge_explain2"}
+    assert all(j["model"] != tasks["explain"]["model"] for j in judges)          # no self-grading
+    assert len({j["model"].split("/")[0] for j in judges}) == 2                  # different vendors
     assert tasks["explain"]["max_tokens"] <= 300                        # two Korean sentences, not a paragraph
+
+
+def test_judge2_stays_the_phase1_gold_labelling_model():
+    # data/eval/gold_enrich_judge2.csv was labelled with this model; `pipeline gold-label --judge judge2`
+    # must keep reproducing it, so the explain-quality judge has its own task
+    from pipeline import settings
+    tasks = settings.load_config("models.yaml")["tasks"]
+    assert tasks["judge2"]["model"] == "nvidia/nemotron-3-super-120b-a12b"
+    assert tasks["judge_explain2"]["model"] == "openai/gpt-oss-20b"
+    assert tasks["judge_explain2"]["extra"] == {"reasoning_effort": "low"}

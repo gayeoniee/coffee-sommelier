@@ -256,7 +256,10 @@ def bench(repo) -> dict:
 
 
 EXPLAIN_CASES = settings.EVAL_DIR / "explain_cases.yaml"
-JUDGES = ("judge", "judge2")
+JUDGES = ("judge", "judge2")          # labels in the result JSON (kept stable so saved runs stay comparable)
+# label -> models.yaml task. The second explain judge has its own task: `judge2` stays the phase-1 gold-set
+# labeller (nemotron), which is also the explain model and would grade itself here.
+EXPLAIN_JUDGE_TASKS = {"judge": "judge", "judge2": "judge_explain2"}
 JUDGE_ATTEMPTS = 3
 RULE_CHECKS = ("foreign_words", "length", "numbers_grounded", "condition_mentioned", "polarity")
 
@@ -398,7 +401,7 @@ def explain_quality(repo) -> dict:
             rules = check_explanation(text, payload, round(c["score"] * 100), c["violation"])
             judges, judge_errors = {}, {}
             for j in JUDGES:
-                judges[j], err = await judge(j, payload, text)
+                judges[j], err = await judge(EXPLAIN_JUDGE_TASKS[j], payload, text)
                 if err:
                     judge_errors[j] = err
             rows.append({"id": c["id"], "persona": c["persona"], "source": c["item"].source,
@@ -411,7 +414,8 @@ def explain_quality(repo) -> dict:
         return rows
 
     rows = asyncio.run(run())
-    return {"models": {t: tasks[t]["model"] for t in (config.EXPLAIN_TASK, *JUDGES)},
+    return {"models": {config.EXPLAIN_TASK: tasks[config.EXPLAIN_TASK]["model"],
+                       **{j: tasks[t]["model"] for j, t in EXPLAIN_JUDGE_TASKS.items()}},
             "deadline_s": config.EXPLAIN_DEADLINE_S, "cases_file": "data/eval/explain_cases.yaml",
             "summary": summarize_explain_quality(rows), "cases": rows}
 
