@@ -55,3 +55,22 @@ def test_polite_client_verify_flag_reaches_httpx(monkeypatch):
     monkeypatch.setattr(httpx, "Client", lambda **kw: seen.update(kw) or real(**{k: v for k, v in kw.items() if k != "verify"}))
     PoliteClient(verify=False)
     assert seen["verify"] is False
+
+
+def test_delay_is_a_public_property():
+    """paulbassett's collector builds its own client but reuses the passed-in client's delay
+    (`pb_http = PoliteClient(delay=http.delay, verify=False)`); that needs public access, not `_delay`."""
+    c = PoliteClient(delay=2.5)
+    assert c.delay == 2.5
+
+
+def test_close_closes_the_underlying_httpx_client():
+    c = PoliteClient()
+    c.close()
+    assert c._client.is_closed
+
+
+def test_polite_client_is_a_context_manager():
+    with PoliteClient() as c:
+        assert not c._client.is_closed
+    assert c._client.is_closed
