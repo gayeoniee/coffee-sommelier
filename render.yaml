@@ -1,0 +1,40 @@
+# Render Blueprint: the FastAPI backend as a free Docker web service.
+# One-click: https://render.com/deploy?repo=https://github.com/gayeoniee/wine-sommelier_rag
+# Secrets (sync: false) are asked for once in the dashboard when the Blueprint is created.
+services:
+  - type: web
+    name: coffee-sommelier-api
+    runtime: docker
+    plan: free
+    region: singapore            # closest Render region to Korea; Neon aws-ap-southeast-1 is in the same city
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeploy: true
+    buildFilter:                 # web/ changes deploy on Vercel only
+      paths:
+        - app/**
+        - pipeline/**
+        - config/**
+        - pyproject.toml
+        - uv.lock
+        - Dockerfile
+        - .dockerignore
+    envVars:
+      - key: DATABASE_URL        # Neon direct connection string (...neon.tech/neondb?sslmode=require)
+        sync: false
+      - key: NVIDIA_API_KEY
+        sync: false
+      # Cookies reach the browser through the Vercel proxy (same site, HTTPS), so Secure + Lax works and
+      # CORS is not used. ALLOWED_ORIGINS only matters if a browser ever calls this API directly.
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: COOKIE_SAMESITE
+        value: lax
+      # Optional tracing: leave both keys empty to disable Langfuse entirely.
+      - key: LANGFUSE_PUBLIC_KEY
+        sync: false
+      - key: LANGFUSE_SECRET_KEY
+        sync: false
+      - key: LANGFUSE_BASE_URL   # EU cloud; US projects use https://us.cloud.langfuse.com
+        value: https://cloud.langfuse.com
