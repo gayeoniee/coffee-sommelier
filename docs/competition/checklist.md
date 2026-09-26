@@ -26,14 +26,23 @@
   4. GitHub·배포 URL을 레시피 본문에 넣어도 되는지
 
 ## 데이터·코드 정리 (10.1 ~ 10.10)
-- [x] **coffeereview 없는 DB 재구축** — 평가만이 아니라 앱이 실제로 쓰는 DB에서도 빠져 있어야 한다(지금은 평가 코드의 `exclude_sources`로만 빠짐). 초안 6장의 명령으로 깨끗한 RAW_DIR에서 다시 만든다. `scripts/competition/build_open_db.sh`로 로컬 docker Postgres에 `coffee_open` 구축 완료: coffees 1,762(cqi 1546·roasterdb 100·roasters_kr 107·shopify 9), coffeereview 0, menu_items 471, violations 0. `violations`·`loo`·`coverage`·`convergence` 결과는 `data/eval/open/*.json`(`explain_quality`·`bench`는 다른 브랜치의 프롬프트 변경 이후로 보류).
-- [ ] 재구축한 DB로 `uv run python -m app.eval violations compare3 convergence bench` 다시 실행하고, 초안의 수치가 달라졌으면 JSON 값으로 고친다(추측으로 고치지 않기)
+- [x] **coffeereview 없는 DB 재구축** — 평가만이 아니라 앱이 실제로 쓰는 DB에서도 빠져 있어야 한다(지금은 평가 코드의 `exclude_sources`로만 빠짐). 초안 6장의 명령으로 깨끗한 RAW_DIR에서 다시 만든다. `scripts/competition/build_open_db.sh`로 로컬 docker Postgres에 `coffee_open` 구축 완료: coffees 1,762(cqi 1546·roasterdb 100·roasters_kr 107·shopify 9), coffeereview 0, menu_items 471, violations 0.
+- [x] `violations`·`loo`·`coverage`·`convergence`·`bench`·`explain_quality` 결과가 모두 `data/eval/open/*.json`에 있다(더는 보류 아님). 재구축한 DB로 다시 실행했고, 초안(1장 수치 표, B-6)의 수치를 이 JSON 값으로 맞췄다 — `uv run python scripts/competition/render_numbers.py data/eval/open`으로 재현 가능. 예전 초안에 남아 있던 옛 수치(위반 0/78, LOO 0.49~0.505, 수렴 0.7792→0.7117, 지연 13.95→11.59초 등)는 모두 현재 값으로 교체했다.
 - [ ] 향미 태깅 정답셋을 오픈 데이터에서 다시 뽑아 평가(지금 정답셋은 coffeereview가 섞인 표본이라 제출본 결과로 쓸 수 없음) — 선택
 - [ ] (권장) 공공데이터 1순위: 공공데이터포털에서 **식약처_식품영양성분DB정보 API 활용신청**(개발계정 자동승인) → 프랜차이즈 음료의 `카페인(㎎)`(AMT_NUM100) 값이 실제로 있는지 확인 → 있으면 나머지 7개 브랜드의 카페인 보강과 교차검증 수치를 레시피에 추가
 - [ ] (선택) 소상공인 상가(상권)정보 CSV, 관세청 HS 0901.12/0901.22 수입 통계 — 넣는다면 실제 수치를 받아서 넣기
-- [ ] 포털에 올릴 CSV 3종 만들기(CSV만 가능): 컬럼정의 파일, 데이터 템플릿 예시, 데이터셋 파일. **coffeereview·RoasterDB·SCA 휠 파생 행은 넣지 않는다.** CQI, 직접 만든 라벨·집계, 공공데이터 위주로
-- [ ] 결과 이미지 최대 5장(초안 B-6의 1~5번) + 이미지마다 해석 문단
-- [ ] 배포 URL과 GitHub 공개 여부 결정. 공개한다면 README의 데이터 출처 표와 제출본 표가 일치하는지 확인
+- [x] 포털에 올릴 CSV 3종 만들기(CSV만 가능): 컬럼정의 파일, 데이터 템플릿 예시, 데이터셋 파일. **coffeereview·RoasterDB·SCA 휠 파생 행은 넣지 않는다.** `data/competition/01_컬럼정의.csv` ~ `07_데이터셋_sca_ko.csv` 7개 파일, UTF-8 BOM, `scripts/competition/export_csv.py`로 생성.
+- [x] 결과 이미지 5장(`docs/competition/images/01~05_*.png`, `scripts/competition/figures.py data/eval/open docs/competition/images`로 생성) + 초안 B-6에 이미지마다 해석 문단.
+- [x] 배포 URL과 GitHub 공개 여부 결정: 제출본 <https://coffee-sommelier-open.vercel.app>(배너 "공모전 제출본"), 참고용 전체 포트폴리오판 <https://coffee-sommelier-psi.vercel.app>, 저장소 <https://github.com/gayeoniee/wine-sommelier_rag>(공개). 초안 A-0·B-7에 반영함.
+- [x] `uv run python scripts/competition/check_draft.py docs/competition/data-recipe-draft.md` 통과(exit 0). A-2~A-6 모두 300자 이상, numbers 마커 있음. 남은 【작성 필요】는 13개 — 전부 본인 정보·포털 드롭다운·전화 확인·팀 구성처럼 본인만 채울 수 있는 항목이다(아래 "남은 【작성 필요】" 참고).
+
+## 남은 【작성 필요】 (check_draft.py 기준 13개, 전부 본인 몫)
+`uv run python scripts/competition/check_draft.py docs/competition/data-recipe-draft.md`는 통과하지만(exit 0), 아래 13곳은 에이전트가 대신 채울 수 없어 본인이 직접 채워야 한다.
+- **개인정보 / 팀 구성 (5곳, A-0·B-7)**: 참가인원(개인/팀), 소속, 아이디(이메일)·이름·연락처, 참가 서약서 동의 체크, [필수] 데이터 수집 및 활용 동의 체크.
+- **포털 드롭다운 (5곳, B-1)**: 데이터 활용목적 대/중분류, 표준산업분류, 산업분야, 기업유형/등급/레시피 유형, 분석모델/알고리즘 — 로그인해야 목록이 보인다.
+- **전화 확인 결과 (1곳, 0장)**: 서식3 "워크스튜디오 분석도구 활용" 문장이 레시피 제안 부문에도 적용되는지 K-DATA 1899-0247(4번)로 확인.
+- **포털 화면 확인 (1곳, B-3)**: 3단계 화면의 실제 입력 필드 — 로그인 전에는 볼 수 없어 추천 문장으로 대체해 두었다.
+- 나머지 1곳(문서 맨 위 5행)은 항목이 아니라 【작성 필요】 표시 자체를 설명하는 범례 문장이다.
 
 ## 포털 입력 (10.12 ~ 10.19)
 - [ ] ① **데이터 레시피 생성하기**(7단계)를 먼저 작성·저장 — 초안 B장. 분류 드롭다운(활용목적, 표준산업분류, 산업분야, 기업유형, 등급, 레시피 유형, 분석모델, 알고리즘)은 화면에서 골라야 함. 레시피 선택은 "AI 레시피" 권장

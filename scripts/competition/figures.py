@@ -81,6 +81,20 @@ def _load_optional(eval_dir: Path, name: str) -> dict | None:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _load_compare3(eval_dir: Path) -> dict:
+    """phase2_compare3.json compares the full/open/open_plus variants side by side, so a
+    single copy is generated once (in the parent eval dir shared across variant runs) rather
+    than duplicated into every variant's own eval dir. Prefer a copy inside eval_dir itself
+    (tests write one there) and fall back to the parent directory (real per-variant runs,
+    e.g. data/eval/open, read the shared data/eval/phase2_compare3.json)."""
+    eval_dir = Path(eval_dir)
+    for candidate in (eval_dir / "phase2_compare3.json", eval_dir.parent / "phase2_compare3.json"):
+        if candidate.exists():
+            return json.loads(candidate.read_text(encoding="utf-8"))
+    raise FileNotFoundError(
+        f"phase2_compare3.json not found in {eval_dir} or {eval_dir.parent}")
+
+
 def _fallback_brands(eval_dir: Path) -> list[str]:
     cov = _load_optional(eval_dir, "phase2_coverage.json")
     if cov and cov.get("menu_items_by_brand"):
@@ -152,7 +166,7 @@ def _noise_for(eval_dir: Path, exclude_sources: list[str]) -> dict[str, float] |
 
 
 def fig_loo_compare(eval_dir: Path, out_path: Path, korean: bool) -> None:
-    cmp = _load(eval_dir, "phase2_compare3.json")
+    cmp = _load_compare3(eval_dir)
     variants = [v for v in VARIANT_ORDER if v in cmp.get("variants", {})]
     labels = VARIANT_LABELS_KO if korean else VARIANT_LABELS_EN
 
@@ -186,13 +200,27 @@ def fig_loo_compare(eval_dir: Path, out_path: Path, korean: bool) -> None:
 # 03_decaf_coverage.png
 # ---------------------------------------------------------------------------
 
+def _shorten(text: str, max_len: int) -> str:
+    """Shorten a table label to at most max_len characters so matplotlib's table cell
+    never clips it mid-word against the cell border. Cuts on a trailing space when one
+    falls near the limit so words are not chopped in half."""
+    text = text or ""
+    if len(text) <= max_len:
+        return text
+    cut = text[: max_len - 1].rstrip()
+    space = cut.rfind(" ")
+    if space >= max_len // 2:
+        cut = cut[:space]
+    return cut + "…"
+
+
 def fig_decaf_coverage(eval_dir: Path, out_path: Path, korean: bool) -> None:
-    cmp = _load(eval_dir, "phase2_compare3.json")
+    cmp = _load_compare3(eval_dir)
     variants = [v for v in VARIANT_ORDER if v in cmp.get("variants", {})]
     labels = VARIANT_LABELS_KO if korean else VARIANT_LABELS_EN
     candidates = [cmp["variants"][v]["decaf_probe"]["candidates"] for v in variants]
 
-    fig, (ax_bar, ax_table) = plt.subplots(1, 2, figsize=(11, 4), gridspec_kw={"width_ratios": [1, 1.6]})
+    fig, (ax_bar, ax_table) = plt.subplots(1, 2, figsize=(12.5, 4), gridspec_kw={"width_ratios": [1, 1.9]})
     bars = ax_bar.bar([labels.get(v, v) for v in variants], candidates, color=BLUE)
     for rect, val in zip(bars, candidates):
         ax_bar.text(rect.get_x() + rect.get_width() / 2, val, str(val), ha="center", va="bottom")
@@ -203,9 +231,11 @@ def fig_decaf_coverage(eval_dir: Path, out_path: Path, korean: bool) -> None:
     top = (cmp["variants"][last_variant]["decaf_probe"].get("top") or [])[:5]
     ax_table.axis("off")
     col_labels = ["원두", "로스터리", "점수"] if korean else ["Coffee", "Roaster", "Score"]
-    rows = [[t.get("name", ""), t.get("roaster", ""), f"{t.get('score', 0):.4f}"] for t in top]
+    rows = [[_shorten(t.get("name", ""), 26), _shorten(t.get("roaster", ""), 18),
+             f"{t.get('score', 0):.4f}"] for t in top]
     if rows:
-        tbl = ax_table.table(cellText=rows, colLabels=col_labels, loc="center", cellLoc="left")
+        tbl = ax_table.table(cellText=rows, colLabels=col_labels, loc="center", cellLoc="left",
+                              colWidths=[0.6, 0.28, 0.12])
         tbl.auto_set_font_size(False)
         tbl.set_fontsize(9)
         tbl.scale(1, 1.5)
