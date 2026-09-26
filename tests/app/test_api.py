@@ -5,7 +5,7 @@ import logging
 import pytest
 from fastapi.testclient import TestClient
 
-from app.api import create_app
+from app.api import RecommendIn, create_app
 from app.models import Profile
 from tests.app.fakes import FakeRepo, fake_deps
 
@@ -115,6 +115,51 @@ def test_telemetry_logging_failure_does_not_break_the_stream(client, monkeypatch
     assert r.status_code == 200
     events = sse_events(r.text)
     assert events[0][0] == "cards" and events[-1][0] == "done"
+
+
+def test_create_app_enables_telemetry_logger_without_caplog():
+    from app import telemetry
+    repo = FakeRepo()
+    create_app(repo=repo, deps=fake_deps(repo), cookie_secure=False)
+    create_app(repo=repo, deps=fake_deps(repo), cookie_secure=False)       # a second app adds no second handler
+    lg = logging.getLogger("telemetry")
+    assert lg.isEnabledFor(logging.INFO)
+    assert len([h for h in lg.handlers if h.get_name() == telemetry.HANDLER_NAME]) == 1
+
+
+def test_each_stream_request_writes_one_json_line_to_the_telemetry_handler(client):
+    import io
+    from app import telemetry
+    handler = next(h for h in logging.getLogger("telemetry").handlers if h.get_name() == telemetry.HANDLER_NAME)
+    buf = io.StringIO()
+    handler.setStream(buf)
+    try:
+        onboard(client)
+        client.post("/recommend", json={"brand_key": "brand:sb"})
+        client.post("/analyze", json={"text": "에티오피아 예가체프 워시드"})
+    finally:
+        handler.setStream(None)          # back to the live sys.stdout
+    lines = buf.getvalue().splitlines()
+    assert [json.loads(x)["evt"] for x in lines] == ["recommend", "analyze"]
+    assert all(json.loads(x)["aborted"] is False for x in lines)
+
+
+def test_client_disconnect_mid_stream_still_logs_an_aborted_line(caplog, client):
+    caplog.set_level(logging.INFO, logger="telemetry")
+    onboard(client)
+    uid = next(iter(client.repo.users))
+    route = next(r for r in client.app.routes if getattr(r, "path", None) == "/recommend")
+    resp = route.endpoint(RecommendIn(brand_key="brand:sb"), uid)
+
+    async def disconnect():
+        gen = resp.body_iterator
+        assert (await gen.__anext__()).startswith("event: cards")
+        with pytest.raises(asyncio.CancelledError):
+            await gen.athrow(asyncio.CancelledError())        # what Starlette does when the client goes away
+
+    asyncio.run(disconnect())
+    rec = _last_telemetry_record(caplog)
+    assert rec["evt"] == "recommend" and rec["aborted"] is True and rec["cards"] == 3
 
 
 def test_tastings_flow_updates_profile(client):

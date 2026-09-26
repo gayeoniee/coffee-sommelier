@@ -9,8 +9,13 @@ import app.llm as llm
 from pipeline.llm import LLMError, Target
 
 
-def sse(*chunks, done=True):
-    lines = [f"data: {json.dumps({'choices': [{'delta': d}]})}" for d in chunks]
+def sse(*chunks, done=True, finish_reason=None):
+    lines = []
+    for i, d in enumerate(chunks):
+        choice = {"delta": d}
+        if finish_reason and i == len(chunks) - 1:
+            choice["finish_reason"] = finish_reason
+        lines.append(f"data: {json.dumps({'choices': [choice]})}")
     if done:
         lines.append("data: [DONE]")
     return "\n\n".join(lines) + "\n\n"
@@ -63,6 +68,88 @@ def test_stream_broken_after_output_raises(monkeypatch):
     tr = httpx.MockTransport(lambda r: httpx.Response(200, stream=Broken()))
     with pytest.raises(LLMError):
         collect("explain", tr)
+
+
+# --- finish_reason == "length" (token-limit truncation) --------------------------------------------
+
+def test_finish_reason_stop_is_unchanged(monkeypatch):
+    targets(monkeypatch)
+    body = sse({"content": "산미가 "}, {"content": "좋아요"}, finish_reason="stop")
+    tr = httpx.MockTransport(lambda r: httpx.Response(200, text=body, headers={"content-type": "text/event-stream"}))
+    toks = collect("explain", tr)
+    assert toks == ["산미가 ", "좋아요"]
+    assert llm.TRUNCATED not in toks
+
+
+def test_finish_reason_length_yields_truncated_sentinel_hedged_path(monkeypatch):
+    """Default HEDGE_AFTER_S > 0 routes the primary through the `_Attempt`/queue machinery."""
+    targets(monkeypatch)
+    body = sse({"content": "산미가 좋아요. "}, {"content": "바디는"}, finish_reason="length")
+    tr = httpx.MockTransport(lambda r: httpx.Response(200, text=body, headers={"content-type": "text/event-stream"}))
+    toks = collect("explain", tr)
+    assert toks == ["산미가 좋아요. ", "바디는", llm.TRUNCATED]
+
+
+def test_finish_reason_length_yields_truncated_sentinel_non_hedged_path(monkeypatch):
+    """HEDGE_AFTER_S <= 0 sends `_stream_once` tokens straight through with no `_Attempt` involved."""
+    targets(monkeypatch)
+    monkeypatch.setattr(llm.config, "HEDGE_AFTER_S", 0)
+    body = sse({"content": "산미가 좋아요. "}, {"content": "바디는"}, finish_reason="length")
+    tr = httpx.MockTransport(lambda r: httpx.Response(200, text=body, headers={"content-type": "text/event-stream"}))
+    toks = collect("explain", tr)
+    assert toks == ["산미가 좋아요. ", "바디는", llm.TRUNCATED]
+
+
+def run_explain(monkeypatch, stream_text):
+    """Run `explain_to_stream` with a fake `deps.stream_text`, collecting the events its writer emits."""
+    from app.graphs import common as graphs_common
+    from app.models import Item, Profile
+
+    events: list[dict] = []
+    monkeypatch.setattr(graphs_common, "get_stream_writer", lambda: events.append)
+
+    class Deps:
+        pass
+
+    deps = Deps()
+    deps.stream_text = stream_text
+    item = Item(key="coffee:1", name="Test Coffee", source="db", acidity=3, body=3, sweetness=3)
+    result = asyncio.run(graphs_common.explain_to_stream(deps, item, Profile(), 0.8, {}))
+    return result, events
+
+
+def test_explain_to_stream_unchanged_when_not_truncated(monkeypatch):
+    async def stream_text(task, messages):
+        yield "산미가 좋아요."
+
+    result, events = run_explain(monkeypatch, stream_text)
+    assert result == {"key": "coffee:1", "text": "산미가 좋아요.", "fallback": False}
+    assert any(e["type"] == "explain_done" and e["text"] == "산미가 좋아요." for e in events)
+    assert not any(e["type"] == "explain_fallback" for e in events)
+
+
+def test_explain_to_stream_trims_truncated_text_to_last_complete_sentence(monkeypatch):
+    async def stream_text(task, messages):
+        yield "산미가 좋아요. 바디는"
+        yield llm.TRUNCATED
+
+    result, events = run_explain(monkeypatch, stream_text)
+    assert result == {"key": "coffee:1", "text": "산미가 좋아요.", "fallback": False}
+    done = [e for e in events if e["type"] == "explain_done"]
+    assert done == [{"type": "explain_done", "key": "coffee:1", "text": "산미가 좋아요."}]
+    assert not any(e["type"] == "explain_fallback" for e in events)
+
+
+def test_explain_to_stream_falls_back_when_truncated_with_no_complete_sentence(monkeypatch):
+    async def stream_text(task, messages):
+        yield "가격 대비 좋은 원두라 계속 설명하자면"
+        yield llm.TRUNCATED
+
+    result, events = run_explain(monkeypatch, stream_text)
+    assert result["fallback"] is True
+    fb = [e for e in events if e["type"] == "explain_fallback"]
+    assert len(fb) == 1 and fb[0]["text"] == result["text"]
+    assert not any(e["type"] == "explain_done" for e in events)
 
 
 class Out(BaseModel):

@@ -20,6 +20,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "matplotlib>=3.11.2",
+    "pillow>=12.3.0",
     "pytest>=8",
 ]
 pipeline = [

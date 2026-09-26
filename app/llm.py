@@ -30,6 +30,13 @@ def _payload(t: Target, messages: list[dict], **extra) -> dict:
     return p
 
 
+TRUNCATED = object()
+"""Sentinel yielded (alongside `str` tokens) by `_stream_once`/`_hedged_stream`/`astream_text` when the
+final chunk carried `finish_reason == "length"` — the completion was cut off by `max_tokens`. Consumers
+that only care about text can ignore it (it is never a `str`); `explain_to_stream` uses it to trim the
+collected text back to its last complete sentence."""
+
+
 async def _stream_once(t: Target, messages: list[dict], transport) -> AsyncIterator[str]:
     async with httpx.AsyncClient(base_url=t.base_url, timeout=t.timeout, transport=transport) as client:
         async with client.stream("POST", "/chat/completions", headers=_headers(t),
@@ -43,11 +50,14 @@ async def _stream_once(t: Target, messages: list[dict], transport) -> AsyncItera
                 if data == "[DONE]":
                     break
                 try:
-                    delta = (json.loads(data)["choices"][0].get("delta") or {}).get("content")
+                    choice = json.loads(data)["choices"][0]
                 except (ValueError, KeyError, IndexError, TypeError, AttributeError):
                     continue
+                delta = (choice.get("delta") or {}).get("content")
                 if delta:
                     yield delta
+                if choice.get("finish_reason") == "length":
+                    yield TRUNCATED
 
 
 _END = object()
@@ -132,6 +142,8 @@ async def _hedged_stream(t: Target, messages: list[dict], transport, hedge_after
             item = await winner.q.get()
             if isinstance(item, str):
                 yield item
+            elif item is TRUNCATED:
+                yield TRUNCATED
             elif item is _END:
                 return
             else:
@@ -149,6 +161,9 @@ async def astream_text(task: str, messages: list[dict], transport=None) -> Async
         try:
             async with contextlib.aclosing(_hedged_stream(t, messages, transport, hedge_after)) as stream:
                 async for tok in stream:
+                    if tok is TRUNCATED:
+                        yield tok
+                        continue
                     started = True
                     yield tok
         except (httpx.HTTPError, LLMError) as e:

@@ -253,6 +253,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "matplotlib" },
+    { name = "pillow" },
     { name = "pytest" },
 ]
 pipeline = [
@@ -280,6 +281,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "matplotlib", specifier = ">=3.11.2" },
+    { name = "pillow", specifier = ">=12.3.0" },
     { name = "pytest", specifier = ">=8" },
 ]
 pipeline = [

@@ -92,6 +92,7 @@ def create_app(repo=None, deps=None, cookie_secure: bool | None = None) -> FastA
         from pipeline import settings
         repo = Repo(settings.DATABASE_URL)
     deps = deps or default_deps(repo)
+    telemetry.configure()
     secure = config.cookie_secure() if cookie_secure is None else cookie_secure
     graphs = {"recommend": build_recommend_graph(deps), "analyze": build_analyze_graph(deps),
               "log": build_log_graph(deps)}
@@ -117,19 +118,23 @@ def create_app(repo=None, deps=None, cookie_secure: bool | None = None) -> FastA
             tok = telemetry.begin(name, **(
                 {"brand": inputs["brand_key"]} if name == "recommend"
                 else {"input": "coffee_id" if inputs.get("coffee_id") is not None else "text"}))
-            with tracing.span(name):
-                try:
-                    async for event in graph.astream(inputs, stream_mode="custom"):
-                        if event["type"] == "cards":
-                            telemetry.add("cards", len(event["cards"]))
-                        yield _sse(event["type"], event)
-                except Exception:           # never leak a traceback into the stream
-                    log.exception("%s stream failed", name)
-                    telemetry.add("error", True)
-                    yield _sse("error", {"message": "처리 중 오류가 발생했어요"})
-            tracing.flush()
-            telemetry.end(tok)
-            yield _sse("done", {})
+            completed = False
+            try:
+                with tracing.span(name):
+                    try:
+                        async for event in graph.astream(inputs, stream_mode="custom"):
+                            if event["type"] == "cards":
+                                telemetry.add("cards", len(event["cards"]))
+                            yield _sse(event["type"], event)
+                    except Exception:           # never leak a traceback into the stream
+                        log.exception("%s stream failed", name)
+                        telemetry.add("error", True)
+                        yield _sse("error", {"message": "처리 중 오류가 발생했어요"})
+                completed = True
+                yield _sse("done", {})
+            finally:                            # also on client disconnect (CancelledError / GeneratorExit)
+                tracing.flush()
+                telemetry.end(tok, aborted=not completed)
         return StreamingResponse(gen(), media_type="text/event-stream",
                                  headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 

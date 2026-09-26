@@ -202,24 +202,25 @@ def test_pool_replaces_connections_killed_by_the_server(repo, db_conn):
     assert repo.user_exists(repo.create_user())           # a dead pooled connection is checked and replaced
 
 
-def _insert_two_identical_embeddings(repo, v):
-    """Two coffees with the same embedding vector; returns their ids sorted ascending."""
+def _insert_two_identical_embeddings(repo, v, ids=(900002, 900001)):
+    """Two coffees with the same embedding vector, inserted with explicit ids in the given order — by default
+    the higher id first, so physical (insertion) order and id order disagree."""
     with repo.pool.connection() as conn:
-        ids = [conn.execute(
-            "INSERT INTO coffees (key, name, roaster, is_decaf, acidity, body, sweetness, flavor_tags,"
-            " embedding, source, collected_at) VALUES (%s,'Tie Bean','R',false,3,3,3,%s,%s::vector,'t',"
-            "'2026-09-26') RETURNING id",
-            (f"tie{i}", ["chocolate"], to_vector_literal(v))).fetchone()["id"] for i in range(2)]
+        for i in ids:
+            conn.execute(
+                "INSERT INTO coffees (id, key, name, roaster, is_decaf, acidity, body, sweetness, flavor_tags,"
+                " embedding, source, collected_at) VALUES (%s,%s,'Tie Bean','R',false,3,3,3,%s,%s::vector,'t',"
+                "'2026-09-26')", (i, f"tie{i}", ["chocolate"], to_vector_literal(v)))
     return sorted(ids)
 
 
 def test_neighbors_break_ties_by_id(repo):
-    # two coffees with identical embeddings must come back in id order, run after run
-    ids = _insert_two_identical_embeddings(repo, vec(9))
+    # identical embeddings inserted higher-id first: without the id tie-break they come back in physical order
+    lo, hi = _insert_two_identical_embeddings(repo, vec(9))
     a = [n.coffee_id for n in repo.neighbors(vec(9), k=5)]
     b = [n.coffee_id for n in repo.neighbors(vec(9), k=5)]
     assert a == b
-    assert a.index(ids[0]) < a.index(ids[1])
+    assert a.index(lo) < a.index(hi)
 
 
 def test_loo_target_filter_sources_and_decaf_beans(repo):
