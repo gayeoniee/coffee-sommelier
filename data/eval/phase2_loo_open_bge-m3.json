@@ -9,39 +9,39 @@
   "targets": 200,
   "target_ids_sha1": "befbe183b5fab3d59f50887988ee19cf41d16fff",
   "neighbor_source_share": {
-    "cqi": 0.9655,
-    "roasterdb": 0.032,
+    "cqi": 0.9505,
+    "roasterdb": 0.047,
     "shopify": 0.0025
   },
-  "predictions_with_tags": 0.04,
-  "embedding_model": "nvidia/nemotron-3-embed-1b",
+  "predictions_with_tags": 0.05,
+  "embedding_model": "bge-m3",
   "acidity": {
-    "n": 198,
-    "exact": 0.2727,
-    "within1": 0.5202
+    "n": 196,
+    "exact": 0.2551,
+    "within1": 0.5204
   },
   "body": {
-    "n": 198,
-    "exact": 0.2828,
-    "within1": 0.5808
+    "n": 196,
+    "exact": 0.2857,
+    "within1": 0.551
   },
   "sweetness": {
-    "n": 6,
-    "exact": 0.5,
-    "within1": 0.8333
+    "n": 9,
+    "exact": 0.5556,
+    "within1": 0.8889
   },
   "acidity_within1_by_confidence": {
     "low": {
-      "n": 73,
-      "within1": 0.3836
+      "n": 74,
+      "within1": 0.4189
     },
     "medium": {
       "n": 108,
-      "within1": 0.5648
+      "within1": 0.5278
     },
     "high": {
-      "n": 17,
-      "within1": 0.8235
+      "n": 14,
+      "within1": 1.0
     }
   }
 }

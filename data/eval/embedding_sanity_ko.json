@@ -1,0 +1,76 @@
+{
+ "bge-m3": {
+  "산미 있는 에티오피아 디카페인": [
+   "0.674 싱글오리진 디카페인 에티오피아 원두 | Ethiopia | None | decaf=True | acid=None | ",
+   "0.661 [골드문트] [디카페인] 에티오피아 예가체프 할로 베리티 내추럴 | Ethiopia | natural | decaf=True | acid=4 | floral,peach,grape,caramelized",
+   "0.635 Decaf Ethiopia Sidamo | Ethiopia | natural | decaf=True | acid=2 | lemon,fresh,honey,pipe tobacco",
+   "0.629 Ethiopia Sidamo Natural Water Decaf | Ethiopia | washed | decaf=True | acid=2 | chocolate,fresh",
+   "0.628 Ethiopia Sidamo Bensa Asefa Dukamo Washed | Ethiopia | washed | decaf=False | acid=4 | pear,cocoa,maple syrup,floral"
+  ],
+  "고소하고 초콜릿 같은 브라질 원두": [
+   "0.640 카페블렌딩 원두 상콤 | Brazil | None | decaf=False | acid=None | ",
+   "0.621 버보니아 스위트 블렌드 원두 | Brazil | None | decaf=False | acid=None | ",
+   "0.619 카페블렌딩 원두 구수 | Brazil | None | decaf=False | acid=None | ",
+   "0.618 카페블렌딩 원두 더치 설렘 | Brazil | None | decaf=False | acid=None | ",
+   "0.618 싱글오리진 브라질 옐로우 버본 원두 | Brazil | None | decaf=False | acid=None | "
+  ],
+  "꽃향 나는 게이샤 워시드": [
+   "0.603 Panama Hacienda La Esmeralda Geisha Washed | Panama | washed | decaf=False | acid=4 | floral,chocolate,cherry",
+   "0.591 Gesha Village Ethiopia Lot #18 Illubabor Wash | Ethiopia | washed | decaf=False | acid=2 | chocolate,raspberry,rose,floral",
+   "0.591 Esmeralda Special Auction Washed Geisha | Panama | washed | decaf=False | acid=4 | rose,apple,chocolate,floral",
+   "0.591 Gesha Village Estate Bench Maji Gesha G1 | Ethiopia | washed | decaf=False | acid=4 | floral,jasmine,maple syrup,cocoa",
+   "0.588 Ethiopia Bench-Maji Lucy Station Washed Geish | Ethiopia | washed | decaf=False | acid=4 | grapefruit,floral"
+  ],
+  "묵직한 바디의 다크 로스트 수마트라": [
+   "0.481 Decaf Sumatra | None | None | decaf=True | acid=None | bitter,woody",
+   "0.475 Buzzworthy Dark Roast (pod) | None | None | decaf=False | acid=None | smoky,stale,pipe tobacco",
+   "0.472 Sumatra Dark Roast | None | None | decaf=False | acid=None | meaty/brothy,musty/earthy",
+   "0.468 Dark Sumatra | Indonesia | None | decaf=False | acid=None | chocolate",
+   "0.466 Colombian 100% Arabica Medium-Dark Roast | Colombia | None | decaf=False | acid=3 | pungent,dark chocolate,hazelnut"
+  ],
+  "딸기 같은 내추럴 가공": [
+   "0.578 볼리바르 내추럴 | Colombia | natural | decaf=False | acid=None | strawberry,prune,grape,winey",
+   "0.567 르완다 냐마셰케 냐부메라 내추럴 | Rwanda | natural | decaf=False | acid=4 | floral,raisin,berry,cherry",
+   "0.551 Dolok Sanggul Single Origin Espresso | Indonesia | wet-hulled | decaf=False | acid=None | pungent,dark chocolate",
+   "0.547 Panama Don Julian Natural | Panama | natural | decaf=False | acid=4 | floral,blueberry,cocoa",
+   "0.544 Organic Costa Rica Las Lajas Natural Process | Costa Rica | natural | decaf=False | acid=4 | chocolate,peach"
+  ]
+ },
+ "nvidia/nemotron-3-embed-1b": {
+  "산미 있는 에티오피아 디카페인": [
+   "0.597 싱글오리진 디카페인 에티오피아 원두 | Ethiopia | None | decaf=True | acid=None | ",
+   "0.570 [골드문트] [디카페인] 에티오피아 예가체프 할로 베리티 내추럴 | Ethiopia | natural | decaf=True | acid=4 | floral,peach,grape,caramelized",
+   "0.514 Decaf Ethiopia Sidamo | Ethiopia | natural | decaf=True | acid=2 | lemon,fresh,honey,pipe tobacco",
+   "0.486 Ethiopia Sidamo Natural Water Decaf | Ethiopia | washed | decaf=True | acid=2 | chocolate,fresh",
+   "0.483 Decaf Asterisk Organic | Ethiopia | None | decaf=True | acid=3 | fresh,raisin,orange"
+  ],
+  "고소하고 초콜릿 같은 브라질 원두": [
+   "0.529 풍요로운 땅 | Brazil | None | decaf=False | acid=3 | chocolate,peanuts,caramelized,orange",
+   "0.475 브릴리 | Brazil | natural | decaf=False | acid=None | vanilla,nutty,chocolate",
+   "0.467 Big Band Blend | Brazil | natural | decaf=False | acid=None | almond,chocolate",
+   "0.466 Brasil Sitio Sao Gabriel | Brazil | None | decaf=False | acid=3 | fresh,hazelnut,dark chocolate",
+   "0.455 Fazenda Capoeira, Brazil - Espresso (500g) | Brazil | natural | decaf=False | acid=None | hazelnut,milk chocolate,chocolate"
+  ],
+  "꽃향 나는 게이샤 워시드": [
+   "0.304 Panama Florsa 100 Geisha FW 1600+ | Panama | washed | decaf=False | acid=4 | cocoa",
+   "0.291 Panama Hacienda La Esmeralda Geisha Washed | Panama | washed | decaf=False | acid=4 | floral,chocolate,cherry",
+   "0.291 Guatemala Acatenango Gesha | Guatemala | washed | decaf=False | acid=4 | floral",
+   "0.287 Biodynamic Washed Geisha | China | washed | decaf=False | acid=2 | floral,chocolate,lemon,fresh",
+   "0.284 Colombia Finca La España Gesha | Colombia | natural | decaf=False | acid=4 | floral,jasmine,fresh"
+  ],
+  "묵직한 바디의 다크 로스트 수마트라": [
+   "0.470 Dark Sumatra | Indonesia | None | decaf=False | acid=None | chocolate",
+   "0.450 Sumatra Dark | Indonesia | None | decaf=False | acid=1 | smoky,dark chocolate,prune,fresh",
+   "0.433 Sumatra Organic | Indonesia | None | decaf=False | acid=None | chocolate,bitter,fermented",
+   "0.430 Sumatra | None | None | decaf=False | acid=None | meaty/brothy,musty/earthy,dark chocolate",
+   "0.425 Sumatra | Indonesia | None | decaf=False | acid=None | pungent"
+  ],
+  "딸기 같은 내추럴 가공": [
+   "0.432 Ethiopia Natural Sidamo Korate Gr. 3 Organic | Ethiopia | natural | decaf=False | acid=3 | strawberry,fresh,cherry",
+   "0.431 Ethiopia Kercha Naturally Processed Sidama | Ethiopia | natural | decaf=False | acid=4 | pungent,floral,rose,strawberry",
+   "0.429 Ethiopia Guji Gerbicho Natural | Ethiopia | natural | decaf=False | acid=2 | strawberry,cocoa,apple,floral",
+   "0.417 볼리바르 내추럴 | Colombia | natural | decaf=False | acid=None | strawberry,prune,grape,winey",
+   "0.407 Ethiopia Sidamo Natural Special Prep. | Ethiopia | natural | decaf=False | acid=4 | floral,berry,dark chocolate,peach"
+  ]
+ }
+}

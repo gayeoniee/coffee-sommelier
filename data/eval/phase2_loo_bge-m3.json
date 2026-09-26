@@ -6,39 +6,39 @@
   "targets": 200,
   "target_ids_sha1": "a8821651f4e3a5e9611dd81eb5bd62db507990fa",
   "neighbor_source_share": {
-    "coffeereview_kaggle": 0.839,
-    "cqi": 0.16,
+    "coffeereview_kaggle": 0.8385,
+    "cqi": 0.1605,
     "shopify": 0.001
   },
-  "predictions_with_tags": 0.84,
-  "embedding_model": "nvidia/nemotron-3-embed-1b",
+  "predictions_with_tags": 0.825,
+  "embedding_model": "bge-m3",
   "acidity": {
     "n": 200,
-    "exact": 0.44,
-    "within1": 0.735
+    "exact": 0.41,
+    "within1": 0.75
   },
   "body": {
     "n": 200,
-    "exact": 0.305,
-    "within1": 0.635
+    "exact": 0.325,
+    "within1": 0.65
   },
   "sweetness": {
-    "n": 96,
-    "exact": 0.5312,
-    "within1": 0.875
+    "n": 98,
+    "exact": 0.449,
+    "within1": 0.8878
   },
   "acidity_within1_by_confidence": {
-    "low": {
-      "n": 14,
-      "within1": 0.3571
-    },
     "medium": {
-      "n": 128,
-      "within1": 0.7188
+      "n": 138,
+      "within1": 0.7754
     },
     "high": {
-      "n": 58,
-      "within1": 0.8621
+      "n": 48,
+      "within1": 0.7708
+    },
+    "low": {
+      "n": 14,
+      "within1": 0.4286
     }
   }
 }
