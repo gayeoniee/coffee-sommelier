@@ -144,6 +144,9 @@ class HollysCollector:
         p = out_dir / "espresso.html"
         p.write_text(http.get(HOLLYS_URL).text, encoding="utf-8")
         return [p]
+
+
+@dataclass
 class PaulbassettCollector:
     """The site's TLS chain is self-signed, so this collector builds its own client with
     verify=False (the only place this project does that) instead of using the passed-in http

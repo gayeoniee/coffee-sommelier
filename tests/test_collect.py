@@ -176,6 +176,18 @@ def test_hollys_saves_espresso_page(tmp_path):
     assert files[0].read_text(encoding="utf-8") == "<div class='menu_view01'></div>"
 
 
+def test_paulbassett_collector_is_a_dataclass():
+    """Same shape as the other collectors (StarbucksCollector, HollysCollector, ...): a @dataclass
+    with a `name` field customizable via the constructor, not a plain class with a bare annotation."""
+    import dataclasses
+
+    from pipeline.collect.web import PaulbassettCollector
+
+    assert dataclasses.is_dataclass(PaulbassettCollector)
+    assert PaulbassettCollector().name == "paulbassett"
+    assert PaulbassettCollector(name="x").name == "x"
+
+
 def test_paulbassett_builds_insecure_client_from_passed_in_delay(tmp_path, monkeypatch):
     """The site's TLS chain is self-signed: the collector must build its own verify=False client
     (the only place this project disables verification), reusing only the passed-in http's delay."""
