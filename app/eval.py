@@ -5,6 +5,8 @@ import json
 import sys
 import time
 
+import yaml
+
 from app.core.explain import explain_messages
 from app.core.predict import predict_from_neighbors
 from app.core.scoring import mmr_top_k, passes, score_item
@@ -23,22 +25,30 @@ PERSONAS = [
     ("디카페인+우유X+단맛", Profile(caffeine_rule="decaf_only", milk_ok=False, acidity=2, body=3, sweetness=4.5,
                               flavor_weights={"sweet": 0.6})),
 ]
-# Deliberately NOT the scoring module's list: an independent, raw-field check.
+# Deliberately NOT the scoring module's list: an independent check. Hand labels first (every menu name in the
+# DB was labelled by a person), this marker list only for names the labels don't cover.
+MILK_LABELS: dict[str, bool] = yaml.safe_load(
+    (settings.CURATED_DIR / "menu_milk_labels.yaml").read_text(encoding="utf-8"))
 MILK_MARKERS = ("라떼", "우유", "밀크", "크림", "카푸치노", "플랫화이트", "모카", "프라푸치노", "latte", "milk", "cream",
                 "cappuccino", "mocha", "frappuccino")
 
 
+def has_milk(name: str) -> bool:
+    if name in MILK_LABELS:
+        return MILK_LABELS[name]
+    n = "".join(name.lower().split())
+    return any(m in n for m in MILK_MARKERS)
+
+
 def independent_ok(profile: Profile, item: Item, raw: dict | None, brand_decaf_available: bool) -> bool:
-    name = (raw["name"] if raw else item.name).lower()
+    name = raw["name"] if raw else item.name
     decaf_capable = (raw["is_decaf"] or raw["decaf_option"]) if raw else brand_decaf_available
     caffeine = raw["caffeine_mg"] if raw else None
     if profile.caffeine_rule == "decaf_only" and not decaf_capable:
         return False
     if profile.caffeine_rule == "low" and not (decaf_capable or (caffeine is not None and caffeine <= 100)):
         return False
-    if not profile.milk_ok and any(m in name for m in MILK_MARKERS):
-        return False
-    return True
+    return profile.milk_ok or not has_milk(name)
 
 
 def violation_rate(repo) -> dict:

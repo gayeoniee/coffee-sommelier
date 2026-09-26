@@ -3,8 +3,17 @@ from app.models import ATTRS, Item, Profile
 
 LOW_CAFFEINE_MG = 100
 ATTR_WEIGHT, FLAVOR_WEIGHT = 0.6, 0.4
-MILK_WORDS = ("라떼", "우유", "밀크", "크림", "카푸치노", "플랫화이트", "모카", "프라푸치노",
-              "latte", "milk", "cream", "cappuccino", "flat white", "mocha", "frappuccino")
+# Matched against the lowercased name with all whitespace removed. Golden-tested against the hand labels in
+# data/curated/menu_milk_labels.yaml (tests/app/test_milk_labels.py).
+MILK_WORDS = (
+    "라떼", "라테", "우유", "밀크", "크림", "크리미", "카푸치노", "플랫화이트", "모카", "프라푸치노", "프라페",
+    "마키아또", "마끼아또", "코르타도", "브레베", "비안코", "아포가토", "콘파나", "아인슈페너", "쉐이크", "셰이크",
+    "초코", "초콜릿", "요거트", "요구르트", "야쿠르트", "퐁크러쉬", "커피스무디",
+    "스타벅스더블샷",            # espresso shaken with milk
+    "할메가", "원조커피",         # mix-coffee style signatures made with condensed milk / cream
+    "latte", "milk", "cream", "cappuccino", "flatwhite", "mocha", "frappuccino", "frappe", "macchiato",
+    "cortado", "breve", "bianco", "affogato", "conpanna", "einspanner", "shake", "choco", "yogurt", "yoghurt",
+)
 
 # checked in order: "바닐라 크림 콜드브루" is cold brew, "디카페인 카페 라떼" is latte
 DRINK_FAMILIES = (("frappuccino", ("frappuccino", "프라푸치노")),
@@ -23,7 +32,7 @@ def drink_family(name: str) -> str:
 
 
 def is_milk_drink(name: str) -> bool:
-    n = name.lower()
+    n = "".join(name.lower().split())
     return any(w in n for w in MILK_WORDS)
 
 
