@@ -20,7 +20,7 @@ from pipeline.normalize.menus import (
     normalize_brands, normalize_compose, normalize_mega, normalize_paik, normalize_shopify, normalize_starbucks,
     normalize_brands, normalize_mega, normalize_paik, normalize_paulbassett, normalize_shopify, normalize_starbucks,
 )
-from pipeline.records import BrandRecord, CoffeeRecord, MenuItemRecord, read_jsonl
+from pipeline.records import BrandRecord, CoffeeRecord, MenuItemRecord, ReviewRecord, read_jsonl
 
 MEGA_HTML = """
 <ul><li><a class="inner_modal_open"></a>
@@ -216,6 +216,37 @@ def test_run_normalize_reads_flat_roasters_kr_and_drops_url_duplicates(tmp_path,
     keys = [c.key for c in read_jsonl(tmp_path / "norm" / "coffees.jsonl", CoffeeRecord)]
     assert keys == ["shopify:shop.test:night", "roasters_kr:fritz:1"]      # same product URL: first source wins
     assert counts["src:roasters_kr"] == 2 and counts["dropped_url_duplicates"] == 1
+
+
+def test_run_normalize_excludes_sources(tmp_path):
+    raw = tmp_path / "raw"
+    cr = raw / "coffeereview_kaggle" / "2026-09-24"
+    (cr / "patkle__x").mkdir(parents=True)
+    (cr / "manifest.json").write_text('{"ok": true}', encoding="utf-8")
+    (cr / "patkle__x" / "reviews_feb_2023.csv").write_text(
+        "title,rating,acidity_structure,aftertaste,aroma,body,flavor,with_milk,agtron,blind_assessment,"
+        "bottom_line,coffee_origin,est_price,notes,review_date,roast_level,roaster,roaster_location,url\n"
+        'Bolivia Gesha,93,9,8,9,8,9,,60/78,"Floral. Magnolia, cocoa nib.","Great.","Caranavi, Bolivia",$30,'
+        '"Washed process.",January 2023,Medium-Light,Red Rooster,Floyd,https://cr.test/review/a/\n',
+        encoding="utf-8")
+    cqi = raw / "cqi" / "2026-09-24"
+    cqi.mkdir(parents=True)
+    (cqi / "manifest.json").write_text('{"ok": true}', encoding="utf-8")
+    (cqi / "arabica_2018.csv").write_text(
+        "Unnamed: 0,Species,Owner,Country.of.Origin,Farm.Name,Company,Region,Variety,Processing.Method,"
+        "Acidity,Body,Sweetness\n"
+        "1,Arabica,metad,Ethiopia,metad plc,metad co,guji,,Washed / Wet,8.75,8.5,10\n",
+        encoding="utf-8")
+    curated = tmp_path / "curated"
+    curated.mkdir()
+    (curated / "brands.yaml").write_text("[]\n", encoding="utf-8")
+
+    out = tmp_path / "norm"
+    stats = run_normalize(raw, out, curated, exclude_sources=("coffeereview_kaggle",))
+    assert stats["src:coffeereview_kaggle"] == "excluded"
+    coffees = read_jsonl(out / "coffees.jsonl", CoffeeRecord)
+    assert coffees and not any(c.source == "coffeereview_kaggle" for c in coffees)
+    assert not any(r.source == "coffeereview_kaggle" for r in read_jsonl(out / "reviews.jsonl", ReviewRecord))
 
 
 def test_menu_decaf_option_rule():

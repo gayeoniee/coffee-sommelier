@@ -1,4 +1,4 @@
-from pipeline.__main__ import STAGES, build_parser
+from pipeline.__main__ import STAGES, build_parser, exclude_sources_from
 
 
 def test_run_defaults_to_all_stages():
@@ -34,6 +34,13 @@ def test_gold_score_file_option():
     assert a.file == "gold_enrich.csv"
     a = build_parser().parse_args(["gold-score", "--file", "gold_enrich_judge2.csv"])
     assert a.file == "gold_enrich_judge2.csv"
+
+
+def test_exclude_source_flag_and_env(monkeypatch):
+    a = build_parser().parse_args(["run", "--only", "normalize", "--exclude-source", "coffeereview_kaggle"])
+    assert exclude_sources_from(a) == ("coffeereview_kaggle",)
+    monkeypatch.setenv("EXCLUDE_SOURCES", "a, b")
+    assert exclude_sources_from(build_parser().parse_args(["run"])) == ("a", "b")
 
 
 def test_gold_agree_defaults_and_options():

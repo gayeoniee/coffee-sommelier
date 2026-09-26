@@ -1,4 +1,16 @@
+import importlib
+
 from pipeline import settings
+
+
+def test_dir_overrides_from_env(monkeypatch, tmp_path):
+    monkeypatch.setenv("NORMALIZED_DIR", str(tmp_path / "n"))
+    monkeypatch.setenv("EVAL_DIR", str(tmp_path / "e"))
+    importlib.reload(settings)
+    assert settings.NORMALIZED_DIR == tmp_path / "n" and settings.EVAL_DIR == tmp_path / "e"
+    monkeypatch.delenv("NORMALIZED_DIR")
+    monkeypatch.delenv("EVAL_DIR")
+    importlib.reload(settings)
 
 
 def test_paths_are_under_repo_root():

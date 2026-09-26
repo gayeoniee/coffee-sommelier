@@ -8,6 +8,7 @@ EXPLAIN_TASK = "explain"
 PARSE_NOTE_TASK = "parse_note"
 PARSE_BEAN_TASK = "parse_bean"
 EXPLAIN_DEADLINE_S = 12.0     # whole explanation stream, first token to last
+DATA_VARIANT = os.getenv("DATA_VARIANT", "full")
 
 
 def cookie_secure() -> bool:

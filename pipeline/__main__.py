@@ -1,6 +1,7 @@
 import argparse
 import datetime as dt
 import json
+import os
 import sys
 
 from pipeline import settings
@@ -16,6 +17,8 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--source", action="append", help="collect only these sources")
     r.add_argument("--limit", type=int, help="max LLM calls in enrich")
     r.add_argument("--retry-failed", action="store_true")
+    r.add_argument("--exclude-source", action="append",
+                   help="skip this source when normalizing (repeatable; or env EXCLUDE_SOURCES=a,b)")
     q = sub.add_parser("query", help="similarity search")
     q.add_argument("text")
     q.add_argument("-k", type=int, default=5)
@@ -37,6 +40,15 @@ def build_parser() -> argparse.ArgumentParser:
     return ap
 
 
+def exclude_sources_from(a) -> tuple[str, ...]:
+    if getattr(a, "exclude_source", None):
+        return tuple(a.exclude_source)
+    env = os.getenv("EXCLUDE_SOURCES")
+    if env:
+        return tuple(s.strip() for s in env.split(",") if s.strip())
+    return ()
+
+
 def _run(a) -> int:
     stages = a.only or STAGES
     stats: dict[str, dict] = {}
@@ -50,7 +62,8 @@ def _run(a) -> int:
         stats["collect"] = {m.source: ("ok" if m.ok else m.error) for m in ms}
     if "normalize" in stages:
         from pipeline.normalize import run_normalize
-        stats["normalize"] = run_normalize(settings.RAW_DIR, settings.NORMALIZED_DIR, settings.CURATED_DIR)
+        stats["normalize"] = run_normalize(settings.RAW_DIR, settings.NORMALIZED_DIR, settings.CURATED_DIR,
+                                           exclude_sources=exclude_sources_from(a))
     if "enrich" in stages:
         from pipeline.enrich import run_enrich
         from pipeline.llm import client_for

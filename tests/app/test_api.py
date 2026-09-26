@@ -108,7 +108,7 @@ def test_catalog_endpoints(client):
     client.post("/session")
     assert client.get("/brands").json()[0]["key"] == "brand:sb"
     assert client.get("/coffees/search", params={"q": "brazil"}).json()[0]["name"] == "Brazil Cerrado"
-    assert client.get("/health").json() == {"ok": True}
+    assert client.get("/health").json() == {"ok": True, "variant": "full", "coffees": 2}
 
 
 def test_tastings_menu_item_uses_order_decaf_or_profile_rule(client):
@@ -202,6 +202,12 @@ def test_allowed_origins_rejects_wildcard(monkeypatch):
     monkeypatch.setenv("ALLOWED_ORIGINS", "http://a.test,*")
     with pytest.raises(ValueError):
         config.allowed_origins()
+
+
+def test_health_reports_variant_and_count(client, monkeypatch):
+    monkeypatch.setattr("app.config.DATA_VARIANT", "open")
+    r = client.get("/health").json()
+    assert r["ok"] is True and r["variant"] == "open" and isinstance(r["coffees"], int)
 
 
 def test_nickname_only_update_keeps_learned_weights(client):

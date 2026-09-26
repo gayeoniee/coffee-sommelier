@@ -76,11 +76,15 @@ def drop_cross_source_url_duplicates(coffees):
     return out, dropped
 
 
-def run_normalize(raw_root: Path, out_dir: Path, curated_dir: Path) -> dict[str, int]:
+def run_normalize(raw_root: Path, out_dir: Path, curated_dir: Path,
+                  exclude_sources: tuple[str, ...] = ()) -> dict[str, int | str]:
     from pipeline.normalize.menus import normalize_brands
 
     total, per_source = Normalized(), {}
     for name, fn in _normalizers().items():
+        if name in exclude_sources:
+            per_source[f"src:{name}"] = "excluded"
+            continue
         snap = _source_dir(raw_root, name)
         if snap is None:
             per_source[f"src:{name}"] = 0

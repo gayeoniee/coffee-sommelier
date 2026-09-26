@@ -109,6 +109,9 @@ class FakeRepo:
     def get_coffee(self, coffee_id):
         return self.coffees.get(coffee_id)
 
+    def count_coffees(self):
+        return len(self.coffees)
+
     def match_coffee(self, text):
         t = " ".join((text or "").split()).lower()
         return next((c for c in self.coffees.values() if c.name.lower() == t), None)

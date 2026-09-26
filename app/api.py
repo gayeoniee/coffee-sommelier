@@ -128,7 +128,7 @@ def create_app(repo=None, deps=None, cookie_secure: bool | None = None) -> FastA
 
     @app.get("/health")
     def health():
-        return {"ok": True}
+        return {"ok": True, "variant": config.DATA_VARIANT, "coffees": repo.count_coffees()}
 
     @app.post("/session")
     def session(request: Request, response: Response):

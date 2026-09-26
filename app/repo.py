@@ -157,6 +157,9 @@ class Repo:
         r = self._one(f"SELECT {COFFEE_COLS} FROM coffees WHERE id = %s", (coffee_id,))
         return _coffee_item(r) if r else None
 
+    def count_coffees(self) -> int:
+        return self._one("SELECT count(*) AS n FROM coffees WHERE active")["n"]
+
     def match_coffee(self, text: str) -> Item | None:
         t = " ".join((text or "").split()).lower()
         if not t:
