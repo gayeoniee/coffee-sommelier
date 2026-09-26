@@ -70,12 +70,14 @@ def test_compose_parses_names_caffeine_decaf(tmp_path):
     snap = _copy_fixture("menus/compose", tmp_path)
     items = normalize_compose(snap, "2026-09-27").menu_items
     by = {i.name: i for i in items}
-    assert len(items) == 4       # H-/I-아메리카노 and H-/I-디카페인 아메리카노 each merge into one
+    assert len(items) == 5       # H-/I-아메리카노 and H-/I-디카페인 아메리카노 each merge into one
     assert by["아메리카노"].caffeine_mg == 185.81      # larger of HOT (150.00) / ICED (185.81)
     assert by["디카페인 아메리카노"].is_decaf and not by["디카페인 아메리카노"].decaf_option
     assert by["아메리카노"].decaf_option is True        # 커피ㆍ콜드브루 is compose's decaf-shot category
     assert by["쫀득카노"].caffeine_mg == 85.0            # no H-/I- prefix: kept as-is, not merged away
     assert by["빅포즈 아메리카노"].caffeine_mg == 371.62  # ICED-only size: no HOT counterpart to merge with
+    # not named decaf, but 9.16mg caffeine is <= the 15mg menu_is_decaf threshold
+    assert by["올데이 오트"].caffeine_mg == 9.16 and by["올데이 오트"].is_decaf
     assert all(i.brand_key == "brand:compose" and i.key.startswith("menu:compose:") for i in items)
     assert all(i.category == "커피ㆍ콜드브루" for i in items)
 def test_paulbassett_parses_names_caffeine_decaf(tmp_path):
@@ -208,6 +210,18 @@ def test_menu_decaf_option_rule():
     assert menu_decaf_option(b, "에스프레소", False, name="콜드브루 라떼") is False   # brewed drink in an espresso category
     assert menu_decaf_option(b, "에스프레소", False, name="카페 라떼") is True
     assert menu_decaf_option(b.model_copy(update={"decaf_available": False}), "에스프레소", False) is False
+
+
+def test_menu_is_decaf_by_caffeine_threshold():
+    """A coffee-category drink can be decaf without the word appearing in its name (컴포즈 「올데이 오트」
+    9.16 mg): caffeine_mg <= 15 counts as decaf too, on top of the name-word check."""
+    from pipeline.normalize.menus import menu_is_decaf
+    assert menu_is_decaf("아메리카노", 182.0) is False
+    assert menu_is_decaf("디카페인 아메리카노", 182.0) is True    # named decaf regardless of caffeine
+    assert menu_is_decaf("올데이 오트", 9.16) is True             # not named decaf, but caffeine <= 15mg
+    assert menu_is_decaf("올데이 오트", 15.0) is True             # boundary: <= 15 counts
+    assert menu_is_decaf("올데이 오트", 15.01) is False
+    assert menu_is_decaf("올데이 오트", None) is False            # no caffeine reading: can't tell from mg
 
 
 def test_menu_decaf_option_no_shot_words():

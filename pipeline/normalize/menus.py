@@ -21,10 +21,11 @@ def normalize_starbucks(snap: Path, collected_at: str) -> Normalized:
             if not name:
                 continue
             key = f"menu:starbucks:{clean(it.get('product_CD')) or name}"
+            caffeine = num(it.get("caffeine"))
             items[key] = MenuItemRecord(
                 key=key, brand_key="brand:starbucks", name=name, name_en=clean(it.get("product_ENGNM")),
-                category=clean(it.get("cate_NAME")), is_decaf=detect_decaf(name)[0],
-                decaf_option=p.stem in STARBUCKS_DECAF_OPTION_CODES, caffeine_mg=num(it.get("caffeine")),
+                category=clean(it.get("cate_NAME")), is_decaf=menu_is_decaf(name, caffeine),
+                decaf_option=p.stem in STARBUCKS_DECAF_OPTION_CODES, caffeine_mg=caffeine,
                 source_url=f"https://www.starbucks.co.kr/upload/json/menu/{p.stem}.js", collected_at=collected_at,
             )
     return Normalized(menu_items=list(items.values()))
@@ -44,10 +45,11 @@ def normalize_mega(snap: Path, collected_at: str) -> Normalized:
             name = name_el.get_text(strip=True)
             en = modal.select_one(".inner_modal_title .cont_text_info")
             m = re.search(r"카페인\s*([\d.]+)\s*mg", modal.get_text(" ", strip=True))
+            caffeine = float(m.group(1)) if m else None
             key = f"menu:mega:{name}"
             items[key] = MenuItemRecord(
                 key=key, brand_key="brand:mega", name=name, name_en=en.get_text(strip=True) if en else None,
-                category="커피", is_decaf=detect_decaf(name)[0], caffeine_mg=float(m.group(1)) if m else None,
+                category="커피", is_decaf=menu_is_decaf(name, caffeine), caffeine_mg=caffeine,
                 source_url="https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1",
                 collected_at=collected_at,
             )
@@ -75,7 +77,7 @@ def normalize_paik(snap: Path, collected_at: str) -> Normalized:
         en = hv.select_one(".menu_tit2")
         items[key] = MenuItemRecord(
             key=key, brand_key="brand:paik", name=name, name_en=en.get_text(strip=True) if en else None,
-            category="커피", is_decaf=detect_decaf(name)[0], caffeine_mg=caffeine,
+            category="커피", is_decaf=menu_is_decaf(name, caffeine), caffeine_mg=caffeine,
             source_url="https://paikdabang.com/menu/menu_coffee/", collected_at=collected_at,
         )
     return Normalized(menu_items=list(items.values()))
@@ -124,7 +126,7 @@ def normalize_hollys(snap: Path, collected_at: str) -> Normalized:
         info = soup.find(id=f"menuView2_{idx}")
         table = info.find("table") if info else None
         caffeine = _hollys_caffeine(table) if table else None
-        is_decaf = detect_decaf(name)[0]
+        is_decaf = menu_is_decaf(name, caffeine)
         key = f"menu:hollys:{idx}"
         items[key] = MenuItemRecord(
             key=key, brand_key="brand:hollys", name=name, name_en=name_en,
@@ -165,7 +167,7 @@ def normalize_coffeebean(snap: Path, collected_at: str) -> Normalized:
                     dt, dd = dl.select_one("dt"), dl.select_one("dd")
                     if dt and dd and "카페인" in dd.get_text():
                         caffeine = num(dt.get_text(strip=True))
-            is_decaf = detect_decaf(name)[0]
+            is_decaf = menu_is_decaf(name, caffeine)
             key = f"menu:coffeebean:{name}"
             items[key] = MenuItemRecord(
                 key=key, brand_key="brand:coffeebean", name=name,
@@ -227,6 +229,12 @@ def normalize_brands(curated_dir: Path) -> list[BrandRecord]:
     return [BrandRecord.model_validate(b) for b in yaml.safe_load(p.read_text(encoding="utf-8"))]
 
 
+def menu_is_decaf(name: str, caffeine_mg: float | None) -> bool:
+    """A coffee-category drink counts as decaf either by name (디카페인/decaf) or, when no such word
+    appears, by a low measured caffeine reading (<=15mg) — e.g. 컴포즈 「올데이 오트」 9.16mg."""
+    return detect_decaf(name)[0] or (caffeine_mg is not None and caffeine_mg <= 15)
+
+
 NO_SHOT_WORDS = (
     "콜드브루", "더치", "드립커피", "브루드",  # brewed coffees have no espresso shot to swap for decaf
     "말차", "큐브", "믹스커피", "데일리커피",  # not espresso-based (or a fixed blend): a decaf shot swap doesn't apply
@@ -268,7 +276,7 @@ def normalize_compose(snap: Path, collected_at: str) -> Normalized:
             m = _COMPOSE_HOT_ICED.match(name)
             base_name = m.group(2) if m else name
             caffeine = num(tds[4].get_text(strip=True))
-            is_decaf = detect_decaf(base_name)[0]
+            is_decaf = menu_is_decaf(base_name, caffeine)
             key = f"menu:compose:{base_name}"
             existing = items.get(key)
             if existing is not None and (caffeine is None or (existing.caffeine_mg or 0) >= caffeine):
@@ -314,7 +322,7 @@ def normalize_paulbassett(snap: Path, collected_at: str) -> Normalized:
                     m = re.search(r"[\d.]+", num_el.get_text(strip=True))
                     caffeine = float(m.group()) if m else None
         dpid = p.stem
-        is_decaf = detect_decaf(name, name_en)[0]
+        is_decaf = menu_is_decaf(f"{name} {name_en}" if name_en else name, caffeine)
         key = f"menu:paulbassett:{dpid}"
         items[key] = MenuItemRecord(
             key=key, brand_key="brand:paulbassett", name=name, name_en=name_en,
