@@ -38,6 +38,14 @@ class ReviewRecord(BaseModel):
     collected_at: str
 
 
+class BeanProfile(BaseModel):
+    """Hand-curated taste of a brand's house bean (estimated from brand notes)."""
+    acidity: float = Field(ge=1, le=5)
+    body: float = Field(ge=1, le=5)
+    sweetness: float = Field(ge=1, le=5)
+    flavor_tags: list[str] = Field(default_factory=list)
+
+
 class BrandRecord(BaseModel):
     key: str
     name: str
@@ -48,6 +56,8 @@ class BrandRecord(BaseModel):
     notes: str | None = None
     source_url: str | None = None
     verified_at: str
+    bean: BeanProfile | None = None
+    decaf_bean: BeanProfile | None = None
 
 
 class MenuItemRecord(BaseModel):

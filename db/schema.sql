@@ -128,3 +128,6 @@ CREATE TABLE IF NOT EXISTS profile_history (
 
 CREATE INDEX IF NOT EXISTS tastings_user_idx ON tastings (user_id, id DESC);
 CREATE INDEX IF NOT EXISTS profile_history_user_idx ON profile_history (user_id, id DESC);
+
+ALTER TABLE brands ADD COLUMN IF NOT EXISTS bean jsonb;
+ALTER TABLE brands ADD COLUMN IF NOT EXISTS decaf_bean jsonb;

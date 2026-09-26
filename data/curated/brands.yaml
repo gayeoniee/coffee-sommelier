@@ -1,4 +1,5 @@
 # 프랜차이즈 브랜드 수기 정리. 공식 페이지 직접 확인은 [공식], 뉴스·검색 요약은 [뉴스] 로 표시.
+# bean / decaf_bean: notes의 원두 설명(산미·바디·향미 문구)에서 추정한 1~5 값. 실측 아님 — 추천 신뢰도는 medium으로 표시된다.
 - key: brand:starbucks
   name: 스타벅스
   decaf_available: true
@@ -6,6 +7,8 @@
   notes: "[공식] 대부분 음료 디카페인 에스프레소 샷 선택 가능(일부 제외), 블론드/미디엄/다크 로스트. [뉴스] 디카페인 +300원(2026-05)."
   source_url: https://www.starbucks.co.kr/menu/drink_list.do
   verified_at: "2026-09-24"
+  bean: {acidity: 2, body: 4, sweetness: 2, flavor_tags: [dark chocolate, caramelized]}
+  decaf_bean: {acidity: 2, body: 3, sweetness: 2, flavor_tags: [chocolate, caramelized]}
 - key: brand:twosome
   name: 투썸플레이스
   decaf_available: true
@@ -13,6 +16,8 @@
   notes: "[뉴스] 원두 3종(블랙그라운드/아로마노트/디카페인). 아로마노트=에티오피아 중심+과테말라, 화사한 산미·플로럴. 공식 사이트는 봇 차단으로 미확인."
   source_url: https://www.twosome.co.kr
   verified_at: "2026-09-24"
+  bean: {acidity: 2, body: 4, sweetness: 2, flavor_tags: [dark chocolate, nutty]}
+  decaf_bean: {acidity: 2, body: 3, sweetness: 3, flavor_tags: [chocolate, nutty]}
 - key: brand:mega
   name: 메가MGC커피
   decaf_available: true
@@ -20,6 +25,8 @@
   notes: "[공식] 디카페인 메뉴 별도(아메리카노·라떼·메가리카노 등). 원두 설명은 '묵직한 바디감' 위주, 산미 정보 없음."
   source_url: https://www.mega-mgccoffee.com/menu/
   verified_at: "2026-09-24"
+  bean: {acidity: 1, body: 4, sweetness: 2, flavor_tags: [nutty, dark chocolate]}
+  decaf_bean: {acidity: 1, body: 3, sweetness: 2, flavor_tags: [nutty, chocolate]}
 - key: brand:compose
   name: 컴포즈커피
   decaf_available: true
@@ -27,6 +34,8 @@
   notes: "[뉴스] 디카페인 아메리카노. 콜롬비아 슈가케인 공법, 묵직한 바디·견과·다크초콜릿(산미 낮은 편). 공식 메뉴는 캡차로 미확인."
   source_url: https://composecoffee.com
   verified_at: "2026-09-24"
+  bean: {acidity: 1, body: 4, sweetness: 2, flavor_tags: [nutty, dark chocolate]}
+  decaf_bean: {acidity: 2, body: 4, sweetness: 2, flavor_tags: [nutty, dark chocolate]}
 - key: brand:paik
   name: 빽다방
   decaf_available: true
@@ -34,6 +43,8 @@
   notes: "[공식] 디카페인 메뉴 별도(일부 매장만 판매), 전 메뉴 카페인 mg 표기. [뉴스] 일반 원두 브라질 세라도."
   source_url: https://paikdabang.com/menu/menu_coffee/
   verified_at: "2026-09-24"
+  bean: {acidity: 1, body: 4, sweetness: 2, flavor_tags: [nutty, chocolate]}
+  decaf_bean: {acidity: 2, body: 3, sweetness: 2, flavor_tags: [chocolate]}
 - key: brand:ediya
   name: 이디야커피
   decaf_available: true
@@ -41,6 +52,8 @@
   notes: "[뉴스] 모든 커피 메뉴 디카페인 변경 가능. 콜롬비아 싱글오리진 워터 프로세스."
   source_url: https://www.ediya.com/contents/drink.html
   verified_at: "2026-09-24"
+  bean: {acidity: 2, body: 3, sweetness: 2, flavor_tags: [chocolate, nutty]}
+  decaf_bean: {acidity: 2, body: 3, sweetness: 3, flavor_tags: [chocolate, caramelized]}
 - key: brand:hollys
   name: 할리스
   decaf_available: true
@@ -48,6 +61,8 @@
   notes: "[공식] 디카페인 콜드브루 계열(라떼, 아샷추 등), '할리스 블렌딩 디카페인 원액 — 깔끔한 후미, 은은한 단맛'."
   source_url: https://www.hollys.co.kr/menu/espresso.do
   verified_at: "2026-09-24"
+  bean: {acidity: 2, body: 3, sweetness: 2, flavor_tags: [chocolate, nutty]}
+  decaf_bean: {acidity: 2, body: 2, sweetness: 3, flavor_tags: [brown sugar]}
 - key: brand:paulbassett
   name: 폴바셋
   decaf_available: true
@@ -55,6 +70,8 @@
   notes: "[공식] Decaf 카테고리(아메리카노·라떼·플랫화이트 등), 시그니처 블렌드=브라질+에티오피아 '밝은 산미, 초콜릿', 디카페인 아메리카노 카페인 10mg 이하. [뉴스] 디카페인 블렌드도 브라질+에티오피아."
   source_url: https://www.baristapaulbassett.co.kr/menu/List.pb?cid1=A&cid2=F
   verified_at: "2026-09-24"
+  bean: {acidity: 4, body: 3, sweetness: 3, flavor_tags: [chocolate, citrus fruit]}
+  decaf_bean: {acidity: 3, body: 3, sweetness: 3, flavor_tags: [chocolate, citrus fruit]}
 - key: brand:bluebottle
   name: 블루보틀
   decaf_available: true
@@ -62,6 +79,8 @@
   notes: "[공식] 디카페인 원두 Night Light(미디엄): 크렘브륄레·바닐라·키라임. [뉴스] 싱글오리진 에스프레소 +1,100원."
   source_url: https://kr.bluebottlecoffee.com
   verified_at: "2026-09-24"
+  bean: {acidity: 3, body: 3, sweetness: 3, flavor_tags: [chocolate, berry]}
+  decaf_bean: {acidity: 3, body: 3, sweetness: 4, flavor_tags: [vanilla, caramelized, lime]}
 - key: brand:coffeebean
   name: 커피빈
   decaf_available: true
@@ -69,3 +88,5 @@
   notes: "[공식] 원두 가이드 로스트 단계 분류, 디카페인 원두 Espresso Roast Blend Decaf. [뉴스] 디카페인 변경 500원(2026-01)."
   source_url: https://www.coffeebeankorea.com/product/bean_guide.asp
   verified_at: "2026-09-24"
+  bean: {acidity: 2, body: 4, sweetness: 2, flavor_tags: [dark chocolate, caramelized]}
+  decaf_bean: {acidity: 2, body: 3, sweetness: 2, flavor_tags: [dark chocolate]}

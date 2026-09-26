@@ -206,3 +206,16 @@ def test_updated_values_are_written(db_conn, tmp_path):
                      source="t", collected_at="2026-09-24")])
     run_load(db_conn, norm, enriched, embedded)
     assert db_conn.execute("SELECT name, acidity FROM coffees WHERE key = 'c1'").fetchone() == ("Ethiopia Washed v2", 3)
+
+
+def test_brand_bean_is_loaded(db_conn, tmp_path):
+    from pipeline.records import BeanProfile
+    norm, enriched, embedded = setup_files(tmp_path)
+    write_jsonl(norm / "brands.jsonl", [BrandRecord(
+        key="brand:x", name="X", decaf_available=True, verified_at="2026-09-24",
+        bean=BeanProfile(acidity=2, body=4, sweetness=3, flavor_tags=["nutty"]),
+        decaf_bean=BeanProfile(acidity=2, body=3, sweetness=3, flavor_tags=["chocolate"]))])
+    run_load(db_conn, norm, enriched, embedded)
+    bean, decaf = db_conn.execute("SELECT bean, decaf_bean FROM brands WHERE key = 'brand:x'").fetchone()
+    assert bean == {"acidity": 2.0, "body": 4.0, "sweetness": 3.0, "flavor_tags": ["nutty"]}
+    assert decaf["flavor_tags"] == ["chocolate"]

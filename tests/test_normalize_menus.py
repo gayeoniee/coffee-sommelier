@@ -104,3 +104,28 @@ def test_shopify_roast_only_from_roast_sentences(tmp_path):
     n = normalize_shopify(tmp_path, "2026-09-24",
                           shops=[{"domain": "shop.test", "roaster": "Shop", "product_types": ["원두"]}])
     assert [c.roast_level for c in n.coffees] == [None, "medium", "light"]
+
+
+SCA_TAGS_USED = {"chocolate", "dark chocolate", "cocoa", "nutty", "almonds", "hazelnut", "caramelized",
+                 "brown sugar", "vanilla", "honey", "citrus fruit", "lemon", "lime", "orange", "berry",
+                 "floral", "black tea", "brown roast", "smoky"}
+
+
+def test_every_brand_has_bean_profiles():
+    from pipeline import settings
+    brands = normalize_brands(settings.CURATED_DIR)
+    assert len(brands) == 10
+    for b in brands:
+        assert b.bean is not None, b.key
+        assert set(b.bean.flavor_tags) <= SCA_TAGS_USED, b.key
+        if b.decaf_available:
+            assert b.decaf_bean is not None, b.key
+            assert set(b.decaf_bean.flavor_tags) <= SCA_TAGS_USED, b.key
+
+
+def test_bean_profile_range_is_validated():
+    import pytest
+    from pydantic import ValidationError
+    from pipeline.records import BeanProfile
+    with pytest.raises(ValidationError):
+        BeanProfile(acidity=6, body=3, sweetness=3, flavor_tags=[])

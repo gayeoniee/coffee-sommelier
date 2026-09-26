@@ -85,9 +85,11 @@ def run_load(conn, norm_dir: Path, enriched_dir: Path, embedded_dir: Path) -> di
     brands = read_jsonl(norm_dir / "brands.jsonl", BrandRecord)
     brand_keys = [b.key for b in brands]
     _upsert(cur, "brands", ["key", "name", "decaf_available", "decaf_surcharge_krw", "default_bean_coffee_id",
-                            "decaf_bean_coffee_id", "notes", "source_url", "verified_at"],
+                            "decaf_bean_coffee_id", "notes", "source_url", "verified_at", "bean", "decaf_bean"],
             [(b.key, b.name, b.decaf_available, b.decaf_surcharge_krw, coffee_ids.get(b.default_bean_coffee_key),
-              coffee_ids.get(b.decaf_bean_coffee_key), b.notes, b.source_url, b.verified_at) for b in brands])
+              coffee_ids.get(b.decaf_bean_coffee_key), b.notes, b.source_url, b.verified_at,
+              Jsonb(b.bean.model_dump()) if b.bean else None,
+              Jsonb(b.decaf_bean.model_dump()) if b.decaf_bean else None) for b in brands])
     brand_key_set = set(brand_keys)
     brand_ids = _ids(conn, "brands")
 
