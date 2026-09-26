@@ -9,6 +9,9 @@ PARSE_NOTE_TASK = "parse_note"
 PARSE_BEAN_TASK = "parse_bean"
 EXPLAIN_DEADLINE_S = 12.0     # whole explanation stream, first token to last
 DATA_VARIANT = os.getenv("DATA_VARIANT", "full")
+# No first token from the primary LLM within this many seconds → send the same request once more and
+# use whichever answers first (hedged request, ADR 0004). 0 disables.
+HEDGE_AFTER_S = float(os.getenv("HEDGE_AFTER_S", "3.0"))
 
 
 def cookie_secure() -> bool:

@@ -85,6 +85,7 @@ def summarize(events: list[dict], window: dict | None = None) -> dict:
     - `first_token_ms_p50`/`first_token_ms_p95`: 모든 이벤트의 `ms_first_token`을 합친 분포
     - `error_rate`: `error: true`인 이벤트 비율
     - `window`: 호출자가 넘긴 조회 구간 메타데이터(그대로 반영, 없으면 `{}`)
+    - `hedged`/`hedge_won`: 헤지 요청을 보낸 횟수 / 헤지 쪽이 이긴 횟수(로그에 해당 필드가 있을 때만)
     """
     requests_by_evt: dict[str, int] = {}
     total_cards = 0
@@ -102,7 +103,7 @@ def summarize(events: list[dict], window: dict | None = None) -> dict:
             error_count += 1
 
     total_events = len(events)
-    return {
+    summary = {
         "requests_by_evt": requests_by_evt,
         "fallback_rate": (total_fallback / total_cards) if total_cards else 0.0,
         "first_token_ms_p50": _percentile(first_tokens, 0.5),
@@ -110,6 +111,11 @@ def summarize(events: list[dict], window: dict | None = None) -> dict:
         "error_rate": (error_count / total_events) if total_events else 0.0,
         "window": dict(window) if window else {},
     }
+    # 헤지 요청(ADR 0004) 카운터: 이를 기록하는 버전의 로그가 있을 때만 싣는다.
+    if any("hedged" in e or "hedge_won" in e for e in events):
+        summary["hedged"] = sum(int(e.get("hedged") or 0) for e in events)
+        summary["hedge_won"] = sum(int(e.get("hedge_won") or 0) for e in events)
+    return summary
 
 
 def _get_owner_id(client: httpx.Client) -> str:
@@ -193,6 +199,8 @@ def _format_table(summary: dict) -> str:
     lines.append(f"| 첫 토큰 p50 (ms) | {summary['first_token_ms_p50']:.1f} |")
     lines.append(f"| 첫 토큰 p95 (ms) | {summary['first_token_ms_p95']:.1f} |")
     lines.append(f"| 에러율 | {summary['error_rate']:.3f} |")
+    if "hedged" in summary:
+        lines.append(f"| 헤지 발사 / 헤지 승 | {summary['hedged']} / {summary['hedge_won']} |")
     return "\n".join(lines)
 
 

@@ -40,6 +40,17 @@ def test_fallback_accumulates_across_multiple_adds(caplog):
     assert rec["fallback"] == 2 and rec["ms_first_token"] == [100, 200]
 
 
+def test_hedge_counters_accumulate_across_cards(caplog):
+    caplog.set_level(logging.INFO, logger="telemetry")
+    tok = telemetry.begin("recommend", brand="brand:sb")
+    telemetry.add("hedged", 1)
+    telemetry.add("hedged", 1)
+    telemetry.add("hedge_won", 1)
+    telemetry.end(tok, cards=3)
+    rec = json.loads(caplog.records[-1].getMessage())
+    assert rec["hedged"] == 2 and rec["hedge_won"] == 1
+
+
 def test_cards_field_is_overwritten_not_accumulated(caplog):
     caplog.set_level(logging.INFO, logger="telemetry")
     tok = telemetry.begin("recommend", brand="brand:sb")
