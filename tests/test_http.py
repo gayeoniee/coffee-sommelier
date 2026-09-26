@@ -45,3 +45,13 @@ def test_robots_network_error_disallows_host():
     c = make_client({"/robots.txt": down, "/data": lambda r: httpx.Response(200, text="ok")}, [])
     with pytest.raises(RobotsDisallowed):
         c.get("https://a.test/data")
+
+
+def test_polite_client_verify_flag_reaches_httpx(monkeypatch):
+    import httpx
+    from pipeline.http import PoliteClient
+    seen = {}
+    real = httpx.Client
+    monkeypatch.setattr(httpx, "Client", lambda **kw: seen.update(kw) or real(**{k: v for k, v in kw.items() if k != "verify"}))
+    PoliteClient(verify=False)
+    assert seen["verify"] is False

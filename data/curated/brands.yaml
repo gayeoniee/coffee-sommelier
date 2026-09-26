@@ -31,11 +31,12 @@
   name: 컴포즈커피
   decaf_available: true
   decaf_surcharge_krw: null
-  notes: "[뉴스] 디카페인 아메리카노. 콜롬비아 슈가케인 공법, 묵직한 바디·견과·다크초콜릿(산미 낮은 편). 공식 메뉴는 캡차로 미확인."
+  notes: "[뉴스] 디카페인 아메리카노. 콜롬비아 슈가케인 공법, 묵직한 바디·견과·다크초콜릿(산미 낮은 편). 공식 메뉴는 캡차로 미확인. [공식] 디카페인 샷 변경 카테고리: 커피 (조사 기준 초안)."
   source_url: https://composecoffee.com
   verified_at: "2026-09-24"
   bean: {acidity: 1, body: 4, sweetness: 2, flavor_tags: [nutty, dark chocolate]}
   decaf_bean: {acidity: 2, body: 4, sweetness: 2, flavor_tags: [nutty, dark chocolate]}
+  decaf_option_categories: [커피]
 - key: brand:paik
   name: 빽다방
   decaf_available: true
@@ -49,29 +50,32 @@
   name: 이디야커피
   decaf_available: true
   decaf_surcharge_krw: null
-  notes: "[뉴스] 모든 커피 메뉴 디카페인 변경 가능. 콜롬비아 싱글오리진 워터 프로세스."
+  notes: "[뉴스] 모든 커피 메뉴 디카페인 변경 가능. 콜롬비아 싱글오리진 워터 프로세스. [공식] 디카페인 샷 변경 카테고리: 에스프레소 (조사 기준 초안)."
   source_url: https://www.ediya.com/contents/drink.html
   verified_at: "2026-09-24"
   bean: {acidity: 2, body: 3, sweetness: 2, flavor_tags: [chocolate, nutty]}
   decaf_bean: {acidity: 2, body: 3, sweetness: 3, flavor_tags: [chocolate, caramelized]}
+  decaf_option_categories: [에스프레소]
 - key: brand:hollys
   name: 할리스
   decaf_available: true
   decaf_surcharge_krw: null
-  notes: "[공식] 디카페인 콜드브루 계열(라떼, 아샷추 등), '할리스 블렌딩 디카페인 원액 — 깔끔한 후미, 은은한 단맛'."
+  notes: "[공식] 디카페인 콜드브루 계열(라떼, 아샷추 등), '할리스 블렌딩 디카페인 원액 — 깔끔한 후미, 은은한 단맛'. [공식] 디카페인 샷 변경 카테고리: 에스프레소 (조사 기준 초안)."
   source_url: https://www.hollys.co.kr/menu/espresso.do
   verified_at: "2026-09-24"
   bean: {acidity: 2, body: 3, sweetness: 2, flavor_tags: [chocolate, nutty]}
   decaf_bean: {acidity: 2, body: 2, sweetness: 3, flavor_tags: [brown sugar]}
+  decaf_option_categories: [에스프레소]
 - key: brand:paulbassett
   name: 폴바셋
   decaf_available: true
   decaf_surcharge_krw: null
-  notes: "[공식] Decaf 카테고리(아메리카노·라떼·플랫화이트 등), 시그니처 블렌드=브라질+에티오피아 '밝은 산미, 초콜릿', 디카페인 아메리카노 카페인 10mg 이하. [뉴스] 디카페인 블렌드도 브라질+에티오피아."
+  notes: "[공식] Decaf 카테고리(아메리카노·라떼·플랫화이트 등), 시그니처 블렌드=브라질+에티오피아 '밝은 산미, 초콜릿', 디카페인 아메리카노 카페인 10mg 이하. [뉴스] 디카페인 블렌드도 브라질+에티오피아. [공식] 디카페인 샷 변경 카테고리: 에스프레소 (조사 기준 초안)."
   source_url: https://www.baristapaulbassett.co.kr/menu/List.pb?cid1=A&cid2=F
   verified_at: "2026-09-24"
   bean: {acidity: 4, body: 3, sweetness: 3, flavor_tags: [chocolate, citrus fruit]}
   decaf_bean: {acidity: 3, body: 3, sweetness: 3, flavor_tags: [chocolate, citrus fruit]}
+  decaf_option_categories: [에스프레소]
 - key: brand:bluebottle
   name: 블루보틀
   decaf_available: true
@@ -85,8 +89,9 @@
   name: 커피빈
   decaf_available: true
   decaf_surcharge_krw: 500
-  notes: "[공식] 원두 가이드 로스트 단계 분류, 디카페인 원두 Espresso Roast Blend Decaf. [뉴스] 디카페인 변경 500원(2026-01)."
+  notes: "[공식] 원두 가이드 로스트 단계 분류, 디카페인 원두 Espresso Roast Blend Decaf. [뉴스] 디카페인 변경 500원(2026-01). [공식] 디카페인 샷 변경 카테고리: 에스프레소 (조사 기준 초안)."
   source_url: https://www.coffeebeankorea.com/product/bean_guide.asp
   verified_at: "2026-09-24"
   bean: {acidity: 2, body: 4, sweetness: 2, flavor_tags: [dark chocolate, caramelized]}
   decaf_bean: {acidity: 2, body: 3, sweetness: 2, flavor_tags: [dark chocolate]}
+  decaf_option_categories: [에스프레소]

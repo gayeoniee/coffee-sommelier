@@ -58,6 +58,7 @@ class BrandRecord(BaseModel):
     verified_at: str
     bean: BeanProfile | None = None
     decaf_bean: BeanProfile | None = None
+    decaf_option_categories: list[str] = Field(default_factory=list)
 
 
 class MenuItemRecord(BaseModel):

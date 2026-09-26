@@ -155,3 +155,22 @@ def test_run_normalize_reads_flat_roasters_kr_and_drops_url_duplicates(tmp_path,
     keys = [c.key for c in read_jsonl(tmp_path / "norm" / "coffees.jsonl", CoffeeRecord)]
     assert keys == ["shopify:shop.test:night", "roasters_kr:fritz:1"]      # same product URL: first source wins
     assert counts["src:roasters_kr"] == 2 and counts["dropped_url_duplicates"] == 1
+
+
+def test_menu_decaf_option_rule():
+    from pipeline.normalize.menus import menu_decaf_option
+    from pipeline.records import BrandRecord
+    b = BrandRecord(key="brand:x", name="x", decaf_available=True, verified_at="2026-09-27",
+                    decaf_option_categories=["에스프레소"])
+    assert menu_decaf_option(b, "에스프레소", is_decaf=False) is True
+    assert menu_decaf_option(b, "에스프레소", is_decaf=True) is False      # already decaf
+    assert menu_decaf_option(b, "콜드브루", is_decaf=False) is False       # no decaf shot for cold brew
+    assert menu_decaf_option(b.model_copy(update={"decaf_available": False}), "에스프레소", False) is False
+
+
+def test_brands_yaml_has_decaf_option_categories_for_menu_brands():
+    from pipeline.normalize.menus import brands_by_key
+    from pipeline import settings
+    b = brands_by_key(settings.CURATED_DIR)
+    for k in ("brand:hollys", "brand:coffeebean", "brand:ediya", "brand:paulbassett", "brand:compose"):
+        assert k in b and isinstance(b[k].decaf_option_categories, list)

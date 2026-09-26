@@ -129,3 +129,13 @@ def normalize_brands(curated_dir: Path) -> list[BrandRecord]:
     if not p.exists():
         return []
     return [BrandRecord.model_validate(b) for b in yaml.safe_load(p.read_text(encoding="utf-8"))]
+
+
+def menu_decaf_option(brand: BrandRecord, category: str | None, is_decaf: bool) -> bool:
+    """Can the guest ask for a decaf shot? Only for espresso-based categories the brand lists, never for a drink
+    that is already decaf."""
+    return bool(brand.decaf_available and not is_decaf and category in brand.decaf_option_categories)
+
+
+def brands_by_key(curated_dir: Path) -> dict[str, BrandRecord]:
+    return {b.key: b for b in normalize_brands(curated_dir)}

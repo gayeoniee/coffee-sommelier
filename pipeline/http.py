@@ -15,9 +15,10 @@ class RobotsDisallowed(Exception):
 class PoliteClient:
     """HTTP GET with robots.txt checks and a per-host delay."""
 
-    def __init__(self, delay: float = 1.0, user_agent: str = UA, transport=None, sleep=time.sleep, timeout: float = 30.0):
+    def __init__(self, delay: float = 1.0, user_agent: str = UA, transport=None, sleep=time.sleep,
+                timeout: float = 30.0, verify: bool = True):
         self._client = httpx.Client(headers={"User-Agent": user_agent}, transport=transport,
-                                    timeout=timeout, follow_redirects=True)
+                                    timeout=timeout, follow_redirects=True, verify=verify)
         self._delay = delay
         self._sleep = sleep
         self._ua = user_agent
