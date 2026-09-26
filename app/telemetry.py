@@ -15,7 +15,7 @@ log = logging.getLogger("telemetry")
 _ctx: contextvars.ContextVar[dict[str, Any] | None] = contextvars.ContextVar("telemetry", default=None)
 
 _LIST_FIELDS = {"ms_first_token"}
-_COUNTER_FIELDS = {"fallback"}
+_COUNTER_FIELDS = {"fallback", "hedged", "hedge_won"}
 
 
 def begin(evt: str, **fields: Any) -> contextvars.Token:
@@ -26,7 +26,7 @@ def begin(evt: str, **fields: Any) -> contextvars.Token:
 def add(key: str, value: Any) -> None:
     """Record a field on the in-flight request. No-op outside a `begin()`/`end()` pair.
 
-    List fields (`ms_first_token`) append; counter fields (`fallback`) accumulate; everything
+    List fields (`ms_first_token`) append; counter fields (`fallback`, `hedged`, `hedge_won`) accumulate; everything
     else (`cards`, `error`, ...) is overwritten.
     """
     data = _ctx.get()

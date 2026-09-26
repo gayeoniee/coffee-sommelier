@@ -5,7 +5,7 @@ from pathlib import Path
 import httpx
 import pytest
 
-from scripts.ops.prod_stats import fetch_logs, parse_events, run, summarize
+from scripts.ops.prod_stats import _format_table, fetch_logs, parse_events, run, summarize
 
 FIXTURES = Path(__file__).parent / "fixtures" / "render_logs"
 
@@ -66,6 +66,18 @@ class TestSummarize:
         # 1 of 4 events has error: true
         assert summary["error_rate"] == pytest.approx(0.25)
         assert summary["window"] == {"hours": 24, "start": "s", "end": "e"}
+
+    def test_hedge_counts_reported_only_when_present(self):
+        assert "hedged" not in summarize(parse_events(RAW_LINES))
+        events = parse_events(RAW_LINES) + [
+            {"evt": "recommend", "cards": 3, "fallback": 0, "hedged": 2, "hedge_won": 1},
+            {"evt": "analyze", "cards": 1, "fallback": 0, "hedged": 1},
+        ]
+        summary = summarize(events)
+        assert summary["hedged"] == 3 and summary["hedge_won"] == 1
+        table = _format_table(summary)
+        assert "| 헤지 발사 / 헤지 승 | 3 / 1 |" in table
+        assert "헤지" not in _format_table(summarize([]))
 
     def test_empty_events_are_safe(self):
         summary = summarize([])
