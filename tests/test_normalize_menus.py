@@ -1,4 +1,15 @@
 import json
+import shutil
+from pathlib import Path
+
+FIXTURES = Path(__file__).parent / "fixtures"
+
+
+def _copy_fixture(name: str, tmp_path: Path) -> Path:
+    """Copy tests/fixtures/<name>/ into tmp_path and return it, as a fake raw snapshot directory."""
+    dst = tmp_path / name.replace("/", "_")
+    shutil.copytree(FIXTURES / name, dst)
+    return dst
 
 from pipeline.collect import run_collect
 from pipeline.normalize import run_normalize
