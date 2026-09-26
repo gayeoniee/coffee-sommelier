@@ -84,3 +84,47 @@ CREATE TABLE IF NOT EXISTS enrich_log (
 CREATE INDEX IF NOT EXISTS coffees_embedding_idx ON coffees USING hnsw (embedding vector_cosine_ops);
 CREATE INDEX IF NOT EXISTS coffees_is_decaf_idx ON coffees (is_decaf);
 CREATE INDEX IF NOT EXISTS menu_items_brand_idx ON menu_items (brand_id);
+
+-- ===== 2단계: 사용자 =====
+CREATE TABLE IF NOT EXISTS users (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  nickname text,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS taste_profiles (
+  user_id uuid PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  caffeine_rule text NOT NULL CHECK (caffeine_rule IN ('decaf_only', 'low', 'any')),
+  milk_ok boolean NOT NULL,
+  acidity real NOT NULL,
+  body real NOT NULL,
+  sweetness real NOT NULL,
+  flavor_weights jsonb NOT NULL DEFAULT '{}',
+  n_updates integer NOT NULL DEFAULT 0,
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS tastings (
+  id bigserial PRIMARY KEY,
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  coffee_id bigint REFERENCES coffees(id),
+  menu_item_id bigint REFERENCES menu_items(id),
+  input_text text,
+  predicted jsonb,
+  rating smallint NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  note text,
+  parsed_signals jsonb,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  CHECK (num_nonnulls(coffee_id, menu_item_id, input_text) = 1)
+);
+
+CREATE TABLE IF NOT EXISTS profile_history (
+  id bigserial PRIMARY KEY,
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  snapshot jsonb NOT NULL,
+  tasting_id bigint REFERENCES tastings(id) ON DELETE SET NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS tastings_user_idx ON tastings (user_id, id DESC);
+CREATE INDEX IF NOT EXISTS profile_history_user_idx ON profile_history (user_id, id DESC);

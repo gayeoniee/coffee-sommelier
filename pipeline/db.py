@@ -3,7 +3,9 @@ import psycopg
 from pipeline import settings
 
 SCHEMA_PATH = settings.ROOT / "db" / "schema.sql"
-TABLES = ["menu_items", "brands", "reviews", "coffees", "flavor_taxonomy", "enrich_log"]
+# Test-fixture reset only. Production code must never truncate user tables.
+TABLES = ["profile_history", "tastings", "taste_profiles", "users",
+          "menu_items", "brands", "reviews", "coffees", "flavor_taxonomy", "enrich_log"]
 
 
 def connect(url: str | None = None) -> psycopg.Connection:
