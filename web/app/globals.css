@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #faf6f0;
+  --color-crema: #f1e4d3;
+  --color-espresso: #2b1d14;
+  --color-roast: #6f4e37;
+  --color-accent: #c2410c;
+  --color-leaf: #3f7d4e;
+  --color-warn: #b45309;
+  --font-sans: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-espresso);
+}
