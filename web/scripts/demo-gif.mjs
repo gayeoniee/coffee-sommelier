@@ -2,7 +2,11 @@
 // Records the guest onboarding → brand recommendation → log a drink → my taste flow
 // on an iPhone-sized viewport and encodes it as a small GIF for the README.
 //
-// Usage: node scripts/demo-gif.mjs [--base http://localhost:3000] [--out ../docs/demo.gif]
+// Usage: node scripts/demo-gif.mjs [--base http://localhost:3000] [--out ../../docs/demo.gif]
+// --out (like --scratch-dir) is resolved relative to this script's own directory, not the
+// current working directory, so the default output location doesn't depend on where the
+// command is run from (e.g. `npm run demo:gif` from web/ vs `node web/scripts/demo-gif.mjs`
+// from the repo root).
 //
 // Requires a running backend (COOKIE_SECURE=false uv run uvicorn app.api:get_app --factory --port 8000)
 // and a running `npm run dev` (or `npm run build && npm run start`) web server.
@@ -24,7 +28,7 @@ function arg(name, fallback) {
 }
 
 const BASE = arg("base", "http://localhost:3000");
-const OUT = path.resolve(process.cwd(), arg("out", "../docs/demo.gif"));
+const OUT = path.resolve(__dirname, arg("out", "../../docs/demo.gif"));
 const FRAMES_DIR = arg("frames-dir", null); // optional: also dump every captured PNG here for inspection
 
 const CAPTURE_INTERVAL_MS = 400;
@@ -151,9 +155,8 @@ async function main() {
   } finally {
     capturing = false;
     await captureTask;
+    await browser.close();
   }
-
-  await browser.close();
 
   console.log(`captured ${frames.length} raw frames`);
   if (frames.length === 0) throw new Error("no frames captured");

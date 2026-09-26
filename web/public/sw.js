@@ -15,6 +15,7 @@ importScripts("/sw-routes.js");
 var CACHE = self.CS_ROUTES.CACHE;
 var PRECACHE = self.CS_ROUTES.PRECACHE;
 var classify = self.CS_ROUTES.classify;
+var shouldCache = self.CS_ROUTES.shouldCache;
 
 self.addEventListener("install", function (event) {
   event.waitUntil(
@@ -51,10 +52,12 @@ self.addEventListener("activate", function (event) {
 });
 
 function putInCache(request, response) {
-  var copy = response.clone();
-  caches.open(CACHE).then(function (cache) {
-    cache.put(request, copy);
-  });
+  if (shouldCache(response)) {
+    var copy = response.clone();
+    caches.open(CACHE).then(function (cache) {
+      cache.put(request, copy);
+    });
+  }
   return response;
 }
 

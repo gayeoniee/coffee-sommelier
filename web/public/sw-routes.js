@@ -14,7 +14,7 @@
 (function (self) {
   "use strict";
 
-  var CACHE = "cs-shell-v1";
+  var CACHE = "cs-shell-v2";
   var PRECACHE = ["/", "/onboarding", "/me", "/offline"];
 
   // classify(request) -> "bypass" | "navigate" | "static"
@@ -42,5 +42,12 @@
     return "bypass";
   }
 
-  self.CS_ROUTES = { CACHE: CACHE, PRECACHE: PRECACHE, classify: classify };
+  // shouldCache(response) -> boolean: whether a fetched response is worth putting in the
+  // app-shell cache. Opaque/error responses (4xx/5xx, or a network failure surfaced as a
+  // non-ok response) must never be cached, or a later offline visit would replay the failure.
+  function shouldCache(response) {
+    return !!response && response.ok && response.status < 400;
+  }
+
+  self.CS_ROUTES = { CACHE: CACHE, PRECACHE: PRECACHE, classify: classify, shouldCache: shouldCache };
 })(self);

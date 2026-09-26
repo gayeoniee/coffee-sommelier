@@ -10,9 +10,16 @@ import { describe, expect, it } from "vitest";
 // documented alternative to a dual ESM/UMD export for this file.
 const here = path.dirname(fileURLToPath(import.meta.url));
 const src = readFileSync(path.resolve(here, "../public/sw-routes.js"), "utf8");
-const sandbox: { CS_ROUTES?: { CACHE: string; PRECACHE: string[]; classify: (r: { url: string; mode: string; method: string }) => string } } = {};
+const sandbox: {
+  CS_ROUTES?: {
+    CACHE: string;
+    PRECACHE: string[];
+    classify: (r: { url: string; mode: string; method: string }) => string;
+    shouldCache: (r: { ok: boolean; status: number } | undefined | null) => boolean;
+  };
+} = {};
 new Function("self", src)(sandbox);
-const { CACHE, PRECACHE, classify } = sandbox.CS_ROUTES!;
+const { CACHE, PRECACHE, classify, shouldCache } = sandbox.CS_ROUTES!;
 
 describe("sw routes", () => {
   it("never touches the API or non-GET", () => {
@@ -29,5 +36,22 @@ describe("sw routes", () => {
   it("precache list includes the offline page and the cache is versioned", () => {
     expect(PRECACHE).toContain("/offline");
     expect(CACHE).toMatch(/^cs-shell-v\d+$/);
+  });
+});
+
+describe("shouldCache", () => {
+  it("caches ok responses", () => {
+    expect(shouldCache({ ok: true, status: 200 })).toBe(true);
+    expect(shouldCache({ ok: true, status: 304 })).toBe(true);
+  });
+  it("never caches error responses", () => {
+    expect(shouldCache({ ok: false, status: 404 })).toBe(false);
+    expect(shouldCache({ ok: false, status: 500 })).toBe(false);
+    // Belt and suspenders: even if `ok` were somehow true, a >= 400 status must not be cached.
+    expect(shouldCache({ ok: true, status: 404 })).toBe(false);
+  });
+  it("never caches a missing response", () => {
+    expect(shouldCache(undefined)).toBe(false);
+    expect(shouldCache(null)).toBe(false);
   });
 });
