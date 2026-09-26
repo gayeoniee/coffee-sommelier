@@ -38,6 +38,14 @@ if [ -z "${NVIDIA_API_KEY:-}" ] && [ -f .env ]; then
 fi
 [ -n "${NVIDIA_API_KEY:-}" ] || die "NVIDIA_API_KEY가 필요해요 (환경변수 또는 .env)"
 command -v docker >/dev/null || die "docker가 필요해요 (로컬 DB를 옮길 때 사용)"
+# Production has no Ollama: the query embedding (config/models.yaml tasks.embed) must come from a remote provider,
+# and the DB vectors being copied must have been made by that same model.
+embed_provider=$(sed -n '/^  embed:/,/^  [a-z_0-9]*:$/p' config/models.yaml | sed -n 's/^ *provider: *//p' | head -n1 | tr -d '\r ')
+if [ "$embed_provider" = "ollama" ]; then
+  echo "경고: config/models.yaml의 embed가 ollama예요. 운영엔 Ollama가 없어 원두 분석의 유사 원두 검색이 빠져요." >&2
+  echo "      NVIDIA 임베딩으로 전환·재임베딩한 뒤 배포하는 걸 권장해요 (계속하려면 Enter, 중단은 Ctrl+C)" >&2
+  [ "${YES:-0}" = "1" ] || read -r _
+fi
 
 # ---------------------------------------------------------------- 1. Neon
 say "1/4 Neon 데이터베이스"
