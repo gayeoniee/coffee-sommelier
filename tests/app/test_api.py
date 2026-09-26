@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 
 import pytest
 from fastapi.testclient import TestClient
@@ -76,6 +77,44 @@ def test_analyze_validates_and_streams_without_review_text(client):
     card = events[0][1]["cards"][0]
     assert card["source"] == "predicted" and "evidence" in card
     assert "review" not in json.dumps(card) and "text" not in card
+
+
+def _last_telemetry_record(caplog):
+    return json.loads(next(r for r in reversed(caplog.records) if r.name == "telemetry").getMessage())
+
+
+def test_recommend_logs_telemetry_with_cards_and_fallback_count(caplog):
+    caplog.set_level(logging.INFO, logger="telemetry")
+    repo = FakeRepo()
+    c = TestClient(create_app(repo=repo, deps=fake_deps(repo, fail_keys=("블론드",)), cookie_secure=False))
+    onboard(c)
+    events = sse_events(c.post("/recommend", json={"brand_key": "brand:sb"}).text)
+    assert events[-1][0] == "done"
+    rec = _last_telemetry_record(caplog)
+    assert rec["evt"] == "recommend" and rec["brand"] == "brand:sb"
+    assert rec["cards"] == 3
+    assert isinstance(rec["fallback"], int) and rec["fallback"] == 1
+    assert rec["ms_total"] >= 0 and "error" not in rec
+
+
+def test_analyze_telemetry_records_input_kind(caplog, client):
+    caplog.set_level(logging.INFO, logger="telemetry")
+    onboard(client)
+    client.post("/analyze", json={"text": "에티오피아 예가체프 워시드"})
+    assert _last_telemetry_record(caplog)["input"] == "text"
+    client.post("/analyze", json={"coffee_id": 1})
+    assert _last_telemetry_record(caplog)["input"] == "coffee_id"
+
+
+def test_telemetry_logging_failure_does_not_break_the_stream(client, monkeypatch):
+    def boom(*a, **k):
+        raise RuntimeError("log boom")
+    monkeypatch.setattr(logging.getLogger("telemetry"), "info", boom)
+    onboard(client)
+    r = client.post("/recommend", json={"brand_key": "brand:sb"})
+    assert r.status_code == 200
+    events = sse_events(r.text)
+    assert events[0][0] == "cards" and events[-1][0] == "done"
 
 
 def test_tastings_flow_updates_profile(client):

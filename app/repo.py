@@ -194,11 +194,11 @@ class Repo:
                 rows = conn.execute(
                     "SELECT id, name, acidity, body, sweetness, flavor_tags, 1 - (embedding <=> %(v)s::vector) AS sim"
                     f" FROM coffees WHERE active AND embedding IS NOT NULL{base}{extra}"
-                    " ORDER BY embedding <=> %(v)s::vector LIMIT %(k)s",
+                    " ORDER BY embedding <=> %(v)s::vector, id LIMIT %(k)s",
                     {"v": v, "k": k, "ex": exclude_id, "o": origin, "p": process,
                      "xs": list(exclude_sources)}).fetchall()
             return [Neighbor(r["id"], r["name"], float(r["sim"]), r["acidity"], r["body"], r["sweetness"],
-                             tuple(r["flavor_tags"] or ())) for r in sorted(rows, key=lambda r: -r["sim"])]
+                             tuple(r["flavor_tags"] or ())) for r in sorted(rows, key=lambda r: (-r["sim"], r["id"]))]
 
         if origin or process:
             extra = (" AND origin_country = %(o)s" if origin else "") + (" AND process = %(p)s" if process else "")
