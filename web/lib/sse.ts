@@ -19,7 +19,7 @@ export async function* readSse(body: ReadableStream<Uint8Array>): AsyncGenerator
     for (;;) {
       const { value, done } = await reader.read();
       if (done) break;
-      buffer += decoder.decode(value, { stream: true });
+      buffer = (buffer + decoder.decode(value, { stream: true })).replace(/\r\n/g, "\n");
       let cut: number;
       while ((cut = buffer.indexOf("\n\n")) >= 0) {
         const ev = parseBlock(buffer.slice(0, cut));

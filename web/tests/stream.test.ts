@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { initialStream, reduceStream } from "@/lib/stream";
+import { initialStream, reduceStream, type StreamState } from "@/lib/stream";
 import type { Card } from "@/lib/types";
 
 const card = (key: string): Card => ({
@@ -11,7 +11,7 @@ const card = (key: string): Card => ({
 
 describe("reduceStream", () => {
   it("cards → deltas → done / fallback", () => {
-    let s = { ...initialStream, status: "loading" as const };
+    let s: StreamState = { ...initialStream, status: "loading" };
     s = reduceStream(s, { event: "cards", data: { cards: [card("a"), card("b")] } });
     expect(s.cards.map((c) => c.key)).toEqual(["a", "b"]);
     expect(s.explanations.a).toEqual({ text: "", status: "streaming" });
@@ -33,6 +33,16 @@ describe("reduceStream", () => {
     s = reduceStream(s, { event: "done", data: {} });
     expect(s.status).toBe("error");
     expect(s.error).toBe("오류");
+  });
+
+  it("done/error settle explanations that never finished to the card template", () => {
+    let s: StreamState = { ...initialStream, status: "loading" };
+    s = reduceStream(s, { event: "cards", data: { cards: [card("a"), card("b")] } });
+    s = reduceStream(s, { event: "explain_delta", data: { key: "a", delta: "산미" } });
+    s = reduceStream(s, { event: "explain_done", data: { key: "b", text: "끝" } });
+    s = reduceStream(s, { event: "error", data: { message: "오류" } });
+    expect(s.explanations.a).toEqual({ text: "템플릿 a", status: "fallback" });
+    expect(s.explanations.b).toEqual({ text: "끝", status: "done" });
   });
 
   it("ignores unknown events", () => {

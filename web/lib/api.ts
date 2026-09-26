@@ -73,7 +73,7 @@ export async function openStream(path: "/recommend" | "/analyze", body: unknown,
 }
 
 export function tastingFor(card: Card, rating: number, note: string): TastingInput {
-  const base = { rating, note: note.trim() || null };
+  const base = { rating, note: note.trim().slice(0, 200) || null };
   if (card.coffee_id != null) return { ...base, coffee_id: card.coffee_id };
   if (card.menu_item_id != null) return { ...base, menu_item_id: card.menu_item_id, order_decaf: card.order_decaf };
   const inputText = card.source === "predicted" ? card.name : `${card.brand ?? ""} ${card.name}`.trim();

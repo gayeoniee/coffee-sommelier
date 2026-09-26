@@ -17,6 +17,15 @@ function setExplanation(state: StreamState, key: string, ex: Explanation): Strea
   return { ...state, explanations: { ...state.explanations, [key]: ex } };
 }
 
+// An explanation still streaming when the stream ends will never finish: show the card's template instead.
+function settle(state: StreamState): StreamState {
+  const explanations = { ...state.explanations };
+  for (const c of state.cards) {
+    if (explanations[c.key]?.status === "streaming") explanations[c.key] = { text: c.template, status: "fallback" };
+  }
+  return { ...state, explanations };
+}
+
 export function reduceStream(state: StreamState, ev: SseEvent): StreamState {
   switch (ev.event) {
     case "cards": {
@@ -38,9 +47,9 @@ export function reduceStream(state: StreamState, ev: SseEvent): StreamState {
     case "explain_fallback":
       return setExplanation(state, ev.data.key, { text: ev.data.text, status: "fallback" });
     case "error":
-      return { ...state, status: "error", error: ev.data.message };
+      return { ...settle(state), status: "error", error: ev.data.message };
     case "done":
-      return { ...state, status: state.status === "error" ? "error" : "done" };
+      return { ...settle(state), status: state.status === "error" ? "error" : "done" };
     default:
       return state;
   }
