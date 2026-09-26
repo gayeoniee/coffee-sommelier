@@ -75,6 +75,7 @@ def test_kaggle_collector_uses_downloader(tmp_path):
 import json as _json
 
 from pipeline.collect.web import ComposeCollector, MegaCollector, PaikCollector, ShopifyCollector, StarbucksCollector
+from pipeline.collect.web import CoffeebeanCollector, MegaCollector, PaikCollector, ShopifyCollector, StarbucksCollector
 
 
 def mock_http(handler):
@@ -142,12 +143,28 @@ def test_compose_sends_coffee_category_tag(tmp_path):
 
     ComposeCollector().collect(tmp_path, mock_http(handler))
     assert seen[0]["search_tag"] == "02. 커피ㆍ콜드브루" and seen[0]["tab"] == "nutrition"
+def test_coffeebean_paginates_each_category_and_stops_at_empty_page(tmp_path):
+    per_category_pages = {13: 2, 14: 1, 12: 1}  # 에스프레소 음료, 브루드 커피, 아이스 블렌디드 (COFFEE)
+
+    def handler(request):
+        cid = int(request.url.params["category"])
+        page = int(request.url.params.get("page", 1))
+        if page > per_category_pages[cid]:
+            return httpx.Response(200, text="<ul class='menu_list'></ul>")
+        return httpx.Response(200, text=(
+            f'<div class="category2"><a class="select_a">cat{cid}</a></div>'
+            f'<ul class="menu_list"><li><dl class="txt"><dt><span class="kor">item{cid}-{page}</span></dt></dl></li></ul>'
+        ))
+
+    files = CoffeebeanCollector().collect(tmp_path, mock_http(handler))
+    assert [f.name for f in files] == [
+        "cat13_page1.html", "cat13_page2.html", "cat14_page1.html", "cat12_page1.html"]
 
 
 def test_registry_lists_all_sources():
     from pipeline.collect.registry import ALL_COLLECTORS
     assert [c.name for c in ALL_COLLECTORS] == [
-        "cqi", "roasterdb", "sca_wheel", "coffeereview_kaggle", "starbucks", "mega", "paik", "shopify", "compose", "hollys"]
+        "cqi", "roasterdb", "sca_wheel", "coffeereview_kaggle", "starbucks", "mega", "paik", "shopify", "coffeebean", "compose", "hollys"]
 
 
 def test_hollys_saves_espresso_page(tmp_path):

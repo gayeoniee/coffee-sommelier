@@ -216,4 +216,23 @@ def test_hollys_parses_names_caffeine_decaf(tmp_path):
     assert by["콜드브루"].caffeine_mg == 195.0                  # ICED만 있는 항목
     assert all(i.brand_key == "brand:hollys" and i.key.startswith("menu:hollys:") for i in items)
     assert all(i.category == "에스프레소" for i in items)
+def test_coffeebean_parses_names_caffeine_and_decaf_option(tmp_path):
+    from pipeline import settings
+    from pipeline.normalize.menus import brands_by_key, menu_decaf_option, normalize_coffeebean
+
+    snap = _copy_fixture("menus/coffeebean", tmp_path)
+    items = normalize_coffeebean(snap, "2026-09-27").menu_items
+    by = {i.name: i for i in items}
+    assert len(items) == 6
+    # coffeebeankorea.com writes HOT/ICED as different names ("아메리카노" vs "아이스 아메리카노"),
+    # never a HOT/ICED suffix on the same name, so they are kept as separate items (not merged).
+    assert by["아메리카노"].caffeine_mg == 182.0
+    assert by["아이스 아메리카노"].caffeine_mg == 91.0
+    # The site's coffee menu has no item literally named decaf: decaf is a paid shot-swap option on
+    # espresso drinks, never a distinct product, so is_decaf is False for every scraped item.
+    assert all(not i.is_decaf for i in items)
+    brand = brands_by_key(settings.CURATED_DIR)["brand:coffeebean"]
+    assert menu_decaf_option(brand, by["아메리카노"].category, by["아메리카노"].is_decaf) is True
+    assert menu_decaf_option(brand, by["콜드브루"].category, by["콜드브루"].is_decaf) is False  # brewed coffee, no shot to swap
+    assert all(i.brand_key == "brand:coffeebean" and i.key.startswith("menu:coffeebean:") for i in items)
     assert sum(i.caffeine_mg is not None for i in items) / len(items) >= 0.9
