@@ -202,6 +202,26 @@ def test_pool_replaces_connections_killed_by_the_server(repo, db_conn):
     assert repo.user_exists(repo.create_user())           # a dead pooled connection is checked and replaced
 
 
+def _insert_two_identical_embeddings(repo, v):
+    """Two coffees with the same embedding vector; returns their ids sorted ascending."""
+    with repo.pool.connection() as conn:
+        ids = [conn.execute(
+            "INSERT INTO coffees (key, name, roaster, is_decaf, acidity, body, sweetness, flavor_tags,"
+            " embedding, source, collected_at) VALUES (%s,'Tie Bean','R',false,3,3,3,%s,%s::vector,'t',"
+            "'2026-09-26') RETURNING id",
+            (f"tie{i}", ["chocolate"], to_vector_literal(v))).fetchone()["id"] for i in range(2)]
+    return sorted(ids)
+
+
+def test_neighbors_break_ties_by_id(repo):
+    # two coffees with identical embeddings must come back in id order, run after run
+    ids = _insert_two_identical_embeddings(repo, vec(9))
+    a = [n.coffee_id for n in repo.neighbors(vec(9), k=5)]
+    b = [n.coffee_id for n in repo.neighbors(vec(9), k=5)]
+    assert a == b
+    assert a.index(ids[0]) < a.index(ids[1])
+
+
 def test_loo_target_filter_sources_and_decaf_beans(repo):
     with repo.pool.connection() as conn:
         rid = conn.execute(

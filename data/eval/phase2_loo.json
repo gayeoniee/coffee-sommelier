@@ -14,13 +14,13 @@
   "embedding_model": "nvidia/nemotron-3-embed-1b",
   "acidity": {
     "n": 200,
-    "exact": 0.44,
+    "exact": 0.43,
     "within1": 0.735
   },
   "body": {
     "n": 200,
-    "exact": 0.305,
-    "within1": 0.635
+    "exact": 0.3,
+    "within1": 0.64
   },
   "sweetness": {
     "n": 96,
@@ -29,16 +29,16 @@
   },
   "acidity_within1_by_confidence": {
     "low": {
-      "n": 14,
-      "within1": 0.3571
+      "n": 10,
+      "within1": 0.4
     },
     "medium": {
-      "n": 128,
-      "within1": 0.7188
+      "n": 130,
+      "within1": 0.7077
     },
     "high": {
-      "n": 58,
-      "within1": 0.8621
+      "n": 60,
+      "within1": 0.85
     }
   }
 }

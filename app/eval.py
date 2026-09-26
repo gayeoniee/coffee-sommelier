@@ -175,6 +175,14 @@ def compare3(repo, n: int = 200, seed: int = 42) -> dict:
     return out
 
 
+def loo_repro(repo, n: int = 200, seed: int = 42) -> dict:
+    """Run loo_accuracy twice and check the JSON output is byte-identical — proves neighbor tie-break by id
+    (ADR 0006) makes leave-one-out results reproducible run to run, not just stable in aggregate."""
+    dumps = [json.dumps(loo_accuracy(repo, n, seed), ensure_ascii=False, sort_keys=True) for _ in range(2)]
+    hashes = [hashlib.sha256(d.encode()).hexdigest() for d in dumps]
+    return {"runs": 2, "identical": hashes[0] == hashes[1], "sha256": hashes}
+
+
 def convergence(repo, users: int = 200, seed: int = 1) -> dict:
     tag_to_cat, _ = repo.taxonomy()
     return simulate_convergence(repo.random_coffees_with_attrs(400, seed), tag_to_cat, users=users, seed=seed)
@@ -214,7 +222,8 @@ def bench(repo) -> dict:
 def main(argv: list[str]) -> int:
     from app.repo import Repo
     names = argv or ["all"]
-    order = ["violations", "loo", "loo_open", "coverage", "coverage_open", "compare3", "convergence", "bench"]
+    order = ["violations", "loo", "loo_open", "coverage", "coverage_open", "compare3", "loo_repro", "convergence",
+             "bench"]
     targets = order if names == ["all"] else names
     repo = Repo(settings.DATABASE_URL)
     fns = {
@@ -224,6 +233,7 @@ def main(argv: list[str]) -> int:
         "coverage": coverage,
         "coverage_open": lambda r: coverage(r, exclude_sources=OPEN_LICENSE_EXCLUDE),
         "compare3": compare3,
+        "loo_repro": loo_repro,
         "convergence": convergence,
         "bench": bench,
     }
