@@ -16,13 +16,24 @@
 #   LANGFUSE_PUBLIC_KEY / LANGFUSE_SECRET_KEY / LANGFUSE_BASE_URL   optional tracing
 #   KEEP_WARM=1         also set the GitHub repo variable that turns on .github/workflows/keep-warm.yml (needs gh)
 #   SKIP_MIGRATE=1      don't copy the local DB (e.g. Neon already has the data)
+#   VARIANT=open        deploy the competition submission (open-data) variant alongside the full one:
+#                       Render service coffee-sommelier-open-api, Vercel project coffee-sommelier-open,
+#                       same Neon project but a second database `coffee_open` (created if missing), env
+#                       DATA_VARIANT=open / NEXT_PUBLIC_VARIANT=open. Local source DB for the migration
+#                       defaults to `coffee_open` too (override with SRC_DB); build it first with
+#                       scripts/competition/build_open_db.sh. Default (unset or VARIANT=full): unchanged.
 set -euo pipefail
 export MSYS_NO_PATHCONV=1 MSYS2_ARG_CONV_EXCL='*'
 
 ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 cd "$ROOT"
-NAME=coffee-sommelier
-RENDER_SERVICE=coffee-sommelier-api
+VARIANT=${VARIANT:-full}
+NEON_PROJECT_NAME=coffee-sommelier
+case "$VARIANT" in
+  full) NAME=coffee-sommelier;      RENDER_SERVICE=coffee-sommelier-api ;;
+  open) NAME=coffee-sommelier-open; RENDER_SERVICE=coffee-sommelier-open-api ;;
+  *) echo "오류: 알 수 없는 VARIANT=$VARIANT (full 또는 open)" >&2; exit 1 ;;
+esac
 REPO_URL=https://github.com/gayeoniee/wine-sommelier_rag
 NEON_REGION=aws-ap-southeast-1           # Singapore, next to Render singapore and Vercel sin1
 NEONCTL="npx -y neonctl@6"
@@ -51,15 +62,27 @@ fi
 say "1/4 Neon 데이터베이스"
 if [ -z "${NEON_DATABASE_URL:-}" ]; then
   $NEONCTL me -o json >/dev/null 2>&1 || die "Neon 로그인이 필요해요: npx neonctl auth"
-  pid=$($NEONCTL projects list -o json | json "(Array.isArray(o)?o:(o.projects||[])).filter(p=>p.name==='$NAME').map(p=>p.id)[0]")
+  pid=$($NEONCTL projects list -o json | json "(Array.isArray(o)?o:(o.projects||[])).filter(p=>p.name==='$NEON_PROJECT_NAME').map(p=>p.id)[0]")
   if [ -z "$pid" ]; then
-    echo "프로젝트 $NAME 생성 ($NEON_REGION, Postgres 17)"
-    pid=$($NEONCTL projects create --name "$NAME" --region-id "$NEON_REGION" --pg-version 17 -o json | json "(o.project||o).id")
+    echo "프로젝트 $NEON_PROJECT_NAME 생성 ($NEON_REGION, Postgres 17)"
+    pid=$($NEONCTL projects create --name "$NEON_PROJECT_NAME" --region-id "$NEON_REGION" --pg-version 17 -o json | json "(o.project||o).id")
   else
     echo "기존 프로젝트 사용: $pid"
   fi
   # direct (non-pooled) connection: pg_restore needs a session, and the API's own pool is small (max 5)
   NEON_DATABASE_URL=$($NEONCTL connection-string --project-id "$pid" | tail -n1 | tr -d '\r')
+  if [ "$VARIANT" = "open" ]; then
+    # Second database in the same project, for the open-data submission variant.
+    has_db=$($NEONCTL databases list --project-id "$pid" -o json | json "(Array.isArray(o)?o:(o.databases||[])).some(d=>d.name==='coffee_open')")
+    if [ "$has_db" != "true" ]; then
+      echo "DB coffee_open 생성"
+      $NEONCTL databases create --project-id "$pid" --name coffee_open -o json >/dev/null
+    else
+      echo "기존 DB coffee_open 사용"
+    fi
+    # swap the database name in the connection string's path (…/neondb?... -> …/coffee_open?...)
+    NEON_DATABASE_URL=$(printf '%s' "$NEON_DATABASE_URL" | sed -E 's#(://[^/]+)/[^/?]+#\1/coffee_open#')
+  fi
 fi
 case "$NEON_DATABASE_URL" in postgres*://*) ;; *) die "Neon 연결 문자열을 얻지 못했어요: $NEON_DATABASE_URL" ;; esac
 echo "연결 문자열 확보 (${NEON_DATABASE_URL%%@*}@...)" | sed -E 's#://([^:]+):[^@]+#://\1:****#'
@@ -71,7 +94,11 @@ if [ "${SKIP_MIGRATE:-0}" != "1" ]; then
   if [ "$has" = "t" ]; then
     echo "Neon에 이미 데이터가 있어요 — 옮기기 건너뜀 (다시 하려면 RESET=1 scripts/deploy/migrate_to_neon.sh)"
   else
-    SRC_CONTAINER=$src NEON_DATABASE_URL=$NEON_DATABASE_URL bash scripts/deploy/migrate_to_neon.sh
+    # open variant: migrate from the local coffee_open DB (see scripts/competition/build_open_db.sh)
+    # into Neon's coffee_open DB above. SRC_DB stays overridable.
+    default_src_db=coffee; [ "$VARIANT" = "open" ] && default_src_db=coffee_open
+    SRC_CONTAINER=$src SRC_DB=${SRC_DB:-$default_src_db} NEON_DATABASE_URL=$NEON_DATABASE_URL \
+      bash scripts/deploy/migrate_to_neon.sh
   fi
 fi
 
@@ -81,7 +108,8 @@ env_json() {
   node -e 'const e=process.env;const keys=["DATABASE_URL","NVIDIA_API_KEY","LANGFUSE_PUBLIC_KEY","LANGFUSE_SECRET_KEY"];
     const out=keys.filter(k=>e[k]).map(k=>({key:k,value:e[k]}));
     out.push({key:"COOKIE_SECURE",value:"true"},{key:"COOKIE_SAMESITE",value:"lax"},
-             {key:"LANGFUSE_BASE_URL",value:e.LANGFUSE_BASE_URL||"https://cloud.langfuse.com"});
+             {key:"LANGFUSE_BASE_URL",value:e.LANGFUSE_BASE_URL||"https://cloud.langfuse.com"},
+             {key:"DATA_VARIANT",value:e.DATA_VARIANT||"full"});
     console.log(JSON.stringify(out))'
 }
 render() {  # render METHOD PATH [BODY]
@@ -89,7 +117,7 @@ render() {  # render METHOD PATH [BODY]
     -H "Accept: application/json" -H "Content-Type: application/json" ${3:+--data "$3"}
 }
 if [ -z "${RENDER_URL:-}" ] && [ -n "${RENDER_API_KEY:-}" ]; then
-  export DATABASE_URL=$NEON_DATABASE_URL NVIDIA_API_KEY
+  export DATABASE_URL=$NEON_DATABASE_URL NVIDIA_API_KEY DATA_VARIANT=$VARIANT
   envs=$(env_json)
   sid=$(render GET "/services?name=$RENDER_SERVICE&limit=1" | json "(o[0]&&o[0].service.id)||''")
   if [ -z "$sid" ]; then
@@ -137,6 +165,7 @@ $VERCEL project add "$NAME" >/dev/null 2>&1 || true            # already exists 
 $VERCEL project update "$NAME" --framework nextjs --root-directory web --yes >/dev/null
 $VERCEL link --yes --project "$NAME" >/dev/null
 $VERCEL env add API_URL production --value "$RENDER_URL" --force --yes >/dev/null
+$VERCEL env add NEXT_PUBLIC_VARIANT production --value "$VARIANT" --force --yes >/dev/null
 deploy_log=$($VERCEL deploy --prod --yes 2>&1 | tr -d '\r' | tee /dev/stderr)
 # The per-deployment URL sits behind Vercel's deployment protection; the public one is the "Aliased" line
 # (Vercel adds a suffix like -psi when the plain project name is already taken on vercel.app).

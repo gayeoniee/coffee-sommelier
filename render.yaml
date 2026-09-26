@@ -38,3 +38,43 @@ services:
         sync: false
       - key: LANGFUSE_BASE_URL   # EU cloud; US projects use https://us.cloud.langfuse.com
         value: https://cloud.langfuse.com
+      - key: DATA_VARIANT
+        value: full
+
+  # Competition submission (judge-facing): same image, a separate Neon database with no coffeereview
+  # source rows (data/eval/open, scripts/competition/build_open_db.sh). See docs/deploy.md "제출본(오픈 데이터판)".
+  - type: web
+    name: coffee-sommelier-open-api
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeploy: false            # CI (.github/workflows/ci.yml deploy job) is the deployer
+    buildFilter:
+      paths:
+        - app/**
+        - pipeline/**
+        - config/**
+        - pyproject.toml
+        - uv.lock
+        - Dockerfile
+        - .dockerignore
+    envVars:
+      - key: DATABASE_URL        # Neon direct connection string for the coffee_open database
+        sync: false
+      - key: NVIDIA_API_KEY
+        sync: false
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: COOKIE_SAMESITE
+        value: lax
+      - key: LANGFUSE_PUBLIC_KEY
+        sync: false
+      - key: LANGFUSE_SECRET_KEY
+        sync: false
+      - key: LANGFUSE_BASE_URL
+        value: https://cloud.langfuse.com
+      - key: DATA_VARIANT
+        value: open

@@ -143,14 +143,45 @@ gh variable delete KEEP_WARM_URL                                                
 - `/health`는 DB를 건드리지 않으므로 Neon은 그대로 유휴 시 자동 정지한다(깨어날 때 1초 미만).
 - GitHub 예약 실행은 몇 분씩 늦을 수 있고, 저장소에 60일간 활동이 없으면 멈춘다.
 
-## 6. CI
+## 6. 제출본(오픈 데이터판)
+
+공모전 심사용으로 `coffeereview` 소스가 전혀 없는 DB로 도는 별도 배포다. 리소스는 전체판과 나란히 존재하고 서로 덮어쓰지 않는다.
+
+| | 전체판 | 제출본(오픈 데이터판) |
+|---|---|---|
+| Neon | 프로젝트 `coffee-sommelier`, DB `neondb` | 같은 프로젝트, DB `coffee_open` |
+| Render | `coffee-sommelier-api` | `coffee-sommelier-open-api` |
+| Vercel | `coffee-sommelier` | `coffee-sommelier-open` |
+| `DATA_VARIANT`(Render) | `full`(기본) | `open` |
+| `NEXT_PUBLIC_VARIANT`(Vercel) | 없음 | `open` — 화면 맨 위에 "공모전 제출본 · 오픈 데이터 + 국내 로스터리 사실정보 (coffeereview 미포함)" 배너 |
+
+준비: 로컬에 오픈 데이터판 DB `coffee_open`이 있어야 한다(`scripts/competition/build_open_db.sh`로 만든다 — 로컬 도커 컨테이너 안의 DB이지, Neon이 아니다). 그 DB에는 `coffeereview_kaggle` 소스가 한 행도 없다.
+
+배포:
+
+```bash
+VARIANT=open bash scripts/deploy/deploy_all.sh
+```
+
+`deploy_all.sh`가 하는 일(전체판과 다른 부분만):
+1. Neon: 프로젝트는 재사용하고, DB `coffee_open`이 없으면 `neonctl databases create`로 만든 뒤 연결 문자열의 DB 이름 부분만 바꿔 쓴다.
+2. 마이그레이션: 로컬 컨테이너의 `coffee_open` DB(`SRC_DB=coffee_open`, 오버라이드 가능)를 방금 만든 Neon `coffee_open`으로 옮긴다.
+3. Render: 서비스 `coffee-sommelier-open-api`를 만들거나 갱신하고 env `DATA_VARIANT=open`을 넣는다.
+4. Vercel: 프로젝트 `coffee-sommelier-open`에 `API_URL`(오픈 백엔드)과 `NEXT_PUBLIC_VARIANT=open`을 넣고 배포한다.
+
+확인: `https://<제출본 웹 주소>/api/health` → `{"ok": true, "variant": "open", "coffees": <오픈 DB 원두 수>}`.
+
+CI(`deploy` job)는 push마다 `coffee-sommelier-api`와 `coffee-sommelier-open-api` 두 서비스 모두에 배포를 트리거한다. 아직 만들지 않은 서비스(제출본을 처음 배포하기 전)는 오류 없이 건너뛴다. Render 블루프린트(`render.yaml`)로 처음부터 만들 때도 두 서비스가 함께 나열되므로, 만들 서비스를 골라 각각 `DATABASE_URL`(제출본은 Neon `coffee_open` 연결 문자열)과 `NVIDIA_API_KEY`를 채운다.
+
+## 7. CI
 
 `.github/workflows/ci.yml` (푸시·PR):
 - `backend`: pgvector 서비스 컨테이너를 띄우고 `uv run pytest -q` (DB 테스트 포함, `coffee_test`는 픽스처가 만든다).
 - `image`: 도커 이미지를 빌드하고 pandas 없이 `app.api`가 임포트되는지 확인.
 - `web`: `npm ci && npm test && npm run lint && npx tsc --noEmit && npm run build`.
+- `deploy`(`main` push만): `coffee-sommelier-api`·`coffee-sommelier-open-api` 두 서비스 모두에 Render 배포를 트리거한다(둘 중 아직 없는 서비스는 건너뜀).
 
-## 7. 문제 해결
+## 8. 문제 해결
 
 | 증상 | 확인 |
 |---|---|
