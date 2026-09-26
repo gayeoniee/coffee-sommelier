@@ -1,6 +1,8 @@
 import json
 
-from pipeline.enrich import EnrichOutput, needs_llm, rule_tags, run_enrich, tag_vocab
+from pipeline.enrich import (
+    EnrichOutput, is_note_list, ko_rule_tags, ko_tag_vocab, needs_llm, rule_tags, run_enrich, tag_vocab,
+)
 from pipeline.llm import LLMError
 from pipeline.records import CoffeeRecord, ReviewRecord, TaxonomyNode, read_jsonl, write_jsonl
 
@@ -110,3 +112,46 @@ def test_torn_cache_line_is_skipped_and_resent(tmp_path):
     new_lines = cache_path.read_text(encoding="utf-8").split("\n")
     assert json.loads(new_lines[-2])["key"] == "c2" and new_lines[-1] == ""  # appended on its own line
     assert run_enrich(norm, out, FakeClient())["llm_calls"] == 0
+
+
+KO_TAX = [TaxonomyNode(key=f"sca:x>{en}", level=lvl, name_en=en, name_ko=ko) for lvl, en, ko in [
+    (1, "fruity", "과일"), (2, "berry", "베리"), (3, "blueberry", "블루베리"), (3, "pear", "배"),
+    (3, "dark chocolate", "다크 초콜릿"), (3, "chocolate", "초콜릿"), (2, "floral", "꽃향"), (3, "honey", "꿀"),
+]]
+
+
+def test_ko_tag_vocab_uses_korean_names_and_known_aliases():
+    ko = ko_tag_vocab(KO_TAX)
+    assert ko["다크초콜릿"] == "dark chocolate" and ko["블루베리"] == "blueberry"   # spaces removed
+    assert "과일" not in ko                                                       # level 1 skipped like tag_vocab
+    assert ko["플로럴"] == "floral" and "카라멜" not in ko                        # alias only if its tag exists
+
+
+def test_ko_rule_tags_on_note_lists():
+    ko = ko_tag_vocab(KO_TAX)
+    # longest match wins inside a note, space-insensitive; order follows the notes
+    assert ko_rule_tags("블루 베리, 밀크초콜릿, 다크초콜릿", ko) == ["blueberry", "chocolate", "dark chocolate"]
+    assert ko_rule_tags("배, 배전도, 꿀", ko) == ["pear", "honey"]      # one-letter terms only as a whole note
+    assert rule_tags("블루베리, 베리, 꽃향기 가득", [], ko_vocab=ko) == ["blueberry", "floral"]   # berry ⊂ blueberry
+    assert rule_tags("Lemon, 블루베리", ["lemon"], ko_vocab=ko) == ["lemon", "blueberry"]
+    assert rule_tags("블루베리", ["lemon"]) == []                        # no Korean vocab -> English only
+
+
+def test_korean_matching_skips_prose():
+    assert is_note_list("초콜릿, 건무화과, 당밀의 긴 여운") and not is_note_list("")
+    assert not is_note_list("에티오피아 커피나무에서 자란 원두로 발효 공정을 거쳐 블루베리 향이 납니다.")
+    ko = ko_tag_vocab(KO_TAX)
+    assert rule_tags("콜롬비아 디카페인. 블루베리와 꿀.", [], ko_vocab=ko) == []
+
+
+def test_run_enrich_tags_korean_notes_and_llm_fills_attrs(tmp_path):
+    norm, out = tmp_path / "norm", tmp_path / "enriched"
+    write_jsonl(norm / "coffees.jsonl", [coffee("k1", flavor_summary="블루베리, 다크 초콜릿")])
+    write_jsonl(norm / "reviews.jsonl", [])
+    write_jsonl(norm / "taxonomy.jsonl", KO_TAX)
+    client = FakeClient()
+    run_enrich(norm, out, client)
+    [c] = read_jsonl(out / "coffees.jsonl", CoffeeRecord)
+    assert c.flavor_tags == ["blueberry", "dark chocolate"]     # rule tags; the LLM's tags are not used
+    assert (c.acidity, c.body, c.sweetness) == (4, 2, 3)        # attrs come from the LLM, as for other sources
+    assert "블루베리, 다크 초콜릿" in client.seen[0]

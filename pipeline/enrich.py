@@ -32,14 +32,72 @@ def tag_vocab(taxonomy: list[TaxonomyNode]) -> list[str]:
     return sorted({n.name_en.lower() for n in taxonomy if n.level >= 2})
 
 
-def rule_tags(text: str, vocab: list[str], limit: int = 6) -> list[str]:
+# Korean note words the SCA Korean names (data/curated/sca_ko.yaml) don't spell the same way -> SCA tag.
+# Only aliases whose target is in the vocabulary are used.
+KO_TAG_ALIASES = {
+    "카라멜": "caramelized", "캬라멜": "caramelized", "카카오": "cocoa", "초코": "chocolate",
+    "플로럴": "floral", "벚꽃": "floral", "아카시아": "floral", "국화": "floral", "꽃": "floral",
+    "자스민": "jasmine", "와이니": "winey", "건자두": "prune", "흑당": "brown sugar", "브라운슈가": "brown sugar",
+    "메이플": "maple syrup", "호두": "nutty", "피스타치오": "nutty", "군밤": "nutty",
+    "베르가못": "citrus fruit", "유자": "citrus fruit", "금귤": "citrus fruit", "블랙커런트": "berry",
+}
+_HANGUL = re.compile(r"[가-힣]")
+_NOTE_SPLIT = re.compile(r"[,/·;\n]+")
+MAX_NOTE_CHARS = 20
+
+
+def ko_tag_vocab(taxonomy: list[TaxonomyNode]) -> dict[str, str]:
+    """Korean term (spaces removed) -> SCA tag, from the taxonomy's Korean names plus KO_TAG_ALIASES."""
+    en = set(tag_vocab(taxonomy))
+    out = {"".join(n.name_ko.split()): n.name_en.lower() for n in taxonomy if n.level >= 2 and n.name_ko}
+    out.update({k: v for k, v in KO_TAG_ALIASES.items() if v in en})
+    return out
+
+
+def is_note_list(text: str) -> bool:
+    """A short comma-separated note list ("초콜릿, 건무화과, 호두"), not prose. Korean substring matching is only
+    safe on these: in prose it would catch "발효" in a process description or "나무" in "커피나무"."""
+    notes = [n.strip() for n in _NOTE_SPLIT.split(text or "") if n.strip()]
+    return bool(notes) and all(len(n) <= MAX_NOTE_CHARS and "." not in n for n in notes)
+
+
+def ko_rule_tags(text: str, ko_vocab: dict[str, str]) -> list[str]:
+    """Match Korean terms inside each note, longest first; a shorter term inside a longer hit is skipped
+    ("블루베리" is blueberry, not also berry). One-letter terms (배, 꿀, 꽃) must be the whole note."""
+    hits: list[tuple[tuple[int, int], str]] = []
+    terms = sorted(ko_vocab, key=len, reverse=True)
+    for i, note in enumerate(_NOTE_SPLIT.split(text or "")):
+        n = "".join(note.split())
+        if not _HANGUL.search(n):
+            continue
+        spans: list[tuple[int, int]] = []
+        for term in terms:
+            if len(term) == 1:
+                if n == term:
+                    hits.append(((i, 0), ko_vocab[term]))
+                continue
+            start = n.find(term)
+            while start != -1 and any(s <= start and start + len(term) <= e for s, e in spans):
+                start = n.find(term, start + 1)
+            if start != -1:
+                spans.append((start, start + len(term)))
+                hits.append(((i, start), ko_vocab[term]))
+    return [tag for _, tag in sorted(hits)]
+
+
+def rule_tags(text: str, vocab: list[str], limit: int = 6, ko_vocab: dict[str, str] | None = None) -> list[str]:
     t = (text or "").lower()
     hits: list[tuple[int, str]] = []
     for term in sorted(vocab, key=len, reverse=True):
         m = re.search(rf"(?<![a-z]){re.escape(term)}(?![a-z])", t)
         if m and not any(term in h for _, h in hits):
             hits.append((m.start(), term))
-    return [term for _, term in sorted(hits)][:limit]
+    tags = [term for _, term in sorted(hits)]
+    if ko_vocab and is_note_list(text):
+        for tag in ko_rule_tags(text, ko_vocab):
+            if not any(tag in h for h in tags):        # same rule as above: "berry" is covered by "blueberry"
+                tags.append(tag)
+    return tags[:limit]
 
 
 def coffee_texts(reviews: list[ReviewRecord]) -> dict[str, str]:
@@ -53,10 +111,10 @@ def needs_llm(c: CoffeeRecord, text: str) -> bool:
     return bool(text) and (not c.flavor_tags or c.acidity is None or c.body is None)
 
 
-def _apply_rules(c: CoffeeRecord, text: str, vocab: list[str]) -> CoffeeRecord:
+def _apply_rules(c: CoffeeRecord, text: str, vocab: list[str], ko_vocab: dict[str, str] | None = None) -> CoffeeRecord:
     update: dict = {}
     if not c.flavor_tags and text:
-        update["flavor_tags"] = rule_tags(text, vocab)
+        update["flavor_tags"] = rule_tags(text, vocab, ko_vocab=ko_vocab)
     if not c.is_decaf:
         is_decaf, process = detect_decaf(c.name, text)
         if is_decaf:
@@ -103,7 +161,8 @@ def ends_torn(path: Path) -> bool:
 def run_enrich(norm_dir: Path, out_dir: Path, client, limit: int | None = None, retry_failed: bool = False) -> dict[str, int]:
     coffees = read_jsonl(norm_dir / "coffees.jsonl", CoffeeRecord)
     texts = coffee_texts(read_jsonl(norm_dir / "reviews.jsonl", ReviewRecord))
-    vocab = tag_vocab(read_jsonl(norm_dir / "taxonomy.jsonl", TaxonomyNode))
+    taxonomy = read_jsonl(norm_dir / "taxonomy.jsonl", TaxonomyNode)
+    vocab, ko_vocab = tag_vocab(taxonomy), ko_tag_vocab(taxonomy)
     vocab_set = set(vocab)
     out_dir.mkdir(parents=True, exist_ok=True)
     cache_path = out_dir / "cache.jsonl"
@@ -115,7 +174,7 @@ def run_enrich(norm_dir: Path, out_dir: Path, client, limit: int | None = None, 
             cache_file.write("\n")  # terminate a torn last line so the next entry starts on its own line
         for c in coffees:
             text = texts.get(c.key) or c.flavor_summary or ""
-            c = _apply_rules(c, text, vocab)
+            c = _apply_rules(c, text, vocab, ko_vocab)
             if needs_llm(c, text):
                 h = hashlib.sha1(f"{c.name}\n{text}".encode("utf-8")).hexdigest()
                 entry = cache.get(c.key)
