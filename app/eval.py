@@ -13,7 +13,7 @@ from app.core.explain import explain_messages
 from app.core.predict import predict_from_neighbors
 from app.core.scoring import mmr_top_k, passes, score_item
 from app.core.simulate import simulate_convergence
-from app.models import ATTRS, Item, Profile
+from app.models import ATTRS, Item, Prediction, Profile
 from pipeline import settings
 from pipeline.llm import embed_model
 
@@ -90,12 +90,28 @@ def violation_rate(repo) -> dict:
             "details": details}
 
 
+def _prf(tp: int, fp: int, fn: int) -> tuple[float, float, float]:
+    p = tp / (tp + fp) if (tp + fp) else 0.0
+    r = tp / (tp + fn) if (tp + fn) else 0.0
+    f1 = 2 * p * r / (p + r) if (p + r) else 0.0
+    return (p, r, f1)
+
+
+def tag_prf(truth: set, pred: set) -> tuple[float, float, float]:
+    """Precision/recall/F1 for one truth/pred tag-set pair. `loo_accuracy` sums TP/FP/FN across all targets
+    itself (micro average over the total counts) rather than averaging per-item calls to this function."""
+    return _prf(len(truth & pred), len(pred - truth), len(truth - pred))
+
+
 def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str, ...] = (),
                  target_sources: tuple[str, ...] = ()) -> dict:
+    tag_to_cat, _ = repo.taxonomy()
     stats = {a: {"n": 0, "exact": 0, "within1": 0} for a in ATTRS}
     by_conf: dict[str, dict] = {}
     neighbor_sources: Counter = Counter()
     with_tags = 0
+    tag_n = tag_tp = tag_fp = tag_fn = 0
+    cat_tp = cat_fp = cat_fn = 0
     not_targets = tuple(dict.fromkeys(exclude_sources + NEVER_LOO_TARGETS))
     ids = repo.random_coffee_ids_for_loo(n, seed, exclude_sources=not_targets, sources=target_sources)
     for cid in ids:
@@ -116,10 +132,24 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
             c = by_conf.setdefault(pred.confidence, {"n": 0, "within1": 0})
             c["n"] += 1
             c["within1"] += abs(pred.acidity - truth.acidity) <= 1
+        truth_tags = {t.lower() for t in truth.tags}
+        if truth_tags:
+            tag_n += 1
+            pred_tags = {t.lower() for t in pred.tags}
+            tag_tp += len(truth_tags & pred_tags)
+            tag_fp += len(pred_tags - truth_tags)
+            tag_fn += len(truth_tags - pred_tags)
+            truth_cats = {tag_to_cat[t] for t in truth_tags if t in tag_to_cat}
+            pred_cats = {tag_to_cat[t] for t in pred_tags if t in tag_to_cat}
+            cat_tp += len(truth_cats & pred_cats)
+            cat_fp += len(pred_cats - truth_cats)
+            cat_fn += len(truth_cats - pred_cats)
     def rate(d: dict, k: str) -> float | None:
         return round(d[k] / d["n"], 4) if d["n"] else None
 
     total_nb = sum(neighbor_sources.values())
+    tag_p, tag_r, tag_f1 = _prf(tag_tp, tag_fp, tag_fn)
+    _, _, cat_f1 = _prf(cat_tp, cat_fp, cat_fn)
     return {"n": n, "seed": seed, "exclude_sources": list(exclude_sources),
             "target_sources": list(target_sources) or "all non-excluded sources",
             "targets": len(ids), "target_ids_sha1": hashlib.sha1(",".join(map(str, sorted(ids))).encode()).hexdigest(),
@@ -127,7 +157,9 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
             "predictions_with_tags": round(with_tags / len(ids), 4) if ids else None,
             "embedding_model": embed_model(),
             **{a: {"n": s["n"], "exact": rate(s, "exact"), "within1": rate(s, "within1")} for a, s in stats.items()},
-            "acidity_within1_by_confidence": {k: {"n": v["n"], "within1": rate(v, "within1")} for k, v in by_conf.items()}}
+            "acidity_within1_by_confidence": {k: {"n": v["n"], "within1": rate(v, "within1")} for k, v in by_conf.items()},
+            "tags": {"n": tag_n, "precision": round(tag_p, 4), "recall": round(tag_r, 4), "f1": round(tag_f1, 4),
+                    "category_f1": round(cat_f1, 4)}}
 
 
 def coverage(repo, exclude_sources: tuple[str, ...] = ()) -> dict:
@@ -175,6 +207,14 @@ def compare3(repo, n: int = 200, seed: int = 42) -> dict:
     return out
 
 
+def loo_repro(repo, n: int = 200, seed: int = 42) -> dict:
+    """Run loo_accuracy twice and check the JSON output is byte-identical — proves neighbor tie-break by id
+    (ADR 0006) makes leave-one-out results reproducible run to run, not just stable in aggregate."""
+    dumps = [json.dumps(loo_accuracy(repo, n, seed), ensure_ascii=False, sort_keys=True) for _ in range(2)]
+    hashes = [hashlib.sha256(d.encode()).hexdigest() for d in dumps]
+    return {"runs": 2, "identical": hashes[0] == hashes[1], "sha256": hashes}
+
+
 def convergence(repo, users: int = 200, seed: int = 1) -> dict:
     tag_to_cat, _ = repo.taxonomy()
     return simulate_convergence(repo.random_coffees_with_attrs(400, seed), tag_to_cat, users=users, seed=seed)
@@ -211,10 +251,139 @@ def bench(repo) -> dict:
             "full_answer_s": [round(t, 2) for _, t in seq]}
 
 
+EXPLAIN_CASES = settings.EVAL_DIR / "explain_cases.yaml"
+JUDGES = ("judge", "judge2")
+JUDGE_ATTEMPTS = 3
+RULE_CHECKS = ("foreign_words", "length", "numbers_grounded", "condition_mentioned", "polarity")
+
+
+def load_explain_cases(path=EXPLAIN_CASES) -> list[dict]:
+    """Hand-written guests × items (no DB, no personal data): each case can build explain_messages on its own."""
+    profiles = dict(PERSONAS)
+    out = []
+    for c in yaml.safe_load(path.read_text(encoding="utf-8")):
+        it = dict(c["item"])
+        it["tags"] = tuple(it.get("tags") or ())
+        pred = Prediction(**c["prediction"]) if c.get("prediction") else None
+        out.append({"id": c["id"], "persona": c["persona"], "profile": profiles[c["persona"]], "item": Item(**it),
+                    "score": float(c["score"]), "violation": c.get("violation"), "prediction": pred})
+    return out
+
+
+def _percentile(xs: list[float], q: float) -> float | None:
+    if not xs:
+        return None
+    s = sorted(xs)
+    pos = q * (len(s) - 1)
+    lo = int(pos)
+    hi = min(lo + 1, len(s) - 1)
+    return round(s[lo] + (s[hi] - s[lo]) * (pos - lo), 2)
+
+
+def summarize_explain_quality(rows: list[dict]) -> dict:
+    """Headline numbers over LLM-generated rows only (template fallbacks are counted, not scored)."""
+    gen = [r for r in rows if not r["fallback"]]
+    both = [r for r in gen if all(r["judges"][j] is not None for j in JUDGES)]
+
+    def rate(k: int, n: int) -> float | None:
+        return round(k / n, 4) if n else None
+
+    def mean(xs: list[float]) -> float | None:
+        return round(sum(xs) / len(xs), 2) if xs else None
+
+    return {
+        "n": len(rows), "generated": len(gen), "fallbacks": len(rows) - len(gen),
+        "rule_pass": sum(all(r["rules"].values()) for r in gen),
+        "rule_pass_rate": rate(sum(all(r["rules"].values()) for r in gen), len(gen)),
+        "rule_failures": {c: sum(not r["rules"][c] for r in gen) for c in RULE_CHECKS},
+        "judged_both": len(both),
+        "no_contradiction_both": sum(not any(r["judges"][j]["contradiction"] for j in JUDGES) for r in both),
+        "no_contradiction_rate_both": rate(sum(not any(r["judges"][j]["contradiction"] for j in JUDGES)
+                                               for r in both), len(both)),
+        "no_hallucination_both": sum(not any(r["judges"][j]["hallucination"] for j in JUDGES) for r in both),
+        "no_hallucination_rate_both": rate(sum(not any(r["judges"][j]["hallucination"] for j in JUDGES)
+                                               for r in both), len(both)),
+        "helpful_mean": {j: mean([r["judges"][j]["helpful"] for r in gen if r["judges"][j] is not None])
+                         for j in JUDGES},
+        "judge_agreement": {k: rate(sum(r["judges"]["judge"][k] == r["judges"]["judge2"][k] for r in both), len(both))
+                            for k in ("contradiction", "hallucination")},
+        "judge_failures": {j: sum(r["judges"][j] is None for r in rows) for j in JUDGES},
+        "first_token_p50": _percentile([r["first_token_s"] for r in gen if r["first_token_s"] is not None], 0.5),
+        "first_token_p95": _percentile([r["first_token_s"] for r in gen if r["first_token_s"] is not None], 0.95),
+    }
+
+
+def explain_quality(repo) -> dict:
+    """24 hand-written cases → one real explanation each (same path and deadline as the app) → deterministic rule
+    checks + two LLM judges. Costs ~72 LLM calls, so it is not part of `all`."""
+    import httpx
+
+    from app import config, llm
+    from app.core.explain import template_explanation
+    from app.core.explain_check import check_explanation
+    from app.core.judge import Verdict, judge_messages
+    from pipeline.llm import LLMError
+
+    _, tag_ko = repo.taxonomy()
+    tasks = settings.load_config("models.yaml")["tasks"]
+
+    async def generate(msgs):
+        start, first, parts = time.perf_counter(), None, []
+        async with asyncio.timeout(config.EXPLAIN_DEADLINE_S):
+            async for tok in llm.astream_text(config.EXPLAIN_TASK, msgs):
+                first = first if first is not None else time.perf_counter() - start
+                parts.append(tok)
+        text = "".join(parts).strip()
+        if not text:
+            raise LLMError("empty explanation")
+        return text, round(first, 2), round(time.perf_counter() - start, 2)
+
+    async def judge(task, payload, text):
+        last = None
+        for _ in range(JUDGE_ATTEMPTS):
+            try:
+                return (await llm.achat_json(task, judge_messages(payload, text), Verdict)).model_dump(), None
+            except LLMError as e:
+                last = str(e)
+        return None, last
+
+    async def run():
+        rows = []
+        for c in load_explain_cases():
+            msgs = explain_messages(c["item"], c["profile"], c["score"], c["prediction"], c["violation"])
+            payload = json.loads(msgs[1]["content"])
+            try:
+                text, first, total = await generate(msgs)
+                fallback, error = False, None
+            except (LLMError, httpx.HTTPError, TimeoutError) as e:    # same failures the app turns into its template
+                text = template_explanation(c["item"], c["profile"], c["score"], tag_ko, c["violation"])
+                first, total, fallback, error = None, None, True, f"{type(e).__name__}: {e}"
+            rules = check_explanation(text, payload, round(c["score"] * 100), c["violation"])
+            judges, judge_errors = {}, {}
+            for j in JUDGES:
+                judges[j], err = await judge(j, payload, text)
+                if err:
+                    judge_errors[j] = err
+            rows.append({"id": c["id"], "persona": c["persona"], "source": c["item"].source,
+                         "score": round(c["score"] * 100), "violation": c["violation"], "fallback": fallback,
+                         "error": error, "first_token_s": first, "total_s": total, "text": text, "rules": rules,
+                         "rule_pass": all(rules.values()), "judges": judges, "judge_errors": judge_errors or None})
+            brief = [None if v is None else (v["contradiction"], v["hallucination"], v["helpful"])
+                     for v in judges.values()]
+            print(f"  {c['id']}: fallback={fallback} rules={all(rules.values())} judges={brief}", flush=True)
+        return rows
+
+    rows = asyncio.run(run())
+    return {"models": {t: tasks[t]["model"] for t in (config.EXPLAIN_TASK, *JUDGES)},
+            "deadline_s": config.EXPLAIN_DEADLINE_S, "cases_file": "data/eval/explain_cases.yaml",
+            "summary": summarize_explain_quality(rows), "cases": rows}
+
+
 def main(argv: list[str]) -> int:
     from app.repo import Repo
     names = argv or ["all"]
-    order = ["violations", "loo", "loo_open", "coverage", "coverage_open", "compare3", "convergence", "bench"]
+    order = ["violations", "loo", "loo_open", "coverage", "coverage_open", "compare3", "loo_repro", "convergence",
+             "bench"]
     targets = order if names == ["all"] else names
     repo = Repo(settings.DATABASE_URL)
     fns = {
@@ -224,8 +393,10 @@ def main(argv: list[str]) -> int:
         "coverage": coverage,
         "coverage_open": lambda r: coverage(r, exclude_sources=OPEN_LICENSE_EXCLUDE),
         "compare3": compare3,
+        "loo_repro": loo_repro,
         "convergence": convergence,
         "bench": bench,
+        "explain_quality": explain_quality,          # real LLM calls; run by name only, not in `all`
     }
     try:
         for name in targets:

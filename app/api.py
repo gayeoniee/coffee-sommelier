@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field, model_validator
 
-from app import config, tracing
+from app import config, telemetry, tracing
 from app.core.flavors import PREFERENCE_CHIPS
 from app.graphs import default_deps
 from app.graphs.analyze_bean import build_analyze_graph
@@ -114,14 +114,21 @@ def create_app(repo=None, deps=None, cookie_secure: bool | None = None) -> FastA
 
     def stream(graph, inputs: dict, name: str) -> StreamingResponse:
         async def gen():
+            tok = telemetry.begin(name, **(
+                {"brand": inputs["brand_key"]} if name == "recommend"
+                else {"input": "coffee_id" if inputs.get("coffee_id") is not None else "text"}))
             with tracing.span(name):
                 try:
                     async for event in graph.astream(inputs, stream_mode="custom"):
+                        if event["type"] == "cards":
+                            telemetry.add("cards", len(event["cards"]))
                         yield _sse(event["type"], event)
                 except Exception:           # never leak a traceback into the stream
                     log.exception("%s stream failed", name)
+                    telemetry.add("error", True)
                     yield _sse("error", {"message": "처리 중 오류가 발생했어요"})
             tracing.flush()
+            telemetry.end(tok)
             yield _sse("done", {})
         return StreamingResponse(gen(), media_type="text/event-stream",
                                  headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})

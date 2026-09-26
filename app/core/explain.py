@@ -9,30 +9,45 @@ CLOSE = 0.75
 LIKED_FLAVOR_MIN = 0.2   # flavor weight above which the guest counts as liking a category
 SYSTEM_PROMPT = ("너는 카페에서 손님에게 커피를 추천하는 친절한 바리스타다. 주어진 데이터만 근거로, 왜 이 음료가 손님 취향에 "
                  "맞는지(또는 안 맞는지) 한국어 2문장 이내로 설명해라. 데이터에 없는 수치나 사실을 지어내지 마라. "
-                 "손님 취향 요약과 반대되는 말을 하지 마라.")
+                 "손님 취향 요약과 반대되는 말을 하지 마라. "
+                 "'디카페인 음료'가 true일 때만 디카페인 음료라고 말하라. '디카페인으로 주문 권장'이 true면 원래는 "
+                 "디카페인이 아니니 '디카페인으로 바꿔 주문하면 (+N원)'처럼 안내하고(N은 '디카페인 추가요금(원)'; 그 값이 "
+                 "null이면 금액 없이 '디카페인으로 바꿔 주문하면'만), 이미 디카페인이라고 말하지 마라.")
+LENGTH_RULE = (" 반드시 지킬 규칙: 설명은 줄바꿈 없는 한 문단, 최대 2문장이다({first}, 둘째 문장은 보충 한 가지). "
+               "세 번째 문장, 괄호 속 메모, 고쳐 쓴 두 번째 답은 절대 쓰지 마라. 향미 이름 말고는 한국어만 쓰고, "
+               "데이터의 항목 이름이나 true/false를 그대로 옮기지 마라. 예: '손님이 좋아하는 강한 산미와 과일 향을 갖춰 취향에 잘 맞아요. "
+               "바디는 가벼운 편이라 묵직한 맛을 원하시면 아쉬울 수 있어요.'")
+FIRST_SENTENCE = "첫 문장은 결론과 가장 큰 이유"
+FIRST_SENTENCE_VIOLATION = "첫 문장 하나에 조건 위반('{violation}')과 그래서 주문 전 확인이 필요하다는 결론을 함께"
 NO_THINK = " /no_think"      # qwen: skip the reasoning phase
-VIOLATION_RULE = " 조건 위반이 있으면 먼저 그 사실을 분명히 말하라."
+VIOLATION_RULE = " 조건 위반이 있으니 첫 문장에서 그 위반 사실(카페인·우유 조건)을 먼저 분명히 말하라."
 CAFFEINE_RULE_KO = {"decaf_only": "디카페인만", "low": "저카페인", "any": "제한 없음"}
 TOPIC_KO = {"acidity": "산미는", "body": "바디는", "sweetness": "단맛은"}
 OBJECT_KO = {"acidity": "산미를", "body": "바디를", "sweetness": "단맛을"}
 
 
+def _subject(word: str) -> str:
+    """Korean subject particle: 이 after a final consonant, 가 otherwise."""
+    last = word[-1]
+    return word + ("이" if "가" <= last <= "힣" and (ord(last) - 0xAC00) % 28 else "가")
+
+
 def template_explanation(item: Item, profile: Profile, score: float, tag_ko: dict[str, str],
                          violation: str | None = None) -> str:
-    parts = [f"취향 적합도 {round(score * 100)}%."]
+    """At most two sentences: score (+ closeness, + violation warning), then the item facts joined by '·'."""
     close = [ATTR_KO[a] for a in ATTRS if item.attr(a) is not None and abs(item.attr(a) - getattr(profile, a)) <= CLOSE]
-    if close:
-        parts.append(f"{', '.join(close)}이(가) 선호와 가까워요.")
+    first = f"취향 적합도 {round(score * 100)}%" + (f"로 {_subject('·'.join(close))} 선호와 가까워요." if close else "예요.")
+    if violation:
+        first = f"주의: {violation} — {first}"
+    facts = []
     if item.tags:
-        parts.append("향미: " + ", ".join(tag_ko.get(t, t) for t in item.tags[:3]) + ".")
+        facts.append("향미: " + ", ".join(tag_ko.get(t, t) for t in item.tags[:3]))
     if item.order_decaf:
         surcharge = f" (+{item.decaf_surcharge_krw}원)" if item.decaf_surcharge_krw else ""
-        parts.append(f"디카페인으로 변경해서 주문하세요{surcharge}.")
+        facts.append(f"디카페인으로 바꿔 주문하세요{surcharge}")
     if item.source == "predicted":
-        parts.append(f"유사 원두 기반 예측이에요(신뢰도 {CONFIDENCE_KO[item.confidence]}).")
-    if violation:
-        parts.insert(0, f"주의: {violation}.")
-    return " ".join(parts)
+        facts.append(f"유사 원두 기반 예측이에요(신뢰도 {CONFIDENCE_KO[item.confidence]})")
+    return first + (" " + " · ".join(facts) + "." if facts else "")
 
 
 def _level(a: str, v: float) -> str:
@@ -58,11 +73,20 @@ def preference_sentence(profile: Profile) -> str:
     return s + (f". 좋아하는 향미: {', '.join(liked)}" if liked else "")
 
 
+def length_rule(violation: str | None = None) -> str:
+    """The hard two-sentence rule, stated last; with a violation its first sentence must carry the violation."""
+    first = FIRST_SENTENCE_VIOLATION.format(violation=violation) if violation else FIRST_SENTENCE
+    return LENGTH_RULE.format(first=first)
+
+
 def explain_messages(item: Item, profile: Profile, score: float, prediction: Prediction | None = None,
                      violation: str | None = None) -> list[dict]:
     payload = {
         "음료": item.name, "브랜드": item.brand, "산미": item.acidity, "바디": item.body, "단맛": item.sweetness,
-        "향미": list(item.tags), "디카페인": item.is_decaf or item.order_decaf, "우유": item.is_milk,
+        "향미": list(item.tags), "디카페인 음료": item.is_decaf,
+        "디카페인으로 주문 권장": item.order_decaf,
+        "디카페인 추가요금(원)": (item.decaf_surcharge_krw or None) if item.order_decaf else None,
+        "우유": item.is_milk,
         "적합도": round(score * 100),
         "손님 취향 요약": preference_sentence(profile),
         "손님 선호": {"산미": round(profile.acidity, 1), "바디": round(profile.body, 1),
@@ -73,7 +97,7 @@ def explain_messages(item: Item, profile: Profile, score: float, prediction: Pre
         "조건 위반": violation,
         "근거": prediction.evidence if prediction else None,
     }
-    system = SYSTEM_PROMPT + (VIOLATION_RULE if violation else "") + NO_THINK
+    system = SYSTEM_PROMPT + (VIOLATION_RULE if violation else "") + length_rule(violation) + NO_THINK
     return [{"role": "system", "content": system},
             {"role": "user", "content": json.dumps(payload, ensure_ascii=False)}]
 
