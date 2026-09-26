@@ -62,10 +62,13 @@ fi
 say "1/4 Neon 데이터베이스"
 if [ -z "${NEON_DATABASE_URL:-}" ]; then
   $NEONCTL me -o json >/dev/null 2>&1 || die "Neon 로그인이 필요해요: npx neonctl auth"
-  pid=$($NEONCTL projects list -o json | json "(Array.isArray(o)?o:(o.projects||[])).filter(p=>p.name==='$NEON_PROJECT_NAME').map(p=>p.id)[0]")
+  # accounts that belong to an organization get an interactive org prompt; pass the (first) org id explicitly
+  NEON_ORG_ID=${NEON_ORG_ID:-$($NEONCTL orgs list -o json 2>/dev/null | json "(Array.isArray(o)&&o[0]&&o[0].id)||''" || true)}
+  org_flag=${NEON_ORG_ID:+--org-id $NEON_ORG_ID}
+  pid=$($NEONCTL projects list $org_flag -o json | json "(Array.isArray(o)?o:(o.projects||[])).filter(p=>p.name==='$NEON_PROJECT_NAME').map(p=>p.id)[0]")
   if [ -z "$pid" ]; then
     echo "프로젝트 $NEON_PROJECT_NAME 생성 ($NEON_REGION, Postgres 17)"
-    pid=$($NEONCTL projects create --name "$NEON_PROJECT_NAME" --region-id "$NEON_REGION" --pg-version 17 -o json | json "(o.project||o).id")
+    pid=$($NEONCTL projects create $org_flag --name "$NEON_PROJECT_NAME" --region-id "$NEON_REGION" --pg-version 17 -o json | json "(o.project||o).id")
   else
     echo "기존 프로젝트 사용: $pid"
   fi
