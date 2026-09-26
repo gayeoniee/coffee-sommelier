@@ -58,3 +58,11 @@ def test_decaf_only_cards_are_all_decaf_or_ordered_decaf():
     latte = next(c for c in cards if c["name"] == "카페 라떼")        # 75mg: low, but not decaf
     assert latte["order_decaf"] is True
     assert cards and all(c["is_decaf"] or c["order_decaf"] for c in cards)
+
+
+def test_cards_carry_korean_tags():
+    deps = fake_deps()
+    events = run_events(build_recommend_graph(deps), {"brand_key": "brand:sb", "profile": Profile()})
+    cards = next(e for e in events if e["type"] == "cards")["cards"]
+    assert all("tags_ko" in c for c in cards)
+    assert any("초콜릿" in c["tags_ko"] for c in cards)      # FakeRepo TAG_KO maps chocolate → 초콜릿

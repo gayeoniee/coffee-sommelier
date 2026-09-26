@@ -44,7 +44,7 @@ def build_recommend_graph(deps):
         if not top:
             writer({"type": "empty", "reason": empty_reason(profile, state["candidates"])})
             return {"ranked": []}
-        writer({"type": "cards", "cards": [card(i, s, template_explanation(i, profile, s, tag_ko)) for i, s in top]})
+        writer({"type": "cards", "cards": [card(i, s, template_explanation(i, profile, s, tag_ko), tag_ko=tag_ko) for i, s in top]})
         return {"ranked": [{"item": i, "score": s} for i, s in top]}
 
     def fan_out(state: RecommendState):

@@ -29,6 +29,10 @@ class ProfileIn(BaseModel):
     nickname: str | None = Field(default=None, max_length=30)
 
 
+class NicknameIn(BaseModel):
+    nickname: str | None = Field(default=None, max_length=30)
+
+
 class SampleIn(BaseModel):
     coffee_id: int
     liked: bool
@@ -155,6 +159,12 @@ def create_app(repo=None, deps=None, cookie_secure: bool | None = None) -> FastA
         if body.nickname is not None:
             repo.set_nickname(uid, body.nickname.strip() or None)
         return {"profile": p.to_dict()}
+
+    @app.put("/me/nickname")
+    def put_nickname(body: NicknameIn, uid: str = Depends(current_user)):
+        nick = (body.nickname or "").strip() or None
+        repo.set_nickname(uid, nick)
+        return {"nickname": nick}
 
     @app.get("/onboarding/samples")
     def samples(uid: str = Depends(current_user)):

@@ -72,7 +72,7 @@ def build_analyze_graph(deps):
         ok, why = passes(profile, item)
         s = score_item(profile, item, tag_to_cat)
         get_stream_writer()({"type": "cards", "cards": [
-            card(item, s, template_explanation(item, profile, s, tag_ko, why), why, state.get("prediction"))]})
+            card(item, s, template_explanation(item, profile, s, tag_ko, why), why, state.get("prediction"), tag_ko=tag_ko)]})
         return {"score": s, "violation": why}
 
     async def explain(state: AnalyzeState) -> dict:

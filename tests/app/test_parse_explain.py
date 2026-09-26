@@ -127,3 +127,9 @@ def test_explain_payload_carries_rules_and_violation():
     assert payload["손님 선호"]["카페인 조건"] == "디카페인만" and payload["손님 선호"]["우유"] == "불가"
     assert bad[0]["content"].endswith("조건 위반이 있으면 먼저 그 사실을 분명히 말하라. /no_think")
     assert json.loads(explain_messages(item, Profile(), 0.7)[1]["content"])["손님 선호"]["카페인 조건"] == "제한 없음"
+
+
+def test_card_has_korean_tags():
+    it = Item(key="coffee:1", name="x", source="db", tags=("lemon", "floral"))
+    assert card(it, 0.5, "t", tag_ko={"lemon": "레몬"})["tags_ko"] == ["레몬", "floral"]
+    assert card(it, 0.5, "t")["tags_ko"] == ["lemon", "floral"]

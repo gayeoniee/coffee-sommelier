@@ -5,6 +5,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.api import create_app
+from app.models import Profile
 from tests.app.fakes import FakeRepo, fake_deps
 
 
@@ -201,3 +202,15 @@ def test_allowed_origins_rejects_wildcard(monkeypatch):
     monkeypatch.setenv("ALLOWED_ORIGINS", "http://a.test,*")
     with pytest.raises(ValueError):
         config.allowed_origins()
+
+
+def test_nickname_only_update_keeps_learned_weights(client):
+    onboard(client)
+    client.repo.save_profile(client.get("/me").json()["user_id"],
+                             Profile(acidity=4, body=2, flavor_weights={"fruity": 0.5, "floral": 0.12}, n_updates=2))
+    r = client.put("/me/nickname", json={"nickname": " 가연 "})
+    assert r.status_code == 200 and r.json() == {"nickname": "가연"}
+    me = client.get("/me").json()
+    assert me["nickname"] == "가연" and me["profile"]["flavor_weights"] == {"fruity": 0.5, "floral": 0.12}
+    assert client.put("/me/nickname", json={"nickname": "  "}).json() == {"nickname": None}
+    assert client.put("/me/nickname", json={"nickname": "x" * 31}).status_code == 422
