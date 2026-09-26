@@ -44,19 +44,19 @@ tasks:
   # 2단계 앱: 추천 설명(스트리밍), 후기·원두 파싱. 원격 실패 시 로컬 폴백.
   explain:
     provider: nvidia
-    model: meta/llama-3.2-11b-vision-instruct
+    model: nvidia/nemotron-3-super-120b-a12b
     timeout: 20
     max_tokens: 1500
     fallback: {provider: ollama, model: "qwen3.5:9b", timeout: 60, max_tokens: 400, extra: {reasoning_effort: "none"}}
   parse_note:
     provider: nvidia
-    model: meta/llama-3.2-11b-vision-instruct
+    model: nvidia/nemotron-3-super-120b-a12b
     timeout: 20
     max_tokens: 1500
     fallback: {provider: ollama, model: "qwen3.5:9b", timeout: 60, max_tokens: 400, extra: {reasoning_effort: "none"}}
   parse_bean:
     provider: nvidia
-    model: meta/llama-3.2-11b-vision-instruct
+    model: nvidia/nemotron-3-super-120b-a12b
     timeout: 20
     max_tokens: 1500
     fallback: {provider: ollama, model: "qwen3.5:9b", timeout: 60, max_tokens: 400, extra: {reasoning_effort: "none"}}

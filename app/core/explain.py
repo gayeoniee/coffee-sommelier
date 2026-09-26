@@ -7,7 +7,10 @@ ATTR_KO = {"acidity": "산미", "body": "바디", "sweetness": "단맛"}
 CONFIDENCE_KO = {"high": "높음", "medium": "보통", "low": "낮음"}
 CLOSE = 0.75
 SYSTEM_PROMPT = ("너는 카페에서 손님에게 커피를 추천하는 친절한 바리스타다. 주어진 데이터만 근거로, 왜 이 음료가 손님 취향에 "
-                 "맞는지(또는 안 맞는지) 한국어 2문장 이내로 설명해라. 데이터에 없는 수치나 사실을 지어내지 마라. /no_think")
+                 "맞는지(또는 안 맞는지) 한국어 2문장 이내로 설명해라. 데이터에 없는 수치나 사실을 지어내지 마라. "
+                 "손님 취향 요약과 반대되는 말을 하지 마라. /no_think")
+TOPIC_KO = {"acidity": "산미는", "body": "바디는", "sweetness": "단맛은"}
+OBJECT_KO = {"acidity": "산미를", "body": "바디를", "sweetness": "단맛을"}
 
 
 def template_explanation(item: Item, profile: Profile, score: float, tag_ko: dict[str, str],
@@ -28,11 +31,31 @@ def template_explanation(item: Item, profile: Profile, score: float, tag_ko: dic
     return " ".join(parts)
 
 
+def _level(a: str, v: float) -> str:
+    if v >= 4:
+        return f"{OBJECT_KO[a]} 강하게 좋아함"
+    if v >= 3.5:
+        return f"{OBJECT_KO[a]} 좋아함"
+    if v <= 2:
+        return f"{OBJECT_KO[a]} 싫어함"
+    if v <= 2.5:
+        return f"{TOPIC_KO[a]} 약한 편을 선호"
+    return f"{TOPIC_KO[a]} 보통"
+
+
+def preference_sentence(profile: Profile) -> str:
+    """Plain-Korean profile summary, so the LLM cannot misread the 1-5 numbers (e.g. 4.5 as 'dislikes')."""
+    s = ", ".join(_level(a, getattr(profile, a)) for a in ATTRS)
+    liked = [CATEGORY_KO.get(c, c) for c, w in profile.flavor_weights.items() if w > 0.2]
+    return s + (f". 좋아하는 향미: {', '.join(liked)}" if liked else "")
+
+
 def explain_messages(item: Item, profile: Profile, score: float, prediction: Prediction | None = None) -> list[dict]:
     payload = {
         "음료": item.name, "브랜드": item.brand, "산미": item.acidity, "바디": item.body, "단맛": item.sweetness,
         "향미": list(item.tags), "디카페인": item.is_decaf or item.order_decaf, "우유": item.is_milk,
         "적합도": round(score * 100),
+        "손님 취향 요약": preference_sentence(profile),
         "손님 선호": {"산미": round(profile.acidity, 1), "바디": round(profile.body, 1),
                   "단맛": round(profile.sweetness, 1),
                   "좋아하는 향미": [CATEGORY_KO.get(c, c) for c, w in profile.flavor_weights.items() if w > 0.2]},

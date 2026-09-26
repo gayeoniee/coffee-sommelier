@@ -1,7 +1,7 @@
 import json
 
-from app.core.explain import card, explain_messages, template_explanation
-from app.core.parse import BeanParse, NoteSignals, merge_llm_parse, needs_llm_parse, parse_bean_text
+from app.core.explain import SYSTEM_PROMPT, card, explain_messages, preference_sentence, template_explanation
+from app.core.parse import BeanParse, NoteSignals, merge_llm_parse, needs_llm_parse, note_messages, parse_bean_text
 from app.models import Item, Prediction, Profile
 
 
@@ -75,3 +75,26 @@ def test_card_includes_prediction_evidence_and_neighbors():
     c = card(it, 0.8, "t", prediction=pred)
     assert c["evidence"] == pred.evidence
     assert c["n_neighbors"] == pred.n_neighbors
+
+
+def test_preference_sentence_levels_and_flavors():
+    s = preference_sentence(Profile(acidity=4.5, body=2.5, sweetness=3, flavor_weights={"fruity": 0.6, "floral": 0.3,
+                                                                                         "roasted": 0.1}))
+    assert s == "산미를 강하게 좋아함, 바디는 약한 편을 선호, 단맛은 보통. 좋아하는 향미: 과일, 꽃"
+    s = preference_sentence(Profile(acidity=1.5, body=3.6, sweetness=2.0))
+    assert s == "산미를 싫어함, 바디를 좋아함, 단맛을 싫어함"
+
+
+def test_explain_payload_states_preference_summary():
+    msgs = explain_messages(Item(key="menu:1", name="카페 라떼", source="brand_bean"),
+                            Profile(acidity=4.5, flavor_weights={"fruity": 0.6}), 0.7)
+    payload = json.loads(msgs[1]["content"])
+    assert payload["손님 취향 요약"].startswith("산미를 강하게 좋아함")
+    assert "손님 취향 요약과 반대되는 말을 하지 마라." in SYSTEM_PROMPT
+
+
+def test_note_messages_few_shot_examples():
+    user = note_messages("그냥 그랬다")[1]["content"]
+    assert "'너무 달고 무거웠어요' → sweetness: \"lower\", body: \"lower\"" in user
+    assert "'산미가 약해서 아쉬웠다' → acidity: \"higher\"" in user
+    assert "'쓴맛 없이 고소해서 좋았다' → liked_flavors: [\"nutty/cocoa\"]" in user

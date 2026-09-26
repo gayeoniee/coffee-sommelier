@@ -61,6 +61,9 @@ def note_messages(note: str) -> list[dict]:
             f"후기: {note}\n\nJSON: {{\"acidity\": \"lower\"|\"higher\"|null, \"body\": ..., \"sweetness\": ..., "
             "\"liked_flavors\": [...], \"disliked_flavors\": [...]}\n"
             "- '산미가 너무 셌다' → acidity: \"lower\" (다음엔 산미가 더 낮은 게 좋다는 뜻)\n"
+            "- '너무 달고 무거웠어요' → sweetness: \"lower\", body: \"lower\"\n"
+            "- '산미가 약해서 아쉬웠다' → acidity: \"higher\"\n"
+            "- '쓴맛 없이 고소해서 좋았다' → liked_flavors: [\"nutty/cocoa\"]\n"
             "- 향미는 다음 중에서만: fruity, floral, sweet, nutty/cocoa, roasted, spices, sour/fermented\n"
             "- 후기에 근거가 없으면 null/빈 배열")},
     ]

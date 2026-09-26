@@ -6,6 +6,21 @@ ATTR_WEIGHT, FLAVOR_WEIGHT = 0.6, 0.4
 MILK_WORDS = ("라떼", "우유", "밀크", "크림", "카푸치노", "플랫화이트", "모카", "프라푸치노",
               "latte", "milk", "cream", "cappuccino", "flat white", "mocha", "frappuccino")
 
+# checked in order: "바닐라 크림 콜드브루" is cold brew, "디카페인 카페 라떼" is latte
+DRINK_FAMILIES = (("frappuccino", ("frappuccino", "프라푸치노")),
+                  ("cold_brew", ("cold brew", "콜드 브루", "콜드브루")),
+                  ("flat_white", ("flat white", "플랫화이트", "플랫 화이트")),
+                  ("cappuccino", ("cappuccino", "카푸치노")),
+                  ("mocha", ("mocha", "모카")),
+                  ("latte", ("latte", "라떼")),
+                  ("americano", ("americano", "아메리카노")),
+                  ("espresso", ("espresso", "에스프레소")))
+
+
+def drink_family(name: str) -> str:
+    n = name.lower()
+    return next((fam for fam, words in DRINK_FAMILIES if any(w in n for w in words)), "other")
+
 
 def is_milk_drink(name: str) -> bool:
     n = name.lower()
@@ -55,6 +70,7 @@ def score_item(profile: Profile, item: Item, tag_to_cat: dict[str, str]) -> floa
 def _features(item: Item, tag_to_cat: dict[str, str]) -> dict[str, float]:
     feats = {a: (item.attr(a) if item.attr(a) is not None else 3.0) / 5 for a in ATTRS}
     feats.update({f"cat:{c}": v for c, v in category_vector(item.tags, tag_to_cat).items()})
+    feats[f"fam:{drink_family(item.name)}"] = 1.0   # same-brand drinks share bean attributes; family separates them
     return feats
 
 

@@ -1,7 +1,7 @@
 import pytest
 
 from app.core.flavors import build_tag_to_category, category_vector, cosine
-from app.core.scoring import attr_fit, flavor_fit, is_milk_drink, mmr_top_k, passes, score_item
+from app.core.scoring import attr_fit, drink_family, flavor_fit, is_milk_drink, mmr_top_k, passes, score_item
 from app.models import Item, Profile
 
 T2C = {"lemon": "fruity", "jasmine": "floral", "chocolate": "nutty/cocoa", "nutty": "nutty/cocoa"}
@@ -68,3 +68,22 @@ def test_mmr_prefers_diverse_second_pick():
     top = mmr_top_k([(a, 0.90), (a2, 0.89), (b, 0.80)], T2C, k=2)
     assert [i.key for i, _ in top] == ["a", "b"]
     assert mmr_top_k([], T2C) == []
+
+
+@pytest.mark.parametrize("name,expected", [
+    ("디카페인 카페 라떼", "latte"), ("Iced Americano", "americano"), ("콜드 브루", "cold_brew"),
+    ("블론드 바닐라 더블 샷 마키아또", "other"), ("자바 칩 프라푸치노", "frappuccino"),
+    ("바닐라 크림 콜드브루", "cold_brew"), ("플랫 화이트", "flat_white"), ("카페 모카", "mocha"),
+    ("Cappuccino", "cappuccino"), ("에스프레소", "espresso")])
+def test_drink_family(name, expected):
+    assert drink_family(name) == expected
+
+
+def test_mmr_spreads_drink_families_when_attributes_are_identical():
+    # menu items of one brand inherit the same brand-bean attributes; only the drink family tells them apart
+    same = dict(acidity=3, body=3, sweetness=3, tags=("chocolate",))
+    items = [(item(key="m1", name="카페 라떼", **same), 0.64), (item(key="m2", name="바닐라 라떼", **same), 0.64),
+             (item(key="m3", name="카페 아메리카노", **same), 0.63), (item(key="m4", name="콜드 브루", **same), 0.62)]
+    top = mmr_top_k(items, T2C, k=3)
+    assert len(top) == 3
+    assert sum(drink_family(i.name) == "latte" for i, _ in top) <= 1
