@@ -137,11 +137,11 @@ $VERCEL project add "$NAME" >/dev/null 2>&1 || true            # already exists 
 $VERCEL project update "$NAME" --framework nextjs --root-directory web --yes >/dev/null
 $VERCEL link --yes --project "$NAME" >/dev/null
 $VERCEL env add API_URL production --value "$RENDER_URL" --force --yes >/dev/null
-DEPLOY_URL=$($VERCEL deploy --prod --yes | tail -n1 | tr -d '\r')
-# The per-deployment URL sits behind Vercel's deployment protection; the public one is the shortest alias.
-alias=$($VERCEL inspect "$DEPLOY_URL" --json 2>/dev/null \
-  | json "((o.alias||o.aliases||[]).slice().sort((a,b)=>a.length-b.length)[0])||''" || true)
-WEB_URL=${alias:+https://${alias#https://}}
+deploy_log=$($VERCEL deploy --prod --yes 2>&1 | tr -d '' | tee /dev/stderr)
+# The per-deployment URL sits behind Vercel's deployment protection; the public one is the "Aliased" line
+# (Vercel adds a suffix like -psi when the plain project name is already taken on vercel.app).
+WEB_URL=$(printf '%s
+' "$deploy_log" | grep -oE 'Aliased[^h]*https://[^ ]+' | grep -oE 'https://[^ ]+' | tail -n1)
 WEB_URL=${WEB_URL:-https://$NAME.vercel.app}
 echo "배포 완료: $WEB_URL"
 
