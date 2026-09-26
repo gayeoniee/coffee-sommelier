@@ -23,7 +23,7 @@ _ctx: contextvars.ContextVar[dict[str, Any] | None] = contextvars.ContextVar("te
 _open: dict[int, dict[str, Any]] = {}      # keyed by id(token): Token is unhashable; the caller holds it
 
 _LIST_FIELDS = {"ms_first_token"}
-_COUNTER_FIELDS = {"fallback", "hedged", "hedge_won"}
+_COUNTER_FIELDS = {"fallback", "hedged", "hedge_won", "truncated"}
 
 
 class _StdoutHandler(logging.StreamHandler):
@@ -65,8 +65,8 @@ def begin(evt: str, **fields: Any) -> contextvars.Token:
 def add(key: str, value: Any) -> None:
     """Record a field on the in-flight request. No-op outside a `begin()`/`end()` pair.
 
-    List fields (`ms_first_token`) append; counter fields (`fallback`, `hedged`, `hedge_won`) accumulate; everything
-    else (`cards`, `error`, ...) is overwritten.
+    List fields (`ms_first_token`) append; counter fields (`fallback`, `hedged`, `hedge_won`, `truncated`)
+    accumulate; everything else (`cards`, `error`, ...) is overwritten.
     """
     data = _ctx.get()
     if data is None:
