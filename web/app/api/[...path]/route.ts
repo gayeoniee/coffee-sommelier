@@ -24,6 +24,7 @@ async function forward(req: Request, { params }: Ctx): Promise<Response> {
       body: hasBody ? await req.arrayBuffer() : undefined,
       cache: "no-store",
       redirect: "manual",
+      signal: req.signal, // client gone (e.g. new search) → stop the upstream LLM stream too
     });
   } catch {
     return Response.json({ detail: "서버에 연결할 수 없어요" }, { status: 502 });
