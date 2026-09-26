@@ -10,7 +10,7 @@ services:
     dockerfilePath: ./Dockerfile
     dockerContext: .
     healthCheckPath: /health
-    autoDeploy: true
+    autoDeploy: false            # CI (.github/workflows/ci.yml deploy job) is the deployer, not Render's own auto-deploy
     buildFilter:                 # web/ changes deploy on Vercel only
       paths:
         - app/**
