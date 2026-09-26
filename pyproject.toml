@@ -13,6 +13,11 @@ dependencies = [
   "lxml>=5.2",
   "psycopg[binary]>=3.2",
   "kaggle>=1.6",
+  "langgraph>=1.2,<2",
+  "fastapi>=0.140",
+  "uvicorn[standard]>=0.30",
+  "psycopg-pool>=3.2",
+  "langfuse>=4.15,<5",
 ]
 
 [dependency-groups]
