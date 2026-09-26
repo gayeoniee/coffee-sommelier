@@ -269,4 +269,6 @@ class Repo:
             " count(*) FILTER (WHERE is_decaf) AS decaf,"
             " count(*) FILTER (WHERE is_decaf AND cardinality(flavor_tags) > 0) AS decaf_with_flavor_tags"
             f" FROM coffees WHERE active{extra}", {"xs": list(exclude_sources)})
-        return dict(row)
+        menus = self._all("SELECT b.key, count(*) AS n FROM menu_items m JOIN brands b ON b.id = m.brand_id"
+                          " WHERE m.active GROUP BY b.key ORDER BY b.key")
+        return {**dict(row), "menu_items_by_brand": {r["key"]: r["n"] for r in menus}}

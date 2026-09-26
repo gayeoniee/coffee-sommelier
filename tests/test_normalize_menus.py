@@ -203,6 +203,8 @@ def test_menu_decaf_option_rule():
     assert menu_decaf_option(b, "에스프레소", is_decaf=False) is True
     assert menu_decaf_option(b, "에스프레소", is_decaf=True) is False      # already decaf
     assert menu_decaf_option(b, "콜드브루", is_decaf=False) is False       # no decaf shot for cold brew
+    assert menu_decaf_option(b, "에스프레소", False, name="콜드브루 라떼") is False   # brewed drink in an espresso category
+    assert menu_decaf_option(b, "에스프레소", False, name="카페 라떼") is True
     assert menu_decaf_option(b.model_copy(update={"decaf_available": False}), "에스프레소", False) is False
 
 

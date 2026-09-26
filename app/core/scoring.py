@@ -11,6 +11,10 @@ MILK_WORDS = (
     "초코", "초콜릿", "요거트", "요구르트", "야쿠르트", "퐁크러쉬", "커피스무디",
     "스타벅스더블샷",            # espresso shaken with milk
     "할메가", "원조커피",         # mix-coffee style signatures made with condensed milk / cream
+    "수아", "믹스커피",           # 카페수아 (condensed milk), 컴포즈믹스커피 (creamer)
+    "마끼아토", "마키아토",       # spelling variants (커피빈 마끼아토네, 폴바셋 카라멜 마키아토)
+    "블렌디드", "오트",           # 커피빈 아이스 블렌디드 (milk base), oat-milk drinks
+    "딜라이트", "에어리",         # 할리스 딜라이트 (milk drink), 컴포즈 에어리 폼 (cream foam, low confidence)
     "latte", "milk", "cream", "cappuccino", "flatwhite", "mocha", "frappuccino", "frappe", "macchiato",
     "cortado", "breve", "bianco", "affogato", "conpanna", "einspanner", "shake", "choco", "yogurt", "yoghurt",
 )

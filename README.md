@@ -24,8 +24,8 @@
 | 원두 (`coffees`, 전부 1024차원 임베딩) | **9,048** |
 | └ 디카페인 원두 | 161 |
 | 리뷰 텍스트 (`reviews`, RAG 근거 전용) | 7,401 |
-| 프랜차이즈 메뉴 (`menu_items`, 카페인 mg 포함) | 304 (스타벅스 71 · 메가 119 · 빽다방 114) |
-| └ 디카페인 메뉴 | 74 |
+| 프랜차이즈 메뉴 (`menu_items`, 카페인 mg 포함) | 471 (스타벅스 71 · 메가 119 · 빽다방 114 · 폴바셋 56 · 커피빈 42 · 컴포즈 42 · 할리스 27) |
+| └ 디카페인 메뉴 | 109 (+ 디카페인 샷 변경 가능 171) |
 | 브랜드 (`brands`, 디카페인 가능 여부·추가요금) | 10 |
 | SCA 향미 택소노미 (`flavor_taxonomy`, 1·2단계 한국어) | 121 |
 
@@ -102,7 +102,7 @@ $ python -m pipeline query "bright citrus floral Ethiopia washed" -k 5 --decaf
 
 | 평가 (`python -m app.eval`) | 결과 |
 |---|---|
-| 조건 위반율 (페르소나 4 × 브랜드 10, top3) | 0.0% — 0/78건 (우유 판정은 메뉴 302종 수기 라벨 기준) |
+| 조건 위반율 (페르소나 4 × 브랜드 10, top3) | 0.0% — 0/102건 (우유 판정은 메뉴 427종 수기 라벨 기준; 메뉴 실측 7개 브랜드) |
 | 원두 예측 leave-one-out, 산미 ±1 이내 | 0.735 (n=200) |
 | 원두 예측 leave-one-out, 바디 ±1 이내 | 0.635 |
 | 학습 수렴: 모의 사용자 10회 기록 후 프로필 오차 | 0.7792 → 0.7117 |
@@ -221,7 +221,7 @@ pipeline/
 - 적재는 매번 전체 삭제 후 재적재(TRUNCATE)다. **2단계에서 사용자 기록 테이블이 `coffees`를 참조하기 전에 key 기반 upsert로 바꿔야 한다.**
 - 규칙 태그의 부정 표현·일반어 오탐 개선, 원본 점수의 절대 척도 보정.
 - 리뷰 코퍼스가 영어라 한국어 질의 검색 품질이 낮다 → 2단계에서 질의 번역 또는 한국어 요약 임베딩.
-- 프랜차이즈 음료 단위 수집은 3개 브랜드뿐(나머지 7개는 브랜드 정보만).
+- 프랜차이즈 음료 단위 수집은 7개 브랜드(스타벅스·메가·빽다방·할리스·커피빈·폴바셋·컴포즈). 투썸(목록 페이지 봇 차단, robots에 일반 규칙 없음)·이디야(메뉴 데이터가 robots.txt 차단 경로 `/inc/`로만 제공)·블루보틀(카페 음료 메뉴 미공개)은 브랜드 원두 추정 카드만 나온다.
 
 ## 데이터 출처
 
@@ -231,7 +231,7 @@ pipeline/
 | Kaggle: [patkle](https://www.kaggle.com/datasets/patkle/coffeereviewcom-over-7000-ratings-and-reviews), [hanifalirsyad](https://www.kaggle.com/datasets/hanifalirsyad/coffee-scrap-coffeereview), [schmoyote](https://www.kaggle.com/datasets/schmoyote/coffee-reviews-dataset) | coffeereview.com 리뷰 스크랩 | 원 저작권은 Coffee Review에 있음. 비상업 포트폴리오 용도로만 사용, 원본 데이터는 레포에 포함하지 않음 |
 | [RoasterDB 샘플](https://github.com/RoasterDB/specialty-coffee-roasterdb) | 로스터리 원두 + SCA 노트 | CC BY-NC 4.0 |
 | [SCA 플레이버 휠 JSON](https://github.com/fschlz/coffee-flavor-api) | 향미 분류 체계 | © SCA/WCR 2016, CC BY-NC-ND 4.0 (원본 수정 없이 별도 한국어 매핑) |
-| 스타벅스·메가MGC·빽다방 공식 메뉴 | 음료, 카페인 mg | robots.txt 허용 범위, 1회 스냅샷 |
+| 스타벅스·메가MGC·빽다방·할리스·커피빈·폴바셋·컴포즈 공식 메뉴 | 음료, 카페인 mg, 디카페인 | robots.txt 허용 범위(폴바셋은 인증서 오류로 해당 호스트만 검증 해제), 1회 스냅샷 |
 | 블루보틀 코리아 `products.json` | 원두 상품 설명 | Shopify 공개 엔드포인트 |
 | 국내 로스터리 5곳 상품 페이지 (`pipeline roasters-kr`) | 원두 사실 정보만(산지·가공·로스팅·디카페인·노트 단어·가격) | robots.txt 준수, 설명 문구 미저장, 테라로사 제외(robots.txt 차단) |
 | `data/curated/brands.yaml` | 10개 브랜드 디카페인 정보 | 공식 페이지·뉴스 수기 정리(확인 수준 표기) |

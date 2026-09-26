@@ -129,7 +129,7 @@ def normalize_hollys(snap: Path, collected_at: str) -> Normalized:
         items[key] = MenuItemRecord(
             key=key, brand_key="brand:hollys", name=name, name_en=name_en,
             category=HOLLYS_CATEGORY, is_decaf=is_decaf,
-            decaf_option=menu_decaf_option(brand, HOLLYS_CATEGORY, is_decaf) if brand else False,
+            decaf_option=menu_decaf_option(brand, HOLLYS_CATEGORY, is_decaf, name) if brand else False,
             caffeine_mg=caffeine, source_url="https://www.hollys.co.kr/menu/espresso.do",
             collected_at=collected_at,
         )
@@ -163,7 +163,7 @@ def normalize_coffeebean(snap: Path, collected_at: str) -> Normalized:
             items[key] = MenuItemRecord(
                 key=key, brand_key="brand:coffeebean", name=name,
                 name_en=clean(eng.get_text()) if eng else None, category=category,
-                is_decaf=is_decaf, decaf_option=menu_decaf_option(brand, category, is_decaf),
+                is_decaf=is_decaf, decaf_option=menu_decaf_option(brand, category, is_decaf, name),
                 caffeine_mg=caffeine,
                 source_url="https://www.coffeebeankorea.com/menu/list.asp", collected_at=collected_at,
             )
@@ -220,9 +220,15 @@ def normalize_brands(curated_dir: Path) -> list[BrandRecord]:
     return [BrandRecord.model_validate(b) for b in yaml.safe_load(p.read_text(encoding="utf-8"))]
 
 
-def menu_decaf_option(brand: BrandRecord, category: str | None, is_decaf: bool) -> bool:
+NO_SHOT_WORDS = ("콜드브루", "더치", "드립커피", "브루드")   # brewed coffees have no espresso shot to swap for decaf
+
+
+def menu_decaf_option(brand: BrandRecord, category: str | None, is_decaf: bool, name: str = "") -> bool:
     """Can the guest ask for a decaf shot? Only for espresso-based categories the brand lists, never for a drink
-    that is already decaf."""
+    that is already decaf, and never for cold brew / drip (no shot to swap; brands sell separate decaf cold brew)."""
+    n = "".join(name.split())
+    if any(w in n for w in NO_SHOT_WORDS):
+        return False
     return bool(brand.decaf_available and not is_decaf and category in brand.decaf_option_categories)
 
 
@@ -246,8 +252,8 @@ def normalize_compose(snap: Path, collected_at: str) -> Normalized:
             if badge:
                 badge.decompose()
             raw_name = clean(tds[0].get_text(strip=True))
-            if not raw_name:
-                continue
+            if not raw_name or raw_name.endswith("빵"):
+                continue  # the coffee tab also lists a bread item ("커피엔 역시 커피빵")
             name = re.sub(r"\s+", " ", raw_name)
             m = _COMPOSE_HOT_ICED.match(name)
             base_name = m.group(2) if m else name
@@ -259,7 +265,7 @@ def normalize_compose(snap: Path, collected_at: str) -> Normalized:
                 continue  # keep the larger of the HOT/ICED caffeine values
             items[key] = MenuItemRecord(
                 key=key, brand_key="brand:compose", name=base_name, category=COMPOSE_CATEGORY,
-                is_decaf=is_decaf, decaf_option=menu_decaf_option(brand, COMPOSE_CATEGORY, is_decaf),
+                is_decaf=is_decaf, decaf_option=menu_decaf_option(brand, COMPOSE_CATEGORY, is_decaf, base_name),
                 caffeine_mg=caffeine,
                 source_url="https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition",
                 collected_at=collected_at,
@@ -303,7 +309,7 @@ def normalize_paulbassett(snap: Path, collected_at: str) -> Normalized:
         items[key] = MenuItemRecord(
             key=key, brand_key="brand:paulbassett", name=name, name_en=name_en,
             category=PAULBASSETT_CATEGORY, is_decaf=is_decaf,
-            decaf_option=menu_decaf_option(brand, PAULBASSETT_CATEGORY, is_decaf), caffeine_mg=caffeine,
+            decaf_option=menu_decaf_option(brand, PAULBASSETT_CATEGORY, is_decaf, name), caffeine_mg=caffeine,
             source_url=f"https://www.baristapaulbassett.co.kr/menu/View.pb?dpid={dpid}", collected_at=collected_at,
         )
     return Normalized(menu_items=list(items.values()))
