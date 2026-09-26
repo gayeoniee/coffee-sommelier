@@ -53,7 +53,7 @@ def test_violation_is_reported_not_hidden():
     c = first_card(run_events(build_analyze_graph(deps), {"coffee_id": 1,
                                                           "profile": Profile(caffeine_rule="decaf_only")}))
     assert c["violation"] == "디카페인이 아니에요"
-    assert c["template"].startswith("주의: 디카페인이 아니에요.")
+    assert c["template"].startswith("주의: 디카페인이 아니에요 — ")
 
 
 def test_violation_reaches_the_llm_prompt():

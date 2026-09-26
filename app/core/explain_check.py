@@ -7,6 +7,13 @@ NEGATIVE = ("맞지 않", "어울리지 않", "거리가 있", "안 맞")
 CONDITION_WORDS = ("디카페인", "카페인", "우유")
 _LATIN = re.compile(r"[A-Za-z]{2,}")
 _NUM = re.compile(r"\d+(?:\.\d+)?")
+_SENTENCE_END = re.compile(r"(?<!\d)[.!?]|[.!?](?!\d)")    # a '.' between digits (4.5) ends nothing
+_HANGUL = re.compile(r"[가-힣]")
+
+
+def sentences(text: str) -> list[str]:
+    """Split into sentences; fragments with no Hangul syllable (e.g. "(84%)") are not sentences."""
+    return [s for s in _SENTENCE_END.split(text) if _HANGUL.search(s)]
 
 
 def payload_numbers(payload: dict) -> set[float]:
@@ -34,12 +41,13 @@ def check_explanation(text: str, payload: dict, score: int, violation: str | Non
     allowed = {w.lower() for tag in payload.get("향미", []) for w in _LATIN.findall(str(tag))}
     allowed |= {"mg", "hot", "iced", "ice"}
     foreign_ok = all(w.lower() in allowed for w in _LATIN.findall(text))
-    sentences = [s for s in re.split(r"[.!?]\s*", text) if s.strip()]
-    length_ok = len(sentences) <= MAX_SENTENCES and len(text) <= MAX_CHARS
+    length_ok = len(sentences(text)) <= MAX_SENTENCES and len(text) <= MAX_CHARS
     nums = payload_numbers(payload) | {float(score)}
     numbers_ok = all(any(abs(float(n) - p) <= 0.05 for p in nums) for n in _NUM.findall(text))
     condition_ok = (not violation) or any(w in text for w in CONDITION_WORDS)
-    if score < 40:
+    if violation:          # a violation makes a negative conclusion right even for a high score
+        polarity_ok = True
+    elif score < 40:
         polarity_ok = not any(w in text for w in POSITIVE)
     elif score >= 80:
         polarity_ok = not any(w in text for w in NEGATIVE)

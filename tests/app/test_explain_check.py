@@ -1,7 +1,7 @@
 from app.core.explain_check import all_ok, check_explanation, payload_numbers
 
 P = {"음료": "카페 아메리카노", "브랜드": "할리스", "산미": 2, "바디": 4, "단맛": 2, "향미": ["dark chocolate", "caramelized"],
-     "디카페인": True, "우유": False, "적합도": 72,
+     "디카페인 음료": True, "디카페인으로 주문 권장": False, "디카페인 추가요금(원)": None, "우유": False, "적합도": 72,
      "손님 취향 요약": "산미가 강한 커피를 좋아해요", "손님 선호": {"산미": 4.5, "바디": 2.5, "단맛": 3.0,
      "좋아하는 향미": ["과일", "꽃"], "카페인 조건": "디카페인만", "우유": "가능"}, "조건 위반": None, "근거": None}
 
@@ -33,3 +33,16 @@ def test_condition_and_polarity():
     assert check_explanation("디카페인이 아니라 카페인 조건에 맞지 않아요.", P, 30, v)["condition_mentioned"] is True
     assert check_explanation("취향에 잘 맞아 추천해요.", P, 30, None)["polarity"] is False
     assert check_explanation("취향과 맞지 않아요.", P, 85, None)["polarity"] is False
+
+
+def test_sentence_splitter_ignores_fragments_without_hangul():
+    t = "산미 4.5를 좋아하는 손님께 맞아요. 바디 2.5도 가까워요. 향미도 좋아요. (72%)."
+    assert check_explanation(t, P, 72, None)["length"] is True       # decimals and "(72%)." are not sentences
+    assert check_explanation("하나예요. 둘이에요. 셋이에요. 넷이에요.", P, 72, None)["length"] is False
+
+
+def test_polarity_relaxed_when_violation_set():
+    v = "카페인이 100mg을 넘거나 알 수 없어요"
+    assert check_explanation("카페인 조건에 맞지 않아요.", P, 86, v)["polarity"] is True
+    assert check_explanation("취향에 잘 맞아 추천해요.", P, 30, v)["polarity"] is True
+    assert check_explanation("취향과 맞지 않아요.", P, 86, None)["polarity"] is False

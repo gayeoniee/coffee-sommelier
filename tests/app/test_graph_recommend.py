@@ -24,7 +24,7 @@ def test_decaf_user_gets_only_decaf_capable_drinks_with_order_flag():
     assert {c["name"] for c in cards} == {"아메리카노", "카페 라떼"}
     americano = next(c for c in cards if c["name"] == "아메리카노")
     assert americano["order_decaf"] is True and americano["decaf_surcharge_krw"] == 300
-    assert "디카페인으로 변경해서 주문하세요 (+300원)." in americano["template"]
+    assert "디카페인으로 바꿔 주문하세요 (+300원)" in americano["template"]
 
 
 def test_one_failed_explanation_falls_back_others_stream():

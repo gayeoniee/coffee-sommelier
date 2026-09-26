@@ -7,6 +7,7 @@ from app.core.explain import (
     preference_sentence,
     template_explanation,
 )
+from app.core.explain_check import check_explanation
 from app.core.parse import (
     BeanParse,
     NoteSignals,
@@ -45,12 +46,23 @@ def test_template_explanation():
     it = Item(key="menu:1", name="카페 아메리카노", source="brand_bean", acidity=4, body=3, tags=("lemon", "floral"),
               decaf_option=True, order_decaf=True, decaf_surcharge_krw=300)
     text = template_explanation(it, Profile(acidity=4, body=3), 0.87, {"lemon": "레몬"})
-    assert text.startswith("취향 적합도 87%.")
-    assert "산미, 바디이(가) 선호와 가까워요." in text
-    assert "향미: 레몬, floral." in text
-    assert "디카페인으로 변경해서 주문하세요 (+300원)." in text
+    assert text.startswith("취향 적합도 87%로 산미·바디가 선호와 가까워요.")
+    assert "향미: 레몬, floral" in text
+    assert "디카페인으로 바꿔 주문하세요 (+300원)" in text
     warn = template_explanation(it, Profile(), 0.5, {}, violation="우유가 들어가요")
-    assert warn.startswith("주의: 우유가 들어가요.")
+    assert warn.startswith("주의: 우유가 들어가요 — 취향 적합도 50%")
+    assert template_explanation(Item(key="x", name="x", source="db"), Profile(), 0.5, {}) == "취향 적합도 50%예요."
+    assert "단맛이 선호와" in template_explanation(Item(key="x", name="x", source="db", sweetness=3), Profile(), 0.5, {})
+
+
+def test_template_explanation_is_at_most_two_sentences():
+    it = Item(key="input", name="예가체프", source="predicted", confidence="low", acidity=4, body=3, sweetness=3,
+              tags=("lemon", "floral", "honey"), decaf_option=True, order_decaf=True, decaf_surcharge_krw=300)
+    for violation in (None, "카페인이 100mg을 넘거나 알 수 없어요"):
+        text = template_explanation(it, Profile(), 0.84, {"lemon": "레몬"}, violation)
+        assert text.count(".") <= 2, text
+        payload = json.loads(explain_messages(it, Profile(), 0.84, violation=violation)[1]["content"])
+        assert check_explanation(text, payload, 84, violation)["length"] is True
 
 
 def test_explain_messages_carry_data_not_review_text():
@@ -133,3 +145,19 @@ def test_card_has_korean_tags():
     it = Item(key="coffee:1", name="x", source="db", tags=("lemon", "floral"))
     assert card(it, 0.5, "t", tag_ko={"lemon": "레몬"})["tags_ko"] == ["레몬", "floral"]
     assert card(it, 0.5, "t")["tags_ko"] == ["lemon", "floral"]
+
+
+def test_explain_payload_separates_decaf_states_and_surcharge():
+    order = Item(key="menu:1", name="카페 아메리카노", source="brand_bean", decaf_option=True, order_decaf=True,
+                 decaf_surcharge_krw=300)
+    p = json.loads(explain_messages(order, Profile(caffeine_rule="decaf_only"), 0.8)[1]["content"])
+    assert "디카페인" not in p
+    assert p["디카페인 음료"] is False and p["디카페인으로 주문 권장"] is True and p["디카페인 추가요금(원)"] == 300
+    decaf = Item(key="coffee:1", name="콜롬비아 디카페인", source="db", is_decaf=True)
+    p = json.loads(explain_messages(decaf, Profile(), 0.8)[1]["content"])
+    assert p["디카페인 음료"] is True and p["디카페인으로 주문 권장"] is False and p["디카페인 추가요금(원)"] is None
+
+
+def test_system_prompt_decaf_order_wording():
+    assert "디카페인으로 바꿔 주문하면" in SYSTEM_PROMPT
+    assert "디카페인 음료" in SYSTEM_PROMPT and "디카페인으로 주문 권장" in SYSTEM_PROMPT
