@@ -5,7 +5,7 @@ from pathlib import Path
 import httpx
 import pytest
 
-from scripts.ops.prod_stats import fetch_logs, parse_events, run, summarize
+from scripts.ops.prod_stats import _format_table, fetch_logs, parse_events, run, summarize
 
 FIXTURES = Path(__file__).parent / "fixtures" / "render_logs"
 
@@ -67,14 +67,25 @@ class TestSummarize:
         assert summary["error_rate"] == pytest.approx(0.25)
         assert summary["window"] == {"hours": 24, "start": "s", "end": "e"}
 
-    def test_empty_events_are_safe(self):
+    def test_empty_events_are_none_not_zero(self):
+        # no data must not read as "0% fallback, 0 ms first token"
         summary = summarize([])
         assert summary["requests_by_evt"] == {}
-        assert summary["fallback_rate"] == 0.0
-        assert summary["first_token_ms_p50"] == 0.0
-        assert summary["first_token_ms_p95"] == 0.0
-        assert summary["error_rate"] == 0.0
+        assert summary["fallback_rate"] is None
+        assert summary["first_token_ms_p50"] is None
+        assert summary["first_token_ms_p95"] is None
+        assert summary["error_rate"] is None
         assert summary["window"] == {}
+
+    def test_events_without_cards_or_first_tokens(self):
+        summary = summarize([{"evt": "analyze", "cards": 0, "ms_first_token": [], "fallback": 0, "error": True}])
+        assert summary["fallback_rate"] is None and summary["first_token_ms_p50"] is None
+        assert summary["error_rate"] == 1.0
+
+    def test_table_prints_no_data_for_missing_values(self):
+        table = _format_table(summarize([]))
+        assert table.count("데이터 없음") == 4
+        assert "0.000" not in table
 
 
 def _make_mock_transport():
@@ -83,14 +94,14 @@ def _make_mock_transport():
 
     def handler(request: httpx.Request) -> httpx.Response:
         path = request.url.path
-        if path.endswith("/owners"):
-            assert request.url.params["limit"] == "1"
-            return httpx.Response(200, json=[{"owner": {"id": "own-test123"}, "cursor": "c1"}])
+        if path.endswith("/owners"):          # the service's own ownerId is used; the first owner may be another team
+            raise AssertionError("must not guess the owner from /owners")
         if path.endswith("/services"):
             assert request.url.params["name"] == "coffee-sommelier-api"
-            return httpx.Response(200, json=[{"service": {"id": "srv-test123"}, "cursor": "c1"}])
+            return httpx.Response(200, json=[{"service": {"id": "srv-test123", "ownerId": "own-svc456"},
+                                              "cursor": "c1"}])
         if path.endswith("/logs"):
-            assert request.url.params["ownerId"] == "own-test123"
+            assert request.url.params["ownerId"] == "own-svc456"
             assert request.url.params.get_list("resource") == ["srv-test123"]
             state["logs_calls"] += 1
             if state["logs_calls"] == 1:
