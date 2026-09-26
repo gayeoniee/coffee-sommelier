@@ -11,10 +11,16 @@ SYSTEM_PROMPT = ("너는 카페에서 손님에게 커피를 추천하는 친절
                  "맞는지(또는 안 맞는지) 한국어 2문장 이내로 설명해라. 데이터에 없는 수치나 사실을 지어내지 마라. "
                  "손님 취향 요약과 반대되는 말을 하지 마라. "
                  "'디카페인 음료'가 true일 때만 디카페인 음료라고 말하라. '디카페인으로 주문 권장'이 true면 원래는 "
-                 "디카페인이 아니니 '디카페인으로 바꿔 주문하면 (+N원)'처럼 안내하고(N은 '디카페인 추가요금(원)', "
-                 "null이면 금액 생략), 이미 디카페인이라고 말하지 마라.")
+                 "디카페인이 아니니 '디카페인으로 바꿔 주문하면 (+N원)'처럼 안내하고(N은 '디카페인 추가요금(원)'; 그 값이 "
+                 "null이면 금액 없이 '디카페인으로 바꿔 주문하면'만), 이미 디카페인이라고 말하지 마라.")
+LENGTH_RULE = (" 반드시 지킬 규칙: 설명은 줄바꿈 없는 한 문단, 최대 2문장이다({first}, 둘째 문장은 보충 한 가지). "
+               "세 번째 문장, 괄호 속 메모, 고쳐 쓴 두 번째 답은 절대 쓰지 마라. 향미 이름 말고는 한국어만 쓰고, "
+               "데이터의 항목 이름이나 true/false를 그대로 옮기지 마라. 예: '손님이 좋아하는 강한 산미와 과일 향을 갖춰 취향에 잘 맞아요. "
+               "바디는 가벼운 편이라 묵직한 맛을 원하시면 아쉬울 수 있어요.'")
+FIRST_SENTENCE = "첫 문장은 결론과 가장 큰 이유"
+FIRST_SENTENCE_VIOLATION = "첫 문장 하나에 조건 위반('{violation}')과 그래서 주문 전 확인이 필요하다는 결론을 함께"
 NO_THINK = " /no_think"      # qwen: skip the reasoning phase
-VIOLATION_RULE = " 조건 위반이 있으면 먼저 그 사실을 분명히 말하라."
+VIOLATION_RULE = " 조건 위반이 있으니 첫 문장에서 그 위반 사실(카페인·우유 조건)을 먼저 분명히 말하라."
 CAFFEINE_RULE_KO = {"decaf_only": "디카페인만", "low": "저카페인", "any": "제한 없음"}
 TOPIC_KO = {"acidity": "산미는", "body": "바디는", "sweetness": "단맛은"}
 OBJECT_KO = {"acidity": "산미를", "body": "바디를", "sweetness": "단맛을"}
@@ -67,6 +73,12 @@ def preference_sentence(profile: Profile) -> str:
     return s + (f". 좋아하는 향미: {', '.join(liked)}" if liked else "")
 
 
+def length_rule(violation: str | None = None) -> str:
+    """The hard two-sentence rule, stated last; with a violation its first sentence must carry the violation."""
+    first = FIRST_SENTENCE_VIOLATION.format(violation=violation) if violation else FIRST_SENTENCE
+    return LENGTH_RULE.format(first=first)
+
+
 def explain_messages(item: Item, profile: Profile, score: float, prediction: Prediction | None = None,
                      violation: str | None = None) -> list[dict]:
     payload = {
@@ -85,7 +97,7 @@ def explain_messages(item: Item, profile: Profile, score: float, prediction: Pre
         "조건 위반": violation,
         "근거": prediction.evidence if prediction else None,
     }
-    system = SYSTEM_PROMPT + (VIOLATION_RULE if violation else "") + NO_THINK
+    system = SYSTEM_PROMPT + (VIOLATION_RULE if violation else "") + length_rule(violation) + NO_THINK
     return [{"role": "system", "content": system},
             {"role": "user", "content": json.dumps(payload, ensure_ascii=False)}]
 

@@ -18,3 +18,12 @@ def test_verdict_schema():
 def test_verdict_rejects_helpful_out_of_range():
     with pytest.raises(ValidationError):
         Verdict.model_validate({"contradiction": False, "hallucination": False, "helpful": 6})
+
+
+def test_judges_differ_from_the_explain_model_and_explain_is_short():
+    from pipeline import settings
+    tasks = settings.load_config("models.yaml")["tasks"]
+    assert tasks["judge"]["model"] != tasks["explain"]["model"]
+    assert tasks["judge2"]["model"] != tasks["explain"]["model"]      # no self-grading
+    assert tasks["judge"]["model"].split("/")[0] != tasks["judge2"]["model"].split("/")[0]   # different vendors
+    assert tasks["explain"]["max_tokens"] <= 300                        # two Korean sentences, not a paragraph

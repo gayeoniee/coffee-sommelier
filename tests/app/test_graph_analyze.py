@@ -67,7 +67,7 @@ def test_violation_reaches_the_llm_prompt():
     deps.stream_text = spy
     run_events(build_analyze_graph(deps), {"coffee_id": 2, "profile": Profile(caffeine_rule="decaf_only")})
     assert '"조건 위반": "디카페인이 아니에요"' in seen[0][1]["content"]
-    assert "조건 위반이 있으면" in seen[0][0]["content"]
+    assert "첫 문장에서 그 위반" in seen[0][0]["content"]
 
 
 def test_explanation_past_deadline_falls_back_to_template(monkeypatch):

@@ -2,8 +2,10 @@ import json
 
 from app.core.explain import (
     SYSTEM_PROMPT,
+    VIOLATION_RULE,
     card,
     explain_messages,
+    length_rule,
     preference_sentence,
     template_explanation,
 )
@@ -132,12 +134,14 @@ def test_explain_payload_carries_rules_and_violation():
     ok = explain_messages(item, Profile(caffeine_rule="low", milk_ok=True), 0.7)
     payload = json.loads(ok[1]["content"])
     assert payload["손님 선호"]["카페인 조건"] == "저카페인" and payload["손님 선호"]["우유"] == "가능"
-    assert payload["조건 위반"] is None and "조건 위반이 있으면" not in ok[0]["content"]
+    assert payload["조건 위반"] is None and VIOLATION_RULE not in ok[0]["content"]
     bad = explain_messages(item, Profile(caffeine_rule="decaf_only", milk_ok=False), 0.7, violation="우유가 들어가요")
     payload = json.loads(bad[1]["content"])
     assert payload["조건 위반"] == "우유가 들어가요"
     assert payload["손님 선호"]["카페인 조건"] == "디카페인만" and payload["손님 선호"]["우유"] == "불가"
-    assert bad[0]["content"].endswith("조건 위반이 있으면 먼저 그 사실을 분명히 말하라. /no_think")
+    assert VIOLATION_RULE in bad[0]["content"] and "첫 문장에서 그 위반" in VIOLATION_RULE
+    assert bad[0]["content"].endswith(length_rule("우유가 들어가요") + " /no_think")   # the hard length rule comes last
+    assert "첫 문장 하나에 조건 위반('우유가 들어가요')" in length_rule("우유가 들어가요")
     assert json.loads(explain_messages(item, Profile(), 0.7)[1]["content"])["손님 선호"]["카페인 조건"] == "제한 없음"
 
 
@@ -161,3 +165,12 @@ def test_explain_payload_separates_decaf_states_and_surcharge():
 def test_system_prompt_decaf_order_wording():
     assert "디카페인으로 바꿔 주문하면" in SYSTEM_PROMPT
     assert "디카페인 음료" in SYSTEM_PROMPT and "디카페인으로 주문 권장" in SYSTEM_PROMPT
+
+
+def test_length_rule_is_last_with_example():
+    msgs = explain_messages(Item(key="menu:1", name="카페 라떼", source="brand_bean"), Profile(), 0.7)
+    rule = length_rule()
+    assert msgs[0]["content"].endswith(rule + " /no_think")
+    assert "최대 2문장" in rule and "첫 문장은 결론과 가장 큰 이유" in rule and "true/false" in rule
+    example = rule.split("예:")[1]
+    assert example.count(".") == 2 and not any(ch.isdigit() for ch in example)   # no numbers to copy
