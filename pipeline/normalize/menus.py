@@ -194,3 +194,40 @@ def menu_decaf_option(brand: BrandRecord, category: str | None, is_decaf: bool) 
 
 def brands_by_key(curated_dir: Path) -> dict[str, BrandRecord]:
     return {b.key: b for b in normalize_brands(curated_dir)}
+
+
+COMPOSE_CATEGORY = "커피ㆍ콜드브루"  # site's own tag (numbering prefix "02. " stripped), matches brands.yaml
+_COMPOSE_HOT_ICED = re.compile(r"^([HI])-(.+)$")  # site's own HOT/ICED marker, e.g. "H-아메리카노"/"I-아메리카노"
+
+
+def normalize_compose(snap: Path, collected_at: str) -> Normalized:
+    brand = brands_by_key(settings.CURATED_DIR)["brand:compose"]
+    items: dict[str, MenuItemRecord] = {}
+    for p in sorted(snap.glob("page_*.html")):
+        for tr in _soup(p).select("#nutrition_table tbody tr"):
+            tds = tr.find_all("td")
+            if len(tds) < 5:
+                continue  # the "no results" placeholder row on a past-the-end page
+            badge = tds[0].select_one(".cafemenu_status_badge")
+            if badge:
+                badge.decompose()
+            raw_name = clean(tds[0].get_text(strip=True))
+            if not raw_name:
+                continue
+            name = re.sub(r"\s+", " ", raw_name)
+            m = _COMPOSE_HOT_ICED.match(name)
+            base_name = m.group(2) if m else name
+            caffeine = num(tds[4].get_text(strip=True))
+            is_decaf = detect_decaf(base_name)[0]
+            key = f"menu:compose:{base_name}"
+            existing = items.get(key)
+            if existing is not None and (caffeine is None or (existing.caffeine_mg or 0) >= caffeine):
+                continue  # keep the larger of the HOT/ICED caffeine values
+            items[key] = MenuItemRecord(
+                key=key, brand_key="brand:compose", name=base_name, category=COMPOSE_CATEGORY,
+                is_decaf=is_decaf, decaf_option=menu_decaf_option(brand, COMPOSE_CATEGORY, is_decaf),
+                caffeine_mg=caffeine,
+                source_url="https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition",
+                collected_at=collected_at,
+            )
+    return Normalized(menu_items=list(items.values()))

@@ -74,7 +74,7 @@ def test_kaggle_collector_uses_downloader(tmp_path):
 
 import json as _json
 
-from pipeline.collect.web import MegaCollector, PaikCollector, ShopifyCollector, StarbucksCollector
+from pipeline.collect.web import ComposeCollector, MegaCollector, PaikCollector, ShopifyCollector, StarbucksCollector
 
 
 def mock_http(handler):
@@ -122,10 +122,32 @@ def test_shopify_paginates(tmp_path):
     assert [p["id"] for p in data["products"]] == [1, 2]
 
 
+def test_compose_stops_at_page_with_no_items(tmp_path):
+    def handler(request):
+        page = int(request.url.params["page"])
+        body = ('<td class="text-center" data-label="품목명">아메리카노</td>' if page <= 2
+                else '<tr><td colspan="5">등록된 상품이 없습니다.</td></tr>')
+        return httpx.Response(200, text=body)
+
+    files = ComposeCollector().collect(tmp_path, mock_http(handler))
+    assert [f.name for f in files] == ["page_1.html", "page_2.html"]
+
+
+def test_compose_sends_coffee_category_tag(tmp_path):
+    seen = []
+
+    def handler(request):
+        seen.append(dict(request.url.params))
+        return httpx.Response(200, text="<div></div>")
+
+    ComposeCollector().collect(tmp_path, mock_http(handler))
+    assert seen[0]["search_tag"] == "02. 커피ㆍ콜드브루" and seen[0]["tab"] == "nutrition"
+
+
 def test_registry_lists_all_sources():
     from pipeline.collect.registry import ALL_COLLECTORS
     assert [c.name for c in ALL_COLLECTORS] == [
-        "cqi", "roasterdb", "sca_wheel", "coffeereview_kaggle", "starbucks", "mega", "paik", "shopify", "hollys"]
+        "cqi", "roasterdb", "sca_wheel", "coffeereview_kaggle", "starbucks", "mega", "paik", "shopify", "compose", "hollys"]
 
 
 def test_hollys_saves_espresso_page(tmp_path):

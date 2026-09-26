@@ -8,6 +8,8 @@ STARBUCKS_URL = "https://www.starbucks.co.kr/upload/json/menu/{code}.js"
 MEGA_URL = "https://www.mega-mgccoffee.com/menu/menu.php"
 PAIK_URL = "https://paikdabang.com/menu/menu_coffee/"
 HOLLYS_URL = "https://www.hollys.co.kr/menu/espresso.do"
+COMPOSE_URL = "https://composecoffee.com/compose"
+COMPOSE_COFFEE_TAG = "02. 커피ㆍ콜드브루"  # site's own category tag; filters out tea/ade/food server-side
 
 
 @dataclass
@@ -56,6 +58,24 @@ class PaikCollector:
         p = out_dir / "coffee.html"
         p.write_text(http.get(PAIK_URL).text, encoding="utf-8")
         return [p]
+
+
+@dataclass
+class ComposeCollector:
+    name: str = "compose"
+    max_pages: int = 15
+
+    def collect(self, out_dir: Path, http) -> list[Path]:
+        files = []
+        for page in range(1, self.max_pages + 1):
+            params = {"search_tag": COMPOSE_COFFEE_TAG, "tab": "nutrition", "page": page}
+            html = http.get(COMPOSE_URL, params=params).text
+            if 'data-label="품목명"' not in html:
+                break  # past the last page: only the "no results" placeholder row remains
+            p = out_dir / f"page_{page}.html"
+            p.write_text(html, encoding="utf-8")
+            files.append(p)
+        return files
 
 
 @dataclass
