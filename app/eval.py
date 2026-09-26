@@ -15,6 +15,7 @@ from app.core.scoring import mmr_top_k, passes, score_item
 from app.core.simulate import simulate_convergence
 from app.models import ATTRS, Item, Profile
 from pipeline import settings
+from pipeline.llm import embed_model
 
 # Knowledge-base variants (sources left out) for the open-data comparison.
 #   full      = everything, incl. the licence-restricted coffeereview (Kaggle) data
@@ -124,7 +125,7 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
             "targets": len(ids), "target_ids_sha1": hashlib.sha1(",".join(map(str, sorted(ids))).encode()).hexdigest(),
             "neighbor_source_share": {k: round(v / total_nb, 4) for k, v in neighbor_sources.most_common()},
             "predictions_with_tags": round(with_tags / len(ids), 4) if ids else None,
-            "embedding_model": settings.load_config("models.yaml")["tasks"]["embed"]["model"],
+            "embedding_model": embed_model(),
             **{a: {"n": s["n"], "exact": rate(s, "exact"), "within1": rate(s, "within1")} for a, s in stats.items()},
             "acidity_within1_by_confidence": {k: {"n": v["n"], "within1": rate(v, "within1")} for k, v in by_conf.items()}}
 

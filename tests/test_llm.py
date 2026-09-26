@@ -125,3 +125,114 @@ def test_embedder_malformed_response_raises_llm_error():
         e = Embedder(target("bge-m3"), transport=transport(lambda b, r, resp=resp: resp))
         with pytest.raises(LLMError):
             e.embed(["a"])
+
+
+def emb_target(**kw):
+    return Target("nvidia", "http://llm.test/v1", "k", "nvidia/emb", 5.0, **kw)
+
+
+def emb_reply(body, dim=4):
+    return httpx.Response(200, json={"data": [{"index": i, "embedding": [float(i + 1)] * dim}
+                                              for i in range(len(body["input"]))]})
+
+
+def test_asymmetric_embedder_sends_input_type_and_batches():
+    seen = []
+
+    def fn(body, req):
+        seen.append(body)
+        return emb_reply(body)
+
+    e = Embedder(emb_target(asymmetric=True, batch=2), transport=transport(fn))
+    assert len(e.embed(["a", "b", "c"])) == 3
+    assert [b["input"] for b in seen] == [["a", "b"], ["c"]]
+    assert all(b["input_type"] == "passage" and b["encoding_format"] == "float" for b in seen)
+    e.embed_query("q")
+    assert seen[-1]["input_type"] == "query" and seen[-1]["input"] == ["q"]
+    assert e.requests == 3
+
+
+def test_symmetric_embedder_sends_no_input_type():
+    seen = []
+
+    def fn(body, req):
+        seen.append(body)
+        return emb_reply(body)
+
+    Embedder(target("bge-m3"), transport=transport(fn)).embed_query("q")
+    assert "input_type" not in seen[0]
+
+
+def test_embedder_truncates_and_renormalises_matryoshka_dims():
+    def fn(body, req):
+        return httpx.Response(200, json={"data": [{"index": 0, "embedding": [3.0, 4.0, 100.0, 100.0]}]})
+
+    e = Embedder(emb_target(dims=2), transport=transport(fn))
+    assert e.embed(["a"]) == [[0.6, 0.8]]
+    with pytest.raises(LLMError):
+        Embedder(emb_target(dims=8), transport=transport(fn)).embed(["a"])
+
+
+def test_embedder_retries_429_and_5xx_with_backoff():
+    calls, sleeps = [], []
+
+    def fn(body, req):
+        calls.append(1)
+        if len(calls) == 1:
+            return httpx.Response(429, headers={"retry-after": "3"})
+        if len(calls) == 2:
+            return httpx.Response(503, text="busy")
+        return emb_reply(body)
+
+    e = Embedder(emb_target(), transport=transport(fn), sleep=sleeps.append)
+    assert len(e.embed(["a"])) == 1
+    assert sleeps == [3.0, 2]
+
+
+def test_embedder_gives_up_after_retries_and_on_4xx():
+    sleeps = []
+    e = Embedder(emb_target(), transport=transport(lambda b, r: httpx.Response(500)), sleep=sleeps.append)
+    with pytest.raises(LLMError):
+        e.embed(["a"])
+    assert len(sleeps) == 5
+    e = Embedder(emb_target(), transport=transport(lambda b, r: httpx.Response(410, text="gone")), sleep=sleeps.append)
+    with pytest.raises(LLMError, match="410"):
+        e.embed(["a"])
+
+
+def test_embedder_rejects_count_mismatch():
+    def fn(body, req):
+        return httpx.Response(200, json={"data": [{"index": 0, "embedding": [1.0]}]})
+
+    with pytest.raises(LLMError):
+        Embedder(emb_target(), transport=transport(fn)).embed(["a", "b"])
+
+
+def test_embedder_throttles_to_rpm():
+    now, sleeps = [0.0], []
+
+    def sleep(s):
+        sleeps.append(s)
+        now[0] += s
+
+    e = Embedder(emb_target(rpm=30, batch=1), transport=transport(lambda b, r: emb_reply(b)), sleep=sleep,
+                 clock=lambda: now[0])
+    e.embed(["a", "b", "c"])
+    assert sleeps == [2.0, 2.0]
+
+
+def test_embed_task_is_switchable_by_env(monkeypatch):
+    from pipeline.llm import embed_model, embed_task, embedder_for
+    monkeypatch.delenv("EMBED_TASK", raising=False)
+    assert embed_task() == "embed"
+    monkeypatch.setenv("EMBED_TASK", "embed_nemotron")
+    assert embed_model() == "nvidia/nemotron-3-embed-1b"
+    t = embedder_for().target
+    assert (t.dims, t.asymmetric, t.provider) == (1024, True, "nvidia")
+
+
+def test_embedded_dir_is_per_model():
+    from pipeline import settings
+    a, b = settings.embedded_dir("bge-m3"), settings.embedded_dir("nvidia/nemotron-3-embed-1b")
+    assert a != b and a.parent == b.parent == settings.EMBEDDED_DIR
+    assert b.name == "nvidia_nemotron-3-embed-1b"

@@ -52,6 +52,9 @@ class FixedEmbedder:
     def embed(self, texts):
         return [vec(1) for _ in texts]
 
+    def embed_query(self, text):
+        return self.embed([text])[0]
+
 
 def test_load_and_query(db_conn, tmp_path):
     norm, enriched, embedded = setup_files(tmp_path)
@@ -136,6 +139,9 @@ def test_filtered_query_returns_k_rows_through_hnsw(db_conn):
     class RandomEmbedder:
         def embed(self, texts):
             return [[rng.uniform(-1, 1) for _ in range(1024)] for _ in texts]
+
+        def embed_query(self, text):
+            return self.embed([text])[0]
 
     hits = similar(db_conn, RandomEmbedder(), "decaf", k=5, decaf=True)
     assert len(hits) == 5 and all(h["is_decaf"] for h in hits)
@@ -262,3 +268,9 @@ def test_brand_bean_is_loaded(db_conn, tmp_path):
     bean, decaf = db_conn.execute("SELECT bean, decaf_bean FROM brands WHERE key = 'brand:x'").fetchone()
     assert bean == {"acidity": 2.0, "body": 4.0, "sweetness": 3.0, "flavor_tags": ["nutty"]}
     assert decaf["flavor_tags"] == ["chocolate"]
+
+
+def test_load_refuses_missing_embeddings_file(db_conn, tmp_path):
+    norm, enriched, _ = setup_files(tmp_path)
+    with pytest.raises(ValueError, match="embed"):
+        run_load(db_conn, norm, enriched, tmp_path / "no-such-model")

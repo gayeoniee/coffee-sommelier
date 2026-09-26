@@ -1,4 +1,5 @@
 import os
+import re
 from pathlib import Path
 
 import yaml
@@ -21,3 +22,8 @@ DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://coffee:coffee@localhost:5
 
 def load_config(name: str) -> dict:
     return yaml.safe_load((CONFIG_DIR / name).read_text(encoding="utf-8"))
+
+
+def embedded_dir(model: str) -> Path:
+    """Embedding cache per model, so switching models never overwrites another model's vectors."""
+    return EMBEDDED_DIR / re.sub(r"[^A-Za-z0-9._-]+", "_", model)

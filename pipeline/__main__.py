@@ -59,17 +59,22 @@ def _run(a) -> int:
     if "embed" in stages:
         from pipeline.embed import run_embed
         from pipeline.llm import embedder_for
-        stats["embed"] = run_embed(settings.ENRICHED_DIR, settings.NORMALIZED_DIR, settings.EMBEDDED_DIR, embedder_for())
+        embedder = embedder_for()
+        stats["embed"] = run_embed(settings.ENRICHED_DIR, settings.NORMALIZED_DIR,
+                                   settings.embedded_dir(embedder.target.model), embedder, batch=embedder.target.batch)
+        stats["embed"].update(model=embedder.target.model, requests=embedder.requests)
     for stage, s in stats.items():
         print(f"[{stage}] {json.dumps(s, ensure_ascii=False)}")
     if "load" in stages:
         from pipeline.db import apply_schema, connect
+        from pipeline.llm import embed_model
         from pipeline.load import run_load
         from pipeline.report import build_report
 
         with connect() as conn:
             apply_schema(conn)
-            stats["load"] = run_load(conn, settings.NORMALIZED_DIR, settings.ENRICHED_DIR, settings.EMBEDDED_DIR)
+            stats["load"] = run_load(conn, settings.NORMALIZED_DIR, settings.ENRICHED_DIR,
+                                     settings.embedded_dir(embed_model()))
             md = build_report(conn, stats)
         print(f"[load] {json.dumps(stats['load'], ensure_ascii=False)}")
         settings.REPORTS_DIR.mkdir(parents=True, exist_ok=True)

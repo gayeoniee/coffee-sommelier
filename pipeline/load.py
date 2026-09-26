@@ -90,7 +90,10 @@ def run_load(conn, norm_dir: Path, enriched_dir: Path, embedded_dir: Path) -> di
             "name_en = EXCLUDED.name_en, name_ko = EXCLUDED.name_ko",
             (t.key, t.parent_key, t.level, t.name_en, t.name_ko))
 
-    vectors = {e["key"]: e["vector"] for e in _read_lines(embedded_dir / "embeddings.jsonl")}
+    emb_path = embedded_dir / "embeddings.jsonl"
+    if not emb_path.exists():
+        raise ValueError(f"{emb_path} 가 없어요 — 이 임베딩 모델로 embed 단계를 먼저 돌리세요 (임베딩을 비우지 않도록 적재 중단)")
+    vectors = {e["key"]: e["vector"] for e in _read_lines(emb_path)}
     source_keys = [c.key for c in coffees]
     _upsert(cur, "coffees",
             ["key", "name", "roaster", "origin_country", "origin_region", "process", "roast_level", "is_decaf",

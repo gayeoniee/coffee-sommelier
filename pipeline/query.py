@@ -3,7 +3,7 @@ def to_vector_literal(vec) -> str:
 
 
 def similar(conn, embedder, text: str, k: int = 5, decaf: bool | None = None) -> list[dict]:
-    v = to_vector_literal(embedder.embed([text])[0])
+    v = to_vector_literal(embedder.embed_query(text))
     where = "embedding IS NOT NULL" + (" AND is_decaf = %(decaf)s" if decaf is not None else "")
     sql = (
         "SELECT name, roaster, origin_country, process, is_decaf, decaf_process, acidity, body, flavor_tags,"
