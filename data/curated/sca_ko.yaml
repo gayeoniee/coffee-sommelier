@@ -35,3 +35,88 @@ sweet>sweet aromatics: 달콤한 향
 floral: 꽃
 floral>black tea: 홍차
 floral>floral: 꽃향
+# level 3 (leaf flavors)
+fruity>berry>blackberry: 블랙베리
+fruity>berry>blueberry: 블루베리
+fruity>berry>strawberry: 딸기
+fruity>berry>raspberry: 라즈베리
+fruity>dried fruit>raisin: 건포도
+fruity>dried fruit>prune: 말린 자두
+fruity>other fruit>coconut: 코코넛
+fruity>other fruit>cherry: 체리
+fruity>other fruit>pomegranate: 석류
+fruity>other fruit>pinapple: 파인애플
+fruity>other fruit>grape: 포도
+fruity>other fruit>apple: 사과
+fruity>other fruit>peach: 복숭아
+fruity>other fruit>pear: 배
+fruity>citrus fruit>grapefruit: 자몽
+fruity>citrus fruit>orange: 오렌지
+fruity>citrus fruit>lemon: 레몬
+fruity>citrus fruit>lime: 라임
+sour/fermented>sour>sour aromatic: 새콤한 향
+sour/fermented>sour>acetic acid: 식초산
+sour/fermented>sour>butyric acid: 버터산
+sour/fermented>sour>isovaleric acid: 이소발레르산
+sour/fermented>sour>citric acid: 구연산
+sour/fermented>sour>malic acid: 사과산
+sour/fermented>alcohol fermented>winey: 와인
+sour/fermented>alcohol fermented>whiskey: 위스키
+sour/fermented>alcohol fermented>overripe: 과숙
+sour/fermented>alcohol fermented>fermented: 발효
+green/vegetative>olive oil>olive oil: 올리브유
+green/vegetative>raw>raw: 날것
+green/vegetative>green vegetative>under-ripe: 덜 익은
+green/vegetative>green vegetative>peapod: 완두콩 꼬투리
+green/vegetative>green vegetative>fresh: 신선한 풀
+green/vegetative>green vegetative>dark green: 짙은 풀
+green/vegetative>green vegetative>vegetative: 채소
+green/vegetative>green vegetative>hay-like: 건초
+green/vegetative>green vegetative>herb-like: 허브
+green/vegetative>beany>beany: 콩비린내
+other>chemical>rubber: 고무
+other>chemical>skunky: 스컹크
+other>chemical>petroleum: 석유
+other>chemical>medicinal: 약품
+other>chemical>salty: 짠맛
+other>chemical>bitter: 쓴맛
+other>papery/musty>phenolic: 페놀
+other>papery/musty>meaty/brothy: 고기/육수
+other>papery/musty>animalic: 동물성
+other>papery/musty>musty/earthy: 흙내
+other>papery/musty>musty/dusty: 먼지내
+other>papery/musty>moldy/damp: 곰팡이
+other>papery/musty>woody: 나무
+other>papery/musty>papery: 종이
+other>papery/musty>stale: 묵은 맛
+roasted>cereal>malt: 몰트
+roasted>cereal>grain: 곡물
+roasted>burnt>brown roast: 진한 로스팅
+roasted>burnt>smoky: 스모키
+roasted>burnt>ashy: 재
+roasted>burnt>acrid: 매캐함
+roasted>tobacco>tobacco: 담배
+roasted>pipe tobacco>pipe tobacco: 파이프 담배
+spices>brown spice>clove: 정향
+spices>brown spice>cinnamon: 시나몬
+spices>brown spice>nutmeg: 육두구
+spices>brown spice>anise: 아니스
+spices>pepper>pepper: 후추
+spices>pungent>pungent: 자극적
+nutty/cocoa>cocoa>dark chocolate: 다크 초콜릿
+nutty/cocoa>cocoa>chocolate: 초콜릿
+nutty/cocoa>nutty>hazelnut: 헤이즐넛
+nutty/cocoa>nutty>peanuts: 땅콩
+nutty/cocoa>nutty>almonds: 아몬드
+sweet>brown sugar>molasses: 당밀
+sweet>brown sugar>caramelized: 캐러멜
+sweet>brown sugar>maple syrup: 메이플 시럽
+sweet>brown sugar>honey: 꿀
+sweet>vanilla>vanilla: 바닐라
+sweet>vanillin>vanillin: 바닐린
+sweet>overall sweet>overall sweet: 전반적 단맛
+sweet>sweet aromatics>sweet aromatics: 달콤한 향
+floral>black tea>black tea: 홍차
+floral>floral>chamomile: 캐모마일
+floral>floral>rose: 장미
+floral>floral>jasmine: 재스민
