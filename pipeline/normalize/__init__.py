@@ -32,12 +32,14 @@ def _normalizers():
     from pipeline.normalize.datasets import (
         normalize_coffeereview, normalize_cqi, normalize_roasterdb, normalize_roasters_kr, normalize_sca,
     )
-    from pipeline.normalize.menus import normalize_mega, normalize_paik, normalize_shopify, normalize_starbucks
+    from pipeline.normalize.menus import (
+        normalize_coffeebean, normalize_mega, normalize_paik, normalize_shopify, normalize_starbucks,
+    )
 
     return {
         "coffeereview_kaggle": normalize_coffeereview, "cqi": normalize_cqi, "roasterdb": normalize_roasterdb,
         "sca_wheel": normalize_sca, "starbucks": normalize_starbucks, "mega": normalize_mega,
-        "paik": normalize_paik, "shopify": normalize_shopify,
+        "paik": normalize_paik, "shopify": normalize_shopify, "coffeebean": normalize_coffeebean,
         "roasters_kr": normalize_roasters_kr,   # last: its URL duplicates of earlier sources are dropped
     }
 

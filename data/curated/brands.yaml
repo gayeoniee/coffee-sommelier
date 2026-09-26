@@ -89,9 +89,9 @@
   name: 커피빈
   decaf_available: true
   decaf_surcharge_krw: 500
-  notes: "[공식] 원두 가이드 로스트 단계 분류, 디카페인 원두 Espresso Roast Blend Decaf. [뉴스] 디카페인 변경 500원(2026-01). [공식] 디카페인 샷 변경 카테고리: 에스프레소 (조사 기준 초안)."
+  notes: "[공식] 원두 가이드 로스트 단계 분류, 디카페인 원두 Espresso Roast Blend Decaf. [뉴스] 디카페인 변경 500원(2026-01). [공식] 메뉴에는 디카페인 단일 항목 없음 — 에스프레소 음료 카테고리에서 샷 변경으로만 제공(coffeebeankorea.com/menu/app.asp?category=13 실사용 확인, 2026-09-26)."
   source_url: https://www.coffeebeankorea.com/product/bean_guide.asp
   verified_at: "2026-09-24"
   bean: {acidity: 2, body: 4, sweetness: 2, flavor_tags: [dark chocolate, caramelized]}
   decaf_bean: {acidity: 2, body: 3, sweetness: 2, flavor_tags: [dark chocolate]}
-  decaf_option_categories: [에스프레소]
+  decaf_option_categories: [에스프레소 음료]

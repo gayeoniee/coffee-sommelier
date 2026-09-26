@@ -81,6 +81,40 @@ def normalize_paik(snap: Path, collected_at: str) -> Normalized:
     return Normalized(menu_items=list(items.values()))
 
 
+def normalize_coffeebean(snap: Path, collected_at: str) -> Normalized:
+    brand = brands_by_key(settings.CURATED_DIR)["brand:coffeebean"]
+    items: dict[str, MenuItemRecord] = {}
+    for p in sorted(snap.glob("cat*_page*.html")):
+        soup = _soup(p)
+        cat_el = soup.select_one("div.category2 a.select_a")
+        category = clean(cat_el.get_text()) if cat_el else None
+        for li in soup.select("ul.menu_list li"):
+            kor = li.select_one(".txt .kor")
+            if not kor:
+                continue
+            name = clean(kor.get_text())
+            if not name:
+                continue
+            # coffeebeankorea.com writes HOT/ICED as different names ("아메리카노" vs "아이스 아메리카노")
+            # rather than a HOT/ICED suffix on the same name, so each stays its own item (never merged).
+            eng = li.select_one(".txt .eng")
+            caffeine = None
+            for dl in li.select("div.info dl"):
+                dt, dd = dl.select_one("dt"), dl.select_one("dd")
+                if dt and dd and "카페인" in dd.get_text():
+                    caffeine = num(dt.get_text(strip=True))
+            is_decaf = detect_decaf(name)[0]
+            key = f"menu:coffeebean:{name}"
+            items[key] = MenuItemRecord(
+                key=key, brand_key="brand:coffeebean", name=name,
+                name_en=clean(eng.get_text()) if eng else None, category=category,
+                is_decaf=is_decaf, decaf_option=menu_decaf_option(brand, category, is_decaf),
+                caffeine_mg=caffeine,
+                source_url="https://www.coffeebeankorea.com/menu/list.asp", collected_at=collected_at,
+            )
+    return Normalized(menu_items=list(items.values()))
+
+
 def _html_text(html: str) -> str:
     return BeautifulSoup(html or "", "lxml").get_text("\n", strip=True)
 
