@@ -22,9 +22,12 @@ def normalize_starbucks(snap: Path, collected_at: str) -> Normalized:
                 continue
             key = f"menu:starbucks:{clean(it.get('product_CD')) or name}"
             caffeine = num(it.get("caffeine"))
+            # NOT menu_is_decaf: this feed (esp. W0000004 블렌디드 커피) also lists non-coffee cream
+            # frappuccinos with 0mg caffeine (e.g. "화이트 타이거 프라푸치노") — the <=15mg rule would
+            # wrongly brand those "decaf" — so stick to name-only detection here.
             items[key] = MenuItemRecord(
                 key=key, brand_key="brand:starbucks", name=name, name_en=clean(it.get("product_ENGNM")),
-                category=clean(it.get("cate_NAME")), is_decaf=menu_is_decaf(name, caffeine),
+                category=clean(it.get("cate_NAME")), is_decaf=detect_decaf(name)[0],
                 decaf_option=p.stem in STARBUCKS_DECAF_OPTION_CODES, caffeine_mg=caffeine,
                 source_url=f"https://www.starbucks.co.kr/upload/json/menu/{p.stem}.js", collected_at=collected_at,
             )
@@ -47,9 +50,12 @@ def normalize_mega(snap: Path, collected_at: str) -> Normalized:
             m = re.search(r"카페인\s*([\d.]+)\s*mg", modal.get_text(" ", strip=True))
             caffeine = float(m.group(1)) if m else None
             key = f"menu:mega:{name}"
+            # NOT menu_is_decaf: this single collected URL also lists non-coffee drinks (ades, smoothies,
+            # teas, e.g. "레몬에이드") with 0mg caffeine under the same hardcoded category="커피" — the
+            # <=15mg rule would wrongly brand those "decaf" — so stick to name-only detection here.
             items[key] = MenuItemRecord(
                 key=key, brand_key="brand:mega", name=name, name_en=en.get_text(strip=True) if en else None,
-                category="커피", is_decaf=menu_is_decaf(name, caffeine), caffeine_mg=caffeine,
+                category="커피", is_decaf=detect_decaf(name)[0], caffeine_mg=caffeine,
                 source_url="https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1",
                 collected_at=collected_at,
             )

@@ -29,6 +29,13 @@ MEGA_HTML = """
    <div class="cont_text_inner cont_text_title"><b>디카페인 아메리카노</b></div>
    <div class="cont_text_inner cont_text_info">Decaf Americano</div></div>
  </div><div class="cont_list"><ul><li>당류 0g</li><li>카페인 11.4mg</li></ul></div></div>
+</li>
+<li><a class="inner_modal_open"></a>
+ <div class="inner_modal"><div class="cont_text_box">
+  <div class="cont_text inner_modal_title">
+   <div class="cont_text_inner cont_text_title"><b>레몬에이드</b></div>
+   <div class="cont_text_inner cont_text_info">Lemon Ade</div></div>
+ </div><div class="cont_list"><ul><li>당류 32g</li><li>카페인 0mg</li></ul></div></div>
 </li></ul>
 """
 PAIK_HTML = """
@@ -46,16 +53,28 @@ def test_starbucks(tmp_path):
         {"product_CD": "1", "product_NM": "아메리카노", "product_ENGNM": "", "cate_NAME": "아메리카노", "caffeine": "150"},
         {"product_CD": "2", "product_NM": "디카페인 카페 라떼", "cate_NAME": "라떼", "caffeine": ""},
     ]}, ensure_ascii=False), encoding="utf-8")
+    # W0000004 (블렌디드 커피) also carries non-coffee cream frappuccinos with 0mg caffeine, e.g. the real
+    # "화이트 타이거 프라푸치노": menu_is_decaf's <=15mg rule must not brand these "decaf" (they were never
+    # coffee to begin with), so starbucks stays on name-only detect_decaf for is_decaf.
+    (tmp_path / "W0000004.json").write_text(json.dumps({"list": [
+        {"product_CD": "3", "product_NM": "화이트 타이거 프라푸치노", "cate_NAME": "블렌디드 커피", "caffeine": "0"},
+    ]}, ensure_ascii=False), encoding="utf-8")
     items = normalize_starbucks(tmp_path, "2026-09-24").menu_items
     assert [(i.key, i.caffeine_mg, i.is_decaf, i.decaf_option) for i in items] == [
-        ("menu:starbucks:1", 150.0, False, True), ("menu:starbucks:2", None, True, True)]
+        ("menu:starbucks:1", 150.0, False, True), ("menu:starbucks:2", None, True, True),
+        ("menu:starbucks:3", 0.0, False, False)]
     assert items[0].name_en is None
 
 
 def test_mega(tmp_path):
     (tmp_path / "page_1.html").write_text(MEGA_HTML, encoding="utf-8")
-    [item] = normalize_mega(tmp_path, "2026-09-24").menu_items
-    assert (item.name, item.name_en, item.caffeine_mg, item.is_decaf) == ("디카페인 아메리카노", "Decaf Americano", 11.4, True)
+    items = normalize_mega(tmp_path, "2026-09-24").menu_items
+    by = {i.name: i for i in items}
+    assert (by["디카페인 아메리카노"].name_en, by["디카페인 아메리카노"].caffeine_mg, by["디카페인 아메리카노"].is_decaf) == ("Decaf Americano", 11.4, True)
+    # mega's single collected URL (menu_category1=1&menu_category2=1) also lists non-coffee drinks (ades,
+    # smoothies, teas) with 0mg caffeine, e.g. the real "레몬에이드": the <=15mg rule must not brand these
+    # "decaf" either, so mega also stays on name-only detect_decaf for is_decaf.
+    assert by["레몬에이드"].is_decaf is False
 
 
 def test_paik_dedupes_and_reads_caffeine(tmp_path):
