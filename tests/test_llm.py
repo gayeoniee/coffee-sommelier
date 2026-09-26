@@ -239,3 +239,18 @@ def test_embedded_dir_is_per_model():
     a, b = settings.embedded_dir("bge-m3"), settings.embedded_dir("nvidia/nemotron-3-embed-1b")
     assert a != b and a.parent == b.parent == settings.EMBEDDED_DIR
     assert b.name == "nvidia_nemotron-3-embed-1b"
+
+
+def test_explain_target_disables_thinking():
+    from pipeline.llm import load_targets
+    primary, _ = load_targets("explain")
+    assert primary.extra == {"chat_template_kwargs": {"enable_thinking": False}}
+
+
+def test_payload_puts_extra_at_top_level():
+    from app.llm import _payload
+    from pipeline.llm import Target
+    t = Target(provider="nvidia", model="m", base_url="http://x", api_key=None, timeout=1, max_tokens=5,
+               extra={"chat_template_kwargs": {"enable_thinking": False}})
+    p = _payload(t, [{"role": "user", "content": "hi"}], stream=True)
+    assert p["chat_template_kwargs"] == {"enable_thinking": False} and p["stream"] is True

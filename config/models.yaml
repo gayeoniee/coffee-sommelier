@@ -60,16 +60,19 @@ tasks:
     model: nvidia/nemotron-3-super-120b-a12b
     timeout: 20
     max_tokens: 1500
+    extra: {chat_template_kwargs: {enable_thinking: false}}
     fallback: {provider: ollama, model: "qwen3.5:9b", timeout: 60, max_tokens: 400, extra: {reasoning_effort: "none"}}
   parse_note:
     provider: nvidia
     model: nvidia/nemotron-3-super-120b-a12b
     timeout: 20
     max_tokens: 1500
+    extra: {chat_template_kwargs: {enable_thinking: false}}
     fallback: {provider: ollama, model: "qwen3.5:9b", timeout: 60, max_tokens: 400, extra: {reasoning_effort: "none"}}
   parse_bean:
     provider: nvidia
     model: nvidia/nemotron-3-super-120b-a12b
     timeout: 20
     max_tokens: 1500
+    extra: {chat_template_kwargs: {enable_thinking: false}}
     fallback: {provider: ollama, model: "qwen3.5:9b", timeout: 60, max_tokens: 400, extra: {reasoning_effort: "none"}}

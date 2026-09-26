@@ -106,7 +106,7 @@ $ python -m pipeline query "bright citrus floral Ethiopia washed" -k 5 --decaf
 | 원두 예측 leave-one-out, 산미 ±1 이내 | 0.735 (n=200) |
 | 원두 예측 leave-one-out, 바디 ±1 이내 | 0.635 |
 | 학습 수렴: 모의 사용자 10회 기록 후 프로필 오차 | 0.7792 → 0.7117 |
-| 설명 3개 순차 vs 병렬 | 13.95초 → 11.59초 |
+| 설명 3개 순차 vs 병렬 (thinking 끔, 첫 토큰 0.66~1.53초) | 10.42초 → 3.49초 |
 
 **데이터 출처별 성능 (포트폴리오판 vs 공개·오픈 라이선스판)** — coffeereview(Kaggle) 데이터는 라이선스상 비상업 포트폴리오 용도로만 쓰므로, 그 데이터를 뺀 공개·오픈 라이선스 소스(CQI·RoasterDB·블루보틀)만으로도 같은 평가를 다시 돌렸다.
 

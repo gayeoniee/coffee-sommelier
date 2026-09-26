@@ -1,15 +1,15 @@
 {
   "model": "nvidia/nemotron-3-super-120b-a12b",
-  "sequential_total_s": 13.95,
-  "parallel_total_s": 11.59,
+  "sequential_total_s": 10.42,
+  "parallel_total_s": 3.49,
   "first_token_s": [
-    2.6,
-    2.94,
-    4.84
+    0.9,
+    0.66,
+    1.53
   ],
   "full_answer_s": [
-    3.1,
-    3.47,
-    7.38
+    5.56,
+    1.68,
+    3.19
   ]
 }

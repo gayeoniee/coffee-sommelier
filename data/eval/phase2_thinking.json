@@ -1,0 +1,1367 @@
+{
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "runs_per_input": 3,
+  "tasks": {
+    "parse_note": {
+      "inputs": [
+        {
+          "input": "산미가 너무 셌다",
+          "on": {
+            "results": [
+              {
+                "acidity": "lower",
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": "lower",
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": "lower",
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              }
+            ],
+            "latencies_s": [
+              6.57,
+              5.73,
+              29.27
+            ],
+            "majority": {
+              "acidity": "lower",
+              "body": null,
+              "disliked_flavors": [],
+              "liked_flavors": [],
+              "sweetness": null
+            },
+            "self_consistency": 1.0
+          },
+          "off": {
+            "results": [
+              {
+                "acidity": "lower",
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": "lower",
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": "lower",
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              }
+            ],
+            "latencies_s": [
+              5.95,
+              1.01,
+              1.21
+            ],
+            "majority": {
+              "acidity": "lower",
+              "body": null,
+              "disliked_flavors": [],
+              "liked_flavors": [],
+              "sweetness": null
+            },
+            "self_consistency": 1.0
+          },
+          "on_vs_off_majority_agree": true
+        },
+        {
+          "input": "너무 달고 무거웠어요",
+          "on": {
+            "results": [
+              {
+                "acidity": null,
+                "body": "lower",
+                "sweetness": "lower",
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": "lower",
+                "sweetness": "lower",
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": "lower",
+                "sweetness": "lower",
+                "liked_flavors": [],
+                "disliked_flavors": []
+              }
+            ],
+            "latencies_s": [
+              3.6,
+              1.94,
+              2.51
+            ],
+            "majority": {
+              "acidity": null,
+              "body": "lower",
+              "disliked_flavors": [],
+              "liked_flavors": [],
+              "sweetness": "lower"
+            },
+            "self_consistency": 1.0
+          },
+          "off": {
+            "results": [
+              {
+                "acidity": null,
+                "body": "lower",
+                "sweetness": "lower",
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": "lower",
+                "sweetness": "lower",
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": "lower",
+                "sweetness": "lower",
+                "liked_flavors": [],
+                "disliked_flavors": []
+              }
+            ],
+            "latencies_s": [
+              9.16,
+              0.79,
+              0.85
+            ],
+            "majority": {
+              "acidity": null,
+              "body": "lower",
+              "disliked_flavors": [],
+              "liked_flavors": [],
+              "sweetness": "lower"
+            },
+            "self_consistency": 1.0
+          },
+          "on_vs_off_majority_agree": true
+        },
+        {
+          "input": "산미가 약해서 아쉬웠다",
+          "on": {
+            "results": [
+              {
+                "acidity": "higher",
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": "higher",
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": "higher",
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              }
+            ],
+            "latencies_s": [
+              4.81,
+              2.54,
+              1.74
+            ],
+            "majority": {
+              "acidity": "higher",
+              "body": null,
+              "disliked_flavors": [],
+              "liked_flavors": [],
+              "sweetness": null
+            },
+            "self_consistency": 1.0
+          },
+          "off": {
+            "results": [
+              {
+                "acidity": "higher",
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": "higher",
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": "higher",
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              }
+            ],
+            "latencies_s": [
+              5.04,
+              0.9,
+              1.11
+            ],
+            "majority": {
+              "acidity": "higher",
+              "body": null,
+              "disliked_flavors": [],
+              "liked_flavors": [],
+              "sweetness": null
+            },
+            "self_consistency": 1.0
+          },
+          "on_vs_off_majority_agree": true
+        },
+        {
+          "input": "쓴맛 없이 고소해서 좋았다",
+          "on": {
+            "results": [
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [
+                  "nutty/cocoa"
+                ],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [
+                  "nutty/cocoa"
+                ],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [
+                  "nutty/cocoa"
+                ],
+                "disliked_flavors": []
+              }
+            ],
+            "latencies_s": [
+              3.07,
+              4.59,
+              4.71
+            ],
+            "majority": {
+              "acidity": null,
+              "body": null,
+              "disliked_flavors": [],
+              "liked_flavors": [
+                "nutty/cocoa"
+              ],
+              "sweetness": null
+            },
+            "self_consistency": 1.0
+          },
+          "off": {
+            "results": [
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [
+                  "nutty/cocoa"
+                ],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [
+                  "nutty/cocoa"
+                ],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [
+                  "nutty/cocoa"
+                ],
+                "disliked_flavors": []
+              }
+            ],
+            "latencies_s": [
+              2.87,
+              1.14,
+              1.24
+            ],
+            "majority": {
+              "acidity": null,
+              "body": null,
+              "disliked_flavors": [],
+              "liked_flavors": [
+                "nutty/cocoa"
+              ],
+              "sweetness": null
+            },
+            "self_consistency": 1.0
+          },
+          "on_vs_off_majority_agree": true
+        },
+        {
+          "input": "그냥 그랬다",
+          "on": {
+            "results": [
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              }
+            ],
+            "latencies_s": [
+              2.86,
+              2.35,
+              3.15
+            ],
+            "majority": {
+              "acidity": null,
+              "body": null,
+              "disliked_flavors": [],
+              "liked_flavors": [],
+              "sweetness": null
+            },
+            "self_consistency": 1.0
+          },
+          "off": {
+            "results": [
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              }
+            ],
+            "latencies_s": [
+              0.89,
+              1.0,
+              1.73
+            ],
+            "majority": {
+              "acidity": null,
+              "body": null,
+              "disliked_flavors": [],
+              "liked_flavors": [],
+              "sweetness": null
+            },
+            "self_consistency": 1.0
+          },
+          "on_vs_off_majority_agree": true
+        },
+        {
+          "input": "산미가 너무 셌어요",
+          "on": {
+            "results": [
+              {
+                "acidity": "lower",
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": "lower",
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": "lower",
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              }
+            ],
+            "latencies_s": [
+              1.5,
+              1.67,
+              2.0
+            ],
+            "majority": {
+              "acidity": "lower",
+              "body": null,
+              "disliked_flavors": [],
+              "liked_flavors": [],
+              "sweetness": null
+            },
+            "self_consistency": 1.0
+          },
+          "off": {
+            "results": [
+              {
+                "acidity": "lower",
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": "lower",
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": "lower",
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              }
+            ],
+            "latencies_s": [
+              0.97,
+              1.23,
+              1.46
+            ],
+            "majority": {
+              "acidity": "lower",
+              "body": null,
+              "disliked_flavors": [],
+              "liked_flavors": [],
+              "sweetness": null
+            },
+            "self_consistency": 1.0
+          },
+          "on_vs_off_majority_agree": true
+        },
+        {
+          "input": "고소하고 부드러워서 좋았어요",
+          "on": {
+            "results": [
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [
+                  "nutty/cocoa"
+                ],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [
+                  "nutty/cocoa"
+                ],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": "lower",
+                "sweetness": null,
+                "liked_flavors": [
+                  "nutty/cocoa"
+                ],
+                "disliked_flavors": []
+              }
+            ],
+            "latencies_s": [
+              11.06,
+              4.2,
+              5.18
+            ],
+            "majority": {
+              "acidity": null,
+              "body": null,
+              "disliked_flavors": [],
+              "liked_flavors": [
+                "nutty/cocoa"
+              ],
+              "sweetness": null
+            },
+            "self_consistency": 0.6667
+          },
+          "off": {
+            "results": [
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [
+                  "nutty/cocoa"
+                ],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": "higher",
+                "sweetness": null,
+                "liked_flavors": [
+                  "nutty/cocoa"
+                ],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": "higher",
+                "sweetness": null,
+                "liked_flavors": [
+                  "nutty/cocoa"
+                ],
+                "disliked_flavors": []
+              }
+            ],
+            "latencies_s": [
+              2.49,
+              1.04,
+              1.18
+            ],
+            "majority": {
+              "acidity": null,
+              "body": "higher",
+              "disliked_flavors": [],
+              "liked_flavors": [
+                "nutty/cocoa"
+              ],
+              "sweetness": null
+            },
+            "self_consistency": 0.6667
+          },
+          "on_vs_off_majority_agree": false
+        },
+        {
+          "input": "디카페인인데도 향이 살아있네요",
+          "on": {
+            "results": [
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              }
+            ],
+            "latencies_s": [
+              3.17,
+              4.62,
+              5.62
+            ],
+            "majority": {
+              "acidity": null,
+              "body": null,
+              "disliked_flavors": [],
+              "liked_flavors": [],
+              "sweetness": null
+            },
+            "self_consistency": 1.0
+          },
+          "off": {
+            "results": [
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": null,
+                "disliked_flavors": null
+              },
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": null,
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              }
+            ],
+            "latencies_s": [
+              1.43,
+              1.33,
+              2.25
+            ],
+            "majority": {
+              "acidity": null,
+              "body": null,
+              "disliked_flavors": [],
+              "liked_flavors": [],
+              "sweetness": null
+            },
+            "self_consistency": 0.6667
+          },
+          "on_vs_off_majority_agree": true
+        },
+        {
+          "input": "물 탄 것처럼 밍밍했어요",
+          "on": {
+            "results": [
+              {
+                "acidity": "lower",
+                "body": "lower",
+                "sweetness": "lower",
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": "lower",
+                "body": "lower",
+                "sweetness": "lower",
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": "lower",
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              }
+            ],
+            "latencies_s": [
+              9.91,
+              6.35,
+              6.23
+            ],
+            "majority": {
+              "acidity": "lower",
+              "body": "lower",
+              "disliked_flavors": [],
+              "liked_flavors": [],
+              "sweetness": "lower"
+            },
+            "self_consistency": 0.6667
+          },
+          "off": {
+            "results": [
+              {
+                "acidity": null,
+                "body": "lower",
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": "lower",
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              },
+              {
+                "acidity": null,
+                "body": "lower",
+                "sweetness": null,
+                "liked_flavors": [],
+                "disliked_flavors": []
+              }
+            ],
+            "latencies_s": [
+              0.92,
+              2.05,
+              0.94
+            ],
+            "majority": {
+              "acidity": null,
+              "body": "lower",
+              "disliked_flavors": [],
+              "liked_flavors": [],
+              "sweetness": null
+            },
+            "self_consistency": 1.0
+          },
+          "on_vs_off_majority_agree": false
+        }
+      ],
+      "summary": {
+        "n_inputs": 9,
+        "runs_per_input": 3,
+        "on_self_consistency": 0.9259,
+        "off_self_consistency": 0.9259,
+        "on_vs_off_majority_agreement_rate": 0.7778,
+        "on_median_latency_s": 4.2,
+        "off_median_latency_s": 1.21
+      }
+    },
+    "parse_bean": {
+      "inputs": [
+        {
+          "input": "에티오피아 예가체프 워시드 디카페인 스위스워터",
+          "on": {
+            "results": [
+              {
+                "origin_country": "Ethiopia",
+                "process": "washed",
+                "roast_level": null,
+                "is_decaf": true
+              },
+              {
+                "origin_country": "Ethiopia",
+                "process": "washed",
+                "roast_level": null,
+                "is_decaf": true
+              },
+              {
+                "origin_country": "Ethiopia",
+                "process": "washed",
+                "roast_level": null,
+                "is_decaf": true
+              }
+            ],
+            "latencies_s": [
+              2.4,
+              2.77,
+              2.61
+            ],
+            "majority": {
+              "is_decaf": true,
+              "origin_country": "Ethiopia",
+              "process": "washed",
+              "roast_level": null
+            },
+            "self_consistency": 1.0
+          },
+          "off": {
+            "results": [
+              {
+                "origin_country": "Ethiopia",
+                "process": "washed",
+                "roast_level": null,
+                "is_decaf": true
+              },
+              {
+                "origin_country": "Ethiopia",
+                "process": "washed",
+                "roast_level": null,
+                "is_decaf": true
+              },
+              {
+                "origin_country": "Ethiopia",
+                "process": "washed",
+                "roast_level": null,
+                "is_decaf": true
+              }
+            ],
+            "latencies_s": [
+              2.25,
+              1.84,
+              0.89
+            ],
+            "majority": {
+              "is_decaf": true,
+              "origin_country": "Ethiopia",
+              "process": "washed",
+              "roast_level": null
+            },
+            "self_consistency": 1.0
+          },
+          "on_vs_off_majority_agree": true
+        },
+        {
+          "input": "동네 로스터리 하우스 블렌드",
+          "on": {
+            "results": [
+              {
+                "origin_country": null,
+                "process": null,
+                "roast_level": null,
+                "is_decaf": null
+              },
+              {
+                "origin_country": null,
+                "process": null,
+                "roast_level": null,
+                "is_decaf": null
+              },
+              {
+                "origin_country": null,
+                "process": null,
+                "roast_level": null,
+                "is_decaf": null
+              }
+            ],
+            "latencies_s": [
+              1.94,
+              2.39,
+              4.46
+            ],
+            "majority": {
+              "is_decaf": null,
+              "origin_country": null,
+              "process": null,
+              "roast_level": null
+            },
+            "self_consistency": 1.0
+          },
+          "off": {
+            "results": [
+              {
+                "origin_country": null,
+                "process": null,
+                "roast_level": null,
+                "is_decaf": null
+              },
+              {
+                "origin_country": null,
+                "process": null,
+                "roast_level": null,
+                "is_decaf": null
+              },
+              {
+                "origin_country": null,
+                "process": null,
+                "roast_level": null,
+                "is_decaf": null
+              }
+            ],
+            "latencies_s": [
+              1.79,
+              0.82,
+              15.63
+            ],
+            "majority": {
+              "is_decaf": null,
+              "origin_country": null,
+              "process": null,
+              "roast_level": null
+            },
+            "self_consistency": 1.0
+          },
+          "on_vs_off_majority_agree": true
+        },
+        {
+          "input": "하우스 블렌드 내추럴",
+          "on": {
+            "results": [
+              {
+                "origin_country": null,
+                "process": "natural",
+                "roast_level": null,
+                "is_decaf": null
+              },
+              {
+                "origin_country": null,
+                "process": "natural",
+                "roast_level": null,
+                "is_decaf": null
+              },
+              {
+                "origin_country": null,
+                "process": "natural",
+                "roast_level": null,
+                "is_decaf": null
+              }
+            ],
+            "latencies_s": [
+              7.9,
+              1.42,
+              4.1
+            ],
+            "majority": {
+              "is_decaf": null,
+              "origin_country": null,
+              "process": "natural",
+              "roast_level": null
+            },
+            "self_consistency": 1.0
+          },
+          "off": {
+            "results": [
+              {
+                "origin_country": null,
+                "process": "natural",
+                "roast_level": null,
+                "is_decaf": false
+              },
+              {
+                "origin_country": null,
+                "process": "natural",
+                "roast_level": null,
+                "is_decaf": null
+              },
+              {
+                "origin_country": null,
+                "process": "natural",
+                "roast_level": null,
+                "is_decaf": null
+              }
+            ],
+            "latencies_s": [
+              0.75,
+              2.15,
+              1.02
+            ],
+            "majority": {
+              "is_decaf": null,
+              "origin_country": null,
+              "process": "natural",
+              "roast_level": null
+            },
+            "self_consistency": 0.6667
+          },
+          "on_vs_off_majority_agree": true
+        },
+        {
+          "input": "에티오피아 예가체프 워시드 디카페인",
+          "on": {
+            "results": [
+              {
+                "origin_country": "Ethiopia",
+                "process": "washed",
+                "roast_level": null,
+                "is_decaf": true
+              },
+              {
+                "origin_country": "Ethiopia",
+                "process": "washed",
+                "roast_level": null,
+                "is_decaf": true
+              },
+              {
+                "origin_country": "Ethiopia",
+                "process": "washed",
+                "roast_level": null,
+                "is_decaf": true
+              }
+            ],
+            "latencies_s": [
+              2.97,
+              4.02,
+              5.4
+            ],
+            "majority": {
+              "is_decaf": true,
+              "origin_country": "Ethiopia",
+              "process": "washed",
+              "roast_level": null
+            },
+            "self_consistency": 1.0
+          },
+          "off": {
+            "results": [
+              {
+                "origin_country": "Ethiopia",
+                "process": "washed",
+                "roast_level": null,
+                "is_decaf": true
+              },
+              {
+                "origin_country": "Ethiopia",
+                "process": "washed",
+                "roast_level": null,
+                "is_decaf": true
+              },
+              {
+                "origin_country": "Ethiopia",
+                "process": "washed",
+                "roast_level": null,
+                "is_decaf": true
+              }
+            ],
+            "latencies_s": [
+              2.0,
+              1.1,
+              0.76
+            ],
+            "majority": {
+              "is_decaf": true,
+              "origin_country": "Ethiopia",
+              "process": "washed",
+              "roast_level": null
+            },
+            "self_consistency": 1.0
+          },
+          "on_vs_off_majority_agree": true
+        },
+        {
+          "input": "콜롬비아 수프리모 미디엄 로스트 초콜릿 견과",
+          "on": {
+            "results": [
+              {
+                "origin_country": "Colombia",
+                "process": null,
+                "roast_level": "medium",
+                "is_decaf": null
+              },
+              {
+                "origin_country": "Colombia",
+                "process": null,
+                "roast_level": "medium",
+                "is_decaf": null
+              },
+              {
+                "origin_country": "Colombia",
+                "process": null,
+                "roast_level": "medium",
+                "is_decaf": null
+              }
+            ],
+            "latencies_s": [
+              1.26,
+              5.63,
+              1.56
+            ],
+            "majority": {
+              "is_decaf": null,
+              "origin_country": "Colombia",
+              "process": null,
+              "roast_level": "medium"
+            },
+            "self_consistency": 1.0
+          },
+          "off": {
+            "results": [
+              {
+                "origin_country": "Colombia",
+                "process": null,
+                "roast_level": "medium",
+                "is_decaf": false
+              },
+              {
+                "origin_country": "Colombia",
+                "process": null,
+                "roast_level": "medium",
+                "is_decaf": false
+              },
+              {
+                "origin_country": "Colombia",
+                "process": null,
+                "roast_level": "medium",
+                "is_decaf": false
+              }
+            ],
+            "latencies_s": [
+              1.41,
+              0.92,
+              1.23
+            ],
+            "majority": {
+              "is_decaf": false,
+              "origin_country": "Colombia",
+              "process": null,
+              "roast_level": "medium"
+            },
+            "self_consistency": 1.0
+          },
+          "on_vs_off_majority_agree": false
+        },
+        {
+          "input": "케냐 AA 자몽 블랙커런트",
+          "on": {
+            "results": [
+              {
+                "origin_country": "Kenya",
+                "process": null,
+                "roast_level": null,
+                "is_decaf": null
+              },
+              {
+                "origin_country": "Kenya",
+                "process": null,
+                "roast_level": null,
+                "is_decaf": null
+              },
+              {
+                "origin_country": "Kenya",
+                "process": null,
+                "roast_level": null,
+                "is_decaf": null
+              }
+            ],
+            "latencies_s": [
+              2.46,
+              3.28,
+              1.33
+            ],
+            "majority": {
+              "is_decaf": null,
+              "origin_country": "Kenya",
+              "process": null,
+              "roast_level": null
+            },
+            "self_consistency": 1.0
+          },
+          "off": {
+            "results": [
+              {
+                "origin_country": "Kenya",
+                "process": null,
+                "roast_level": null,
+                "is_decaf": null
+              },
+              {
+                "origin_country": "Kenya",
+                "process": null,
+                "roast_level": null,
+                "is_decaf": null
+              },
+              {
+                "origin_country": "Kenya",
+                "process": null,
+                "roast_level": null,
+                "is_decaf": null
+              }
+            ],
+            "latencies_s": [
+              2.75,
+              0.87,
+              1.58
+            ],
+            "majority": {
+              "is_decaf": null,
+              "origin_country": "Kenya",
+              "process": null,
+              "roast_level": null
+            },
+            "self_consistency": 1.0
+          },
+          "on_vs_off_majority_agree": true
+        },
+        {
+          "input": "브라질 내추럴 다크 로스트",
+          "on": {
+            "results": [
+              {
+                "origin_country": "Brazil",
+                "process": "natural",
+                "roast_level": "dark",
+                "is_decaf": null
+              },
+              {
+                "origin_country": "Brazil",
+                "process": "natural",
+                "roast_level": "dark",
+                "is_decaf": null
+              },
+              {
+                "origin_country": "Brazil",
+                "process": "natural",
+                "roast_level": "dark",
+                "is_decaf": null
+              }
+            ],
+            "latencies_s": [
+              1.48,
+              4.56,
+              2.35
+            ],
+            "majority": {
+              "is_decaf": null,
+              "origin_country": "Brazil",
+              "process": "natural",
+              "roast_level": "dark"
+            },
+            "self_consistency": 1.0
+          },
+          "off": {
+            "results": [
+              {
+                "origin_country": "Brazil",
+                "process": "natural",
+                "roast_level": "dark",
+                "is_decaf": false
+              },
+              {
+                "origin_country": "Brazil",
+                "process": "natural",
+                "roast_level": "dark",
+                "is_decaf": false
+              },
+              {
+                "origin_country": "Brazil",
+                "process": "natural",
+                "roast_level": "dark",
+                "is_decaf": false
+              }
+            ],
+            "latencies_s": [
+              1.13,
+              2.66,
+              0.72
+            ],
+            "majority": {
+              "is_decaf": false,
+              "origin_country": "Brazil",
+              "process": "natural",
+              "roast_level": "dark"
+            },
+            "self_consistency": 1.0
+          },
+          "on_vs_off_majority_agree": false
+        },
+        {
+          "input": "과테말라 안티구아 허니 프로세스 스위스워터 디카페인",
+          "on": {
+            "results": [
+              {
+                "origin_country": "Guatemala",
+                "process": "honey",
+                "roast_level": null,
+                "is_decaf": true
+              },
+              {
+                "origin_country": "Guatemala",
+                "process": "honey",
+                "roast_level": null,
+                "is_decaf": true
+              },
+              {
+                "origin_country": "Guatemala",
+                "process": "honey",
+                "roast_level": null,
+                "is_decaf": true
+              }
+            ],
+            "latencies_s": [
+              2.66,
+              2.57,
+              2.35
+            ],
+            "majority": {
+              "is_decaf": true,
+              "origin_country": "Guatemala",
+              "process": "honey",
+              "roast_level": null
+            },
+            "self_consistency": 1.0
+          },
+          "off": {
+            "results": [
+              {
+                "origin_country": "Guatemala",
+                "process": "honey",
+                "roast_level": null,
+                "is_decaf": true
+              },
+              {
+                "origin_country": "Guatemala",
+                "process": "honey",
+                "roast_level": null,
+                "is_decaf": true
+              },
+              {
+                "origin_country": "Guatemala",
+                "process": "honey",
+                "roast_level": null,
+                "is_decaf": true
+              }
+            ],
+            "latencies_s": [
+              0.94,
+              1.42,
+              0.78
+            ],
+            "majority": {
+              "is_decaf": true,
+              "origin_country": "Guatemala",
+              "process": "honey",
+              "roast_level": null
+            },
+            "self_consistency": 1.0
+          },
+          "on_vs_off_majority_agree": true
+        }
+      ],
+      "summary": {
+        "n_inputs": 8,
+        "runs_per_input": 3,
+        "on_self_consistency": 1.0,
+        "off_self_consistency": 0.9583,
+        "on_vs_off_majority_agreement_rate": 0.75,
+        "on_median_latency_s": 2.59,
+        "off_median_latency_s": 1.18
+      }
+    }
+  },
+  "overall": {
+    "on_self_consistency": 0.9629,
+    "off_self_consistency": 0.9421,
+    "threshold": "off >= on - 0.05",
+    "threshold_met": true,
+    "decision": "switch_off: parse_note/parse_bean도 chat_template_kwargs.enable_thinking=false 추가"
+  }
+}
