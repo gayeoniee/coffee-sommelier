@@ -14,7 +14,7 @@ def _copy_fixture(name: str, tmp_path: Path) -> Path:
 from pipeline.collect import run_collect
 from pipeline.normalize import run_normalize
 from pipeline.normalize.menus import (
-    normalize_brands, normalize_mega, normalize_paik, normalize_shopify, normalize_starbucks,
+    normalize_brands, normalize_compose, normalize_mega, normalize_paik, normalize_shopify, normalize_starbucks,
 )
 from pipeline.records import BrandRecord, CoffeeRecord, MenuItemRecord, read_jsonl
 
@@ -60,6 +60,21 @@ def test_paik_dedupes_and_reads_caffeine(tmp_path):
     assert set(items) == {"원조커피(ICED)", "디카페인 아메리카노"}
     assert items["원조커피(ICED)"].caffeine_mg == 346.0
     assert items["디카페인 아메리카노"].is_decaf is True
+
+
+def test_compose_parses_names_caffeine_decaf(tmp_path):
+    snap = _copy_fixture("menus/compose", tmp_path)
+    items = normalize_compose(snap, "2026-09-27").menu_items
+    by = {i.name: i for i in items}
+    assert len(items) == 4       # H-/I-아메리카노 and H-/I-디카페인 아메리카노 each merge into one
+    assert by["아메리카노"].caffeine_mg == 185.81      # larger of HOT (150.00) / ICED (185.81)
+    assert by["디카페인 아메리카노"].is_decaf and not by["디카페인 아메리카노"].decaf_option
+    assert by["아메리카노"].decaf_option is True        # 커피ㆍ콜드브루 is compose's decaf-shot category
+    assert by["쫀득카노"].caffeine_mg == 85.0            # no H-/I- prefix: kept as-is, not merged away
+    assert by["빅포즈 아메리카노"].caffeine_mg == 371.62  # ICED-only size: no HOT counterpart to merge with
+    assert all(i.brand_key == "brand:compose" and i.key.startswith("menu:compose:") for i in items)
+    assert all(i.category == "커피ㆍ콜드브루" for i in items)
+    assert sum(i.caffeine_mg is not None for i in items) / len(items) >= 0.9
 
 
 def test_shopify_keeps_bean_products(tmp_path):
