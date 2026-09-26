@@ -1,0 +1,5 @@
+# shell scripts and CI files must keep LF even on Windows checkouts (autocrlf)
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+Dockerfile text eol=lf
