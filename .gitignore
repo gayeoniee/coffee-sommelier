@@ -225,3 +225,4 @@ web/.env*.local
 
 # deploy
 .vercel
+.env.local
