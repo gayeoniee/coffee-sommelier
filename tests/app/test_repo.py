@@ -99,6 +99,42 @@ def test_neighbors_prefer_same_origin_and_exclude(repo):
     assert repo.fallback_neighbors(None, None) == []
 
 
+def test_neighbors_and_loo_ids_exclude_sources(repo):
+    with repo.pool.connection() as conn:
+        restricted_id = conn.execute(
+            "INSERT INTO coffees (key, name, roaster, origin_country, process, is_decaf, acidity, body, "
+            "sweetness, flavor_tags, flavor_summary, embedding, source, collected_at) "
+            "VALUES ('c3','Restricted Bean','R','Ethiopia','washed',false,5,3,3,%s,'restricted',%s::vector,"
+            "'coffeereview_kaggle','2026-09-26') RETURNING id",
+            (["citrus fruit"], to_vector_literal(vec(0)))).fetchone()["id"]
+    target = repo.match_coffee("Ethiopia Yirgacheffe Washed").coffee_id
+
+    near = repo.neighbors(vec(0), k=10, exclude_id=target)
+    assert restricted_id in [n.coffee_id for n in near]
+    near_open = repo.neighbors(vec(0), k=10, exclude_id=target, exclude_sources=("coffeereview_kaggle",))
+    assert restricted_id not in [n.coffee_id for n in near_open]
+
+    ids = repo.random_coffee_ids_for_loo(10, seed=1)
+    assert restricted_id in ids
+    ids_open = repo.random_coffee_ids_for_loo(10, seed=1, exclude_sources=("coffeereview_kaggle",))
+    assert restricted_id not in ids_open
+
+
+def test_coverage_counts_excludes_sources(repo):
+    with repo.pool.connection() as conn:
+        conn.execute(
+            "INSERT INTO coffees (key, name, roaster, origin_country, process, is_decaf, acidity, body, "
+            "sweetness, flavor_tags, flavor_summary, embedding, source, collected_at) "
+            "VALUES ('c3','Restricted Bean','R','Ethiopia','washed',false,5,3,3,%s,'restricted',%s::vector,"
+            "'coffeereview_kaggle','2026-09-26')",
+            (["citrus fruit"], to_vector_literal(vec(0))))
+    full = repo.coverage_counts()
+    assert (full["total"], full["with_embedding"], full["with_flavor_tags"], full["with_acidity"], full["decaf"],
+            full["decaf_with_flavor_tags"]) == (4, 4, 4, 4, 1, 1)
+    open_ = repo.coverage_counts(exclude_sources=("coffeereview_kaggle",))
+    assert (open_["total"], open_["with_flavor_tags"], open_["decaf"]) == (3, 3, 1)
+
+
 def test_save_tasting_and_recent(repo):
     uid = repo.create_user()
     cid = repo.match_coffee("Brazil Cerrado").coffee_id

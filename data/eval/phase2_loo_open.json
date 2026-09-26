@@ -1,0 +1,37 @@
+{
+  "n": 200,
+  "seed": 42,
+  "exclude_sources": [
+    "coffeereview_kaggle"
+  ],
+  "embedding_model": "bge-m3",
+  "acidity": {
+    "n": 196,
+    "exact": 0.2602,
+    "within1": 0.5306
+  },
+  "body": {
+    "n": 196,
+    "exact": 0.3112,
+    "within1": 0.5816
+  },
+  "sweetness": {
+    "n": 9,
+    "exact": 0.5556,
+    "within1": 0.8889
+  },
+  "acidity_within1_by_confidence": {
+    "low": {
+      "n": 73,
+      "within1": 0.4384
+    },
+    "high": {
+      "n": 29,
+      "within1": 0.7931
+    },
+    "medium": {
+      "n": 94,
+      "within1": 0.5213
+    }
+  }
+}

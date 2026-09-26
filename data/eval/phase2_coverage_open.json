@@ -1,0 +1,11 @@
+{
+  "exclude_sources": [
+    "coffeereview_kaggle"
+  ],
+  "total": 1655,
+  "with_embedding": 1655,
+  "with_flavor_tags": 109,
+  "with_acidity": 1580,
+  "decaf": 6,
+  "decaf_with_flavor_tags": 6
+}

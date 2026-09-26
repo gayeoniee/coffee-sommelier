@@ -1,0 +1,9 @@
+{
+  "exclude_sources": [],
+  "total": 9048,
+  "with_embedding": 9048,
+  "with_flavor_tags": 7495,
+  "with_acidity": 7845,
+  "decaf": 161,
+  "decaf_with_flavor_tags": 161
+}

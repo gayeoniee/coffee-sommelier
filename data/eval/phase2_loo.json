@@ -1,0 +1,35 @@
+{
+  "n": 200,
+  "seed": 42,
+  "exclude_sources": [],
+  "embedding_model": "bge-m3",
+  "acidity": {
+    "n": 200,
+    "exact": 0.415,
+    "within1": 0.76
+  },
+  "body": {
+    "n": 200,
+    "exact": 0.315,
+    "within1": 0.67
+  },
+  "sweetness": {
+    "n": 98,
+    "exact": 0.449,
+    "within1": 0.8878
+  },
+  "acidity_within1_by_confidence": {
+    "medium": {
+      "n": 140,
+      "within1": 0.7714
+    },
+    "high": {
+      "n": 48,
+      "within1": 0.7708
+    },
+    "low": {
+      "n": 12,
+      "within1": 0.5833
+    }
+  }
+}

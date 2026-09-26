@@ -180,9 +180,10 @@ class Repo:
         return json.loads(r["e"]) if r and r["e"] else None
 
     def neighbors(self, vec: list[float], k: int = 10, origin: str | None = None, process: str | None = None,
-                  exclude_id: int | None = None) -> list[Neighbor]:
+                  exclude_id: int | None = None, exclude_sources: tuple[str, ...] = ()) -> list[Neighbor]:
         v = to_vector_literal(vec)
-        base = " AND id <> %(ex)s" if exclude_id is not None else ""
+        base = ((" AND id <> %(ex)s" if exclude_id is not None else "")
+                + (" AND source <> ALL(%(xs)s)" if exclude_sources else ""))
 
         def run(extra: str) -> list[Neighbor]:
             with self.pool.connection() as conn, conn.transaction():
@@ -192,7 +193,8 @@ class Repo:
                     "SELECT id, name, acidity, body, sweetness, flavor_tags, 1 - (embedding <=> %(v)s::vector) AS sim"
                     f" FROM coffees WHERE embedding IS NOT NULL{base}{extra}"
                     " ORDER BY embedding <=> %(v)s::vector LIMIT %(k)s",
-                    {"v": v, "k": k, "ex": exclude_id, "o": origin, "p": process}).fetchall()
+                    {"v": v, "k": k, "ex": exclude_id, "o": origin, "p": process,
+                     "xs": list(exclude_sources)}).fetchall()
             return [Neighbor(r["id"], r["name"], float(r["sim"]), r["acidity"], r["body"], r["sweetness"],
                              tuple(r["flavor_tags"] or ())) for r in sorted(rows, key=lambda r: -r["sim"])]
 
@@ -234,8 +236,21 @@ class Repo:
                          " AND sweetness IS NOT NULL ORDER BY id")
         return [_coffee_item(r) for r in random.Random(seed).sample(rows, min(n, len(rows)))]
 
-    def random_coffee_ids_for_loo(self, n: int, seed: int) -> list[int]:
+    def random_coffee_ids_for_loo(self, n: int, seed: int, exclude_sources: tuple[str, ...] = ()) -> list[int]:
+        extra = " AND source <> ALL(%(xs)s)" if exclude_sources else ""
         rows = self._all("SELECT id FROM coffees WHERE embedding IS NOT NULL AND acidity IS NOT NULL"
-                         " AND body IS NOT NULL ORDER BY id")
+                         f" AND body IS NOT NULL{extra} ORDER BY id", {"xs": list(exclude_sources)})
         ids = [r["id"] for r in rows]
         return random.Random(seed).sample(ids, min(n, len(ids)))
+
+    def coverage_counts(self, exclude_sources: tuple[str, ...] = ()) -> dict:
+        extra = " WHERE source <> ALL(%(xs)s)" if exclude_sources else ""
+        row = self._one(
+            "SELECT count(*) AS total,"
+            " count(*) FILTER (WHERE embedding IS NOT NULL) AS with_embedding,"
+            " count(*) FILTER (WHERE cardinality(flavor_tags) > 0) AS with_flavor_tags,"
+            " count(*) FILTER (WHERE acidity IS NOT NULL) AS with_acidity,"
+            " count(*) FILTER (WHERE is_decaf) AS decaf,"
+            " count(*) FILTER (WHERE is_decaf AND cardinality(flavor_tags) > 0) AS decaf_with_flavor_tags"
+            f" FROM coffees{extra}", {"xs": list(exclude_sources)})
+        return dict(row)
