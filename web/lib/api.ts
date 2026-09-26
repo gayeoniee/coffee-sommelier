@@ -17,11 +17,22 @@ async function errorFrom(r: Response): Promise<ApiError> {
   return new ApiError(r.status, msg);
 }
 
-async function req<T>(path: string, init?: RequestInit): Promise<T> {
+// A guest session cookie can be missing or expired (private browsing, cleared cookies, a stale
+// tab). Rather than surface a raw 401, make a fresh /session once and retry the request once.
+async function recoverSession(): Promise<void> {
+  const r = await fetch("/api/session", { method: "POST", headers: { "content-type": "application/json" } });
+  if (!r.ok) throw await errorFrom(r);
+}
+
+async function req<T>(path: string, init?: RequestInit, retried = false): Promise<T> {
   const r = await fetch(`/api${path}`, {
     ...init,
     headers: { "content-type": "application/json", ...(init?.headers ?? {}) },
   });
+  if (r.status === 401 && !retried) {
+    await recoverSession();
+    return req<T>(path, init, true);
+  }
   if (!r.ok) throw await errorFrom(r);
   return (await r.json()) as T;
 }
@@ -61,13 +72,22 @@ export const api = {
     req<{ summary: string; changes: string[]; profile: Profile }>("/tastings", { method: "POST", body: JSON.stringify(body) }),
 };
 
-export async function openStream(path: "/recommend" | "/analyze", body: unknown, signal?: AbortSignal) {
+export async function openStream(
+  path: "/recommend" | "/analyze",
+  body: unknown,
+  signal?: AbortSignal,
+  retried = false,
+): Promise<ReadableStream<Uint8Array>> {
   const r = await fetch(`/api${path}`, {
     method: "POST",
     body: JSON.stringify(body),
     headers: { "content-type": "application/json", accept: "text/event-stream" },
     signal,
   });
+  if (r.status === 401 && !retried) {
+    await recoverSession();
+    return openStream(path, body, signal, true);
+  }
   if (!r.ok || !r.body) throw await errorFrom(r);
   return r.body;
 }

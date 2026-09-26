@@ -1,15 +1,28 @@
+// Deploy targets (e.g. serverless) can leave API_URL unset; fall back to localhost but say so once at boot.
+if (!process.env.API_URL && process.env.NODE_ENV === "production") {
+  console.error("API_URL이 설정되지 않았어요 — http://localhost:8000로 기본 동작해요");
+}
+
 const API_URL = process.env.API_URL ?? "http://localhost:8000";
 const FORWARD_REQUEST = ["content-type", "cookie", "accept"];
 const FORWARD_RESPONSE = ["content-type", "cache-control"];
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+export const maxDuration = 60;
+
+// Exported for tests: a trailing slash on API_URL (easy to leave in a deploy env var) must not
+// produce a double slash before the forwarded path.
+export function targetUrl(base: string, path: string[], search: string): string {
+  return `${base.replace(/\/+$/, "")}/${path.map(encodeURIComponent).join("/")}${search}`;
+}
 
 type Ctx = { params: Promise<{ path: string[] }> };
 
 async function forward(req: Request, { params }: Ctx): Promise<Response> {
   const { path } = await params;
   const url = new URL(req.url);
-  const target = `${API_URL}/${path.map(encodeURIComponent).join("/")}${url.search}`;
+  const target = targetUrl(API_URL, path, url.search);
   const headers = new Headers();
   for (const h of FORWARD_REQUEST) {
     const v = req.headers.get(h);

@@ -1,10 +1,41 @@
 // @vitest-environment node
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { GET, POST } from "@/app/api/[...path]/route";
+import { GET, POST, targetUrl } from "@/app/api/[...path]/route";
 
 const ctx = (path: string[]) => ({ params: Promise.resolve({ path }) });
 
 afterEach(() => vi.unstubAllGlobals());
+
+describe("targetUrl", () => {
+  it("strips a trailing slash from the base so the path never gets a double slash", () => {
+    expect(targetUrl("http://localhost:8000/", ["me"], "")).toBe("http://localhost:8000/me");
+    expect(targetUrl("http://localhost:8000///", ["recommend"], "?x=1")).toBe("http://localhost:8000/recommend?x=1");
+    expect(targetUrl("http://localhost:8000", ["me"], "")).toBe("http://localhost:8000/me");
+  });
+});
+
+describe("API_URL missing in production", () => {
+  it("logs once and still defaults to localhost", async () => {
+    vi.resetModules();
+    const hadApiUrl = "API_URL" in process.env;
+    const prevApiUrl = process.env.API_URL;
+    delete process.env.API_URL;
+    vi.stubEnv("NODE_ENV", "production");
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const fetchMock = vi.fn().mockResolvedValue(new Response("{}", { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    try {
+      const mod = await import("@/app/api/[...path]/route");
+      await mod.GET(new Request("http://localhost:3000/api/me"), ctx(["me"]));
+      expect(errorSpy).toHaveBeenCalledTimes(1);
+      expect(fetchMock.mock.calls[0][0]).toBe("http://localhost:8000/me");
+    } finally {
+      errorSpy.mockRestore();
+      vi.unstubAllEnvs();
+      if (hadApiUrl) process.env.API_URL = prevApiUrl;
+    }
+  });
+});
 
 describe("api proxy", () => {
   it("forwards path, query, cookie and body; returns set-cookie and streamed body", async () => {
