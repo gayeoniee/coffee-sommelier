@@ -89,7 +89,8 @@ def card(item: Item, score: float, template: str, violation: str | None = None,
          prediction: Prediction | None = None, tag_ko: dict[str, str] | None = None) -> dict:
     c = {"key": item.key, "name": item.name, "brand": item.brand, "score": round(score * 100),
          "source": item.source, "confidence": item.confidence, "acidity": item.acidity, "body": item.body,
-         "sweetness": item.sweetness, "tags": list(item.tags), "tags_ko": [(tag_ko or {}).get(t.lower(), t) for t in item.tags], "is_decaf": item.is_decaf,
+         "sweetness": item.sweetness, "tags": list(item.tags),
+         "tags_ko": [(tag_ko or {}).get(t.lower(), t) for t in item.tags], "is_decaf": item.is_decaf,
          "order_decaf": item.order_decaf, "decaf_surcharge_krw": item.decaf_surcharge_krw,
          "caffeine_mg": item.caffeine_mg, "is_milk": item.is_milk, "coffee_id": item.coffee_id,
          "menu_item_id": item.menu_item_id, "violation": violation, "template": template}
