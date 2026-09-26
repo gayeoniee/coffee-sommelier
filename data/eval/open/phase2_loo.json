@@ -1,0 +1,45 @@
+{
+  "n": 200,
+  "seed": 42,
+  "exclude_sources": [],
+  "target_sources": "all non-excluded sources",
+  "targets": 200,
+  "target_ids_sha1": "befbe183b5fab3d59f50887988ee19cf41d16fff",
+  "neighbor_source_share": {
+    "cqi": 0.9645,
+    "roasterdb": 0.028,
+    "roasters_kr": 0.006,
+    "shopify": 0.0015
+  },
+  "predictions_with_tags": 0.04,
+  "embedding_model": "nvidia/nemotron-3-embed-1b",
+  "acidity": {
+    "n": 198,
+    "exact": 0.2626,
+    "within1": 0.5152
+  },
+  "body": {
+    "n": 198,
+    "exact": 0.2828,
+    "within1": 0.596
+  },
+  "sweetness": {
+    "n": 8,
+    "exact": 0.5,
+    "within1": 0.875
+  },
+  "acidity_within1_by_confidence": {
+    "low": {
+      "n": 65,
+      "within1": 0.3846
+    },
+    "high": {
+      "n": 31,
+      "within1": 0.7097
+    },
+    "medium": {
+      "n": 102,
+      "within1": 0.5392
+    }
+  }
+}

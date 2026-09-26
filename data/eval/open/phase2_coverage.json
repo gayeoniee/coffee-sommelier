@@ -1,0 +1,18 @@
+{
+  "exclude_sources": [],
+  "total": 1762,
+  "with_embedding": 1762,
+  "with_flavor_tags": 148,
+  "with_acidity": 1603,
+  "decaf": 13,
+  "decaf_with_flavor_tags": 9,
+  "menu_items_by_brand": {
+    "brand:coffeebean": 42,
+    "brand:compose": 42,
+    "brand:hollys": 27,
+    "brand:mega": 119,
+    "brand:paik": 114,
+    "brand:paulbassett": 56,
+    "brand:starbucks": 71
+  }
+}

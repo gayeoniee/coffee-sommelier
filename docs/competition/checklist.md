@@ -26,7 +26,7 @@
   4. GitHub·배포 URL을 레시피 본문에 넣어도 되는지
 
 ## 데이터·코드 정리 (10.1 ~ 10.10)
-- [ ] **coffeereview 없는 DB 재구축** — 평가만이 아니라 앱이 실제로 쓰는 DB에서도 빠져 있어야 한다(지금은 평가 코드의 `exclude_sources`로만 빠짐). 초안 6장의 명령으로 깨끗한 RAW_DIR에서 다시 만든다.
+- [x] **coffeereview 없는 DB 재구축** — 평가만이 아니라 앱이 실제로 쓰는 DB에서도 빠져 있어야 한다(지금은 평가 코드의 `exclude_sources`로만 빠짐). 초안 6장의 명령으로 깨끗한 RAW_DIR에서 다시 만든다. `scripts/competition/build_open_db.sh`로 로컬 docker Postgres에 `coffee_open` 구축 완료: coffees 1,762(cqi 1546·roasterdb 100·roasters_kr 107·shopify 9), coffeereview 0, menu_items 471, violations 0. `violations`·`loo`·`coverage`·`convergence` 결과는 `data/eval/open/*.json`(`explain_quality`·`bench`는 다른 브랜치의 프롬프트 변경 이후로 보류).
 - [ ] 재구축한 DB로 `uv run python -m app.eval violations compare3 convergence bench` 다시 실행하고, 초안의 수치가 달라졌으면 JSON 값으로 고친다(추측으로 고치지 않기)
 - [ ] 향미 태깅 정답셋을 오픈 데이터에서 다시 뽑아 평가(지금 정답셋은 coffeereview가 섞인 표본이라 제출본 결과로 쓸 수 없음) — 선택
 - [ ] (권장) 공공데이터 1순위: 공공데이터포털에서 **식약처_식품영양성분DB정보 API 활용신청**(개발계정 자동승인) → 프랜차이즈 음료의 `카페인(㎎)`(AMT_NUM100) 값이 실제로 있는지 확인 → 있으면 나머지 7개 브랜드의 카페인 보강과 교차검증 수치를 레시피에 추가

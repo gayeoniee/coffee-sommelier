@@ -210,6 +210,7 @@ __marimo__/
 # coffee pipeline outputs
 data/raw/
 data/normalized/
+data/normalized_open/
 data/enriched/
 data/embedded/
 data/reports/
