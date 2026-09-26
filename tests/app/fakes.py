@@ -43,6 +43,12 @@ class FakeRepo:
                      tags=("caramelized",), decaf_option=False, caffeine_mg=155, brand="스타벅스", menu_item_id=13,
                      confidence="medium"),
             ],
+            "brand:tw": [                       # menu-less brand: synthetic items, no menu_item_id
+                Item(key="brand:tw:아메리카노", name="아메리카노", source="brand_bean", acidity=2, body=4, sweetness=2,
+                     tags=("chocolate",), decaf_option=True, brand="투썸", confidence="medium"),
+                Item(key="brand:tw:카페라떼", name="카페라떼", source="brand_bean", acidity=2, body=4, sweetness=2,
+                     tags=("chocolate",), decaf_option=True, is_milk=True, brand="투썸", confidence="medium"),
+            ],
             "brand:nodecaf": [Item(key="menu:20", name="에스프레소", source="brand_bean", acidity=3, body=4,
                                    sweetness=2, caffeine_mg=120, brand="X", menu_item_id=20, confidence="medium")],
         }

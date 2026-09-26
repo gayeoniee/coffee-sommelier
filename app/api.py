@@ -1,8 +1,9 @@
+import asyncio
 import json
 import logging
-from typing import Literal
+from typing import Annotated, Literal
 
-from fastapi import Depends, FastAPI, HTTPException, Request, Response
+from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field, model_validator
@@ -52,11 +53,16 @@ class PredictedIn(BaseModel):
     acidity: float | None = None
     body: float | None = None
     sweetness: float | None = None
-    tags: list[str] = Field(default_factory=list)
+    tags: list[Annotated[str, Field(max_length=40)]] = Field(default_factory=list, max_length=10)
     is_decaf: bool = False
 
 
 class TastingIn(BaseModel):
+    """Exactly one target: a DB coffee, a scraped menu item, or free text.
+
+    Recommend cards of brands without scraped menus have menu_item_id = None. To log one, the client sends
+    input_text = f"{card.brand} {card.name}" and predicted = the card's acidity/body/sweetness/tags/is_decaf.
+    """
     coffee_id: int | None = None
     menu_item_id: int | None = None
     input_text: str | None = Field(default=None, max_length=300)
@@ -96,7 +102,7 @@ def create_app(repo=None, deps=None, cookie_secure: bool | None = None) -> FastA
             raise HTTPException(401, "세션이 없어요. /session을 먼저 호출하세요")
         return uid
 
-    def profile_of(uid: str) -> Profile:
+    def profile_of(uid: str) -> Profile:            # sync: call via asyncio.to_thread from async endpoints
         p = repo.get_profile(uid)
         if p is None:
             raise HTTPException(409, "온보딩이 필요해요")
@@ -140,6 +146,8 @@ def create_app(repo=None, deps=None, cookie_secure: bool | None = None) -> FastA
     def put_profile(body: ProfileIn, uid: str = Depends(current_user)):
         old = repo.get_profile(uid)
         weights = dict(old.flavor_weights) if old else {}
+        # the chips replace the previous likes; learned dislikes (negative weights) stay
+        weights.update({c: 0.0 for c, w in weights.items() if w > 0 and c not in body.flavor_likes})
         weights.update({c: max(weights.get(c, 0.0), 0.5) for c in body.flavor_likes})
         p = Profile(caffeine_rule=body.caffeine_rule, milk_ok=body.milk_ok, acidity=body.acidity, body=body.body,
                     sweetness=body.sweetness, flavor_weights=weights, n_updates=old.n_updates if old else 0)
@@ -153,10 +161,12 @@ def create_app(repo=None, deps=None, cookie_secure: bool | None = None) -> FastA
         return repo.sample_coffees()
 
     @app.post("/onboarding/samples")
-    async def post_samples(body: list[SampleIn], uid: str = Depends(current_user)):
-        p = profile_of(uid)
+    async def post_samples(body: Annotated[list[SampleIn], Field(max_length=3)], uid: str = Depends(current_user)):
+        p = await asyncio.to_thread(profile_of, uid)
+        if p.n_updates > 0:
+            raise HTTPException(409, "이미 온보딩을 마쳤어요")
         for s in body:
-            item = repo.get_coffee(s.coffee_id)
+            item = await asyncio.to_thread(repo.get_coffee, s.coffee_id)
             if item is None:
                 raise HTTPException(404, f"원두 {s.coffee_id}를 찾을 수 없어요")
             out = await graphs["log"].ainvoke({"user_id": uid, "profile": p, "item": item,
@@ -170,7 +180,7 @@ def create_app(repo=None, deps=None, cookie_secure: bool | None = None) -> FastA
         return repo.list_brands()
 
     @app.get("/coffees/search")
-    def search(q: str = "", uid: str = Depends(current_user)):
+    def search(q: str = Query("", max_length=100), uid: str = Depends(current_user)):
         return repo.search_coffees(q)
 
     @app.post("/recommend")
@@ -178,18 +188,22 @@ def create_app(repo=None, deps=None, cookie_secure: bool | None = None) -> FastA
         return stream(graphs["recommend"], {"brand_key": body.brand_key, "profile": profile_of(uid)}, "recommend")
 
     @app.post("/analyze")
-    def analyze(body: AnalyzeIn, uid: str = Depends(current_user)):
-        return stream(graphs["analyze"], {"text": body.text, "coffee_id": body.coffee_id,
-                                          "profile": profile_of(uid)}, "analyze")
+    async def analyze(body: AnalyzeIn, uid: str = Depends(current_user)):
+        p = await asyncio.to_thread(profile_of, uid)
+        if body.coffee_id is not None and await asyncio.to_thread(repo.get_coffee, body.coffee_id) is None:
+            raise HTTPException(404, f"원두 {body.coffee_id}를 찾을 수 없어요")
+        return stream(graphs["analyze"], {"text": body.text, "coffee_id": body.coffee_id, "profile": p}, "analyze")
 
     @app.post("/tastings")
     async def tastings(body: TastingIn, uid: str = Depends(current_user)):
-        p = profile_of(uid)
+        p = await asyncio.to_thread(profile_of, uid)
         rule = "decaf_only" if body.order_decaf else p.caffeine_rule
         if body.coffee_id is not None:
-            item, target = repo.get_coffee(body.coffee_id), {"coffee_id": body.coffee_id}
+            item = await asyncio.to_thread(repo.get_coffee, body.coffee_id)
+            target = {"coffee_id": body.coffee_id}
         elif body.menu_item_id is not None:
-            item, target = repo.get_menu_item(body.menu_item_id, rule), {"menu_item_id": body.menu_item_id}
+            item = await asyncio.to_thread(repo.get_menu_item, body.menu_item_id, rule)
+            target = {"menu_item_id": body.menu_item_id}
         else:
             pred = body.predicted or PredictedIn()
             item = Item(key="input", name=body.input_text, source="predicted", acidity=pred.acidity, body=pred.body,

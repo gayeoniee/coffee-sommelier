@@ -18,4 +18,7 @@ def cookie_samesite() -> str:
 
 
 def allowed_origins() -> list[str]:
-    return [o.strip() for o in os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",") if o.strip()]
+    origins = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",") if o.strip()]
+    if "*" in origins:
+        raise ValueError("ALLOWED_ORIGINS에 '*'는 쓸 수 없어요 (쿠키 인증과 함께 쓰면 안전하지 않음)")
+    return origins
