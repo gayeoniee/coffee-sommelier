@@ -7,7 +7,7 @@
 | 단계 | 내용 | 상태 |
 |---|---|---|
 | **1. 데이터 기반** | 수집 → 정규화 → 구조화(규칙 + 로컬 LLM) → 임베딩 → pgvector 적재, 품질 리포트, 태깅 평가 | ✅ 완료 |
-| 2. 추천 + 기록 | 취향 온보딩, 조건 필터 + 취향 점수 추천, 음용 기록, PWA | 🚧 백엔드 완료 (화면·배포 진행 예정) |
+| 2. 추천 + 기록 | 취향 온보딩, 조건 필터 + 취향 점수 추천, 음용 기록, PWA | ✅ 완료 (배포는 Plan 3) |
 | 3. 스캔 + 추론 + 평가 | 원두카드/메뉴 사진 Vision 추출, 근거 기반 향미 예측, 모델 비교 | 예정 |
 | 4. 에이전트 | 멀티턴 대화("아까 거보다 산미 센 걸로") | 예정 |
 
@@ -140,6 +140,20 @@ uv run pytest -q                                 # 114 tests (DB 테스트 포�
 ```
 
 `run --only <stage>`로 단계별 실행, `--limit N`으로 LLM 호출 수 제한, `--retry-failed`로 실패 행 재시도. enrich·embed는 캐시로 **중단 후 이어서** 실행된다(실제로 컴퓨터 재시작·메모리 부족으로 여러 번 끊겼지만 한 건도 잃지 않았다).
+
+### 웹앱 (2단계 화면)
+
+| 온보딩 | 추천 결과 | 기록 | 내 취향 |
+|---|---|---|---|
+| ![](docs/screenshots/onboarding.png) | ![](docs/screenshots/home.png) | ![](docs/screenshots/log.png) | ![](docs/screenshots/me.png) |
+
+```bash
+COOKIE_SECURE=false uv run uvicorn app.api:get_app --factory --port 8000   # 백엔드
+cd web && cp .env.example .env.local && npm install && npm run dev            # http://localhost:3000
+npm test          # 단위 테스트 (Vitest)
+npm run e2e       # 온보딩→추천→기록 스모크 (백엔드·DB 실행 필요)
+```
+브라우저는 같은 출처의 `/api/*`만 호출하고 Next Route Handler가 FastAPI로 쿠키·SSE를 그대로 중계한다(배포 시 교차 사이트 쿠키 문제 회피).
 
 ## 아키텍처
 
