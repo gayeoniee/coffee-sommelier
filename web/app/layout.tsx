@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import VariantBanner from "@/components/VariantBanner";
 
 export const metadata: Metadata = {
   title: "커피 소믈리에",
@@ -12,6 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko">
       <body className="min-h-dvh font-sans antialiased">
+        <VariantBanner />
         <main className="mx-auto min-h-dvh max-w-md px-4 pb-16 pt-6">{children}</main>
       </body>
     </html>

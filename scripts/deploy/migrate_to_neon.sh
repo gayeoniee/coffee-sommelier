@@ -12,7 +12,10 @@
 #
 # Options (env):
 #   SRC_CONTAINER   local DB container (default: the running pgvector/pgvector:pg17 container publishing 5432)
-#   SRC_DB, SRC_USER  (default coffee / coffee)
+#   SRC_DB, SRC_USER  (default coffee / coffee). For the competition open-data variant, point this at the
+#                     local open-data DB (SRC_DB=coffee_open, built by scripts/competition/build_open_db.sh)
+#                     while NEON_DATABASE_URL targets Neon's own coffee_open database — deploy_all.sh
+#                     VARIANT=open sets both automatically.
 #   INCLUDE_REVIEWS=1  also copy reviews + enrich_log data
 #   RESET=1         target already has tables: DROP and recreate them. Destroys production user data!
 set -euo pipefail
