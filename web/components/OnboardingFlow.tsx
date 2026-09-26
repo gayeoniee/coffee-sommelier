@@ -11,14 +11,39 @@ export function OnboardingFlow({ redo }: { redo: boolean }) {
   const lastStep = redo ? 2 : 3;
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState<OnboardingDraft>(defaultDraft);
+  const [loadingProfile, setLoadingProfile] = useState(redo);
   const [samples, setSamples] = useState<Sample[]>([]);
   const [choices, setChoices] = useState<Record<number, boolean | undefined>>({});
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Redo starts from the CURRENT profile, not the defaults — otherwise saving without any
+  // edits would silently reset sliders/likes the user already set.
+  useEffect(() => {
+    if (!redo) return;
+    let alive = true;
+    api.me()
+      .then((m) => {
+        if (!alive || !m.profile) return;
+        const p = m.profile;
+        setDraft({
+          caffeine_rule: p.caffeine_rule,
+          milk_ok: p.milk_ok,
+          acidity: p.acidity,
+          body: p.body,
+          sweetness: p.sweetness,
+          likes: CHIPS.filter((c) => (p.flavor_weights[c.key] ?? 0) > 0.2).map((c) => c.key),
+        });
+      })
+      .finally(() => alive && setLoadingProfile(false));
+    return () => { alive = false; };
+  }, [redo]);
+
   useEffect(() => {
     if (step === 3) api.samples().then(setSamples).catch(() => setSamples([]));
   }, [step]);
+
+  if (loadingProfile) return <p className="text-roast">불러오는 중…</p>;
 
   async function finish() {
     setBusy(true);
