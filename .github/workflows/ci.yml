@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      # tests/conftest.py creates coffee_test through the "coffee" database (DB tests skip without Postgres)
+      db:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_USER: coffee
+          POSTGRES_PASSWORD: coffee
+          POSTGRES_DB: coffee
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U coffee"
+          --health-interval 5s
+          --health-retries 10
+    env:
+      DATABASE_URL_TEST: postgresql://coffee:coffee@localhost:5432/coffee_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.3"
+          enable-cache: true
+      - run: uv sync --frozen
+      - run: uv run pytest -q
+
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t coffee-api .
+      # the API must import with only its runtime deps (no pipeline group: pandas, bs4, ...)
+      - run: docker run --rm coffee-api python -c "import app.api, sys; assert 'pandas' not in sys.modules"
+
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      - run: npm run build

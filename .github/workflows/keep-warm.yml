@@ -1,0 +1,26 @@
+# Keeps the Render free backend awake during Korean daytime so the first visitor skips the 30-60 s cold start.
+#
+# On/off without editing this file:
+#   on:  gh variable set KEEP_WARM_URL --body https://<service>.onrender.com/health
+#   off: gh variable delete KEEP_WARM_URL        (or: gh workflow disable keep-warm.yml)
+#
+# Budget: 08:00-24:00 KST = 16 h/day, about 500 h/month of Render's 750 free instance hours (one service).
+# Only /health is pinged, so the Neon database still scales to zero when nobody uses the app.
+# GitHub may delay scheduled runs by several minutes and pauses them after 60 days without repo activity.
+name: keep-warm
+
+on:
+  schedule:
+    - cron: "*/14 23 * * *"     # 08:00-08:59 KST
+    - cron: "*/14 0-14 * * *"   # 09:00-23:59 KST
+  workflow_dispatch:
+
+jobs:
+  ping:
+    if: ${{ vars.KEEP_WARM_URL != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - run: curl -fsS --retry 3 --retry-delay 20 --max-time 90 "$URL"
+        env:
+          URL: ${{ vars.KEEP_WARM_URL }}
