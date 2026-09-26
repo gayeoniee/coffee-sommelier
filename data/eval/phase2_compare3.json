@@ -1,0 +1,432 @@
+{
+  "variants": {
+    "full": {
+      "exclude_sources": [],
+      "coverage": {
+        "total": 9155,
+        "with_embedding": 9155,
+        "with_flavor_tags": 7534,
+        "with_acidity": 7868,
+        "decaf": 168,
+        "decaf_with_flavor_tags": 164
+      },
+      "loo": {
+        "n": 200,
+        "seed": 42,
+        "exclude_sources": [],
+        "target_sources": [
+          "cqi"
+        ],
+        "targets": 200,
+        "target_ids_sha1": "d652320c4072789d0291eebd9d8a1605e1a72d2b",
+        "neighbor_source_share": {
+          "cqi": 0.971,
+          "coffeereview_kaggle": 0.025,
+          "roasters_kr": 0.0025,
+          "roasterdb": 0.0015
+        },
+        "predictions_with_tags": 0.025,
+        "embedding_model": "bge-m3",
+        "acidity": {
+          "n": 200,
+          "exact": 0.23,
+          "within1": 0.49
+        },
+        "body": {
+          "n": 200,
+          "exact": 0.255,
+          "within1": 0.525
+        },
+        "sweetness": {
+          "n": 0,
+          "exact": null,
+          "within1": null
+        },
+        "acidity_within1_by_confidence": {
+          "low": {
+            "n": 75,
+            "within1": 0.4533
+          },
+          "medium": {
+            "n": 114,
+            "within1": 0.4825
+          },
+          "high": {
+            "n": 11,
+            "within1": 0.8182
+          }
+        }
+      },
+      "decaf_probe": {
+        "persona": "디카페인+산미",
+        "candidates": 168,
+        "with_evidence": 164,
+        "by_source": {
+          "coffeereview_kaggle": 155,
+          "roasters_kr": 7,
+          "roasterdb": 5,
+          "shopify": 1
+        },
+        "top": [
+          {
+            "name": "Decaf EA Ethiopia",
+            "roaster": "Ceremony Coffee Roasters",
+            "source": "roasterdb",
+            "score": 0.9036,
+            "acidity": 4,
+            "body": 3,
+            "sweetness": 3,
+            "tags": [
+              "cherry"
+            ]
+          },
+          {
+            "name": "House Blend Decaf",
+            "roaster": "San Alto/Oasis Coffee",
+            "source": "coffeereview_kaggle",
+            "score": 0.878,
+            "acidity": 4,
+            "body": 3,
+            "sweetness": 3,
+            "tags": [
+              "floral"
+            ]
+          },
+          {
+            "name": "[골드문트] [디카페인] 에티오피아 예가체프 할로 베리티 내추럴",
+            "roaster": "커피 리브레",
+            "source": "roasters_kr",
+            "score": 0.8777,
+            "acidity": 4,
+            "body": 3,
+            "sweetness": 4,
+            "tags": [
+              "floral",
+              "peach",
+              "grape",
+              "caramelized"
+            ]
+          },
+          {
+            "name": "Decaf Espresso, Costa Rica La Lapa",
+            "roaster": "Terroir Coffee",
+            "source": "coffeereview_kaggle",
+            "score": 0.8626,
+            "acidity": 3,
+            "body": 3,
+            "sweetness": 3,
+            "tags": [
+              "berry",
+              "floral",
+              "chocolate"
+            ]
+          },
+          {
+            "name": "Donut House Decaf (K-Cup)",
+            "roaster": "Green Mountain Coffee",
+            "source": "coffeereview_kaggle",
+            "score": 0.8411,
+            "acidity": null,
+            "body": 3,
+            "sweetness": 2,
+            "tags": [
+              "raisin"
+            ]
+          }
+        ]
+      }
+    },
+    "open": {
+      "exclude_sources": [
+        "coffeereview_kaggle",
+        "roasters_kr"
+      ],
+      "coverage": {
+        "total": 1655,
+        "with_embedding": 1655,
+        "with_flavor_tags": 109,
+        "with_acidity": 1580,
+        "decaf": 6,
+        "decaf_with_flavor_tags": 6
+      },
+      "loo": {
+        "n": 200,
+        "seed": 42,
+        "exclude_sources": [
+          "coffeereview_kaggle",
+          "roasters_kr"
+        ],
+        "target_sources": [
+          "cqi"
+        ],
+        "targets": 200,
+        "target_ids_sha1": "d652320c4072789d0291eebd9d8a1605e1a72d2b",
+        "neighbor_source_share": {
+          "cqi": 0.9955,
+          "roasterdb": 0.0045
+        },
+        "predictions_with_tags": 0.005,
+        "embedding_model": "bge-m3",
+        "acidity": {
+          "n": 200,
+          "exact": 0.235,
+          "within1": 0.495
+        },
+        "body": {
+          "n": 200,
+          "exact": 0.27,
+          "within1": 0.54
+        },
+        "sweetness": {
+          "n": 0,
+          "exact": null,
+          "within1": null
+        },
+        "acidity_within1_by_confidence": {
+          "low": {
+            "n": 78,
+            "within1": 0.4231
+          },
+          "medium": {
+            "n": 113,
+            "within1": 0.5044
+          },
+          "high": {
+            "n": 9,
+            "within1": 1.0
+          }
+        }
+      },
+      "decaf_probe": {
+        "persona": "디카페인+산미",
+        "candidates": 6,
+        "with_evidence": 6,
+        "by_source": {
+          "roasterdb": 5,
+          "shopify": 1
+        },
+        "top": [
+          {
+            "name": "Decaf EA Ethiopia",
+            "roaster": "Ceremony Coffee Roasters",
+            "source": "roasterdb",
+            "score": 0.9036,
+            "acidity": 4,
+            "body": 3,
+            "sweetness": 3,
+            "tags": [
+              "cherry"
+            ]
+          },
+          {
+            "name": "Deco Decaf Blend",
+            "roaster": "Victrola Coffee Roasters",
+            "source": "roasterdb",
+            "score": 0.7716,
+            "acidity": null,
+            "body": null,
+            "sweetness": null,
+            "tags": [
+              "strawberry",
+              "milk chocolate",
+              "chocolate",
+              "graham cracker"
+            ]
+          },
+          {
+            "name": "Sans Decaf",
+            "roaster": "Mission Coffee Works",
+            "source": "roasterdb",
+            "score": 0.7716,
+            "acidity": null,
+            "body": null,
+            "sweetness": null,
+            "tags": [
+              "peach",
+              "hazelnut"
+            ]
+          },
+          {
+            "name": "Decaf El Buho 250g Decaf Coffee",
+            "roaster": "Small Batch Coffee",
+            "source": "roasterdb",
+            "score": 0.7387,
+            "acidity": null,
+            "body": null,
+            "sweetness": 4,
+            "tags": [
+              "grape",
+              "vanilla",
+              "malt"
+            ]
+          },
+          {
+            "name": "나이트 라이트 디카페인",
+            "roaster": "Blue Bottle Coffee",
+            "source": "shopify",
+            "score": 0.5375,
+            "acidity": null,
+            "body": 4,
+            "sweetness": 5,
+            "tags": [
+              "caramelized",
+              "molasses",
+              "sweet aromatics"
+            ]
+          }
+        ]
+      }
+    },
+    "open_plus": {
+      "exclude_sources": [
+        "coffeereview_kaggle"
+      ],
+      "coverage": {
+        "total": 1762,
+        "with_embedding": 1762,
+        "with_flavor_tags": 148,
+        "with_acidity": 1603,
+        "decaf": 13,
+        "decaf_with_flavor_tags": 9
+      },
+      "loo": {
+        "n": 200,
+        "seed": 42,
+        "exclude_sources": [
+          "coffeereview_kaggle"
+        ],
+        "target_sources": [
+          "cqi"
+        ],
+        "targets": 200,
+        "target_ids_sha1": "d652320c4072789d0291eebd9d8a1605e1a72d2b",
+        "neighbor_source_share": {
+          "cqi": 0.9915,
+          "roasters_kr": 0.0045,
+          "roasterdb": 0.004
+        },
+        "predictions_with_tags": 0.005,
+        "embedding_model": "bge-m3",
+        "acidity": {
+          "n": 199,
+          "exact": 0.2362,
+          "within1": 0.4975
+        },
+        "body": {
+          "n": 199,
+          "exact": 0.2663,
+          "within1": 0.5377
+        },
+        "sweetness": {
+          "n": 0,
+          "exact": null,
+          "within1": null
+        },
+        "acidity_within1_by_confidence": {
+          "low": {
+            "n": 77,
+            "within1": 0.4286
+          },
+          "medium": {
+            "n": 112,
+            "within1": 0.5
+          },
+          "high": {
+            "n": 10,
+            "within1": 1.0
+          }
+        }
+      },
+      "decaf_probe": {
+        "persona": "디카페인+산미",
+        "candidates": 13,
+        "with_evidence": 9,
+        "by_source": {
+          "roasters_kr": 7,
+          "roasterdb": 5,
+          "shopify": 1
+        },
+        "top": [
+          {
+            "name": "Decaf EA Ethiopia",
+            "roaster": "Ceremony Coffee Roasters",
+            "source": "roasterdb",
+            "score": 0.9036,
+            "acidity": 4,
+            "body": 3,
+            "sweetness": 3,
+            "tags": [
+              "cherry"
+            ]
+          },
+          {
+            "name": "[골드문트] [디카페인] 에티오피아 예가체프 할로 베리티 내추럴",
+            "roaster": "커피 리브레",
+            "source": "roasters_kr",
+            "score": 0.8777,
+            "acidity": 4,
+            "body": 3,
+            "sweetness": 4,
+            "tags": [
+              "floral",
+              "peach",
+              "grape",
+              "caramelized"
+            ]
+          },
+          {
+            "name": "Deco Decaf Blend",
+            "roaster": "Victrola Coffee Roasters",
+            "source": "roasterdb",
+            "score": 0.7716,
+            "acidity": null,
+            "body": null,
+            "sweetness": null,
+            "tags": [
+              "strawberry",
+              "milk chocolate",
+              "chocolate",
+              "graham cracker"
+            ]
+          },
+          {
+            "name": "Sans Decaf",
+            "roaster": "Mission Coffee Works",
+            "source": "roasterdb",
+            "score": 0.7716,
+            "acidity": null,
+            "body": null,
+            "sweetness": null,
+            "tags": [
+              "peach",
+              "hazelnut"
+            ]
+          },
+          {
+            "name": "Decaf El Buho 250g Decaf Coffee",
+            "roaster": "Small Batch Coffee",
+            "source": "roasterdb",
+            "score": 0.7387,
+            "acidity": null,
+            "body": null,
+            "sweetness": 4,
+            "tags": [
+              "grape",
+              "vanilla",
+              "malt"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "loo_targets": {
+    "sources": [
+      "cqi"
+    ],
+    "n": 200,
+    "seed": 42,
+    "why": "Held fixed across variants: open-licence beans with human-rated acidity/body (CQI cupping). Roaster beans are never targets (no human ratings; their attributes are LLM estimates from flavor note words); only the neighbour pool changes between variants. CQI has no sweetness or flavor tags, so only acidity/body accuracy is measured; predictions_with_tags shows how often the pool can suggest any flavor tags for these targets (no ground truth).",
+    "identical_across_variants": true
+  }
+}

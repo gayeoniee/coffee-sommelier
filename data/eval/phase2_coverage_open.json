@@ -1,6 +1,7 @@
 {
   "exclude_sources": [
-    "coffeereview_kaggle"
+    "coffeereview_kaggle",
+    "roasters_kr"
   ],
   "total": 1655,
   "with_embedding": 1655,

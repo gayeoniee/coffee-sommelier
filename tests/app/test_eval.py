@@ -1,6 +1,6 @@
 from dataclasses import replace
 
-from app.eval import LOO_TARGET_SOURCES, OPEN_LICENSE_EXCLUDE, VARIANTS, independent_ok, rank_decaf, violation_rate
+from app.eval import LOO_TARGET_SOURCES, NEVER_LOO_TARGETS, OPEN_LICENSE_EXCLUDE, VARIANTS, independent_ok, rank_decaf, violation_rate
 from app.models import Item, Profile
 from tests.app.fakes import FakeRepo
 
@@ -63,7 +63,7 @@ def test_variants_keep_open_comparable_and_targets_out_of_every_exclusion():
     assert set(VARIANTS["open"]) == {"coffeereview_kaggle", "roasters_kr"} and OPEN_LICENSE_EXCLUDE == VARIANTS["open"]
     assert VARIANTS["open_plus"] == ("coffeereview_kaggle",)
     assert not any(set(LOO_TARGET_SOURCES) & set(xs) for xs in VARIANTS.values())   # same targets everywhere
-    assert "roasters_kr" not in LOO_TARGET_SOURCES
+    assert "roasters_kr" not in LOO_TARGET_SOURCES and "roasters_kr" in NEVER_LOO_TARGETS
 
 
 def test_rank_decaf_counts_candidates_and_ranks_by_fit():

@@ -2,18 +2,28 @@
   "n": 200,
   "seed": 42,
   "exclude_sources": [
-    "coffeereview_kaggle"
+    "coffeereview_kaggle",
+    "roasters_kr"
   ],
+  "target_sources": "all non-excluded sources",
+  "targets": 200,
+  "target_ids_sha1": "befbe183b5fab3d59f50887988ee19cf41d16fff",
+  "neighbor_source_share": {
+    "cqi": 0.9505,
+    "roasterdb": 0.047,
+    "shopify": 0.0025
+  },
+  "predictions_with_tags": 0.05,
   "embedding_model": "bge-m3",
   "acidity": {
     "n": 196,
-    "exact": 0.2602,
-    "within1": 0.5306
+    "exact": 0.2551,
+    "within1": 0.5204
   },
   "body": {
     "n": 196,
-    "exact": 0.3112,
-    "within1": 0.5816
+    "exact": 0.2857,
+    "within1": 0.551
   },
   "sweetness": {
     "n": 9,
@@ -22,16 +32,16 @@
   },
   "acidity_within1_by_confidence": {
     "low": {
-      "n": 73,
-      "within1": 0.4384
-    },
-    "high": {
-      "n": 29,
-      "within1": 0.7931
+      "n": 74,
+      "within1": 0.4189
     },
     "medium": {
-      "n": 94,
-      "within1": 0.5213
+      "n": 108,
+      "within1": 0.5278
+    },
+    "high": {
+      "n": 14,
+      "within1": 1.0
     }
   }
 }

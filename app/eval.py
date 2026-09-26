@@ -31,6 +31,9 @@ OPEN_LICENSE_EXCLUDE = VARIANTS["open"]
 # scores). Never roaster beans (their attributes are LLM estimates from note words, not ratings) and never
 # coffeereview (not open), so the same targets exist in every variant and only the neighbour pool changes.
 LOO_TARGET_SOURCES = ("cqi",)
+# Never LOO targets in any command: facts-only roaster beans have no human ratings. Keeps the plain `loo` target
+# sample identical to the one drawn before roasters_kr was loaded.
+NEVER_LOO_TARGETS = ("roasters_kr",)
 
 PERSONAS = [
     ("디카페인+산미", Profile(caffeine_rule="decaf_only", milk_ok=True, acidity=4.5, body=2.5, sweetness=3,
@@ -92,7 +95,8 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
     by_conf: dict[str, dict] = {}
     neighbor_sources: Counter = Counter()
     with_tags = 0
-    ids = repo.random_coffee_ids_for_loo(n, seed, exclude_sources=exclude_sources, sources=target_sources)
+    not_targets = tuple(dict.fromkeys(exclude_sources + NEVER_LOO_TARGETS))
+    ids = repo.random_coffee_ids_for_loo(n, seed, exclude_sources=not_targets, sources=target_sources)
     for cid in ids:
         truth = repo.get_coffee(cid)
         near = repo.neighbors(repo.coffee_embedding(cid), k=10, exclude_id=cid, exclude_sources=exclude_sources)
