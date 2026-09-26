@@ -90,12 +90,28 @@ def violation_rate(repo) -> dict:
             "details": details}
 
 
+def _prf(tp: int, fp: int, fn: int) -> tuple[float, float, float]:
+    p = tp / (tp + fp) if (tp + fp) else 0.0
+    r = tp / (tp + fn) if (tp + fn) else 0.0
+    f1 = 2 * p * r / (p + r) if (p + r) else 0.0
+    return (p, r, f1)
+
+
+def tag_prf(truth: set, pred: set) -> tuple[float, float, float]:
+    """Precision/recall/F1 for one truth/pred tag-set pair. `loo_accuracy` sums TP/FP/FN across all targets
+    itself (micro average over the total counts) rather than averaging per-item calls to this function."""
+    return _prf(len(truth & pred), len(pred - truth), len(truth - pred))
+
+
 def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str, ...] = (),
                  target_sources: tuple[str, ...] = ()) -> dict:
+    tag_to_cat, _ = repo.taxonomy()
     stats = {a: {"n": 0, "exact": 0, "within1": 0} for a in ATTRS}
     by_conf: dict[str, dict] = {}
     neighbor_sources: Counter = Counter()
     with_tags = 0
+    tag_n = tag_tp = tag_fp = tag_fn = 0
+    cat_tp = cat_fp = cat_fn = 0
     not_targets = tuple(dict.fromkeys(exclude_sources + NEVER_LOO_TARGETS))
     ids = repo.random_coffee_ids_for_loo(n, seed, exclude_sources=not_targets, sources=target_sources)
     for cid in ids:
@@ -116,10 +132,24 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
             c = by_conf.setdefault(pred.confidence, {"n": 0, "within1": 0})
             c["n"] += 1
             c["within1"] += abs(pred.acidity - truth.acidity) <= 1
+        truth_tags = {t.lower() for t in truth.tags}
+        if truth_tags:
+            tag_n += 1
+            pred_tags = {t.lower() for t in pred.tags}
+            tag_tp += len(truth_tags & pred_tags)
+            tag_fp += len(pred_tags - truth_tags)
+            tag_fn += len(truth_tags - pred_tags)
+            truth_cats = {tag_to_cat[t] for t in truth_tags if t in tag_to_cat}
+            pred_cats = {tag_to_cat[t] for t in pred_tags if t in tag_to_cat}
+            cat_tp += len(truth_cats & pred_cats)
+            cat_fp += len(pred_cats - truth_cats)
+            cat_fn += len(truth_cats - pred_cats)
     def rate(d: dict, k: str) -> float | None:
         return round(d[k] / d["n"], 4) if d["n"] else None
 
     total_nb = sum(neighbor_sources.values())
+    tag_p, tag_r, tag_f1 = _prf(tag_tp, tag_fp, tag_fn)
+    _, _, cat_f1 = _prf(cat_tp, cat_fp, cat_fn)
     return {"n": n, "seed": seed, "exclude_sources": list(exclude_sources),
             "target_sources": list(target_sources) or "all non-excluded sources",
             "targets": len(ids), "target_ids_sha1": hashlib.sha1(",".join(map(str, sorted(ids))).encode()).hexdigest(),
@@ -127,7 +157,9 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
             "predictions_with_tags": round(with_tags / len(ids), 4) if ids else None,
             "embedding_model": embed_model(),
             **{a: {"n": s["n"], "exact": rate(s, "exact"), "within1": rate(s, "within1")} for a, s in stats.items()},
-            "acidity_within1_by_confidence": {k: {"n": v["n"], "within1": rate(v, "within1")} for k, v in by_conf.items()}}
+            "acidity_within1_by_confidence": {k: {"n": v["n"], "within1": rate(v, "within1")} for k, v in by_conf.items()},
+            "tags": {"n": tag_n, "precision": round(tag_p, 4), "recall": round(tag_r, 4), "f1": round(tag_f1, 4),
+                    "category_f1": round(cat_f1, 4)}}
 
 
 def coverage(repo, exclude_sources: tuple[str, ...] = ()) -> dict:
