@@ -158,7 +158,7 @@
 | `POST /analyze` | 원두 텍스트/ID 분석, SSE | `analyze_bean` |
 | `POST /tastings` | 기록 + 프로필 갱신 + 변화 요약 | `log_tasting` |
 
-SSE 이벤트: `card`(결과 카드 JSON, 즉시) → `explain_delta`(설명 토큰) → `explain_done` / `explain_fallback` → `done`. 쿠키는 `HttpOnly; Secure; SameSite=Lax`, 1년 유지.
+SSE 이벤트: `cards`(결과 카드 배열, 즉시) 또는 `empty`(후보 없음 사유) → `explain_delta`(설명 토큰) → `explain_done` / `explain_fallback` → `done` (처리 중 예외는 `error`). 쿠키는 `HttpOnly; Secure; SameSite=Lax`, 1년 유지.
 
 ---
 
