@@ -160,3 +160,17 @@ gh variable delete KEEP_WARM_URL                                                
 | Render 로그에 DB 연결 오류 | `DATABASE_URL`이 direct 문자열인지, `sslmode=require`가 붙었는지 |
 | 원두 분석 결과가 모두 "예측 신뢰도 낮음" | 임베딩 설정(0절). `config/models.yaml`의 embed가 ollama면 운영에서 임베딩이 실패한다 |
 | Neon 용량 경고 | `reviews`·`enrich_log`를 넣지 않았는지(`INCLUDE_REVIEWS` 미사용), 대시보드에서 브랜치·히스토리 보존 기간 확인 |
+
+## 8. 운영 통계 (Render 로그)
+
+`app/telemetry.py`가 추천·분석 스트림이 끝날 때마다 JSON 한 줄(`evt`, `cards`, `ms_total`, `ms_first_token`, `fallback`, `error`)을 `logging`으로 남긴다. `scripts/ops/prod_stats.py`가 Render 로그 API로 최근 N시간의 로그를 받아 그 줄만 골라 폴백 비율·첫 토큰 p50/p95·에러율을 집계한다.
+
+```bash
+uv run python scripts/ops/prod_stats.py --hours 24
+```
+
+- `RENDER_API_KEY`를 환경 변수 또는 레포 루트 `.env`에서 읽는다(Render 대시보드 → Account Settings → API Keys).
+- 서비스 id는 `/v1/services?name=coffee-sommelier-api`로, owner id는 `/v1/owners`로 조회한 뒤 `/v1/logs`를 `hasMore`가 꺼질 때까지 페이지네이션한다.
+- `--service-name`으로 다른 서비스 이름을 지정할 수 있다(기본 `coffee-sommelier-api`).
+- 결과는 표로 출력되고, `data/eval/prod_stats_<YYYY-MM-DD>.json`에도 저장된다.
+- 텔레메트리 로그 줄이 아직 없거나(배포 직후) 조회 구간에 요청이 없으면 `requests: 0`으로 정상 종료한다.
