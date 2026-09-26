@@ -1,4 +1,4 @@
-import { ATTR_KO } from "@/lib/labels";
+import { ATTR_KO, fmt1 } from "@/lib/labels";
 import type { Card, Profile } from "@/lib/types";
 
 const KEYS = ["acidity", "body", "sweetness"] as const;
@@ -15,10 +15,10 @@ export default function TasteBars({ card, profile }: { card: Card; profile?: Pro
               {v != null && <div className="absolute h-2 rounded-full bg-roast" style={{ width: `${(v / 5) * 100}%` }} />}
               {profile && (
                 <div className="absolute -top-0.5 h-3 w-0.5 bg-accent" style={{ left: `${(profile[k] / 5) * 100}%` }}
-                     aria-label={`내 선호 ${profile[k].toFixed(1)}`} />
+                     aria-label={`내 선호 ${fmt1(profile[k])}`} />
               )}
             </div>
-            <span className="w-7 text-right tabular-nums">{v == null ? "?" : v.toFixed(1)}</span>
+            <span className="w-7 text-right tabular-nums">{v == null ? "?" : fmt1(v)}</span>
           </div>
         );
       })}

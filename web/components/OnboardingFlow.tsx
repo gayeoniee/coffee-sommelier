@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ApiError, api } from "@/lib/api";
 import { defaultDraft, profileInput, sampleAnswers, type OnboardingDraft } from "@/lib/onboarding";
-import { ATTR_KO, RULE_KO } from "@/lib/labels";
+import { ATTR_KO, RULE_KO, fmt1 } from "@/lib/labels";
 import { CHIPS, type CaffeineRule, type Sample } from "@/lib/types";
 
 export function OnboardingFlow({ redo }: { redo: boolean }) {
@@ -92,7 +92,7 @@ export function OnboardingFlow({ redo }: { redo: boolean }) {
           <h1 className="mt-1 text-2xl font-bold">어떤 맛을 좋아하세요?</h1>
           {(["acidity", "body", "sweetness"] as const).map((k) => (
             <label key={k} className="mt-5 block">
-              <span className="flex justify-between text-sm"><span>{ATTR_KO[k]}</span><span className="tabular-nums">{draft[k].toFixed(1)}</span></span>
+              <span className="flex justify-between text-sm"><span>{ATTR_KO[k]}</span><span className="tabular-nums">{fmt1(draft[k])}</span></span>
               <input type="range" min={1} max={5} step={0.5} value={draft[k]} onChange={(e) => set(k, Number(e.target.value))}
                 aria-label={ATTR_KO[k]} className="mt-2 w-full accent-roast" />
             </label>

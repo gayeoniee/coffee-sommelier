@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import LogSheet from "@/components/LogSheet";
@@ -32,5 +32,13 @@ describe("LogSheet", () => {
     expect(JSON.parse(init.body)).toEqual({ rating: 4, note: "산미가 너무 셌어요", menu_item_id: 10, order_decaf: true });
     expect(await screen.findByText("산미 선호 3.0→2.5")).toBeInTheDocument();
     expect(onSaved).toHaveBeenCalledWith(expect.objectContaining({ acidity: 2.5 }));
+  });
+
+  it("focuses the first star on open and closes on Escape", () => {
+    const onClose = vi.fn();
+    render(<LogSheet card={card} onClose={onClose} onSaved={() => {}} />);
+    expect(screen.getByRole("button", { name: "1점" })).toHaveFocus();
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

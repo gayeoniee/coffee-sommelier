@@ -28,7 +28,7 @@ export default function ResultCard({ card, explanation, profile, onLog }: Props)
           </span>
         )}
         {card.caffeine_mg != null && <span className="rounded-full bg-crema px-2 py-0.5">카페인 {card.caffeine_mg}mg</span>}
-        {card.tags_ko.slice(0, 4).map((t) => <span key={t} className="rounded-full bg-crema px-2 py-0.5">{t}</span>)}
+        {card.tags_ko.slice(0, 4).map((t, i) => <span key={`${i}:${t}`} className="rounded-full bg-crema px-2 py-0.5">{t}</span>)}
       </div>
       <div className="mt-3"><TasteBars card={card} profile={profile} /></div>
       <p className={`mt-3 text-sm leading-relaxed ${writing && !explanation?.text ? "text-roast/80" : ""}`}>{text}</p>
