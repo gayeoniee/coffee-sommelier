@@ -18,7 +18,10 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["pytest>=8"]
+dev = [
+    "pillow>=12.3.0",
+    "pytest>=8",
+]
 pipeline = [
   "pandas>=2.2",
   "numpy>=1.26",
