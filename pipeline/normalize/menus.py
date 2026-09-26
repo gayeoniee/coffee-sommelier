@@ -154,10 +154,17 @@ def normalize_coffeebean(snap: Path, collected_at: str) -> Normalized:
             # rather than a HOT/ICED suffix on the same name, so each stays its own item (never merged).
             eng = li.select_one(".txt .eng")
             caffeine = None
-            for dl in li.select("div.info dl"):
-                dt, dd = dl.select_one("dt"), dl.select_one("dd")
-                if dt and dd and "카페인" in dd.get_text():
-                    caffeine = num(dt.get_text(strip=True))
+            # The site's item markup has an unclosed <div> before </li>, so lxml nests every following
+            # <li> inside the current one; `li.select("div.info dl")` would then also match later items'
+            # nutrition rows. `li.find("div", class_="info")` returns only the item's OWN div.info (the
+            # first one in document order, before the mis-nested trailing content), and iterating its
+            # direct dl children (recursive=False) cannot descend into a nested <li> at all.
+            info = li.find("div", class_="info")
+            if info:
+                for dl in info.find_all("dl", recursive=False):
+                    dt, dd = dl.select_one("dt"), dl.select_one("dd")
+                    if dt and dd and "카페인" in dd.get_text():
+                        caffeine = num(dt.get_text(strip=True))
             is_decaf = detect_decaf(name)[0]
             key = f"menu:coffeebean:{name}"
             items[key] = MenuItemRecord(

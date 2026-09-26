@@ -236,11 +236,21 @@ def test_coffeebean_parses_names_caffeine_and_decaf_option(tmp_path):
     snap = _copy_fixture("menus/coffeebean", tmp_path)
     items = normalize_coffeebean(snap, "2026-09-27").menu_items
     by = {i.name: i for i in items}
-    assert len(items) == 6
+    assert len(items) == 7
     # coffeebeankorea.com writes HOT/ICED as different names ("아메리카노" vs "아이스 아메리카노"),
     # never a HOT/ICED suffix on the same name, so they are kept as separate items (not merged).
     assert by["아메리카노"].caffeine_mg == 182.0
-    assert by["아이스 아메리카노"].caffeine_mg == 91.0
+    # Regression for the unclosed <div> before </li>: lxml nests each following <li> inside the current
+    # one, so a naive `li.select("div.info dl")` walks into every later item's div.info too, and (since
+    # the loop never breaks) ends up keeping the LAST matched dl — i.e. every non-last item in a page
+    # wrongly reports the page's very last item's caffeine. cat13_page1.html chains three items (아이스
+    # 아메리카노, 아이스 헤이즐넛 라떼, 카페수아) with three different caffeine values so both non-last
+    # items are wrong (and provably different from their own correct value) under the bug.
+    assert by["아이스 아메리카노"].caffeine_mg == 91.0        # would read 182 (카페수아's, the page's last item) if buggy
+    assert by["아이스 헤이즐넛 라떼"].caffeine_mg == 130.0    # would also read 182 (카페수아's) if buggy
+    assert by["카페수아"].caffeine_mg == 182.0
+    assert by["카페라떼"].caffeine_mg == 91.0                 # would read 182 (아메리카노's, the page's last item) if buggy
+    assert by["드립커피"].caffeine_mg == 148.0                # would read 190 (콜드브루's, the page's last item) if buggy
     # The site's coffee menu has no item literally named decaf: decaf is a paid shot-swap option on
     # espresso drinks, never a distinct product, so is_decaf is False for every scraped item.
     assert all(not i.is_decaf for i in items)
