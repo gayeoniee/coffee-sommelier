@@ -75,7 +75,7 @@
   verified_at: "2026-09-24"
   bean: {acidity: 4, body: 3, sweetness: 3, flavor_tags: [chocolate, citrus fruit]}
   decaf_bean: {acidity: 3, body: 3, sweetness: 3, flavor_tags: [chocolate, citrus fruit]}
-  decaf_option_categories: [에스프레소]
+  decaf_option_categories: [커피]
 - key: brand:bluebottle
   name: 블루보틀
   decaf_available: true

@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 
 import yaml
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
 
 from pipeline import settings
 from pipeline.normalize import Normalized
@@ -264,4 +264,43 @@ def normalize_compose(snap: Path, collected_at: str) -> Normalized:
                 source_url="https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition",
                 collected_at=collected_at,
             )
+PAULBASSETT_CATEGORY = "커피"  # the site's single coffee tab (cid1=A) covers every coffee sub-category
+
+
+def normalize_paulbassett(snap: Path, collected_at: str) -> Normalized:
+    brand = brands_by_key(settings.CURATED_DIR)["brand:paulbassett"]
+    items: dict[str, MenuItemRecord] = {}
+    for p in sorted(snap.glob("PB*.html")):
+        soup = _soup(p)
+        dt = soup.select_one(".menuTit dt")
+        if not dt:
+            continue
+        name_en = clean(dt.find("span").get_text(strip=True)) if dt.find("span") else None
+        name = None
+        for c in dt.contents:
+            if isinstance(c, NavigableString):
+                t = clean(str(c))
+                if t:
+                    name = t
+                    break
+        if not name:
+            continue
+        caffeine = None
+        size_div = soup.select_one('div[id^="pSize_"]')
+        if size_div:
+            for li in size_div.select("ul li"):
+                tit = li.select_one(".tit")
+                num_el = li.select_one(".num")
+                if tit and num_el and "카페인" in tit.get_text():
+                    m = re.search(r"[\d.]+", num_el.get_text(strip=True))
+                    caffeine = float(m.group()) if m else None
+        dpid = p.stem
+        is_decaf = detect_decaf(name, name_en)[0]
+        key = f"menu:paulbassett:{dpid}"
+        items[key] = MenuItemRecord(
+            key=key, brand_key="brand:paulbassett", name=name, name_en=name_en,
+            category=PAULBASSETT_CATEGORY, is_decaf=is_decaf,
+            decaf_option=menu_decaf_option(brand, PAULBASSETT_CATEGORY, is_decaf), caffeine_mg=caffeine,
+            source_url=f"https://www.baristapaulbassett.co.kr/menu/View.pb?dpid={dpid}", collected_at=collected_at,
+        )
     return Normalized(menu_items=list(items.values()))

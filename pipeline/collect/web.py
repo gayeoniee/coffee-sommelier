@@ -1,8 +1,10 @@
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
 from pipeline import settings
+from pipeline.http import PoliteClient
 
 STARBUCKS_URL = "https://www.starbucks.co.kr/upload/json/menu/{code}.js"
 MEGA_URL = "https://www.mega-mgccoffee.com/menu/menu.php"
@@ -14,6 +16,9 @@ COFFEEBEAN_URL = "https://www.coffeebeankorea.com/menu/app.asp"
 # menu/list.asp coffee nav (2026-09-26 확인): 13=에스프레소 음료, 14=브루드 커피, 12=아이스 블렌디드 (COFFEE).
 # 티(18)·티 라떼(17)·아이스 블렌디드 (NON-COFFEE)(11)·커피빈 주스(26)·기타 제조 음료(24)는 커피 음료가 아니라 제외.
 COFFEEBEAN_CATEGORIES = (13, 14, 12)
+PAULBASSETT_LIST_URL = "https://www.baristapaulbassett.co.kr/menu/List.pb"
+PAULBASSETT_VIEW_URL = "https://www.baristapaulbassett.co.kr/menu/View.pb"
+PAULBASSETT_DPID_RE = re.compile(r"goView\('(\w+)'\)")
 
 
 @dataclass
@@ -139,3 +144,23 @@ class HollysCollector:
         p = out_dir / "espresso.html"
         p.write_text(http.get(HOLLYS_URL).text, encoding="utf-8")
         return [p]
+class PaulbassettCollector:
+    """The site's TLS chain is self-signed, so this collector builds its own client with
+    verify=False (the only place this project does that) instead of using the passed-in http
+    (only its per-host delay is reused)."""
+
+    name: str = "paulbassett"
+
+    def collect(self, out_dir: Path, http) -> list[Path]:
+        pb_http = PoliteClient(delay=http._delay, verify=False)
+        files = []
+        list_html = pb_http.get(PAULBASSETT_LIST_URL, params={"cid1": "A"}).text
+        p = out_dir / "list.html"
+        p.write_text(list_html, encoding="utf-8")
+        files.append(p)
+        for dpid in dict.fromkeys(PAULBASSETT_DPID_RE.findall(list_html)):
+            detail = pb_http.get(PAULBASSETT_VIEW_URL, params={"dpid": dpid}).text
+            dp = out_dir / f"{dpid}.html"
+            dp.write_text(detail, encoding="utf-8")
+            files.append(dp)
+        return files

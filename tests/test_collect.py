@@ -76,6 +76,7 @@ import json as _json
 
 from pipeline.collect.web import ComposeCollector, MegaCollector, PaikCollector, ShopifyCollector, StarbucksCollector
 from pipeline.collect.web import CoffeebeanCollector, MegaCollector, PaikCollector, ShopifyCollector, StarbucksCollector
+from pipeline.collect.web import MegaCollector, PaikCollector, PaulbassettCollector, ShopifyCollector, StarbucksCollector
 
 
 def mock_http(handler):
@@ -164,7 +165,7 @@ def test_coffeebean_paginates_each_category_and_stops_at_empty_page(tmp_path):
 def test_registry_lists_all_sources():
     from pipeline.collect.registry import ALL_COLLECTORS
     assert [c.name for c in ALL_COLLECTORS] == [
-        "cqi", "roasterdb", "sca_wheel", "coffeereview_kaggle", "starbucks", "mega", "paik", "shopify", "coffeebean", "compose", "hollys"]
+        "cqi", "roasterdb", "sca_wheel", "coffeereview_kaggle", "starbucks", "mega", "paik", "shopify", "coffeebean", "compose", "hollys", "paulbassett"]
 
 
 def test_hollys_saves_espresso_page(tmp_path):
@@ -173,3 +174,45 @@ def test_hollys_saves_espresso_page(tmp_path):
     files = HollysCollector().collect(tmp_path, mock_http(lambda r: httpx.Response(200, text="<div class='menu_view01'></div>")))
     assert [f.name for f in files] == ["espresso.html"]
     assert files[0].read_text(encoding="utf-8") == "<div class='menu_view01'></div>"
+
+
+def test_paulbassett_builds_insecure_client_from_passed_in_delay(tmp_path, monkeypatch):
+    """The site's TLS chain is self-signed: the collector must build its own verify=False client
+    (the only place this project disables verification), reusing only the passed-in http's delay."""
+    import pipeline.collect.web as web
+
+    created = {}
+
+    def fake_polite_client(*, delay, verify):
+        created["delay"] = delay
+        created["verify"] = verify
+        return mock_http(lambda r: httpx.Response(200, text="<div class='menuList'></div>"))
+
+    monkeypatch.setattr(web, "PoliteClient", fake_polite_client)
+    passed_in = PoliteClient(delay=2.5, transport=httpx.MockTransport(lambda r: httpx.Response(404)), sleep=lambda s: None)
+    files = PaulbassettCollector().collect(tmp_path, passed_in)
+    assert created == {"delay": 2.5, "verify": False}
+    assert [f.name for f in files] == ["list.html"]
+
+
+def test_paulbassett_saves_list_and_detail_pages(tmp_path, monkeypatch):
+    import pipeline.collect.web as web
+
+    list_html = (
+        "<div class='menuList'>"
+        "<a onclick=\"goView('PB1');return false;\"></a>"
+        "<a onclick=\"goView('PB2');return false;\"></a>"
+        "</div>"
+    )
+
+    def handler(request):
+        if request.url.path == "/menu/List.pb":
+            return httpx.Response(200, text=list_html)
+        dpid = request.url.params["dpid"]
+        return httpx.Response(200, text=f"<div>{dpid}</div>")
+
+    monkeypatch.setattr(web, "PoliteClient",
+                        lambda *, delay, verify: mock_http(handler))
+    files = PaulbassettCollector().collect(tmp_path, PoliteClient(delay=1.0, sleep=lambda s: None))
+    assert sorted(f.name for f in files) == ["PB1.html", "PB2.html", "list.html"]
+    assert (tmp_path / "PB1.html").read_text(encoding="utf-8") == "<div>PB1</div>"

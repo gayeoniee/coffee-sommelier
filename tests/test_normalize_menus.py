@@ -16,6 +16,7 @@ from pipeline.normalize import run_normalize
 from pipeline.normalize.menus import (
     normalize_brands, normalize_hollys, normalize_mega, normalize_paik, normalize_shopify, normalize_starbucks,
     normalize_brands, normalize_compose, normalize_mega, normalize_paik, normalize_shopify, normalize_starbucks,
+    normalize_brands, normalize_mega, normalize_paik, normalize_paulbassett, normalize_shopify, normalize_starbucks,
 )
 from pipeline.records import BrandRecord, CoffeeRecord, MenuItemRecord, read_jsonl
 
@@ -75,6 +76,16 @@ def test_compose_parses_names_caffeine_decaf(tmp_path):
     assert by["빅포즈 아메리카노"].caffeine_mg == 371.62  # ICED-only size: no HOT counterpart to merge with
     assert all(i.brand_key == "brand:compose" and i.key.startswith("menu:compose:") for i in items)
     assert all(i.category == "커피ㆍ콜드브루" for i in items)
+def test_paulbassett_parses_names_caffeine_decaf(tmp_path):
+    snap = _copy_fixture("menus/paulbassett", tmp_path)
+    items = normalize_paulbassett(snap, "2026-09-27").menu_items
+    by = {i.name: i for i in items}
+    assert len(items) == 5
+    assert by["아메리카노"].caffeine_mg == 160.0
+    assert by["아이스 아메리카노"].caffeine_mg == 160.0  # regular ("Standard") size, not the larger Venti option
+    assert by["디카페인 아메리카노"].is_decaf and not by["디카페인 아메리카노"].decaf_option
+    assert by["아메리카노"].decaf_option is True
+    assert all(i.brand_key == "brand:paulbassett" and i.key.startswith("menu:paulbassett:") for i in items)
     assert sum(i.caffeine_mg is not None for i in items) / len(items) >= 0.9
 
 
