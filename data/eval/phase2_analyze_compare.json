@@ -1,4 +1,247 @@
 {
+ "after_tag_model": {
+  "full": [
+   {
+    "text": "에티오피아 예가체프 워시드 디카페인",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "체리",
+     "초콜릿",
+     "건포도",
+     "쓴맛"
+    ],
+    "model_evidence": true,
+    "evidence": 2,
+    "fb": 0
+   },
+   {
+    "text": "콜롬비아 수프리모 미디엄 로스트 초콜릿 견과",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "초콜릿",
+     "다크 초콜릿"
+    ],
+    "model_evidence": true,
+    "evidence": 2,
+    "fb": 0
+   },
+   {
+    "text": "케냐 AA 자몽 블랙커런트",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "블랙베리",
+     "체리",
+     "초콜릿",
+     "자극적",
+     "라임"
+    ],
+    "model_evidence": true,
+    "evidence": 2,
+    "fb": 0
+   },
+   {
+    "text": "브라질 세라도 내추럴 다크 로스트",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "다크 초콜릿"
+    ],
+    "model_evidence": true,
+    "evidence": 2,
+    "fb": 0
+   },
+   {
+    "text": "과테말라 안티구아 허니 프로세스 스위스워터 디카페인",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "꿀",
+     "초콜릿",
+     "캐러멜"
+    ],
+    "model_evidence": true,
+    "evidence": 2,
+    "fb": 1
+   },
+   {
+    "text": "파나마 게이샤 재스민 베르가못",
+    "error": 0,
+    "conf": "high",
+    "tags": [
+     "재스민",
+     "베리",
+     "레몬",
+     "라임",
+     "딸기"
+    ],
+    "model_evidence": true,
+    "evidence": 2,
+    "fb": 0
+   },
+   {
+    "text": "인도네시아 만델링 흙내 묵직한 바디",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "달콤한 향",
+     "캐러멜",
+     "나무",
+     "견과",
+     "신맛"
+    ],
+    "model_evidence": true,
+    "evidence": 2,
+    "fb": 0
+   },
+   {
+    "text": "코스타리카 타라주 허니 캐러멜 사과",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "꿀",
+     "사과",
+     "체리"
+    ],
+    "model_evidence": true,
+    "evidence": 2,
+    "fb": 0
+   },
+   {
+    "text": "르완다 부르봉 워시드 홍차 살구",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "레몬",
+     "바닐라",
+     "다크 초콜릿",
+     "딸기",
+     "짠맛"
+    ],
+    "model_evidence": true,
+    "evidence": 2,
+    "fb": 0
+   },
+   {
+    "text": "온두라스 디카페인 마운틴워터 캐러멜",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "나무",
+     "달콤한 향",
+     "캐러멜",
+     "체리"
+    ],
+    "model_evidence": true,
+    "evidence": 2,
+    "fb": 0
+   }
+  ],
+  "open": [
+   {
+    "text": "에티오피아 예가체프 워시드 디카페인",
+    "error": 0,
+    "conf": "medium",
+    "tags": [],
+    "model_evidence": false,
+    "evidence": 1,
+    "fb": 0
+   },
+   {
+    "text": "콜롬비아 수프리모 미디엄 로스트 초콜릿 견과",
+    "error": 0,
+    "conf": "low",
+    "tags": [
+     "밀크 초콜릿",
+     "초콜릿",
+     "다크 초콜릿",
+     "체리"
+    ],
+    "model_evidence": false,
+    "evidence": 2,
+    "fb": 0
+   },
+   {
+    "text": "케냐 AA 자몽 블랙커런트",
+    "error": 0,
+    "conf": "high",
+    "tags": [],
+    "model_evidence": false,
+    "evidence": 1,
+    "fb": 0
+   },
+   {
+    "text": "브라질 세라도 내추럴 다크 로스트",
+    "error": 0,
+    "conf": "low",
+    "tags": [],
+    "model_evidence": false,
+    "evidence": 1,
+    "fb": 0
+   },
+   {
+    "text": "과테말라 안티구아 허니 프로세스 스위스워터 디카페인",
+    "error": 0,
+    "conf": "high",
+    "tags": [
+     "코코아"
+    ],
+    "model_evidence": false,
+    "evidence": 2,
+    "fb": 0
+   },
+   {
+    "text": "파나마 게이샤 재스민 베르가못",
+    "error": 0,
+    "conf": "medium",
+    "tags": [],
+    "model_evidence": false,
+    "evidence": 1,
+    "fb": 0
+   },
+   {
+    "text": "인도네시아 만델링 흙내 묵직한 바디",
+    "error": 0,
+    "conf": "medium",
+    "tags": [],
+    "model_evidence": false,
+    "evidence": 1,
+    "fb": 0
+   },
+   {
+    "text": "코스타리카 타라주 허니 캐러멜 사과",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "꿀",
+     "체리"
+    ],
+    "model_evidence": false,
+    "evidence": 3,
+    "fb": 0
+   },
+   {
+    "text": "르완다 부르봉 워시드 홍차 살구",
+    "error": 0,
+    "conf": "medium",
+    "tags": [],
+    "model_evidence": false,
+    "evidence": 1,
+    "fb": 0
+   },
+   {
+    "text": "온두라스 디카페인 마운틴워터 캐러멜",
+    "error": 0,
+    "conf": "medium",
+    "tags": [],
+    "model_evidence": false,
+    "evidence": 1,
+    "fb": 0
+   }
+  ]
+ },
  "after_lift_gate": {
   "full": [
    {
