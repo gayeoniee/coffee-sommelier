@@ -27,6 +27,31 @@ Site notes / scope decisions:
     single-product facts or mix multiple origins.
   * Terarosa is excluded entirely: its ``/market/`` path is disallowed by
     robots.txt.
+  * Anthracite (anthracitecoffee.com), Momos (momos.co.kr) and Deca Coffee
+    Lab (decacoffeelab.com, checked but not collected -- see below) run on
+    imweb, whose product pages single-quote their ``ld+json`` script tag
+    (``ld_json_blocks`` accepts either quote style). Anthracite's facts live
+    in a plain ``지역 : ... 가공방식 : ...`` paragraph (parsed with the same
+    ``extract_labeled_fields`` used for Fritz/Coffee Libre); Momos hides a
+    legal "상품 정보고시" disclosure table (``<td>/<td>`` pairs, not
+    ``<th>/<td>``) that happens to carry a real "노트" (flavor notes) row.
+  * Felt (feltcoffee.com) and Manufact (manufactcoffee.com) are Cafe24 shops
+    like Fritz/Namusairo/Coffee Libre. Felt keys its facts table "Name /
+    Notice / Coffee / Description / Price" (English labels); roast level is
+    parsed out of the "Notice" cell. Manufact packs region, flavor notes and
+    roast level into one "원두 정보" cell separated by ``<br>`` -- each line
+    is classified by content (contains a known country name -> region line;
+    contains "로스트" -> roast line; otherwise -> notes line) since blends
+    only carry two of the three lines.
+  * Bean Brothers (beanbrothers.co.kr) is a Godo5 shop (like 1kg Coffee) but
+    exposes a genuine "FACT SHEET" block of ``<p><span>label</span>
+    <span>value</span></p>`` rows (parsed by ``bean_brothers_fact_sheet``);
+    blends only carry a "블렌드 구성"/"로스팅" pair, so ``origin_country`` is
+    left ``None`` for them, same as elsewhere in this module.
+  * Deca Coffee Lab, Center Coffee, Hell Cafe, Leesar, Lowkey Coffee, Coffee
+    Montage and three guessed domains (Mesh Coffee, Pastel Coffee Works,
+    Coffee Graffiti) were evaluated and skipped -- see the collector
+    docstrings below and the roasters-kr README/data-recipe notes for why.
 """
 
 from __future__ import annotations
@@ -82,7 +107,7 @@ def write_beans_jsonl(path: Path, records: list[BeanFactRecord]) -> int:
 
 EXCLUDE_KEYWORDS = (
     "캡슐", "콜드브루", "드립백", "드립 백", "티백", "머그", "텀블러", "굿즈",
-    "스티커", "도서", "기프트카드", "세트", "케이크", "커피용품", "시럽",
+    "스티커", "도서", "기프트", "세트", "케이크", "커피용품", "시럽",
     "브루잉", "인스턴트", "쇼핑백", "여과지", "필터", "구독",
 )
 
@@ -107,7 +132,7 @@ DECAF_METHOD_PATTERNS: tuple[tuple[str, str], ...] = (
     (r"스위스\s*워터|swiss\s*water", "Swiss Water Process"),
     (r"슈가\s*케인|sugar\s*cane|sugarcane", "Sugarcane Process"),
     (r"마운틴\s*워터|mountain\s*water|\bmwp\b", "Mountain Water Process"),
-    (r"이에이\s*프로세스|\be\.?a\.?\s*process\b", "EA Process"),
+    (r"이에이\s*프로세스|에틸\s*아세테이트|\be\.?a\.?\s*process\b|ethyl\s*acetate", "EA Process"),
     (r"co2|이산화탄소", "CO2 Process"),
 )
 
@@ -229,6 +254,30 @@ def split_ko_flavor_list(raw: str | None) -> list[str]:
     return [p.strip(" .") for p in re.split(r"[,·]", prefix) if p.strip(" .")]
 
 
+MAX_NOTE_WORD_LEN = 16
+
+
+def split_note_list(raw: str | None, limit: int = 8) -> list[str]:
+    """Split an already-isolated "note"-style fact-table value (comma or
+    middle-dot separated, Korean or English) into individual words. Unlike
+    ``split_ko_flavor_list`` this does not require the value to start with
+    Korean text -- it is meant for text already pulled out of a specific
+    labelled field rather than a generic free-form description.
+
+    Some sites (seen on Anthracite/Momos blends) reuse the same "노트" label
+    for a marketing tagline instead of a word list on some products, and a
+    stray comma inside an ordinary Korean sentence still splits into
+    several long fragments -- so any split producing a fragment longer than
+    ``MAX_NOTE_WORD_LEN`` is treated as prose and rejected wholesale rather
+    than partially stored."""
+    if not raw:
+        return []
+    parts = [p.strip(" .") for p in re.split(r"[,·ㆍ]", _nfc(raw)) if p.strip(" .")]
+    if any(len(p) > MAX_NOTE_WORD_LEN for p in parts):
+        return []
+    return parts[:limit]
+
+
 def parse_price_krw(text: str | None) -> int | None:
     if not text:
         return None
@@ -263,7 +312,9 @@ def clean_name(name: str | None) -> str | None:
 
 def ld_json_blocks(html_text: str) -> list[dict]:
     blocks = []
-    for raw in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html_text, re.S):
+    # Cafe24 shops always double-quote the type attribute; imweb shops
+    # (Anthracite, Momos, ...) single-quote it -- accept either.
+    for raw in re.findall(r'''<script type=["']application/ld\+json["']>(.*?)</script>''', html_text, re.S):
         try:
             d = json.loads(raw)
         except ValueError:
@@ -734,12 +785,438 @@ class BlueBottleCollector:
 
 
 # --------------------------------------------------------------------------- #
+# Anthracite (anthracitecoffee.com) -- imweb
+# --------------------------------------------------------------------------- #
+
+ANTHRACITE_LABELS = (
+    ("지역", "region"), ("로스팅레벨", "roast"), ("로스팅 레벨", "roast"),
+    ("가공방식", "process_raw"), ("플레이버", "notes_flavor"), ("노트", "notes_raw"),
+    ("중량", "weight_raw"),
+)
+ANTHRACITE_EXTRA_MARKERS = ("품종", "고도", "등급", "구성")
+
+
+def parse_anthracite_product(html_text: str, url: str) -> dict | None:
+    ld = first_product_ld(html_text)
+    if ld is None:
+        return None
+    name, _desc, price = ld_name_desc_price(ld)
+    if is_excluded(name):
+        return None
+    soup = BeautifulSoup(html_text, "lxml")
+    summary = soup.find("div", class_="goods_summary")
+    text = normalize_ws(summary.get_text(" ")) if summary else ""
+    fields = extract_labeled_fields(text, ANTHRACITE_LABELS, extra_markers=ANTHRACITE_EXTRA_MARKERS)
+    process_raw = fields.get("process_raw")
+    decaf = is_decaf(name)
+    # Blends carry both a "플레이버" word list (e.g. "볶은 견과, 스파이시,
+    # 다크 초콜렛") and a separate "노트" marketing tagline sentence; single
+    # origins only ever have "노트", and it is a clean word list there --
+    # prefer 플레이버 when present, since 노트 is the one that turns into
+    # prose on blends (``split_note_list`` also rejects prose defensively).
+    flavor_notes = split_note_list(fields.get("notes_flavor")) or split_note_list(fields.get("notes_raw"))
+    return {
+        "name": name,
+        "origin_country": find_country(name),
+        "origin_region": fields.get("region") or None,
+        "origin_farm": None,  # never exposed as its own field on this site
+        # Process is stated in English ("Washed", "Double Anaerobic
+        # Fermentation/Thermel Shock") rather than one of our Korean
+        # PROCESS_WORDS -- store the site's own short value rather than
+        # losing it to a canonical-word lookup that can only match Korean.
+        "process": process_raw or None,
+        "roast_level": fields.get("roast") or None,
+        "is_decaf": decaf,
+        "decaf_process": find_decaf_method(process_raw) if decaf else None,
+        "flavor_notes": flavor_notes,
+        "price_krw": int(price) if price is not None else None,
+        "weight_g": parse_weight_g(fields.get("weight_raw")) or parse_weight_g(name),
+        "product_url": url,
+    }
+
+
+@dataclass
+class AnthraciteCollector:
+    name: str = "anthracite"
+    base_url: str = "https://anthracitecoffee.com"
+    roaster: str = "앤트러사이트"
+
+    def collect(self, http, cache_dir: Path, collected_at: str) -> list[BeanFactRecord]:
+        sitemap = fetch_cached(http, f"{self.base_url}/sitemap.xml", cache_dir, "sitemap.xml")
+        if not sitemap:
+            return []
+        ids = dict.fromkeys(re.findall(r"/shop_view/(\d+)", sitemap))
+        records = []
+        for pid in ids:
+            url = f"{self.base_url}/shop_view/?idx={pid}"
+            page = fetch_cached(http, url, cache_dir, f"product_{pid}.html")
+            if not page:
+                continue
+            facts = parse_anthracite_product(page, url)
+            if facts is None:
+                continue
+            records.append(BeanFactRecord(
+                key=f"{self.name}:{pid}", site=self.name, roaster=self.roaster,
+                collected_at=collected_at, **facts,
+            ))
+        return records
+
+
+# --------------------------------------------------------------------------- #
+# Felt (feltcoffee.com) -- Cafe24
+# --------------------------------------------------------------------------- #
+
+
+def parse_felt_product(html_text: str, url: str) -> dict | None:
+    ld = first_product_ld(html_text)
+    if ld is None:
+        return None
+    name, desc, price = ld_name_desc_price(ld)
+    if is_excluded(name):
+        return None
+    soup = BeautifulSoup(html_text, "lxml")
+    facts = label_value_map(soup)
+    notice = facts.get("Notice", "")
+    coffee_raw = facts.get("Coffee", "")
+    roast_m = re.search(r"ROASTING\s*LEVEL\s*:\s*([^/\n]+)", notice, re.IGNORECASE)
+    decaf = is_decaf(name)
+    variant = (ld.get("hasVariant") or [{}])[0] if ld.get("@type") == "ProductGroup" else ld
+    return {
+        "name": name,
+        "origin_country": find_country(name),
+        "origin_region": None,  # only ever spelled out in the English "Coffee" prose line
+        "origin_farm": None,
+        "process": find_process(name),
+        "roast_level": normalize_ws(roast_m.group(1)) if roast_m else None,
+        "is_decaf": decaf,
+        "decaf_process": find_decaf_method(coffee_raw) if decaf else None,
+        "flavor_notes": split_note_list(desc or facts.get("Description")),
+        "price_krw": int(price) if price is not None else None,
+        "weight_g": parse_weight_g(variant.get("name") or "") or parse_weight_g(name),
+        "product_url": url,
+    }
+
+
+@dataclass
+class FeltCollector:
+    name: str = "felt"
+    base_url: str = "https://feltcoffee.com"
+    roaster: str = "펠트"
+    category: str = "30"  # COFFEE
+
+    def collect(self, http, cache_dir: Path, collected_at: str) -> list[BeanFactRecord]:
+        listing = fetch_cached(http, f"{self.base_url}/product/list.html?cate_no={self.category}",
+                                cache_dir, f"list_{self.category}.html")
+        if not listing:
+            return []
+        seen: dict[str, str] = {}
+        for m in re.finditer(rf'href="(/product/[^"?]+/(\d+)/category/{self.category}[^"]*)"', listing):
+            seen.setdefault(m.group(2), m.group(1))
+        records = []
+        for pid, rel_url in seen.items():
+            url = f"{self.base_url}{rel_url}"
+            page = fetch_cached(http, url, cache_dir, f"product_{pid}.html")
+            if not page:
+                continue
+            facts = parse_felt_product(page, url)
+            if facts is None:
+                continue
+            records.append(BeanFactRecord(
+                key=f"{self.name}:{pid}", site=self.name, roaster=self.roaster,
+                collected_at=collected_at, **facts,
+            ))
+        return records
+
+
+# --------------------------------------------------------------------------- #
+# Bean Brothers (beanbrothers.co.kr) -- Godo5
+# --------------------------------------------------------------------------- #
+
+
+def bean_brothers_fact_sheet(soup: BeautifulSoup) -> dict[str, str]:
+    """Parse the "FACT SHEET" block of ``<p><span>label</span>
+    <span>value</span></p>`` rows. A label-less row (empty first span)
+    continues the previous label's value -- used for multi-line blend
+    composition ("블렌드 구성" listing each origin/percentage on its own
+    row). Label/value text is inconsistently punctuated across products
+    (some end the label with ":", some start the value with ":") so both
+    are stripped of a leading/trailing colon."""
+    h1 = soup.find(lambda t: t.name == "h1" and t.get_text(strip=True) == "FACT SHEET")
+    if h1 is None:
+        return {}
+    container = h1.find_parent("div")
+    if container is None:
+        return {}
+    collected: dict[str, list[str]] = {}
+    current: str | None = None
+    for p in container.find_all("p", recursive=False):
+        spans = p.find_all("span")
+        if len(spans) < 2:
+            continue
+        label = _nfc(spans[0].get_text(strip=True)).strip(" :：")
+        value = _nfc(spans[1].get_text(strip=True)).strip(" :：")
+        if label:
+            current = label
+            collected.setdefault(current, [])
+            if value:
+                collected[current].append(value)
+        elif current and value:
+            collected[current].append(value)
+    return {k: ", ".join(v) for k, v in collected.items() if v}
+
+
+def parse_beanbrothers_product(html_text: str, url: str) -> dict | None:
+    m = re.search(r'<meta property="og:title" content="([^"]*)"', html_text)
+    name = clean_name(m.group(1)) if m else None
+    if is_excluded(name):
+        return None
+    soup = BeautifulSoup(html_text, "lxml")
+    fact_sheet = bean_brothers_fact_sheet(soup)
+    region = fact_sheet.get("지역")
+    process_raw = fact_sheet.get("가공") or fact_sheet.get("가공방식")
+    decaf = is_decaf(name)
+    price_el = soup.select_one("p.price")
+    price_text = price_el.get_text(" ", strip=True) if price_el else None
+    weight_m = re.search(r'<option\s+value="(\d+(?:\.\d+)?(?:g|kg))"', html_text)
+    return {
+        "name": name,
+        "origin_country": find_country(name) or find_country(region),
+        "origin_region": region,
+        "origin_farm": fact_sheet.get("농장"),
+        "process": process_raw,
+        "roast_level": fact_sheet.get("로스팅"),
+        "is_decaf": decaf,
+        "decaf_process": find_decaf_method(process_raw) if decaf else None,
+        "flavor_notes": split_note_list(fact_sheet.get("테이스팅 노트")),
+        "price_krw": parse_price_krw(price_text),
+        "weight_g": parse_weight_g(weight_m.group(1)) if weight_m else None,
+        "product_url": url,
+    }
+
+
+@dataclass
+class BeanBrothersCollector:
+    name: str = "beanbrothers"
+    base_url: str = "https://beanbrothers.co.kr"
+    roaster: str = "빈브라더스"
+    categories: tuple[str, ...] = ("007001001", "007001002")  # 블렌드, 싱글오리진
+
+    def collect(self, http, cache_dir: Path, collected_at: str) -> list[BeanFactRecord]:
+        ids: dict[str, None] = {}
+        for cate in self.categories:
+            listing = fetch_cached(http, f"{self.base_url}/goods/goods_list.php?cateCd={cate}&sort=date&pageNum=100",
+                                    cache_dir, f"list_{cate}.html")
+            if not listing:
+                continue
+            for gid in re.findall(r"goods_view\.php\?goodsNo=(\d+)", listing):
+                ids.setdefault(gid, None)
+        records = []
+        for gid in ids:
+            url = f"{self.base_url}/goods/goods_view.php?goodsNo={gid}"
+            page = fetch_cached(http, url, cache_dir, f"product_{gid}.html")
+            if not page:
+                continue
+            facts = parse_beanbrothers_product(page, url)
+            if facts is None:
+                continue
+            records.append(BeanFactRecord(
+                key=f"{self.name}:{gid}", site=self.name, roaster=self.roaster,
+                collected_at=collected_at, **facts,
+            ))
+        return records
+
+
+# --------------------------------------------------------------------------- #
+# Momos (momos.co.kr) -- imweb
+# --------------------------------------------------------------------------- #
+
+
+def momos_disclosure_map(soup: BeautifulSoup) -> dict[str, str]:
+    """The legally-required "상품 정보고시" (product info disclosure) table
+    is plain ``<td>/<td>`` pairs (no ``<th>``), and happens to carry a real
+    "노트" (flavor notes) row alongside the food-labelling boilerplate."""
+    div = soup.find("div", class_="tms-product-tab-desc")
+    if div is None:
+        return {}
+    table = div.find("table")
+    if table is None:
+        return {}
+    result: dict[str, str] = {}
+    for tr in table.find_all("tr"):
+        tds = tr.find_all("td")
+        if len(tds) != 2:
+            continue
+        label = _nfc(re.sub(r"\s+", "", tds[0].get_text(" ", strip=True)))
+        value = _nfc(tds[1].get_text(" ", strip=True))
+        if label and value and label not in result:
+            result[label] = value
+    return result
+
+
+def parse_momos_product(html_text: str, url: str) -> dict | None:
+    ld = first_product_ld(html_text)
+    if ld is None:
+        return None
+    name, _desc, price = ld_name_desc_price(ld)
+    if is_excluded(name):
+        return None
+    soup = BeautifulSoup(html_text, "lxml")
+    disclosure = momos_disclosure_map(soup)
+    # The short "향미노트" summary card (``.tms-product-info``) is always a
+    # clean word list; the legal disclosure table's "노트" row repeats that
+    # list for single origins but is sometimes rewritten into a marketing
+    # sentence for blends, so prefer the summary card and only fall back to
+    # the disclosure row (``split_note_list`` rejects it if still prose).
+    summary_notes_el = soup.select_one("div.tms-product-info td")
+    summary_notes = summary_notes_el.get_text(" ", strip=True) if summary_notes_el else None
+    flavor_notes = split_note_list(summary_notes) or split_note_list(disclosure.get("노트"))
+    decaf = is_decaf(name)
+    return {
+        "name": name,
+        "origin_country": find_country(name),
+        "origin_region": None,
+        "origin_farm": None,
+        "process": find_process(name),
+        "roast_level": None,  # not exposed as its own fact on this site
+        "is_decaf": decaf,
+        "decaf_process": find_decaf_method(name) if decaf else None,
+        "flavor_notes": flavor_notes,
+        "price_krw": int(price) if price is not None else None,
+        "weight_g": parse_weight_g(disclosure.get("내용량")) or parse_weight_g(name),
+        "product_url": url,
+    }
+
+
+@dataclass
+class MomosCollector:
+    name: str = "momos"
+    base_url: str = "https://momos.co.kr"
+    roaster: str = "모모스커피"
+
+    def collect(self, http, cache_dir: Path, collected_at: str) -> list[BeanFactRecord]:
+        listing = fetch_cached(http, f"{self.base_url}/shop", cache_dir, "list_shop.html")
+        if not listing:
+            return []
+        ids = dict.fromkeys(re.findall(r"/shop/\?idx=(\d+)", listing))
+        records = []
+        for pid in ids:
+            url = f"{self.base_url}/shop_view/?idx={pid}"
+            page = fetch_cached(http, url, cache_dir, f"product_{pid}.html")
+            if not page:
+                continue
+            facts = parse_momos_product(page, url)
+            if facts is None:
+                continue
+            records.append(BeanFactRecord(
+                key=f"{self.name}:{pid}", site=self.name, roaster=self.roaster,
+                collected_at=collected_at, **facts,
+            ))
+        return records
+
+
+# --------------------------------------------------------------------------- #
+# Manufact (manufactcoffee.com) -- Cafe24
+# --------------------------------------------------------------------------- #
+
+
+def manufact_bean_info_lines(soup: BeautifulSoup) -> list[str]:
+    for th in soup.find_all("th"):
+        label = _nfc(re.sub(r"\s+", "", th.get_text(" ", strip=True)))
+        if label != "원두정보":
+            continue
+        td = th.find_next_sibling("td")
+        if td is None:
+            return []
+        return [normalize_ws(x) for x in td.get_text("\n", strip=True).split("\n") if normalize_ws(x)]
+    return []
+
+
+def parse_manufact_product(html_text: str, url: str) -> dict | None:
+    soup = BeautifulSoup(html_text, "lxml")
+    facts = label_value_map(soup)
+    name = clean_name(facts.get("상품명"))
+    if is_excluded(name):
+        return None
+    lines = manufact_bean_info_lines(soup)
+    origin_country: str | None = None
+    origin_region: str | None = None
+    roast_level: str | None = None
+    notes_line: str | None = None
+    weight_line: str | None = None
+    for line in lines:
+        if "로스트" in line:
+            roast_level = re.sub(r"\s*로스트\s*$", "", line).strip() or None
+            continue
+        if re.fullmatch(r"\d+(?:\.\d+)?\s*(?:g|kg)", line, re.IGNORECASE):
+            # some products tack a bare weight ("100g") on as its own line
+            weight_line = line
+            continue
+        country = find_country(line)
+        if country:
+            origin_country = country
+            origin_region = normalize_ws(line.replace(country, "")) or None
+            continue
+        notes_line = line
+    decaf = is_decaf(name)
+    return {
+        "name": name,
+        "origin_country": origin_country,
+        "origin_region": origin_region,
+        "origin_farm": None,
+        # Process is folded into the free-form "원두 정보" cell above rather
+        # than getting its own row on this site -- left unset like 1kg
+        # Coffee's marketing-prose-only process rather than mis-splitting it.
+        "process": None,
+        "roast_level": roast_level,
+        "is_decaf": decaf,
+        "decaf_process": find_decaf_method(" ".join(lines)) if decaf else None,
+        "flavor_notes": split_note_list(notes_line),
+        "price_krw": parse_price_krw(facts.get("판매가")),
+        "weight_g": parse_weight_g(weight_line) or parse_weight_g(name),
+        "product_url": url,
+    }
+
+
+@dataclass
+class ManufactCollector:
+    name: str = "manufact"
+    base_url: str = "https://manufactcoffee.com"
+    roaster: str = "매뉴팩트"
+    category: str = "66"  # COFFEE BEANS
+
+    def collect(self, http, cache_dir: Path, collected_at: str) -> list[BeanFactRecord]:
+        listing = fetch_cached(http, f"{self.base_url}/product/list.html?cate_no={self.category}",
+                                cache_dir, f"list_{self.category}.html")
+        if not listing:
+            return []
+        seen: dict[str, str] = {}
+        for m in re.finditer(rf'href="(/product/[^"?]+/(\d+)/category/{self.category}[^"]*)"', listing):
+            seen.setdefault(m.group(2), m.group(1))
+        records = []
+        for pid, rel_url in seen.items():
+            url = f"{self.base_url}{rel_url}"
+            page = fetch_cached(http, url, cache_dir, f"product_{pid}.html")
+            if not page:
+                continue
+            facts = parse_manufact_product(page, url)
+            if facts is None:
+                continue
+            records.append(BeanFactRecord(
+                key=f"{self.name}:{pid}", site=self.name, roaster=self.roaster,
+                collected_at=collected_at, **facts,
+            ))
+        return records
+
+
+# --------------------------------------------------------------------------- #
 # Orchestration
 # --------------------------------------------------------------------------- #
 
 ALL_ROASTER_COLLECTORS = [
     FritzCollector(), NamusairoCollector(), CoffeeLibreCollector(),
     OnekgCoffeeCollector(), BlueBottleCollector(),
+    AnthraciteCollector(), FeltCollector(), BeanBrothersCollector(),
+    MomosCollector(), ManufactCollector(),
 ]
 
 
