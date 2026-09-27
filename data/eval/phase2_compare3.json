@@ -26,15 +26,17 @@
         "target_sources": [
           "cqi"
         ],
-        "targets": 0,
-        "target_ids_sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
-        "neighbor_source_share": {},
-        "predictions_with_tags": null,
+        "targets": 200,
+        "target_ids_sha1": "d652320c4072789d0291eebd9d8a1605e1a72d2b",
+        "neighbor_source_share": {
+          "cqi": 1.0
+        },
+        "predictions_with_tags": 0.0,
         "embedding_model": "nvidia/nemotron-3-embed-1b",
         "acidity": {
-          "n": 0,
-          "exact": null,
-          "within1": null
+          "n": 200,
+          "exact": 0.235,
+          "within1": 0.495
         },
         "body": {
           "n": 0,
@@ -46,10 +48,23 @@
           "exact": null,
           "within1": null
         },
-        "acidity_within1_by_confidence": {},
+        "acidity_within1_by_confidence": {
+          "low": {
+            "n": 76,
+            "within1": 0.3684
+          },
+          "high": {
+            "n": 28,
+            "within1": 0.6429
+          },
+          "medium": {
+            "n": 96,
+            "within1": 0.5521
+          }
+        },
         "tags_query_embeddings": {
-          "leak_free": 0,
-          "stored_fallback": 0,
+          "leak_free": 4,
+          "stored_fallback": 196,
           "note": "leak-free tag-free query embeddings are the default when cached (data/eval/loo_tagfree_query_embeddings.jsonl, exactly the n=200/seed=42 targets); other target draws fall back to the stored (tag-including) embedding, as before docs/adr/0008."
         },
         "tags": {
@@ -173,15 +188,17 @@
         "target_sources": [
           "cqi"
         ],
-        "targets": 0,
-        "target_ids_sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
-        "neighbor_source_share": {},
-        "predictions_with_tags": null,
+        "targets": 200,
+        "target_ids_sha1": "d652320c4072789d0291eebd9d8a1605e1a72d2b",
+        "neighbor_source_share": {
+          "cqi": 1.0
+        },
+        "predictions_with_tags": 0.0,
         "embedding_model": "nvidia/nemotron-3-embed-1b",
         "acidity": {
-          "n": 0,
-          "exact": null,
-          "within1": null
+          "n": 200,
+          "exact": 0.235,
+          "within1": 0.495
         },
         "body": {
           "n": 0,
@@ -193,10 +210,23 @@
           "exact": null,
           "within1": null
         },
-        "acidity_within1_by_confidence": {},
+        "acidity_within1_by_confidence": {
+          "low": {
+            "n": 76,
+            "within1": 0.3684
+          },
+          "high": {
+            "n": 28,
+            "within1": 0.6429
+          },
+          "medium": {
+            "n": 96,
+            "within1": 0.5521
+          }
+        },
         "tags_query_embeddings": {
-          "leak_free": 0,
-          "stored_fallback": 0,
+          "leak_free": 4,
+          "stored_fallback": 196,
           "note": "leak-free tag-free query embeddings are the default when cached (data/eval/loo_tagfree_query_embeddings.jsonl, exactly the n=200/seed=42 targets); other target draws fall back to the stored (tag-including) embedding, as before docs/adr/0008."
         },
         "tags": {
@@ -317,15 +347,17 @@
         "target_sources": [
           "cqi"
         ],
-        "targets": 0,
-        "target_ids_sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
-        "neighbor_source_share": {},
-        "predictions_with_tags": null,
+        "targets": 200,
+        "target_ids_sha1": "d652320c4072789d0291eebd9d8a1605e1a72d2b",
+        "neighbor_source_share": {
+          "cqi": 1.0
+        },
+        "predictions_with_tags": 0.0,
         "embedding_model": "nvidia/nemotron-3-embed-1b",
         "acidity": {
-          "n": 0,
-          "exact": null,
-          "within1": null
+          "n": 200,
+          "exact": 0.235,
+          "within1": 0.495
         },
         "body": {
           "n": 0,
@@ -337,10 +369,23 @@
           "exact": null,
           "within1": null
         },
-        "acidity_within1_by_confidence": {},
+        "acidity_within1_by_confidence": {
+          "low": {
+            "n": 76,
+            "within1": 0.3684
+          },
+          "high": {
+            "n": 28,
+            "within1": 0.6429
+          },
+          "medium": {
+            "n": 96,
+            "within1": 0.5521
+          }
+        },
         "tags_query_embeddings": {
-          "leak_free": 0,
-          "stored_fallback": 0,
+          "leak_free": 4,
+          "stored_fallback": 196,
           "note": "leak-free tag-free query embeddings are the default when cached (data/eval/loo_tagfree_query_embeddings.jsonl, exactly the n=200/seed=42 targets); other target draws fall back to the stored (tag-including) embedding, as before docs/adr/0008."
         },
         "tags": {

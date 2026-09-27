@@ -6,54 +6,53 @@
     "roasters_kr"
   ],
   "target_sources": "all non-excluded sources",
-  "targets": 32,
-  "target_ids_sha1": "67b1bfebe01bf83a56b4717db5252f23b3571e9b",
+  "targets": 200,
+  "target_ids_sha1": "fe0ef3546102a0886102a2ffe16e2b9dae119a09",
   "neighbor_source_share": {
-    "roasterdb": 0.7438,
-    "cqi": 0.1844,
-    "shopify": 0.0719
+    "cqi": 0.9755,
+    "roasterdb": 0.0245
   },
-  "predictions_with_tags": 0.875,
+  "predictions_with_tags": 0.03,
   "embedding_model": "nvidia/nemotron-3-embed-1b",
   "acidity": {
-    "n": 28,
-    "exact": 0.75,
-    "within1": 0.8571
+    "n": 199,
+    "exact": 0.2513,
+    "within1": 0.5126
   },
   "body": {
-    "n": 23,
-    "exact": 0.913,
+    "n": 3,
+    "exact": 1.0,
     "within1": 1.0
   },
   "sweetness": {
-    "n": 27,
-    "exact": 0.5556,
-    "within1": 0.8889
+    "n": 4,
+    "exact": 0.5,
+    "within1": 1.0
   },
   "acidity_within1_by_confidence": {
+    "low": {
+      "n": 74,
+      "within1": 0.3649
+    },
     "high": {
-      "n": 23,
-      "within1": 0.8696
+      "n": 33,
+      "within1": 0.697
     },
     "medium": {
-      "n": 4,
-      "within1": 1.0
-    },
-    "low": {
-      "n": 1,
-      "within1": 0.0
+      "n": 92,
+      "within1": 0.5652
     }
   },
   "tags_query_embeddings": {
-    "leak_free": 1,
-    "stored_fallback": 31,
+    "leak_free": 4,
+    "stored_fallback": 196,
     "note": "leak-free tag-free query embeddings are the default when cached (data/eval/loo_tagfree_query_embeddings.jsonl, exactly the n=200/seed=42 targets); other target draws fall back to the stored (tag-including) embedding, as before docs/adr/0008."
   },
   "tags": {
-    "n": 32,
-    "precision": 0.5278,
-    "recall": 0.38,
-    "f1": 0.4419,
-    "category_f1": 0.7308
+    "n": 9,
+    "precision": 0.75,
+    "recall": 0.4091,
+    "f1": 0.5294,
+    "category_f1": 0.7619
   }
 }
