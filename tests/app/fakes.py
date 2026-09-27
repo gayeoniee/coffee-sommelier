@@ -53,6 +53,7 @@ class FakeRepo:
                                    sweetness=2, caffeine_mg=120, brand="X", menu_item_id=20, confidence="medium")],
         }
         self.tasting_ids = itertools.count(1)
+        self.count_coffees_calls = 0
 
     # users/profiles
     def create_user(self):
@@ -110,6 +111,7 @@ class FakeRepo:
         return self.coffees.get(coffee_id)
 
     def count_coffees(self):
+        self.count_coffees_calls += 1
         return len(self.coffees)
 
     def match_coffee(self, text):
