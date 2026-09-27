@@ -27,3 +27,14 @@ def test_load_config_reads_yaml(tmp_path, monkeypatch):
     (tmp_path / "x.yaml").write_text("a: 1\n", encoding="utf-8")
     monkeypatch.setattr(settings, "CONFIG_DIR", tmp_path)
     assert settings.load_config("x.yaml") == {"a": 1}
+
+
+def test_tag_ko_extra_ships_with_the_api_image():
+    # the Docker image copies only app/, pipeline/, config/ — runtime data files must live under config/
+    from pathlib import Path
+    from app.core.flavors import load_tag_ko_extra
+    root = Path(__file__).resolve().parents[1]
+    assert (root / "config" / "tag_ko_extra.yaml").exists()
+    assert not (root / "data" / "curated" / "tag_ko_extra.yaml").exists()
+    assert "milk chocolate" in load_tag_ko_extra()
+    assert "!config/" in (root / ".dockerignore").read_text(encoding="utf-8")

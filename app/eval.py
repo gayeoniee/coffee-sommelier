@@ -165,7 +165,7 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
 
 def tag_names(repo) -> dict:
     """Fix B check: every distinct flavor tag on active coffees should have a Korean name after
-    data/curated/tag_ko_extra.yaml is merged into Repo.taxonomy() (flavor_taxonomy.name_ko, plus the extra
+    config/tag_ko_extra.yaml is merged into Repo.taxonomy() (flavor_taxonomy.name_ko, plus the extra
     file for off-wheel tags). `missing_ko` should be empty; if not, add the tag to tag_ko_extra.yaml."""
     _, tag_ko = repo.taxonomy()
     base_rates = repo.tag_base_rates()             # keys = every distinct tag on active coffees with >=1 tag

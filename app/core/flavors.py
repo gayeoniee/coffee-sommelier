@@ -1,3 +1,4 @@
+from pathlib import Path
 from math import sqrt
 from typing import Iterable
 
@@ -22,11 +23,15 @@ def build_tag_to_category(rows: Iterable[tuple[str, int, str]]) -> dict[str, str
 
 
 def load_tag_ko_extra() -> dict[str, str]:
-    """Korean names (data/curated/tag_ko_extra.yaml) for tags that reach coffees.flavor_tags without a matching
-    SCA-wheel node in flavor_taxonomy (LLM enrich / the Korean roastery note mapper can produce off-wheel tags)."""
+    """Korean names (config/tag_ko_extra.yaml) for tags that reach coffees.flavor_tags without a matching
+    SCA-wheel node in flavor_taxonomy (LLM enrich / the Korean roastery note mapper can produce off-wheel tags).
+    Lives under config/ because that is what the API image ships (data/ is not copied); a missing file is an
+    empty map, never an error."""
     from pipeline import settings
 
-    path = settings.CURATED_DIR / "tag_ko_extra.yaml"
+    path = Path(settings.__file__).resolve().parents[1] / "config" / "tag_ko_extra.yaml"
+    if not path.exists():
+        return {}
     data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     return {k.lower(): v for k, v in data.items()}
 

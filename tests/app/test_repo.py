@@ -74,7 +74,7 @@ def test_tag_base_rates(repo):
 
 def test_taxonomy_tag_ko_is_topped_up_by_the_extra_file(repo):
     # fixture's flavor_taxonomy only has "fruity"/"citrus fruit" - "milk chocolate" has no taxonomy row at all,
-    # so it can only come from data/curated/tag_ko_extra.yaml (Fix B).
+    # so it can only come from config/tag_ko_extra.yaml (Fix B).
     _, tag_ko = repo.taxonomy()
     assert tag_ko["milk chocolate"] == "밀크 초콜릿"
     assert tag_ko["citrus fruit"] == "시트러스"          # taxonomy names are still there alongside the extra ones
