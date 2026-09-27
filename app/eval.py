@@ -163,6 +163,16 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
                     "category_f1": round(cat_f1, 4)}}
 
 
+def tag_names(repo) -> dict:
+    """Fix B check: every distinct flavor tag on active coffees should have a Korean name after
+    data/curated/tag_ko_extra.yaml is merged into Repo.taxonomy() (flavor_taxonomy.name_ko, plus the extra
+    file for off-wheel tags). `missing_ko` should be empty; if not, add the tag to tag_ko_extra.yaml."""
+    _, tag_ko = repo.taxonomy()
+    base_rates = repo.tag_base_rates()             # keys = every distinct tag on active coffees with >=1 tag
+    missing = sorted(t for t in base_rates if t not in tag_ko)
+    return {"total_tags": len(base_rates), "n_missing": len(missing), "missing_ko": missing}
+
+
 def coverage(repo, exclude_sources: tuple[str, ...] = ()) -> dict:
     return {"exclude_sources": list(exclude_sources), **repo.coverage_counts(exclude_sources=exclude_sources)}
 
@@ -436,6 +446,7 @@ def main(argv: list[str]) -> int:
         "loo_open": lambda r: loo_accuracy(r, exclude_sources=OPEN_LICENSE_EXCLUDE),
         "coverage": coverage,
         "coverage_open": lambda r: coverage(r, exclude_sources=OPEN_LICENSE_EXCLUDE),
+        "tag_names": tag_names,                      # Fix B check; run by name only, not in `all`
         "compare3": compare3,
         "loo_repro": loo_repro,
         "convergence": convergence,

@@ -1,8 +1,11 @@
+import psycopg
 import pytest
 from psycopg.types.json import Jsonb
 
+from app.eval import tag_names
 from app.models import Profile
 from app.repo import Repo
+from pipeline import settings
 from pipeline.query import to_vector_literal
 
 pytestmark = pytest.mark.db
@@ -67,6 +70,14 @@ def test_tag_base_rates(repo):
     # fixture: 3 active coffees with a tag - 2 carry "citrus fruit", 1 carries "chocolate"
     rates = repo.tag_base_rates()
     assert rates == pytest.approx({"citrus fruit": 2 / 3, "chocolate": 1 / 3})
+
+
+def test_taxonomy_tag_ko_is_topped_up_by_the_extra_file(repo):
+    # fixture's flavor_taxonomy only has "fruity"/"citrus fruit" - "milk chocolate" has no taxonomy row at all,
+    # so it can only come from data/curated/tag_ko_extra.yaml (Fix B).
+    _, tag_ko = repo.taxonomy()
+    assert tag_ko["milk chocolate"] == "밀크 초콜릿"
+    assert tag_ko["citrus fruit"] == "시트러스"          # taxonomy names are still there alongside the extra ones
 
 
 def test_brand_items_decaf_option_and_synthetic_menu(repo):
@@ -241,3 +252,19 @@ def test_loo_target_filter_sources_and_decaf_beans(repo):
     assert sorted(src for _, src in repo.decaf_coffees()) == ["roasters_kr", "t"]
     only_open = repo.decaf_coffees(exclude_sources=("roasters_kr",))
     assert [(i.name, src) for i, src in only_open] == [("Decaf Ethiopia Sidamo", "t")]
+
+
+def test_dev_db_every_active_flavor_tag_has_a_korean_name():
+    """Fix B: no English tag (e.g. "milk chocolate") should reach the UI untranslated. Checks the real dev DB
+    (not the throwaway coffee_test fixture) since that's where the actual catalog's tags live."""
+    try:
+        admin = psycopg.connect(settings.DATABASE_URL, autocommit=True, connect_timeout=3)
+        admin.close()
+    except psycopg.OperationalError:
+        pytest.skip("dev DB not reachable (docker compose up -d db)")
+    repo = Repo(settings.DATABASE_URL)
+    try:
+        result = tag_names(repo)
+    finally:
+        repo.close()
+    assert result["missing_ko"] == []

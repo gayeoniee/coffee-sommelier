@@ -1,0 +1,20 @@
+# Korean names for flavor tags that reach coffees.flavor_tags without a matching SCA-wheel node in
+# flavor_taxonomy (LLM enrich or the Korean roastery note mapper can produce tags off the wheel). Merged into
+# Repo.taxonomy()'s tag_ko map; flavor_taxonomy.name_ko wins on conflict, this file only fills the gaps.
+# Found by: `SELECT DISTINCT t FROM coffees, unnest(flavor_tags) t WHERE active` minus flavor_taxonomy.name_en
+# (case-insensitive) on the dev DB, 2026-09-27 -- 15 tags.
+caramel: 캐러멜
+milk chocolate: 밀크 초콜릿
+tropical fruit: 열대 과일
+almond: 아몬드
+hibiscus: 히비스커스
+bergamot: 베르가못
+graham cracker: 그레이엄 크래커
+pineapple: 파인애플
+orange blossom: 오렌지 블라섬
+pecan: 피칸
+passion fruit: 패션프루트
+peanut: 땅콩
+tangerine: 귤
+mango: 망고
+cocoa nibs: 카카오 닙스

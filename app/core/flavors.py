@@ -1,6 +1,8 @@
 from math import sqrt
 from typing import Iterable
 
+import yaml
+
 CATEGORIES = ("fruity", "floral", "sweet", "nutty/cocoa", "roasted", "spices", "sour/fermented",
               "green/vegetative", "other")
 CATEGORY_KO = {"fruity": "과일", "floral": "꽃", "sweet": "단맛", "nutty/cocoa": "견과/코코아", "roasted": "로스팅",
@@ -17,6 +19,21 @@ def build_tag_to_category(rows: Iterable[tuple[str, int, str]]) -> dict[str, str
             continue
         out.setdefault(name.lower(), key.removeprefix("sca:").split(">")[0])
     return out
+
+
+def load_tag_ko_extra() -> dict[str, str]:
+    """Korean names (data/curated/tag_ko_extra.yaml) for tags that reach coffees.flavor_tags without a matching
+    SCA-wheel node in flavor_taxonomy (LLM enrich / the Korean roastery note mapper can produce off-wheel tags)."""
+    from pipeline import settings
+
+    path = settings.CURATED_DIR / "tag_ko_extra.yaml"
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    return {k.lower(): v for k, v in data.items()}
+
+
+def merge_tag_ko(taxonomy_ko: dict[str, str], extra: dict[str, str]) -> dict[str, str]:
+    """Merge tag_ko_extra.yaml under a taxonomy-derived tag_ko map; the taxonomy's own names win on conflict."""
+    return {**extra, **taxonomy_ko}
 
 
 def category_vector(tags: Iterable[str], tag_to_cat: dict[str, str]) -> dict[str, float]:

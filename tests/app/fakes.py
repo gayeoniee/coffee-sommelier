@@ -4,13 +4,14 @@ import uuid
 from dataclasses import replace
 
 from app.core.explain import sample_card
+from app.core.flavors import load_tag_ko_extra, merge_tag_ko
 from app.core.scoring import needs_decaf_order
 from app.graphs import Deps
 from app.models import Item, Neighbor, Profile
 from pipeline.llm import LLMError
 
 TAG_TO_CAT = {"lemon": "fruity", "jasmine": "floral", "chocolate": "nutty/cocoa", "caramelized": "sweet"}
-TAG_KO = {"lemon": "레몬", "chocolate": "초콜릿"}
+TAG_KO = merge_tag_ko({"lemon": "레몬", "chocolate": "초콜릿"}, load_tag_ko_extra())
 # Small stand-in for Repo.tag_base_rates(): "chocolate" is generic (high base rate), the rest are rarer.
 TAG_BASE_RATES = {"chocolate": 0.5, "lemon": 0.2, "jasmine": 0.1, "caramelized": 0.05}
 
