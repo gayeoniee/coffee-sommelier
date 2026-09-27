@@ -258,10 +258,13 @@ def test_dev_db_every_active_flavor_tag_has_a_korean_name():
     """Fix B: no English tag (e.g. "milk chocolate") should reach the UI untranslated. Checks the real dev DB
     (not the throwaway coffee_test fixture) since that's where the actual catalog's tags live."""
     try:
-        admin = psycopg.connect(settings.DATABASE_URL, autocommit=True, connect_timeout=3)
-        admin.close()
-    except psycopg.OperationalError:
+        with psycopg.connect(settings.DATABASE_URL, autocommit=True, connect_timeout=3) as admin:
+            loaded = admin.execute("SELECT to_regclass('public.flavor_taxonomy') IS NOT NULL"
+                                   " AND EXISTS (SELECT 1 FROM coffees WHERE active)").fetchone()[0]
+    except (psycopg.OperationalError, psycopg.errors.UndefinedTable):
         pytest.skip("dev DB not reachable (docker compose up -d db)")
+    if not loaded:
+        pytest.skip("dev DB has no loaded catalog (CI uses an empty database)")
     repo = Repo(settings.DATABASE_URL)
     try:
         result = tag_names(repo)
