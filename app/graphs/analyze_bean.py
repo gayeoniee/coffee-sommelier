@@ -9,7 +9,9 @@ from langgraph.graph import END, START, StateGraph
 from app.config import PARSE_BEAN_TASK
 from app.core.explain import card, template_explanation
 from app.core.parse import BeanParse, bean_parse_messages, merge_llm_parse, needs_llm_parse, parse_bean_text
-from app.core.predict import item_from_prediction, predict_from_neighbors, with_model_attrs, with_model_tags
+from app.core.predict import (
+    item_from_prediction, predict_from_neighbors, with_model_attrs, with_model_tags, with_text_cues,
+)
 from app.core.scoring import passes, score_item
 from app.graphs.common import explain_to_stream
 from app.models import Item, ParsedBean, Prediction, Profile
@@ -52,7 +54,7 @@ def build_analyze_graph(deps):
 
     async def predict(state: AnalyzeState) -> dict:
         parsed = state["parsed"]
-        _, tag_ko = await asyncio.to_thread(deps.repo.taxonomy)
+        tag_to_cat, tag_ko = await asyncio.to_thread(deps.repo.taxonomy)
         base_rates = await asyncio.to_thread(deps.repo.tag_base_rates)
         degraded = False
         vec = None
@@ -76,6 +78,9 @@ def build_analyze_graph(deps):
                 # it shipped a value; an attribute it doesn't cover (e.g. open-variant sweetness) keeps the
                 # neighbour average. Evidence/confidence/n_neighbors are untouched either way.
                 pred = with_model_attrs(pred, deps.attr_model.predict(vec))
+        # explicit cues in the user's own text (app/core/textcues.py) outrank both the model and the neighbour
+        # average -- applied last, regardless of degraded/model state (docs/adr/0010-body-heaviness.md).
+        pred = with_text_cues(pred, parsed.text, tag_ko=tag_ko, tag_to_cat=tag_to_cat)
         return {"item": item_from_prediction(parsed, pred), "prediction": pred}
 
     async def score(state: AnalyzeState) -> dict:
