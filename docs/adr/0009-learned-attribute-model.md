@@ -44,7 +44,7 @@ seed=42, exclude_sources=("roasters_kr",))` — ADR 0008의 태그 모델과 **�
 `coffeereview_kaggle`·`roasterdb`를 빼고 CQI + `roasters_kr` + `shopify`만으로 학습했다
 (`--variant open`). 단맛은 오픈 라이선스 라벨이 36건뿐이라(최소 기준 300건) 오픈판 모델에서 뺐다 —
 `AttrModel.predict()`가 `sweetness`에 `None`을 돌려주면 `app/graphs/analyze_bean.py`가 이웃 평균으로
-폴백한다(`config/attr_model_open.json`에는 `acidity`/`body`만 있다).
+폴백한다(`config/attr_model_open.json`에는 `body`만 있다 — acidity 헤드는 오픈 held-out에서 이웃 평균보다 나빠(MAE 1.14 vs 1.10) 빼고 이웃 평균으로 둔다).
 
 | 속성 | 학습 표본 | CV MAE (릿지 / MLP) | 선택 | held-out MAE (모델 / 이웃) | held-out ±1 이내 (모델 / 이웃) |
 |---|---|---|---|---|---|
@@ -91,7 +91,7 @@ margin(CV − 투표) = **-0.0134** — 기준(≥0.05)에 크게 못 미치는 
   20.9ms로 여전히 예산 안이다.
 - Docker 이미지: `docker build -q -t coffee-api:check .`로 만든 이미지에서 두 모델 모두 로드를 확인했다
   — 전체판(`docker run --rm coffee-api:check ...`): `AttrModel.load()` → acidity/body/sweetness 3개,
-  `TagModel.load()` → 54개 태그. 오픈판(`-e DATA_VARIANT=open`): `AttrModel.load()` → acidity/body
+  `TagModel.load()` → 54개 태그. 오픈판(`-e DATA_VARIANT=open`): `AttrModel.load()` → body만(acidity는 제거)
   2개(단맛 없음), `TagModel.load()` → `None`(로그: "no learned tag model found ... tag_model_open.json") —
   둘 다 기대한 대로다. 이 커밋 전(799e496) 이미지와 비교하면 **358MB → 359MB(+1MB)** — gzip된 가중치
   파일(682KB + 19KB)이 대부분이고, scikit-learn/numpy는 여전히 `pipeline` 그룹 전용이라 이미지에
