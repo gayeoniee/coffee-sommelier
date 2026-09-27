@@ -2,7 +2,11 @@
 # Builds/refreshes the "open data" variant DB (coffee_open on the local docker Postgres) with no
 # coffeereview_kaggle source, then runs the non-LLM evals into data/eval/open/.
 #
-# Idempotent: safe to re-run. RESET=1 drops and recreates the database first.
+# Safe to re-run: the end state (coffee_open has zero coffeereview_kaggle rows) is the same every
+# time. It is NOT a no-op on repeat runs, though - step 2's `load` re-upserts every source's coffees
+# from the shared (full-variant) enriched cache, coffeereview_kaggle included, so step 3's DELETE
+# finds and removes real rows (currently ~7,393) on every run, not just the first one. RESET=1 drops
+# and recreates the database first.
 #
 # Usage:
 #   bash scripts/competition/build_open_db.sh
@@ -58,11 +62,21 @@ echo "== 3/4 cleanup: drop any coffeereview rows that reached coffees via the en
 # run_load reads the coffees table's source rows from data/enriched/coffees.jsonl (ENRICHED_DIR),
 # not from NORMALIZED_DIR - so --exclude-source at the normalize stage keeps coffeereview_kaggle
 # out of reviews/menu_items/brands (those come from NORMALIZED_DIR) but NOT out of coffees by
-# itself, since the enriched cache is the full-variant cache and still has every source. Delete the
-# leftover rows here so this DB genuinely has zero coffeereview_kaggle coffees. No FK conflicts:
-# franchise brands/menu_items reference roasterdb/cqi/roasters_kr/shopify beans, never
-# coffeereview_kaggle ones, and normalize already excluded coffeereview's own reviews from
-# NORMALIZED_DIR so none were loaded for them either. Idempotent: 0 rows deleted on repeat runs.
+# itself, since the enriched cache is the full-variant cache and still has every source.
+# pipeline/settings.py has no ENRICHED_DIR env override (only NORMALIZED_DIR and EVAL_DIR do), so
+# there is no cheap way to pre-filter step 2's load input the way EXCLUDE_SOURCES pre-filters
+# normalize; this DELETE is the actual filter for the coffees table, not a defensive no-op. It runs
+# (and deletes real rows - currently ~7,393) on every invocation of this script, including repeats,
+# because step 2 re-upserts every source's coffees from that same shared enriched cache each time.
+#
+# Safety: this DELETE can only ever conflict with a foreign key if some row's default_bean_coffee_id
+# / decaf_bean_coffee_id (brands) or coffee_id (menu_items) points at a coffeereview_kaggle coffee -
+# both are nullable FKs with no ON DELETE action (RESTRICT), so such a reference would abort the
+# DELETE with an FK-violation error rather than silently corrupting data. In practice neither column
+# is populated by this pipeline (menu_items link to brands, not directly to coffees; brands.*_bean_*
+# are legacy/unused), so no row ever references a coffeereview_kaggle coffee and the DELETE succeeds.
+# reviews.coffee_id is NOT NULL with ON DELETE CASCADE, but that's moot here too: normalize already
+# excluded coffeereview's own reviews from NORMALIZED_DIR, so none were loaded for them.
 psql_open -c "DELETE FROM coffees WHERE source = 'coffeereview_kaggle'"
 
 echo "== 4/4 verification =="

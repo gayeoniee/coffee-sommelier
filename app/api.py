@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+import time
 from typing import Annotated, Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response
@@ -138,9 +139,21 @@ def create_app(repo=None, deps=None, cookie_secure: bool | None = None) -> FastA
         return StreamingResponse(gen(), media_type="text/event-stream",
                                  headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
+    # count_coffees() hits the DB; Render's health pings land every few seconds, so cache the value
+    # in-process for a short TTL (per app instance, not a module global, so tests stay isolated).
+    _COFFEE_COUNT_TTL_S = 60
+    _coffee_count_cache: dict[str, float | int | None] = {"value": None, "expires_at": 0.0}
+
+    def cached_coffee_count() -> int:
+        now = time.monotonic()
+        if _coffee_count_cache["value"] is None or now >= _coffee_count_cache["expires_at"]:
+            _coffee_count_cache["value"] = repo.count_coffees()
+            _coffee_count_cache["expires_at"] = now + _COFFEE_COUNT_TTL_S
+        return _coffee_count_cache["value"]
+
     @app.get("/health")
     def health():
-        return {"ok": True, "variant": config.DATA_VARIANT, "coffees": repo.count_coffees()}
+        return {"ok": True, "variant": config.DATA_VARIANT, "coffees": cached_coffee_count()}
 
     @app.post("/session")
     def session(request: Request, response: Response):

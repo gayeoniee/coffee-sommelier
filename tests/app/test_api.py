@@ -294,6 +294,21 @@ def test_health_reports_variant_and_count(client, monkeypatch):
     assert r["ok"] is True and r["variant"] == "open" and isinstance(r["coffees"], int)
 
 
+def test_health_caches_coffee_count_within_ttl_then_refreshes(client, monkeypatch):
+    import app.api as api_module
+
+    now = [1_000.0]
+    monkeypatch.setattr(api_module.time, "monotonic", lambda: now[0])
+
+    assert client.get("/health").json()["coffees"] == 2
+    assert client.get("/health").json()["coffees"] == 2
+    assert client.repo.count_coffees_calls == 1          # second call within TTL hit the cache
+
+    now[0] += 61                                          # past the 60s TTL
+    assert client.get("/health").json()["coffees"] == 2
+    assert client.repo.count_coffees_calls == 2          # cache expired -> repo hit again
+
+
 def test_nickname_only_update_keeps_learned_weights(client):
     onboard(client)
     client.repo.save_profile(client.get("/me").json()["user_id"],

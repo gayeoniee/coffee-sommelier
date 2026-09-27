@@ -34,6 +34,17 @@ BRAND_COLUMNS = ["key", "name", "decaf_available", "decaf_surcharge_krw", "sourc
 MILK_LABEL_COLUMNS = ["name", "is_milk"]
 SCA_KO_COLUMNS = ["key", "name_en", "name_ko", "level"]
 
+# SCA/WCR 플레이버 휠 파생(계층 키 + 영문명)은 CC BY-NC-ND라 포털 업로드 세트(01~06)에 넣지 않는다.
+# out_dir 밖의 reference/ 하위에 참고용으로만 둔다.
+REFERENCE_DIR_NAME = "reference"
+REFERENCE_SCA_FILENAME = "07_sca_ko_참고.csv"
+REFERENCE_README_TEXT = (
+    "업로드 금지 — 참고용.\n\n"
+    f"`{REFERENCE_SCA_FILENAME}`은 SCA/WCR 플레이버 휠(계층 키 + 영문명, CC BY-NC-ND 4.0)에서 파생한 "
+    "한국어 매핑입니다. 원본 라이선스 조건(변경 금지)과 충돌할 수 있어 포털 업로드 세트(01~06)에는 "
+    "넣지 않고 참고용으로만 둡니다.\n"
+)
+
 TABLE_COLUMNS: dict[str, list[str]] = {
     "coffees": COFFEE_COLUMNS,
     "menu_items": MENU_ITEM_COLUMNS,
@@ -206,6 +217,17 @@ def write_csv(path: Path, fieldnames: list[str], rows: Iterable[dict]) -> int:
     return n
 
 
+def write_sca_ko_reference(out_dir: Path, sca_ko: list[dict]) -> int:
+    """07(SCA 휠 파생) 파일을 업로드 대상 out_dir이 아니라 out_dir/reference/에 참고용으로 쓴다.
+
+    업로드 금지 사유를 적은 README.md도 같은 디렉터리에 함께 쓴다(둘 다 out_dir 바로 아래에는 없다).
+    """
+    ref_dir = out_dir / REFERENCE_DIR_NAME
+    ref_dir.mkdir(parents=True, exist_ok=True)
+    (ref_dir / "README.md").write_text(REFERENCE_README_TEXT, encoding="utf-8")
+    return write_csv(ref_dir / REFERENCE_SCA_FILENAME, SCA_KO_COLUMNS, sca_ko)
+
+
 def write_raw_csv(path: Path, rows: Iterable[list[Any]]) -> int:
     path.parent.mkdir(parents=True, exist_ok=True)
     n = 0
@@ -277,7 +299,7 @@ def main(database_url: str, out_dir: Path, curated_dir: Path | None = None) -> d
     counts["06_데이터셋_milk_labels.csv"] = write_csv(out_dir / "06_데이터셋_milk_labels.csv", MILK_LABEL_COLUMNS, milk_labels)
 
     sca_ko = rows_for_sca_ko(load_yaml(curated_dir / "sca_ko.yaml"))
-    counts["07_데이터셋_sca_ko.csv"] = write_csv(out_dir / "07_데이터셋_sca_ko.csv", SCA_KO_COLUMNS, sca_ko)
+    counts[f"{REFERENCE_DIR_NAME}/{REFERENCE_SCA_FILENAME}"] = write_sca_ko_reference(out_dir, sca_ko)
 
     return counts
 

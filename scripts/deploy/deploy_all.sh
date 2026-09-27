@@ -19,8 +19,10 @@
 #   VARIANT=open        deploy the competition submission (open-data) variant alongside the full one:
 #                       Render service coffee-sommelier-open-api, Vercel project coffee-sommelier-open,
 #                       same Neon project but a second database `coffee_open` (created if missing), env
-#                       DATA_VARIANT=open / NEXT_PUBLIC_VARIANT=open. Local source DB for the migration
-#                       defaults to `coffee_open` too (override with SRC_DB); build it first with
+#                       DATA_VARIANT=open / NEXT_PUBLIC_VARIANT=open (set for both the production and
+#                       preview Vercel environments, so PR/branch previews on this project also show
+#                       the open-data banner). Local source DB for the migration defaults to
+#                       `coffee_open` too (override with SRC_DB); build it first with
 #                       scripts/competition/build_open_db.sh. Default (unset or VARIANT=full): unchanged.
 set -euo pipefail
 export MSYS_NO_PATHCONV=1 MSYS2_ARG_CONV_EXCL='*'
@@ -169,6 +171,11 @@ $VERCEL project update "$NAME" --framework nextjs --root-directory web --yes >/d
 $VERCEL link --yes --project "$NAME" >/dev/null
 $VERCEL env add API_URL production --value "$RENDER_URL" --force --yes >/dev/null
 $VERCEL env add NEXT_PUBLIC_VARIANT production --value "$VARIANT" --force --yes >/dev/null
+# Preview deployments (PRs, branch pushes) also need the banner on the open project - otherwise a
+# preview build falls back to the full-variant look on the competition submission's own repo.
+if [ "$VARIANT" = "open" ]; then
+  $VERCEL env add NEXT_PUBLIC_VARIANT preview --value "$VARIANT" --force --yes >/dev/null
+fi
 deploy_log=$($VERCEL deploy --prod --yes 2>&1 | tr -d '\r' | tee /dev/stderr)
 # The per-deployment URL sits behind Vercel's deployment protection; the public one is the "Aliased" line
 # (Vercel adds a suffix like -psi when the plain project name is already taken on vercel.app).
