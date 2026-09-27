@@ -8,11 +8,14 @@ from pipeline.records import CoffeeRecord, ReviewRecord, read_jsonl
 REVIEW_CHARS = 1500
 
 
-def embedding_text(c: CoffeeRecord, review_text: str | None) -> str:
+def embedding_text(c: CoffeeRecord, review_text: str | None, include_tags: bool = True) -> str:
+    """The text a coffee's embedding is built from. `include_tags=False` drops the bean's own flavor_tags —
+    used to build tag-FREE training/query embeddings for the learned tag model (app/core/tagmodel.py), since
+    a genuinely unknown bean's runtime text (app/graphs/analyze_bean.py) never has tags in it either."""
     parts = [
         c.name, c.origin_country, c.process, c.roast_level,
         f"decaf {c.decaf_process or ''}".strip() if c.is_decaf else None,
-        ", ".join(c.flavor_tags) or None, c.flavor_summary,
+        (", ".join(c.flavor_tags) or None) if include_tags else None, c.flavor_summary,
         (review_text or "")[:REVIEW_CHARS] or None,
     ]
     return " | ".join(p for p in parts if p)

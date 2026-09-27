@@ -27,6 +27,16 @@ def test_embedding_text_includes_structure_and_review():
     assert len(t) < 2000
 
 
+def test_embedding_text_include_tags_false_drops_only_the_tag_segment():
+    c = coffee("a", name="Kenya AA", origin_country="Kenya", process="washed", is_decaf=True,
+               decaf_process="swiss-water", flavor_tags=["lemon"], flavor_summary="Bright.")
+    tagged = embedding_text(c, "review text", include_tags=True)
+    tagfree = embedding_text(c, "review text", include_tags=False)
+    assert tagged == "Kenya AA | Kenya | washed | decaf swiss-water | lemon | Bright. | review text"
+    assert tagfree == "Kenya AA | Kenya | washed | decaf swiss-water | Bright. | review text"
+    assert "lemon" not in tagfree
+
+
 def test_run_embed_caches_unchanged_rows(tmp_path):
     enriched, norm, out = tmp_path / "e", tmp_path / "n", tmp_path / "o"
     write_jsonl(enriched / "coffees.jsonl", [coffee("a"), coffee("b")])

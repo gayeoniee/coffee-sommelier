@@ -29,6 +29,7 @@ pipeline = [
   "beautifulsoup4>=4.12",
   "lxml>=5.2",
   "kaggle>=1.6",
+  "scikit-learn>=1.9.1",
 ]
 
 [tool.uv]
