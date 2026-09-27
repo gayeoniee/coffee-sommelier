@@ -11,6 +11,8 @@ from pipeline.llm import LLMError
 
 TAG_TO_CAT = {"lemon": "fruity", "jasmine": "floral", "chocolate": "nutty/cocoa", "caramelized": "sweet"}
 TAG_KO = {"lemon": "레몬", "chocolate": "초콜릿"}
+# Small stand-in for Repo.tag_base_rates(): "chocolate" is generic (high base rate), the rest are rarer.
+TAG_BASE_RATES = {"chocolate": 0.5, "lemon": 0.2, "jasmine": 0.1, "caramelized": 0.05}
 
 
 class FakeRepo:
@@ -91,6 +93,9 @@ class FakeRepo:
     # catalog
     def taxonomy(self):
         return TAG_TO_CAT, TAG_KO
+
+    def tag_base_rates(self):
+        return TAG_BASE_RATES
 
     def list_brands(self):
         return [{"key": "brand:sb", "name": "스타벅스", "decaf_available": True, "decaf_surcharge_krw": 300,

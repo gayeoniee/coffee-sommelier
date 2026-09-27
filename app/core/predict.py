@@ -1,4 +1,4 @@
-from math import sqrt
+from math import log, sqrt
 
 from app.models import ATTRS, Item, Neighbor, ParsedBean, Prediction
 
@@ -6,6 +6,11 @@ MIN_NEIGHBORS = 3
 TAG_SHARE = 0.3
 MAX_TAGS = 5
 HIGH_STD, MEDIUM_STD = 0.7, 1.2
+# Lift gate (Fix A): a tag that is common everywhere (e.g. "chocolate") needs a much higher share among the
+# neighbours than a rare one before it counts as evidence. `_MIN_GLOBAL_SHARE` is a floor used only when a tag
+# has no known base rate (unseen tag), so it neither gets a free pass nor blows up log(1/0).
+LIFT = 1.2
+_MIN_GLOBAL_SHARE = 1e-6
 
 
 def _weighted(pairs: list[tuple[float, float]]) -> tuple[float, float]:
@@ -15,7 +20,22 @@ def _weighted(pairs: list[tuple[float, float]]) -> tuple[float, float]:
     return mean, sqrt(var)
 
 
-def predict_from_neighbors(neighbors: list[Neighbor], tag_ko: dict[str, str] | None = None) -> Prediction:
+def _tag_kept(share: float, global_share: float, lift: float = LIFT) -> bool:
+    """True when a tag's share among the neighbours clears the lift-adjusted gate.
+
+    `global_share` is the tag's base rate over all active coffees with >=1 tag. A tag no more common than
+    the flat TAG_SHARE floor everywhere never needs the lift; one that dominates the whole catalog (e.g.
+    "chocolate") needs `lift` times its base rate before it counts as evidence for this particular bean."""
+    return share >= max(TAG_SHARE, lift * global_share)
+
+
+def _tag_rank_score(share: float, global_share: float) -> float:
+    """Rarer tags (lower global_share) outrank common ones at the same neighbour share."""
+    return share * log(1 / max(global_share, _MIN_GLOBAL_SHARE))
+
+
+def predict_from_neighbors(neighbors: list[Neighbor], tag_ko: dict[str, str] | None = None,
+                           base_rates: dict[str, float] | None = None) -> Prediction:
     tag_ko = tag_ko or {}
     weighted = [(n, max(n.similarity, 0.01)) for n in neighbors]
     values: dict[str, float | None] = {}
@@ -41,8 +61,17 @@ def predict_from_neighbors(neighbors: list[Neighbor], tag_ko: dict[str, str] | N
         for t in {x.lower() for x in n.tags}:
             weight_by_tag[t] = weight_by_tag.get(t, 0.0) + w
             count_by_tag[t] = count_by_tag.get(t, 0) + 1
-    ranked = sorted(weight_by_tag.items(), key=lambda kv: (-kv[1], kv[0]))
-    tags = [t for t, _ in ranked if count_by_tag[t] / len(neighbors) >= TAG_SHARE][:MAX_TAGS]
+    if base_rates is None:
+        ranked = sorted(weight_by_tag.items(), key=lambda kv: (-kv[1], kv[0]))
+        tags = [t for t, _ in ranked if count_by_tag[t] / len(neighbors) >= TAG_SHARE][:MAX_TAGS]
+    else:
+        kept = []
+        for t in weight_by_tag:
+            share = count_by_tag[t] / len(neighbors)
+            global_share = base_rates.get(t, 0.0)
+            if _tag_kept(share, global_share):
+                kept.append((t, _tag_rank_score(share, global_share)))
+        tags = [t for t, _ in sorted(kept, key=lambda kv: (-kv[1], kv[0]))][:MAX_TAGS]
 
     evidence = [f"유사 원두 {len(neighbors)}개 중 {count_by_tag[t]}개에서 '{tag_ko.get(t, t)}' 언급" for t in tags[:2]]
     if values["acidity"] is not None:

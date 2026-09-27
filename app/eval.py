@@ -106,6 +106,7 @@ def tag_prf(truth: set, pred: set) -> tuple[float, float, float]:
 def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str, ...] = (),
                  target_sources: tuple[str, ...] = ()) -> dict:
     tag_to_cat, _ = repo.taxonomy()
+    base_rates = repo.tag_base_rates()
     stats = {a: {"n": 0, "exact": 0, "within1": 0} for a in ATTRS}
     by_conf: dict[str, dict] = {}
     neighbor_sources: Counter = Counter()
@@ -118,7 +119,7 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
         truth = repo.get_coffee(cid)
         near = repo.neighbors(repo.coffee_embedding(cid), k=10, exclude_id=cid, exclude_sources=exclude_sources)
         neighbor_sources.update(repo.coffee_sources([x.coffee_id for x in near]).values())
-        pred = predict_from_neighbors(near)
+        pred = predict_from_neighbors(near, base_rates=base_rates)
         with_tags += bool(pred.tags)
         for a in ATTRS:
             t, v = truth.attr(a), getattr(pred, a)

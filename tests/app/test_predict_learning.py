@@ -3,7 +3,7 @@ import itertools
 import pytest
 
 from app.core.learning import update_profile
-from app.core.predict import item_from_prediction, predict_from_neighbors
+from app.core.predict import _tag_kept, _tag_rank_score, item_from_prediction, predict_from_neighbors
 from app.core.simulate import simulate_convergence
 from app.models import Item, Neighbor, ParsedBean, Profile
 
@@ -38,6 +38,45 @@ def test_too_few_neighbors_is_low_confidence():
     p = predict_from_neighbors([nb(1, 0.9, 4, 2, ()), nb(2, 0.8, 1, 5, ())])
     assert (p.acidity, p.confidence, p.tags) == (None, "low", [])
     assert predict_from_neighbors([]).confidence == "low"
+
+
+def test_gate_excludes_generic_tag_but_includes_rare_tag_at_the_spec_lift():
+    # The exact example from the spec, tested at LIFT=1.5 directly (independent of whatever LIFT app.core.predict
+    # ends up tuned to): a generic tag present in 50% of the whole catalog needs share >= max(0.3, 1.5*0.5)=0.75,
+    # so a neighbour share of 0.6 is excluded. A rare tag (global 0.05) only needs share >= max(0.3, 1.5*0.05)=0.3,
+    # so a neighbour share of exactly 0.3 is included.
+    assert not _tag_kept(share=0.6, global_share=0.5, lift=1.5)
+    assert _tag_kept(share=0.3, global_share=0.05, lift=1.5)
+
+
+def test_gate_ranks_rarer_tags_above_common_ones_at_equal_share():
+    assert _tag_rank_score(0.5, 0.1) > _tag_rank_score(0.5, 0.5)
+
+
+def test_lift_gate_excludes_generic_tag_but_includes_rare_one_through_predict():
+    # Uses global rates extreme enough (0.9 vs 0.05) that the outcome holds for any LIFT in {1.2, 1.5, 2.0}, so
+    # this test doesn't depend on which value app.core.predict.LIFT is tuned to.
+    neigh = [nb(i, 0.9, 4, 2, ("chocolate", "yuzu") if i < 3 else ("chocolate",)) for i in range(10)]
+    p = predict_from_neighbors(neigh, base_rates={"chocolate": 0.9, "yuzu": 0.05})
+    assert "chocolate" not in p.tags                 # share 1.0, global 0.9 -> threshold > 1.0, never kept
+    assert "yuzu" in p.tags                          # share 0.3, global 0.05 -> threshold stays the flat 0.3
+
+
+def test_lift_gate_with_no_base_rates_keeps_old_share_only_behaviour():
+    neigh = [nb(i, 0.9, 4, 2, ("chocolate",)) for i in range(6)] + [nb(i, 0.9, 4, 2, ()) for i in range(6, 10)]
+    p = predict_from_neighbors(neigh, base_rates=None)
+    assert p.tags == ["chocolate"]                   # share 0.6 >= flat TAG_SHARE 0.3, no lift gate applied
+
+
+def test_lift_gate_orders_tags_by_share_times_log_inverse_global_share_not_weight():
+    # Equal similarity for every neighbour, so the old weighted-share ranking would rank "common" (9/10, higher
+    # weight) above "rare" (4/10). With base rates, "rare" outranks it: 0.4*ln(1/0.1)=0.921 > 0.9*ln(1/0.5)=0.624
+    # -- both tags clear their gates at the tuned LIFT=1.2 (common needs share >= 0.6, rare >= 0.3).
+    neigh = ([nb(i, 0.9, 4, 2, ("rare", "common")) for i in range(3)]
+             + [nb(3, 0.9, 4, 2, ("rare",))]
+             + [nb(i, 0.9, 4, 2, ("common",)) for i in range(4, 10)])
+    p = predict_from_neighbors(neigh, base_rates={"rare": 0.1, "common": 0.5})
+    assert p.tags == ["rare", "common"]
 
 
 def test_item_from_prediction():

@@ -8,7 +8,7 @@ from psycopg.types.json import Jsonb
 from psycopg_pool import ConnectionPool
 
 from app.core.explain import sample_card
-from app.core.flavors import build_tag_to_category
+from app.core.flavors import build_tag_to_category, load_tag_ko_extra, merge_tag_ko
 from app.core.scoring import is_milk_drink, needs_decaf_order
 from app.models import Item, Neighbor, Profile
 from pipeline.query import to_vector_literal
@@ -35,6 +35,7 @@ class Repo:
         self.pool = ConnectionPool(url, min_size=min_size, max_size=max_size, kwargs={"row_factory": dict_row},
                                    check=ConnectionPool.check_connection, max_idle=300, open=True)
         self._taxonomy: tuple[dict, dict] | None = None
+        self._tag_base_rates: dict[str, float] | None = None
 
     def close(self) -> None:
         self.pool.close()
@@ -109,8 +110,23 @@ class Repo:
             rows = self._all("SELECT key, level, name_en, name_ko FROM flavor_taxonomy")
             tag_to_cat = build_tag_to_category((r["key"], r["level"], r["name_en"]) for r in rows)
             tag_ko = {r["name_en"].lower(): r["name_ko"] for r in rows if r["name_ko"]}
+            tag_ko = merge_tag_ko(tag_ko, load_tag_ko_extra())
             self._taxonomy = (tag_to_cat, tag_ko)
         return self._taxonomy
+
+    def tag_base_rates(self) -> dict[str, float]:
+        """Global base rate of each flavor tag: (#active coffees carrying it) / (#active coffees with >=1 tag).
+
+        Feeds the lift gate in `predict_from_neighbors` so a tag that is common everywhere (e.g. "chocolate")
+        needs a much higher share among a bean's neighbours before it counts as evidence."""
+        if self._tag_base_rates is None:
+            rows = self._all(
+                "WITH counts AS ("
+                "  SELECT t AS tag, count(*) AS n FROM coffees, unnest(flavor_tags) AS t WHERE active GROUP BY t"
+                "), total AS (SELECT count(*) AS n FROM coffees WHERE active AND cardinality(flavor_tags) > 0)"
+                " SELECT tag, n::float / NULLIF((SELECT n FROM total), 0) AS share FROM counts")
+            self._tag_base_rates = {r["tag"].lower(): r["share"] for r in rows}
+        return self._tag_base_rates
 
     # ---- brands & menus ---------------------------------------------------
     # Catalog queries (browse, search, recommend, neighbors, eval) skip retired rows (active = false);

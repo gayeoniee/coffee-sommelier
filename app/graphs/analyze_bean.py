@@ -53,6 +53,7 @@ def build_analyze_graph(deps):
     async def predict(state: AnalyzeState) -> dict:
         parsed = state["parsed"]
         _, tag_ko = await asyncio.to_thread(deps.repo.taxonomy)
+        base_rates = await asyncio.to_thread(deps.repo.tag_base_rates)
         degraded = False
         try:
             vec = await deps.embed(parsed.text)
@@ -61,7 +62,7 @@ def build_analyze_graph(deps):
         except (LLMError, httpx.HTTPError):
             degraded = True
             neighbors = await asyncio.to_thread(deps.repo.fallback_neighbors, parsed.origin_country, parsed.process)
-        pred = predict_from_neighbors(neighbors, tag_ko)
+        pred = predict_from_neighbors(neighbors, tag_ko, base_rates=base_rates)
         if degraded:
             pred = replace(pred, confidence="low")
         return {"item": item_from_prediction(parsed, pred), "prediction": pred}

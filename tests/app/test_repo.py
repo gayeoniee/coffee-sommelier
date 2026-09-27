@@ -63,6 +63,12 @@ def test_taxonomy_maps(repo):
     assert tag_ko["citrus fruit"] == "시트러스"
 
 
+def test_tag_base_rates(repo):
+    # fixture: 3 active coffees with a tag - 2 carry "citrus fruit", 1 carries "chocolate"
+    rates = repo.tag_base_rates()
+    assert rates == pytest.approx({"citrus fruit": 2 / 3, "chocolate": 1 / 3})
+
+
 def test_brand_items_decaf_option_and_synthetic_menu(repo):
     items = {i.name: i for i in repo.brand_items("brand:sb", "decaf_only")}
     am = items["아메리카노"]

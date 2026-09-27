@@ -70,7 +70,7 @@ AI 흐름에는 분기("DB에 있는 원두인가"), 폴백(LLM 실패 → 템�
 
 ### 13. 무엇이 안 됐나
 
-- **규칙 기반 향미 태그가 가장 약한 고리다.** 정답 대비 Jaccard 0.40(n=48)이고, 이웃 예측 태그 F1도 0.4082(n=168)다. 부정 표현("no bitterness")·일반어("fresh") 오탐이 원인으로 보이는데 아직 고치지 않았다([gold_enrich_judge2_scores.json](../data/eval/gold_enrich_judge2_scores.json), [phase2_loo.json](../data/eval/phase2_loo.json)).
+- **규칙 기반 향미 태그가 가장 약한 고리다.** 정답 대비 Jaccard 0.40(n=48)이고, 이웃 예측 태그 F1도 0.3974(n=168)다. 부정 표현("no bitterness") 오탐은 아직 고치지 않았다. 일반어("chocolate" 등 전역에 흔한 태그) 오탐은 전역 빈도 대비 이웃 비율(lift)이 일정 배수 이상일 때만 채택하는 게이트로 완화했다 — 정밀도 0.3871→0.3933, F1은 0.4082→0.3974로 소폭만 내려갔다([ADR 0007](adr/0007-tag-lift-gate.md), [gold_enrich_judge2_scores.json](../data/eval/gold_enrich_judge2_scores.json), [phase2_loo.json](../data/eval/phase2_loo.json)).
 - **국내 로스터리 데이터는 예측에 기여하지 못했다.** CQI 대상 200개의 이웃 중 로스터리 원두는 0%라 compare3의 LOO가 세 판 모두 0.495로 같다. 기여는 커버리지(디카페인 6 → 13)뿐이다([phase2_compare3.json](../data/eval/phase2_compare3.json)).
 - **설명의 환각은 절반만 줄었다.** 규칙 통과는 18/24(재채점 전 21/24)지만 두 판정자가 모두 환각 없음으로 본 건 14/22다. 남은 환각은 "균형이 좋아요" 같은 평가적 수사와 1~5 수치를 "보통"으로 뭉개는 버릇이다([ADR 0005](adr/0005-explain-quality-eval.md)).
 - **메뉴는 10개 브랜드 중 7개만 실측이다.** 투썸(봇 차단)·이디야(robots.txt 차단 경로)·블루보틀(음료 메뉴 미공개)은 브랜드 원두 추정 카드만 나온다.
