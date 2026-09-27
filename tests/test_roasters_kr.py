@@ -4,8 +4,13 @@ from pathlib import Path
 import pytest
 
 from pipeline.collect.roasters_kr import (
+    AnthraciteCollector,
+    BeanBrothersCollector,
     BeanFactRecord,
     BlueBottleCollector,
+    FeltCollector,
+    ManufactCollector,
+    MomosCollector,
     fetch_cached,
     find_country,
     find_decaf_method,
@@ -14,14 +19,20 @@ from pipeline.collect.roasters_kr import (
     flavor_notes_from_ld_description,
     is_decaf,
     ko_prefix,
+    parse_anthracite_product,
+    parse_beanbrothers_product,
     parse_bluebottle_product,
+    parse_felt_product,
     parse_fritz_product,
     parse_libre_product,
+    parse_manufact_product,
+    parse_momos_product,
     parse_namusairo_product,
     parse_onekg_product,
     parse_price_krw,
     parse_weight_g,
     run_roasters_kr_collect,
+    split_note_list,
 )
 from pipeline.http import RobotsDisallowed
 
@@ -256,6 +267,322 @@ def test_bluebottle_collector_paginates_and_dedupes(tmp_path):
     assert {r.site for r in records} == {"bluebottle"}
     assert len(records) == 2  # the 텀블러 and 세트 products are filtered out
     assert (tmp_path / "products_page1.json").exists()
+
+
+def test_split_note_list_handles_ko_en_and_alt_dot():
+    assert split_note_list("건포도 · 허브 · 마카다미아") == ["건포도", "허브", "마카다미아"]
+    assert split_note_list("밀크초콜릿ㆍ콘 시럽ㆍ땅콩") == ["밀크초콜릿", "콘 시럽", "땅콩"]
+    assert split_note_list("Floral, Raspberry, Rosemary") == ["Floral", "Raspberry", "Rosemary"]
+    assert split_note_list(None) == []
+    assert split_note_list("") == []
+
+
+# --------------------------------------------------------------------------- #
+# Anthracite
+# --------------------------------------------------------------------------- #
+
+
+def test_parse_anthracite_single_origin():
+    facts = parse_anthracite_product(read_fixture("anthracite_product.html"),
+                                      "https://anthracitecoffee.com/shop_view/?idx=193")
+    assert facts["origin_country"] == "콜롬비아"
+    assert facts["origin_region"] == "Piendamo, Cauca"
+    assert facts["process"] == "Double Anaerobic Fermentation/Thermel Shock"
+    assert facts["roast_level"] == "Medium Light"
+    assert facts["is_decaf"] is False
+    assert facts["flavor_notes"] == []  # no "노트" row on this product
+    assert facts["price_krw"] == 30000
+    assert facts["weight_g"] == 200
+
+
+def test_parse_anthracite_decaf_has_notes_and_method():
+    facts = parse_anthracite_product(read_fixture("anthracite_decaf.html"),
+                                      "https://anthracitecoffee.com/shop_view/?idx=135")
+    assert facts["is_decaf"] is True
+    assert facts["decaf_process"] == "Mountain Water Process"
+    assert facts["origin_country"] == "에티오피아"
+    assert facts["flavor_notes"] == ["Pumpkin Yeot", "Green Tangerine", "Maplesyrup", "Long Aftertaste"]
+
+
+def test_parse_anthracite_blend_prefers_flavor_list_over_prose_note_tagline():
+    # This site reuses one "노트" label for two very different things: a
+    # clean word list on single origins, and a marketing tagline sentence on
+    # blends (which also embeds the bare word "노트" earlier in a sentence,
+    # e.g. "견과류의 노트와 단맛이 ..." -- a trap for naive label scanning).
+    facts = parse_anthracite_product(read_fixture("anthracite_blend.html"),
+                                      "https://anthracitecoffee.com/shop_view/?idx=71")
+    assert facts["flavor_notes"] == ["볶은 견과", "스파이시", "다크 초콜렛"]
+    assert facts["roast_level"] == "미디움 다크 Medium Dark"
+    assert facts["origin_country"] is None  # blend, no single origin
+
+
+def test_parse_anthracite_excludes_non_bean_products():
+    excluded_html = read_fixture("anthracite_product.html").replace(
+        '"name":"콜롬비아 엘 파라이소 더블 무산소 리치피치 Colombia El paraiso Castillo Double Anaerobic Fermentation - Lychee Peach"',
+        '"name":"앤트러사이트 원두 선물세트(3종)"')
+    assert parse_anthracite_product(excluded_html, "https://x/1") is None
+
+
+# --------------------------------------------------------------------------- #
+# Felt
+# --------------------------------------------------------------------------- #
+
+
+def test_parse_felt_single_origin():
+    facts = parse_felt_product(read_fixture("felt_product.html"), "https://feltcoffee.com/product/x/488/")
+    assert facts["name"] == "온두라스 쿠쿠루초 파카마라 워시드"
+    assert facts["origin_country"] == "온두라스"
+    assert facts["process"] == "워시드"
+    assert facts["roast_level"] == "MEDIUM LIGHT"
+    assert facts["is_decaf"] is False
+    assert facts["flavor_notes"] == ["Floral", "Raspberry", "Rosemary"]
+    assert facts["price_krw"] == 25000
+    assert facts["weight_g"] == 200
+
+
+def test_parse_felt_decaf_extracts_method_from_coffee_line():
+    facts = parse_felt_product(read_fixture("felt_decaf.html"), "https://feltcoffee.com/product/x/513/")
+    assert facts["is_decaf"] is True
+    assert facts["decaf_process"] == "Mountain Water Process"
+    assert facts["process"] == "허니"
+    assert facts["flavor_notes"] == ["Peach", "Sweet Potato", "Molasess", "Silky"]
+
+
+def test_parse_felt_excludes_non_bean_products():
+    excluded_html = read_fixture("felt_product.html").replace(
+        "온두라스 쿠쿠루초 파카마라 워시드", "펠트 드립백")
+    assert parse_felt_product(excluded_html, "https://x/1") is None
+
+
+# --------------------------------------------------------------------------- #
+# Bean Brothers
+# --------------------------------------------------------------------------- #
+
+
+def test_parse_beanbrothers_single_origin():
+    facts = parse_beanbrothers_product(read_fixture("beanbrothers_product.html"),
+                                        "https://beanbrothers.co.kr/goods/goods_view.php?goodsNo=1000001418")
+    assert facts["name"] == "에티오피아 반코 타라투 워시드"
+    assert facts["origin_country"] == "에티오피아"
+    assert facts["origin_region"] == "반코 타라투(Banqo Taratu), 게뎁, 예가체프"
+    assert facts["origin_farm"] == "타라투"
+    assert facts["process"] == "워시드"
+    assert facts["roast_level"] == "라이트"
+    assert facts["flavor_notes"] == ["모란", "신비 복숭아", "얼그레이", "생기 있는"]
+    assert facts["price_krw"] == 21000
+    assert facts["weight_g"] == 200
+
+
+def test_parse_beanbrothers_decaf_picks_ea_process_from_korean_phrase():
+    facts = parse_beanbrothers_product(read_fixture("beanbrothers_decaf.html"),
+                                        "https://beanbrothers.co.kr/goods/goods_view.php?goodsNo=1000001504")
+    assert facts["is_decaf"] is True
+    assert facts["decaf_process"] == "EA Process"  # "천연 에틸 아세테이트(사탕수수) 프로세스"
+    assert facts["origin_country"] == "콜롬비아"  # only in the "지역" fact-sheet row, not the name
+
+
+def test_parse_beanbrothers_blend_has_no_origin_but_keeps_roast():
+    facts = parse_beanbrothers_product(read_fixture("beanbrothers_blend.html"),
+                                        "https://beanbrothers.co.kr/goods/goods_view.php?goodsNo=1000000025")
+    assert facts["origin_country"] is None  # blend of two Ethiopia lots, no single origin
+    assert facts["roast_level"] == "Medium Light"
+    assert facts["flavor_notes"] == []  # no "테이스팅 노트" row on a blend
+
+
+def test_parse_beanbrothers_excludes_gift_bundle():
+    excluded_html = read_fixture("beanbrothers_product.html").replace(
+        "에티오피아 반코 타라투 워시드", "Bb 샘플 세트")
+    assert parse_beanbrothers_product(excluded_html, "https://x/1") is None
+
+
+# --------------------------------------------------------------------------- #
+# Momos
+# --------------------------------------------------------------------------- #
+
+
+def test_parse_momos_single_origin():
+    facts = parse_momos_product(read_fixture("momos_product.html"), "https://momos.co.kr/shop_view/?idx=7375")
+    assert facts["name"] == "원두 에티오피아 사포 모스토 무산소 내추럴"
+    assert facts["origin_country"] == "에티오피아"
+    assert facts["process"] == "무산소 내추럴"
+    assert facts["is_decaf"] is False
+    assert facts["flavor_notes"] == ["허니듀", "포도", "마시멜로우", "바닐라 캔디", "정제된"]
+    assert facts["price_krw"] == 17000
+    assert facts["weight_g"] == 100
+
+
+def test_parse_momos_decaf():
+    facts = parse_momos_product(read_fixture("momos_decaf.html"), "https://momos.co.kr/shop_view/?idx=9001")
+    assert facts["is_decaf"] is True
+    assert facts["decaf_process"] == "Swiss Water Process"
+    assert facts["flavor_notes"] == ["초콜릿", "캐러멜"]
+
+
+def test_parse_momos_blend_prefers_summary_card_over_prose_disclosure_note():
+    # The legal disclosure table's "노트" row is rewritten into a marketing
+    # sentence for some blends; the short "향미노트" summary card above it
+    # keeps the clean word list and should win.
+    facts = parse_momos_product(read_fixture("momos_blend.html"), "https://momos.co.kr/shop_view/?idx=2486")
+    assert facts["flavor_notes"] == ["다크 초콜릿", "묵직한", "깨끗한", "크림같은"]
+
+
+def test_parse_momos_excludes_non_bean_products():
+    excluded_html = read_fixture("momos_product.html").replace(
+        "원두 에티오피아 사포 모스토 무산소 내추럴", "보자기 드립백 버라이어티 15개입")
+    assert parse_momos_product(excluded_html, "https://x/1") is None
+
+
+# --------------------------------------------------------------------------- #
+# Manufact
+# --------------------------------------------------------------------------- #
+
+
+def test_parse_manufact_single_origin_splits_bean_info_lines():
+    facts = parse_manufact_product(read_fixture("manufact_product.html"),
+                                    "https://manufactcoffee.com/product/x/426/")
+    assert facts["name"] == "Guatemala Waykan | 과테말라 와이칸"
+    assert facts["origin_country"] == "과테말라"
+    assert facts["origin_region"] == "우에우에테낭고"
+    assert facts["roast_level"] == "미디엄다크"
+    assert facts["flavor_notes"] == ["건포도", "허브", "마카다미아", "사탕수수", "초콜렛"]
+    assert facts["process"] is None  # folded into the free-form cell, not its own row
+    assert facts["price_krw"] == 18000
+
+
+def test_parse_manufact_decaf_blend_has_two_line_bean_info():
+    facts = parse_manufact_product(read_fixture("manufact_decaf.html"),
+                                    "https://manufactcoffee.com/product/x/106/")
+    assert facts["is_decaf"] is True
+    assert facts["origin_country"] is None  # blend, no origin line
+    assert facts["roast_level"] == "미디엄다크"
+    assert facts["flavor_notes"] == ["밀크초콜릿", "콘 시럽", "땅콩", "복숭아", "오트밀"]
+
+
+def test_parse_manufact_bare_weight_line_does_not_leak_into_notes():
+    facts = parse_manufact_product(read_fixture("manufact_product_with_weight_line.html"),
+                                    "https://manufactcoffee.com/product/x/439/")
+    assert facts["weight_g"] == 100
+    assert facts["flavor_notes"] == ["베르가못", "라임", "밀크티"]
+    assert facts["origin_region"] == "후일라 팔레스티나"
+
+
+def test_parse_manufact_excludes_non_bean_products():
+    excluded_html = read_fixture("manufact_product.html").replace(
+        "Guatemala Waykan | 과테말라 와이칸", "머신용품 청소 세트")
+    assert parse_manufact_product(excluded_html, "https://x/1") is None
+
+
+# --------------------------------------------------------------------------- #
+# New-site collectors: listing regex + caching wiring
+# --------------------------------------------------------------------------- #
+
+
+def test_anthracite_collector_extracts_ids_from_sitemap(tmp_path):
+    sitemap = ('<?xml version="1.0"?><urlset>'
+               '<url><loc>https://anthracitecoffee.com/shop_view/193</loc></url>'
+               '<url><loc>https://anthracitecoffee.com/shop_view/193</loc></url>'
+               '<url><loc>https://anthracitecoffee.com/home</loc></url>'
+               '</urlset>')
+    product_html = read_fixture("anthracite_product.html")
+
+    class FakeResp:
+        def __init__(self, text):
+            self.text = text
+
+    class FakeHttp:
+        def get(self, url):
+            if url.endswith("sitemap.xml"):
+                return FakeResp(sitemap)
+            return FakeResp(product_html)
+
+    c = AnthraciteCollector()
+    records = c.collect(FakeHttp(), tmp_path, "2026-09-27")
+    assert len(records) == 1  # the duplicate idx=193 is deduped
+    assert records[0].key == "anthracite:193"
+
+
+def test_momos_collector_extracts_ids_from_shop_listing(tmp_path):
+    listing = '<a href="/shop/?idx=7375">a</a><a href="/shop/?idx=7375">dup</a>'
+    product_html = read_fixture("momos_product.html")
+
+    class FakeResp:
+        def __init__(self, text):
+            self.text = text
+
+    class FakeHttp:
+        def get(self, url):
+            if url.endswith("/shop"):
+                return FakeResp(listing)
+            return FakeResp(product_html)
+
+    c = MomosCollector()
+    records = c.collect(FakeHttp(), tmp_path, "2026-09-27")
+    assert len(records) == 1
+    assert records[0].key == "momos:7375"
+
+
+def test_felt_collector_extracts_ids_from_category_listing(tmp_path):
+    listing = ('<a href="/product/온두라스-쿠쿠루초-파카마라-워시드/488/category/30/display/1/">a</a>'
+               '<a href="/product/온두라스-쿠쿠루초-파카마라-워시드/488/category/30/display/1/">dup</a>')
+    product_html = read_fixture("felt_product.html")
+
+    class FakeResp:
+        def __init__(self, text):
+            self.text = text
+
+    class FakeHttp:
+        def get(self, url):
+            if "list.html" in url:
+                return FakeResp(listing)
+            return FakeResp(product_html)
+
+    c = FeltCollector()
+    records = c.collect(FakeHttp(), tmp_path, "2026-09-27")
+    assert len(records) == 1
+    assert records[0].key == "felt:488"
+
+
+def test_beanbrothers_collector_merges_both_categories_and_dedupes(tmp_path):
+    listing_blend = '<a href="/goods/goods_view.php?goodsNo=1000001418">a</a>'
+    listing_single = '<a href="/goods/goods_view.php?goodsNo=1000001418">dup</a>'
+    product_html = read_fixture("beanbrothers_product.html")
+
+    class FakeResp:
+        def __init__(self, text):
+            self.text = text
+
+    class FakeHttp:
+        def get(self, url):
+            if "007001001" in url:
+                return FakeResp(listing_blend)
+            if "007001002" in url:
+                return FakeResp(listing_single)
+            return FakeResp(product_html)
+
+    c = BeanBrothersCollector()
+    records = c.collect(FakeHttp(), tmp_path, "2026-09-27")
+    assert len(records) == 1
+    assert records[0].key == "beanbrothers:1000001418"
+
+
+def test_manufact_collector_extracts_ids_from_category_listing(tmp_path):
+    listing = '<a href="/product/guatemala-waykan-과테말라-와이칸/426/category/66/display/1/">a</a>'
+    product_html = read_fixture("manufact_product.html")
+
+    class FakeResp:
+        def __init__(self, text):
+            self.text = text
+
+    class FakeHttp:
+        def get(self, url):
+            if "list.html" in url:
+                return FakeResp(listing)
+            return FakeResp(product_html)
+
+    c = ManufactCollector()
+    records = c.collect(FakeHttp(), tmp_path, "2026-09-27")
+    assert len(records) == 1
+    assert records[0].key == "manufact:426"
 
 
 # --------------------------------------------------------------------------- #
