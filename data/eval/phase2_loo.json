@@ -41,11 +41,23 @@
       "within1": 0.85
     }
   },
+  "tags_query_embeddings": {
+    "leak_free": 200,
+    "stored_fallback": 0,
+    "note": "leak-free tag-free query embeddings are the default when cached (data/eval/loo_tagfree_query_embeddings.jsonl, exactly the n=200/seed=42 targets); other target draws fall back to the stored (tag-including) embedding, as before docs/adr/0008."
+  },
   "tags": {
     "n": 168,
-    "precision": 0.3933,
-    "recall": 0.4015,
-    "f1": 0.3974,
-    "category_f1": 0.6426
+    "precision": 0.3677,
+    "recall": 0.3712,
+    "f1": 0.3695,
+    "category_f1": 0.6298
+  },
+  "tags_model": {
+    "n": 168,
+    "precision": 0.7797,
+    "recall": 0.6837,
+    "f1": 0.7286,
+    "category_f1": 0.8249
   }
 }

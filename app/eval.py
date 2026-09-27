@@ -502,12 +502,15 @@ def main(argv: list[str]) -> int:
     targets = order if names == ["all"] else names
     offline = {"explain_recheck"}                     # no DB, no LLM
     repo = None if set(targets) <= offline else Repo(settings.DATABASE_URL)
-    tag_model = TagModel.load() if repo is not None else None    # adds `tags_model` to loo/loo_open when present
+    # adds a `tags_model` block to plain `loo` only: the model's training labels are coffeereview_kaggle-derived
+    # (licence-restricted; docs/adr/0008-learned-tag-model.md), so the open-data deployment never loads it
+    # (app/graphs/__init__.py _tag_model_enabled) and `loo_open` -- its eval counterpart -- doesn't score it either.
+    tag_model = TagModel.load() if repo is not None else None
     outputs = {"explain_recheck": "explain_quality"}  # the re-score rewrites the saved explain_quality result
     fns = {
         "violations": violation_rate,
         "loo": lambda r: loo_accuracy(r, tag_model=tag_model),
-        "loo_open": lambda r: loo_accuracy(r, exclude_sources=OPEN_LICENSE_EXCLUDE, tag_model=tag_model),
+        "loo_open": lambda r: loo_accuracy(r, exclude_sources=OPEN_LICENSE_EXCLUDE),
         "coverage": coverage,
         "coverage_open": lambda r: coverage(r, exclude_sources=OPEN_LICENSE_EXCLUDE),
         "tag_names": tag_names,                      # Fix B check; run by name only, not in `all`

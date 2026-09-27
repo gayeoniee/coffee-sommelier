@@ -44,6 +44,11 @@
       "within1": 0.5577
     }
   },
+  "tags_query_embeddings": {
+    "leak_free": 4,
+    "stored_fallback": 196,
+    "note": "leak-free tag-free query embeddings are the default when cached (data/eval/loo_tagfree_query_embeddings.jsonl, exactly the n=200/seed=42 targets); other target draws fall back to the stored (tag-including) embedding, as before docs/adr/0008."
+  },
   "tags": {
     "n": 9,
     "precision": 0.7,
