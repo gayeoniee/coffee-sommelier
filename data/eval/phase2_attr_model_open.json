@@ -1,0 +1,65 @@
+{
+  "variant": "open",
+  "only_sources": [
+    "cqi",
+    "roasters_kr",
+    "shopify"
+  ],
+  "embed_model": "nvidia/nemotron-3-embed-1b",
+  "holdout_n": 200,
+  "holdout_seed": 42,
+  "config_path": "config/attr_model_open.json",
+  "attrs": {
+    "acidity": {
+      "shipped": true,
+      "n_labels": 1373,
+      "model_type": "ridge",
+      "cv": {
+        "ridge_mae": 1.0549,
+        "mlp_mae": 1.0837,
+        "picked": "ridge"
+      },
+      "holdout": {
+        "n_scored": 200,
+        "model": {
+          "mae": 1.14,
+          "within1": 0.45
+        },
+        "neighbor_avg": {
+          "n": 200,
+          "mae": 1.0981,
+          "within1": 0.5
+        },
+        "note": "both scored on the SAME tag-free (leak-free) query embeddings of the fixed held-out targets; neighbor_avg is predict_from_neighbors's weighted average (production defaults, k=10) over the production neighbour pool."
+      }
+    },
+    "body": {
+      "shipped": true,
+      "n_labels": 1379,
+      "model_type": "ridge",
+      "cv": {
+        "ridge_mae": 1.0105,
+        "mlp_mae": 1.0385,
+        "picked": "ridge"
+      },
+      "holdout": {
+        "n_scored": 200,
+        "model": {
+          "mae": 0.9919,
+          "within1": 0.54
+        },
+        "neighbor_avg": {
+          "n": 200,
+          "mae": 1.0286,
+          "within1": 0.545
+        },
+        "note": "both scored on the SAME tag-free (leak-free) query embeddings of the fixed held-out targets; neighbor_avg is predict_from_neighbors's weighted average (production defaults, k=10) over the production neighbour pool."
+      }
+    },
+    "sweetness": {
+      "shipped": false,
+      "n_labels": 36,
+      "reason": "too few open-licence labels"
+    }
+  }
+}
