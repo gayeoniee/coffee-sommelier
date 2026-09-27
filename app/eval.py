@@ -121,7 +121,7 @@ def _load_tagfree_query_embeddings() -> dict[int, list[float]]:
 
 
 def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str, ...] = (),
-                 target_sources: tuple[str, ...] = (), tag_model=None) -> dict:
+                 target_sources: tuple[str, ...] = (), tag_model=None, attr_model=None) -> dict:
     """Attribute (acidity/body/sweetness) predictions are unchanged: stored query embedding, k=10 neighbours.
 
     Tag predictions default to LEAK-FREE query embeddings when cached (see `_load_tagfree_query_embeddings`):
@@ -129,7 +129,12 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
     embedding, so scoring `repo.coffee_embedding(cid)` against `truth.tags` is partly circular (docs/adr/0008).
     This affects only the `tags`/`tags_model` blocks below (not the attribute blocks, which never touch tags).
     `tag_model`, when given (an app.core.tagmodel.TagModel), adds a `tags_model` block scored on the SAME
-    query embedding as `tags`, so the two are directly comparable."""
+    query embedding as `tags`, so the two are directly comparable.
+
+    `attr_model`, when given (an app.core.attrmodel.AttrModel), adds an `attrs_model` block: per-attribute MAE/
+    within1 for the learned regressor vs the neighbour average, BOTH scored on the same leak-free query
+    embedding used for tags (docs/adr/0009-learned-attribute-model.md) -- a fair comparison independent of the
+    stored-embedding tag leak above, unlike the plain attribute block."""
     tag_to_cat, _ = repo.taxonomy()
     base_rates = repo.tag_base_rates()
     tagfree = _load_tagfree_query_embeddings()
@@ -141,6 +146,8 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
     cat_tp = cat_fp = cat_fn = 0
     model_n = model_tp = model_fp = model_fn = 0
     model_cat_tp = model_cat_fp = model_cat_fn = 0
+    attrs_model_stats = {a: {"n": 0, "model_abs_err": 0.0, "model_within1": 0, "neighbor_n": 0,
+                             "neighbor_abs_err": 0.0, "neighbor_within1": 0} for a in ATTRS}
     leak_free_used = 0
     not_targets = tuple(dict.fromkeys(exclude_sources + NEVER_LOO_TARGETS))
     ids = repo.random_coffee_ids_for_loo(n, seed, exclude_sources=not_targets, sources=target_sources)
@@ -171,6 +178,24 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
         else:
             tag_vec, tag_near = emb, near                # no cached leak-free embedding: fall back, as before
         tag_pred = predict_from_neighbors(tag_near, base_rates=base_rates)
+
+        if attr_model is not None:
+            model_values = attr_model.predict(tag_vec)
+            for a in ATTRS:
+                t = truth.attr(a)
+                if t is None:
+                    continue
+                s = attrs_model_stats[a]
+                neighbor_v = getattr(tag_pred, a)
+                if neighbor_v is not None:
+                    s["neighbor_n"] += 1
+                    s["neighbor_abs_err"] += abs(neighbor_v - t)
+                    s["neighbor_within1"] += abs(neighbor_v - t) <= 1
+                model_v = model_values.get(a)
+                if model_v is not None:
+                    s["n"] += 1
+                    s["model_abs_err"] += abs(model_v - t)
+                    s["model_within1"] += abs(model_v - t) <= 1
 
         truth_tags = {t.lower() for t in truth.tags}
         if truth_tags:
@@ -222,6 +247,18 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
         _, _, mcat_f1 = _prf(model_cat_tp, model_cat_fp, model_cat_fn)
         out["tags_model"] = {"n": model_n, "precision": round(mp, 4), "recall": round(mr, 4), "f1": round(mf1, 4),
                             "category_f1": round(mcat_f1, 4)}
+    if attr_model is not None:
+        def block(s: dict, n: int, err_key: str, within1_key: str) -> dict:
+            return {"n": n, "mae": round(s[err_key] / n, 4) if n else None,
+                   "within1": round(s[within1_key] / n, 4) if n else None}
+
+        out["attrs_model"] = {
+            a: {"model": block(s, s["n"], "model_abs_err", "model_within1"),
+               "neighbor": block(s, s["neighbor_n"], "neighbor_abs_err", "neighbor_within1"),
+               "note": "both scored on the same leak-free tag-free query embedding as `tags` above "
+                       "(docs/adr/0009-learned-attribute-model.md); neighbor = predict_from_neighbors's "
+                       "weighted average over that embedding's neighbours, production defaults (k=10)."}
+            for a, s in attrs_model_stats.items()}
     return out
 
 
@@ -494,6 +531,7 @@ def explain_quality(repo) -> dict:
 
 
 def main(argv: list[str]) -> int:
+    from app.core.attrmodel import AttrModel
     from app.core.tagmodel import TagModel
     from app.repo import Repo
     names = argv or ["all"]
@@ -502,14 +540,18 @@ def main(argv: list[str]) -> int:
     targets = order if names == ["all"] else names
     offline = {"explain_recheck"}                     # no DB, no LLM
     repo = None if set(targets) <= offline else Repo(settings.DATABASE_URL)
-    # adds a `tags_model` block to plain `loo` only: the model's training labels are coffeereview_kaggle-derived
-    # (licence-restricted; docs/adr/0008-learned-tag-model.md), so the open-data deployment never loads it
-    # (app/graphs/__init__.py _tag_model_enabled) and `loo_open` -- its eval counterpart -- doesn't score it either.
+    # adds a `tags_model`/`attrs_model` block to plain `loo` only. Both loaders are DATA_VARIANT-aware
+    # (app/core/tagmodel.py, app/core/attrmodel.py): under DATA_VARIANT=open they look for the *_open.json
+    # files (tag model only if one has been shipped -- docs/adr/0009-learned-attribute-model.md Goal B2) and
+    # never fall back to the coffeereview_kaggle-derived full tag model, so running this against coffee_open
+    # with DATA_VARIANT=open reports the open models. `loo_open` -- the full-DB, excluded-neighbour-pool
+    # experiment -- doesn't score either model block; it predates both and answers a different question.
     tag_model = TagModel.load() if repo is not None else None
+    attr_model = AttrModel.load() if repo is not None else None
     outputs = {"explain_recheck": "explain_quality"}  # the re-score rewrites the saved explain_quality result
     fns = {
         "violations": violation_rate,
-        "loo": lambda r: loo_accuracy(r, tag_model=tag_model),
+        "loo": lambda r: loo_accuracy(r, tag_model=tag_model, attr_model=attr_model),
         "loo_open": lambda r: loo_accuracy(r, exclude_sources=OPEN_LICENSE_EXCLUDE),
         "coverage": coverage,
         "coverage_open": lambda r: coverage(r, exclude_sources=OPEN_LICENSE_EXCLUDE),

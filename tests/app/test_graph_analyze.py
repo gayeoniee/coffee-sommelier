@@ -1,3 +1,4 @@
+from app.core.attrmodel import AttrModel, _Ridge
 from app.core.tagmodel import TagModel
 from app.graphs.analyze_bean import build_analyze_graph
 from app.models import Profile
@@ -6,6 +7,14 @@ from tests.app.fakes import fake_deps, run_events
 
 def first_card(events):
     return next(e for e in events if e["type"] == "cards")["cards"][0]
+
+
+def _fake_attr_model(sweetness=True) -> AttrModel:
+    # fake_deps().embed() returns [0.0] * 8, so every input is 0 -- ridge collapses to the intercept.
+    models = {"acidity": _Ridge(w=[0.0] * 8, b=4.5), "body": _Ridge(w=[0.0] * 8, b=1.5)}
+    if sweetness:
+        models["sweetness"] = _Ridge(w=[0.0] * 8, b=3.5)
+    return AttrModel(embed_model="test", models=models)
 
 
 def _fake_tag_model() -> TagModel:
@@ -79,6 +88,41 @@ def test_no_tag_model_loaded_keeps_neighbor_vote_tags():
     c = first_card(run_events(build_analyze_graph(deps), {"text": "에티오피아 예가체프 워시드", "profile": Profile()}))
     assert not any(e.startswith("향미 모델:") for e in c["evidence"])
     assert c["tags"] == ["lemon"]
+
+
+def test_unknown_bean_uses_attr_model_when_loaded():
+    deps = fake_deps(attr_model=_fake_attr_model())
+    c = first_card(run_events(build_analyze_graph(deps), {"text": "에티오피아 예가체프 워시드", "profile": Profile()}))
+    assert c["source"] == "predicted"
+    assert (c["acidity"], c["body"], c["sweetness"]) == (4.5, 1.5, 3.5)   # model values, not the neighbour average
+    assert c["confidence"] != "low" and c["n_neighbors"] == 10             # confidence/n_neighbors untouched
+
+
+def test_attr_model_missing_attribute_falls_back_to_neighbor_average():
+    deps = fake_deps(attr_model=_fake_attr_model(sweetness=False))
+    c = first_card(run_events(build_analyze_graph(deps), {"text": "에티오피아 예가체프 워시드", "profile": Profile()}))
+    assert (c["acidity"], c["body"]) == (4.5, 1.5)      # model values
+    assert c["sweetness"] == 3.0                        # model doesn't cover sweetness -> neighbour average kept
+
+
+def test_degraded_embedding_falls_back_to_neighbor_average_even_with_an_attr_model_loaded():
+    deps = fake_deps(embed_fails=True, attr_model=_fake_attr_model())
+    c = first_card(run_events(build_analyze_graph(deps), {"text": "브라질 내추럴", "profile": Profile()}))
+    assert c["confidence"] == "low" and c["acidity"] == 3.0    # fallback_neighbors' plain average, not the model
+
+
+def test_no_attr_model_loaded_keeps_neighbor_average_attrs():
+    deps = fake_deps()                                          # attr_model=None by default
+    c = first_card(run_events(build_analyze_graph(deps), {"text": "에티오피아 예가체프 워시드", "profile": Profile()}))
+    assert (c["acidity"], c["body"], c["sweetness"]) != (4.5, 1.5, 3.5)
+
+
+def test_tag_model_and_attr_model_compose_independently():
+    deps = fake_deps(tag_model=_fake_tag_model(), attr_model=_fake_attr_model())
+    c = first_card(run_events(build_analyze_graph(deps), {"text": "에티오피아 예가체프 워시드", "profile": Profile()}))
+    assert c["tags"] == ["chocolate", "lemon"]                          # tag model's ranking
+    assert (c["acidity"], c["body"], c["sweetness"]) == (4.5, 1.5, 3.5)  # attr model's values
+    assert any(e.startswith("향미 모델:") for e in c["evidence"])
 
 
 def test_violation_is_reported_not_hidden():

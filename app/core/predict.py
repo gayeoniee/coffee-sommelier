@@ -95,6 +95,15 @@ def with_model_tags(pred: Prediction, tag_probs: list[tuple[str, float]], tag_ko
     return replace(pred, tags=tags, evidence=model_evidence + kept_evidence)
 
 
+def with_model_attrs(pred: Prediction, attr_values: dict[str, float | None]) -> Prediction:
+    """Replace the neighbour-average acidity/body/sweetness with the learned attribute model's predictions
+    (app/core/attrmodel.py) wherever it shipped a value; an attribute the model doesn't cover (None -- e.g. the
+    open variant ships no sweetness) keeps the neighbour-average value. Confidence/tags/evidence/n_neighbors are
+    untouched -- the model only replaces the ATTRIBUTE half of `predict_from_neighbors`'s output
+    (docs/adr/0009-learned-attribute-model.md)."""
+    return replace(pred, **{a: v if v is not None else getattr(pred, a) for a, v in attr_values.items()})
+
+
 def item_from_prediction(parsed: ParsedBean, pred: Prediction) -> Item:
     return Item(key="input", name=parsed.text, source="predicted", acidity=pred.acidity, body=pred.body,
                 sweetness=pred.sweetness, tags=tuple(pred.tags), is_decaf=parsed.is_decaf,

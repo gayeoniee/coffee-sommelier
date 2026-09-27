@@ -3,7 +3,8 @@ import itertools
 import pytest
 
 from app.core.learning import update_profile
-from app.core.predict import _tag_kept, _tag_rank_score, item_from_prediction, predict_from_neighbors
+from app.core.predict import (_tag_kept, _tag_rank_score, item_from_prediction, predict_from_neighbors,
+                              with_model_attrs)
 from app.core.simulate import simulate_convergence
 from app.models import Item, Neighbor, ParsedBean, Profile
 
@@ -85,6 +86,17 @@ def test_item_from_prediction():
     it = item_from_prediction(parsed, pred)
     assert (it.key, it.source, it.name, it.is_decaf, it.acidity, it.tags) == (
         "input", "predicted", "예가체프 디카페인", True, 4.0, ("lemon",))
+
+
+def test_with_model_attrs_overrides_present_values_keeps_missing_and_rest_untouched():
+    pred = predict_from_neighbors([nb(i, 0.9, 4, 2, ("lemon",)) for i in range(3)])
+    assert pred.sweetness is None                    # no neighbour has sweetness
+    out = with_model_attrs(pred, {"acidity": 3.5, "body": None, "sweetness": 2.1})
+    assert out.acidity == 3.5                         # model value used
+    assert out.body == pred.body                      # model returned None -> neighbour average kept
+    assert out.sweetness == 2.1                       # model covers an attribute the neighbours couldn't
+    assert out.tags == pred.tags and out.evidence == pred.evidence and out.confidence == pred.confidence
+    assert out.n_neighbors == pred.n_neighbors
 
 
 def item(**kw):

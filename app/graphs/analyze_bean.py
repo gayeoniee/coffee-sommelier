@@ -9,7 +9,7 @@ from langgraph.graph import END, START, StateGraph
 from app.config import PARSE_BEAN_TASK
 from app.core.explain import card, template_explanation
 from app.core.parse import BeanParse, bean_parse_messages, merge_llm_parse, needs_llm_parse, parse_bean_text
-from app.core.predict import item_from_prediction, predict_from_neighbors, with_model_tags
+from app.core.predict import item_from_prediction, predict_from_neighbors, with_model_attrs, with_model_tags
 from app.core.scoring import passes, score_item
 from app.graphs.common import explain_to_stream
 from app.models import Item, ParsedBean, Prediction, Profile
@@ -66,10 +66,16 @@ def build_analyze_graph(deps):
         pred = predict_from_neighbors(neighbors, tag_ko, base_rates=base_rates)
         if degraded:
             pred = replace(pred, confidence="low")
-        elif deps.tag_model is not None:
-            # the learned tag model (app/core/tagmodel.py) replaces the neighbour-vote's tags when it's loaded
-            # and the embedding call succeeded; attributes/confidence/n_neighbors stay from predict_from_neighbors.
-            pred = with_model_tags(pred, deps.tag_model.tags(vec), tag_ko)
+        else:
+            if deps.tag_model is not None:
+                # the learned tag model (app/core/tagmodel.py) replaces the neighbour-vote's tags when it's
+                # loaded and the embedding call succeeded; confidence/n_neighbors stay from predict_from_neighbors.
+                pred = with_model_tags(pred, deps.tag_model.tags(vec), tag_ko)
+            if deps.attr_model is not None:
+                # the learned attribute model (app/core/attrmodel.py) replaces acidity/body/sweetness wherever
+                # it shipped a value; an attribute it doesn't cover (e.g. open-variant sweetness) keeps the
+                # neighbour average. Evidence/confidence/n_neighbors are untouched either way.
+                pred = with_model_attrs(pred, deps.attr_model.predict(vec))
         return {"item": item_from_prediction(parsed, pred), "prediction": pred}
 
     async def score(state: AnalyzeState) -> dict:
