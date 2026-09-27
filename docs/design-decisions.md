@@ -1,4 +1,4 @@
-# 설계 결정 — 면접에서 물을 만한 질문 14개
+# 설계 결정 — 면접에서 물을 만한 질문 15개
 
 각 답은 "무엇을 골랐나 → 왜 → 수치 → 원자료" 순서다. 수치는 모두 `data/eval/*.json` 또는 ADR에서 옮겼다. 구조 그림은 [architecture.md](architecture.md), 결정 기록 원문은 [docs/adr/](adr/)에 있다.
 
@@ -17,7 +17,8 @@
 | 11 | [왜 설명 품질을 판정자 두 명으로 재나](#11-왜-설명-품질을-판정자-두-명으로-재나) | [ADR 0005](adr/0005-explain-quality-eval.md) |
 | 12 | [데이터 라이선스는 어떻게 정했나 (전체판과 오픈판)](#12-데이터-라이선스는-어떻게-정했나-전체판과-오픈판) | [loo_open](../data/eval/phase2_loo_open.json), [compare3](../data/eval/phase2_compare3.json) |
 | 13 | [왜 향미 태그 예측을 학습형 모델로 바꿨나](#13-왜-향미-태그-예측을-학습형-모델로-바꿨나) | [ADR 0008](adr/0008-learned-tag-model.md), [phase2_tag_model.json](../data/eval/phase2_tag_model.json) |
-| 14 | [무엇이 안 됐나](#14-무엇이-안-됐나) | 아래 각 링크 |
+| 14 | [왜 속성 예측(산미/바디/단맛)도 학습형 모델로 바꿨나](#14-왜-속성-예측산미바디단맛도-학습형-모델로-바꿨나) | [ADR 0009](adr/0009-learned-attribute-model.md), [phase2_attr_model.json](../data/eval/phase2_attr_model.json) |
+| 15 | [무엇이 안 됐나](#15-무엇이-안-됐나) | 아래 각 링크 |
 
 ---
 
@@ -86,9 +87,27 @@ coffeereview 파생이라 오픈 데이터판(`DATA_VARIANT=open`)에는 이 모
 [ADR 0008](adr/0008-learned-tag-model.md), [phase2_tag_model.json](../data/eval/phase2_tag_model.json),
 [phase2_loo.json](../data/eval/phase2_loo.json).
 
-### 14. 무엇이 안 됐나
+### 14. 왜 속성 예측(산미/바디/단맛)도 학습형 모델로 바꿨나
 
-- **속성 예측(산미/바디/단맛)은 여전히 이웃 평균이다.** 향미 태그만 학습형 모델로 바꿨고(13번), 산미·바디·단맛과 신뢰도는 그대로 이웃 가중 평균이다 — 다음 개선 후보.
+13번과 같은 논리를 속성에도 적용했다: `predict_from_neighbors`의 나머지 절반(산미·바디·단맛)도 여전히
+이웃 가중 평균이었다. `scripts/train_attr_model.py`가 속성마다 릿지 회귀와 작은 MLP(1024→128→1)를
+5-fold CV MAE로 비교해 독립적으로 고른다(산미·바디는 MLP, 단맛은 릿지). 학습 풀은 태그 모델과 같은 태그
+프리 임베딩이고, 대상에서 뺀 고정 200개도 동일하다 — 이번엔 CQI(사람 커핑, 태그 없음)도 학습에
+포함시켜서 태그 프리 캐시를 CQI까지 확장했다(약 1,600건 추가). 결과: 같은 누수 없는 임베딩으로 재면
+산미 MAE 0.6231 vs 이웃 0.7336, 바디 0.7649 vs 0.8831, 단맛 0.4393 vs 0.5618 — 세 속성 모두 학습
+모델이 이웃 평균을 이긴다(태그만큼 극적이진 않다 — 이웃 평균도 애초에 어느 정도는 통했다). 오픈판은
+CQI + 국내 로스터리 + shopify만으로 따로 학습했는데(coffeereview·RoasterDB 제외), 표본이 훨씬 작아
+(산미·바디 각 ~1,370건) 산미는 모델이 이웃 평균보다 오히려 근소하게 나쁘고 바디만 근소하게 낫다 —
+정직하게 기록했다. 향미 카테고리(SCA 7대 분류)로 오픈판 태그 모델도 시도했지만(측정 풀 145건), CV
+카테고리 F1(0.6459)이 이웃 투표(0.6593)를 못 넘어 탑재하지 않았다 — 표본이 너무 작아 전체 카탈로그를
+이웃으로 쓰는 투표를 이기지 못한다. 가중치는 전체판 682KB(gzip), 오픈판 19KB, 순전파는 13.8ms/호출.
+원자료: [ADR 0009](adr/0009-learned-attribute-model.md), [phase2_attr_model.json](../data/eval/phase2_attr_model.json), [phase2_attr_model_open.json](../data/eval/phase2_attr_model_open.json), [phase2_tag_model_open_feasibility.json](../data/eval/phase2_tag_model_open_feasibility.json).
+
+### 15. 무엇이 안 됐나
+
+- **오픈판 향미 카테고리 모델은 표본 부족으로 기각했다.** 측정 풀 145건으로는 이웃 투표(전체 9천여 건을
+  이웃으로 씀)를 카테고리 F1에서 넘지 못했다(0.6459 vs 0.6593, 14번). 오픈판은 향미 태그를 계속 이웃
+  투표로만 낸다.
 - **국내 로스터리 데이터는 예측에 기여하지 못했다.** CQI 대상 200개의 이웃 중 로스터리 원두는 0%라 compare3의 LOO가 세 판 모두 0.495로 같다. 기여는 커버리지(디카페인 6 → 13)뿐이다([phase2_compare3.json](../data/eval/phase2_compare3.json)).
 - **설명의 환각은 절반만 줄었다.** 규칙 통과는 18/24(재채점 전 21/24)지만 두 판정자가 모두 환각 없음으로 본 건 14/22다. 남은 환각은 "균형이 좋아요" 같은 평가적 수사와 1~5 수치를 "보통"으로 뭉개는 버릇이다([ADR 0005](adr/0005-explain-quality-eval.md)).
 - **메뉴는 10개 브랜드 중 7개만 실측이다.** 투썸(봇 차단)·이디야(robots.txt 차단 경로)·블루보틀(음료 메뉴 미공개)은 브랜드 원두 추정 카드만 나온다.
