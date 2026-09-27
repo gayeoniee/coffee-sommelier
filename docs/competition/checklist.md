@@ -33,7 +33,7 @@
 - [ ] (선택) 소상공인 상가(상권)정보 CSV, 관세청 HS 0901.12/0901.22 수입 통계 — 넣는다면 실제 수치를 받아서 넣기
 - [x] 포털에 올릴 CSV 3종 만들기(CSV만 가능): 컬럼정의 파일, 데이터 템플릿 예시, 데이터셋 파일. **coffeereview·RoasterDB·SCA 휠 파생 행은 넣지 않는다.** 업로드 세트는 `data/competition/01_컬럼정의.csv` ~ `06_데이터셋_milk_labels.csv` 6개 파일(UTF-8 BOM, `scripts/competition/export_csv.py`로 생성)이다. SCA 휠 파생 한국어 매핑(CC BY-NC-ND)은 업로드 세트에 넣지 않고 `data/competition/reference/07_sca_ko_참고.csv`(README.md에 "업로드 금지 — 참고용" 명시)에 참고용으로만 둔다.
 - [x] 결과 이미지 5장(`docs/competition/images/01~05_*.png`, `scripts/competition/figures.py data/eval/open docs/competition/images`로 생성) + 초안 B-6에 이미지마다 해석 문단.
-- [x] 배포 URL과 GitHub 공개 여부 결정: 제출본 <https://coffee-sommelier-open.vercel.app>(배너 "공모전 제출본"), 참고용 전체 포트폴리오판 <https://coffee-sommelier-psi.vercel.app>, 저장소 <https://github.com/gayeoniee/wine-sommelier_rag>(공개). 초안 A-0·B-7에 반영함.
+- [x] 배포 URL과 GitHub 공개 여부 결정: 제출본 <https://coffee-sommelier-open.vercel.app>(배너 "공모전 제출본"), 참고용 전체 포트폴리오판 <https://coffee-sommelier-psi.vercel.app>, 저장소 <https://github.com/gayeoniee/coffee-sommelier>(공개). 초안 A-0·B-7에 반영함.
 - [x] `uv run python scripts/competition/check_draft.py docs/competition/data-recipe-draft.md` 통과(exit 0). A-2~A-6 모두 300자 이상, numbers 마커 있음. 남은 【작성 필요】는 13개 — 전부 본인 정보·포털 드롭다운·전화 확인·팀 구성처럼 본인만 채울 수 있는 항목이다(아래 "남은 【작성 필요】" 참고).
 
 ## 남은 【작성 필요】 (check_draft.py 기준 13개, 전부 본인 몫)
