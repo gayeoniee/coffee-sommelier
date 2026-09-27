@@ -45,6 +45,21 @@ _HANGUL = re.compile(r"[가-힣]")
 _NOTE_SPLIT = re.compile(r"[,/·;\n]+")
 MAX_NOTE_CHARS = 20
 
+# Korean roastery note-word body cue (docs/adr/0010-body-heaviness.md): roasters_kr beans are facts-only note
+# lists with no review prose to judge with an LLM (scripts/relabel_body.py needs cupping-note sentences), so
+# a heaviness reading straight from the note words is the only rule-based signal available before the LLM
+# enrich fallback (needs_llm) would otherwise guess from the same short text anyway.
+_KO_BODY_HEAVY = re.compile(r"묵직|무거운|풀\s*바디")
+_KO_BODY_LIGHT = re.compile(r"가벼운|라이트|깔끔한\s*바디")
+
+
+def ko_body_cue(text: str) -> int | None:
+    if _KO_BODY_HEAVY.search(text or ""):
+        return 4
+    if _KO_BODY_LIGHT.search(text or ""):
+        return 2
+    return None
+
 
 def ko_tag_vocab(taxonomy: list[TaxonomyNode]) -> dict[str, str]:
     """Korean term (spaces removed) -> SCA tag, from the taxonomy's Korean names plus KO_TAG_ALIASES."""
@@ -119,6 +134,10 @@ def _apply_rules(c: CoffeeRecord, text: str, vocab: list[str], ko_vocab: dict[st
         is_decaf, process = detect_decaf(c.name, text)
         if is_decaf:
             update.update(is_decaf=True, decaf_process=process)
+    if c.body is None and text and c.source == "roasters_kr":
+        body = ko_body_cue(text)
+        if body is not None:
+            update["body"] = body
     return c.model_copy(update=update)
 
 
@@ -156,6 +175,41 @@ def ends_torn(path: Path) -> bool:
             return False
         f.seek(-1, 2)
         return f.read(1) != b"\n"
+
+
+def apply_body_heaviness(coffees: list[CoffeeRecord], out_dir: Path) -> tuple[list[CoffeeRecord], dict[str, int]]:
+    """Replace coffees.body -- a quintile of a QUALITY sub-score, not heaviness (docs/adr/0010-body-heaviness.md)
+    -- with the mouthfeel-heaviness values scripts/relabel_body.py judged from each bean's own review text.
+
+    - coffeereview_kaggle: body <- data/enriched/body_heaviness.jsonl's value for this key. A bean the relabel
+      run never attempted (no review text -> never a target) keeps its old quintile value untouched; one it DID
+      attempt but couldn't score (LLM call failed, or the text said nothing about weight) becomes None -- an
+      honest "no signal" beats keeping a value we know measures the wrong thing.
+    - cqi: body -> None always. The CQI "Body" column is a cupping QUALITY score (same defect as coffeereview's,
+      and CQI ships no review prose scripts/relabel_body.py could judge instead), so there is no trustworthy
+      heaviness value to give it; app/graphs/analyze_bean.py's neighbour average/attribute model cover it instead.
+    - every other source: untouched (roasters_kr's Korean cue is applied earlier, in _apply_rules).
+    """
+    heaviness, _ = read_json_lines(out_dir / "body_heaviness.jsonl")
+    by_key = {r["key"]: r for r in heaviness}          # later lines win (append-only cache)
+    stats = {"body_heaviness_applied": 0, "body_heaviness_nulled": 0, "cqi_body_nulled": 0}
+    out = []
+    for c in coffees:
+        if c.source == "coffeereview_kaggle":
+            entry = by_key.get(c.key)
+            if entry is None:
+                out.append(c)
+                continue
+            body = entry.get("body") if entry.get("status") == "ok" else None
+            stats["body_heaviness_applied" if body is not None else "body_heaviness_nulled"] += 1
+            out.append(c.model_copy(update={"body": body}))
+        elif c.source == "cqi":
+            if c.body is not None:
+                stats["cqi_body_nulled"] += 1
+            out.append(c.model_copy(update={"body": None}) if c.body is not None else c)
+        else:
+            out.append(c)
+    return out, stats
 
 
 def run_enrich(norm_dir: Path, out_dir: Path, client, limit: int | None = None, retry_failed: bool = False) -> dict[str, int]:
@@ -196,5 +250,7 @@ def run_enrich(norm_dir: Path, out_dir: Path, client, limit: int | None = None, 
                 if entry and entry["hash"] == h and entry["status"] == "ok":
                     c = _merge_llm(c, EnrichOutput(**entry["output"]), vocab_set)
             enriched.append(c)
+    enriched, heaviness_stats = apply_body_heaviness(enriched, out_dir)
+    stats.update(heaviness_stats)
     stats["coffees"] = write_jsonl(out_dir / "coffees.jsonl", enriched)
     return stats
