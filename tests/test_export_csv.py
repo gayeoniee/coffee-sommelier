@@ -4,6 +4,9 @@ from scripts.competition.export_csv import (
     COFFEE_COLUMNS,
     MENU_ITEM_COLUMNS,
     MILK_LABEL_COLUMNS,
+    REFERENCE_DIR_NAME,
+    REFERENCE_README_TEXT,
+    REFERENCE_SCA_FILENAME,
     SCA_KO_COLUMNS,
     build_column_definitions,
     rows_for_brands,
@@ -12,6 +15,7 @@ from scripts.competition.export_csv import (
     rows_for_milk_labels,
     rows_for_sca_ko,
     write_csv,
+    write_sca_ko_reference,
 )
 
 
@@ -95,6 +99,27 @@ class TestRowsForScaKo:
         assert by_key["fruity>berry>blackberry"]["level"] == 3
         assert by_key["fruity>berry>blackberry"]["name_en"] == "blackberry"
         assert by_key["fruity>berry>blackberry"]["name_ko"] == "블랙베리"
+
+
+class TestScaKoReferenceNotUploaded:
+    """07(SCA/WCR 휠 파생 파일)은 업로드 세트(01~06)에 들어가면 안 된다 — CC BY-NC-ND."""
+
+    def test_reference_file_written_outside_upload_dir(self, tmp_path):
+        rows = rows_for_sca_ko({"fruity": "과일", "fruity>berry": "베리"})
+        write_sca_ko_reference(tmp_path, rows)
+
+        upload_files = [p.name for p in tmp_path.iterdir() if p.is_file()]
+        assert not any("sca" in name.lower() for name in upload_files)
+
+    def test_reference_file_and_readme_written_under_reference_dir(self, tmp_path):
+        rows = rows_for_sca_ko({"fruity": "과일"})
+        write_sca_ko_reference(tmp_path, rows)
+
+        ref_dir = tmp_path / REFERENCE_DIR_NAME
+        assert (ref_dir / REFERENCE_SCA_FILENAME).exists()
+        readme_text = (ref_dir / "README.md").read_text(encoding="utf-8")
+        assert "업로드 금지" in readme_text
+        assert readme_text == REFERENCE_README_TEXT
 
 
 class TestColumnDefinitions:

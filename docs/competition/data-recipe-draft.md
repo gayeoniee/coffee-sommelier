@@ -134,7 +134,7 @@
   - 테이블 2 `menu_items` — 프랜차이즈 메뉴(이름, 디카페인, 변경 가능, 카페인 mg)【권리 확인 후】
   - 테이블 3 `eval_results` — 평가 결과 집계(위반율, LOO, 커버리지)
 - **컬럼정의 파일(CSV)**: 완료 — `data/competition/01_컬럼정의.csv`(`scripts/competition/export_csv.py`로 생성, coffees/menu_items/brands 순, "변수번호, 타깃 여부, 타입, 컬럼명, 비고" 형식).
-- **데이터 템플릿 예시·데이터셋 파일(CSV)**: 완료 — `data/competition/02_데이터_템플릿.csv`(테이블별 3행), `03_데이터셋_coffees.csv`(source ∈ {cqi, roasters_kr, shopify}), `04_데이터셋_menu_items.csv`, `05_데이터셋_brands.csv`, `06_데이터셋_milk_labels.csv`, `07_데이터셋_sca_ko.csv`. RoasterDB·SCA 휠 원문·coffeereview 파생 행은 넣지 않았다(3장 참고), UTF-8 BOM.
+- **데이터 템플릿 예시·데이터셋 파일(CSV)**: 완료 — `data/competition/02_데이터_템플릿.csv`(테이블별 3행), `03_데이터셋_coffees.csv`(source ∈ {cqi, roasters_kr, shopify}), `04_데이터셋_menu_items.csv`, `05_데이터셋_brands.csv`, `06_데이터셋_milk_labels.csv`(업로드 세트 = 01~06, UTF-8 BOM). RoasterDB·SCA 휠 원문·coffeereview 파생 행은 업로드 세트에 넣지 않았다(3장 참고). SCA 휠 파생 한국어 매핑은 `data/competition/reference/07_sca_ko_참고.csv`에 참고용으로만 두고(README.md에 "업로드 금지 — 참고용" 명시) 포털에는 올리지 않는다.
 - **데이터 설명**: 원두 1행 = 원두 1개. 산미·바디·단맛은 1~5 정수, 향미 태그는 SCA 휠 영문 키 배열, `source`는 수집처, `is_decaf`는 규칙으로 판별한 값.
 - **데이터 변수 가이드라인**: 독립변수 — 원두 텍스트 임베딩(이름·산지·가공·로스팅·노트), 산지, 가공방식, 사용자 취향(산미·바디·단맛·향미 가중치). 종속변수 — 원두의 산미·바디(LOO 정답은 CQI 커핑 점수를 5분위로 바꾼 값), 추천 적합도.
 
@@ -278,7 +278,7 @@
 |---|---|---|---|---|---|
 | CQI 2018 / 2023 커핑 데이터 | Coffee Quality Institute 원자료, GitHub jldbc / fatih-boyar 재배포 | 저장소 **MIT** | 원두 1,546개, 산미·바디 사람 평가 → 이웃 예측의 근거 풀이자 LOO 정답 | ○ | ○ (출처 표기) |
 | RoasterDB 샘플 | RoasterDB (GitHub) | **CC BY-NC 4.0** | 로스터리 원두 100개 + SCA 노트 | ○ | △ — 포털 게시와 생성형 AI 학습 활용(서약서 제6조)이 비영리 조건과 맞는지 불확실 → **올리지 않는 것을 권장** |
-| SCA 플레이버 휠 JSON | © SCA/WCR 2016 (fschlz/coffee-flavor-api) | **CC BY-NC-ND 4.0** | 향미 분류 체계. 원본은 고치지 않고 한국어 매핑(`data/curated/sca_ko.yaml`)을 따로 만들어 참조 | ○ (참조만) | ✕ (변경 금지 조건) |
+| SCA 플레이버 휠 JSON | © SCA/WCR 2016 (fschlz/coffee-flavor-api) | **CC BY-NC-ND 4.0** | 향미 분류 체계. 원본은 고치지 않고 한국어 매핑(`data/curated/sca_ko.yaml`)을 따로 만들어 참조 | ○ (참조만) | ✕ (변경 금지 조건 — 파생 매핑은 `data/competition/reference/07_sca_ko_참고.csv`에 참고용으로만 보관, 업로드 세트 01~06에는 없음) |
 | 블루보틀 코리아 `products.json` | Blue Bottle Coffee Korea (Shopify 공개 엔드포인트) | 사실정보만 사용 | 원두 9개 | ○ | △ 사실 필드만 |
 | 국내 로스터리 5곳 (프릳츠·나무사이로·커피 리브레·1kg커피·블루보틀 코리아) | 각 로스터리 상품 페이지 | robots.txt 준수, **사실정보만**(이름·산지·가공·로스팅·디카페인·노트 단어·가격), 설명 문구는 저장하지 않음. 테라로사는 robots.txt가 막아 제외 | 원두 107건(중복 8건 제외), 국내 디카페인 7개 | ○ | △ 사실 필드만. 데이터베이스제작자 권리 문제가 없도록 전체 복제본이 아닌 필요한 필드만 |
 | 스타벅스·메가MGC·빽다방 공식 메뉴 | 각 브랜드 공식 사이트 | robots.txt 허용 범위, 한 번만 스냅샷 | 메뉴 304종, 카페인 mg, 디카페인 | ○ | △ — 식약처 DB와 교차검증한 값으로 바꾸거나 필드를 최소화 |
@@ -288,12 +288,14 @@
 
 추가로 넣을 공공데이터(4장에서 설명)는 모두 공공데이터포털에서 "이용허락범위 제한 없음"으로 표시되어 있다(식약처 식품영양성분DB정보, 소상공인 상가(상권)정보, 관세청 품목별 국가별 수출입실적 — 2026-09-26 확인). 식약처 영양성분 표준데이터 2종은 포털 페이지에 이용허락범위가 표시되지 않아 【확인 필요】.
 
-> **생성형 AI 활용 고지 (필수, 서약서 제9조)** — 이 제출물은 다음 범위에서 생성형 AI를 사용했다.
+> **생성형 AI 활용 고지 (필수, 서약서 제9조)** — 이 제출물은 다음 범위에서 생성형 AI를 사용했다(`config/models.yaml`의 task별 모델).
 > - **Claude Code**(Anthropic 코딩 에이전트): 코드 작성, 이 레시피 문서를 포함한 문서 작성, 데이터 라벨링 보조.
-> - **qwen3.5 9B**(로컬 Ollama): 규칙 매핑으로 못 채운 원두 속성(산미·바디·단맛)만 구조화.
-> - **nemotron-3-super-120b-a12b**(NVIDIA API): 추천 설명 문장 생성, 국내 로스터리 상품 후기(노트) 파싱.
-> - **deepseek-v4.1-flash·nemotron-3-super-120b**(NVIDIA API): 평가용 향미 태깅과 설명 품질(무모순·무환각) 판정 — 두 모델을 각각 judge/judge2로 써서 서로 교차확인했다.
-> - **nemotron-3-embed-1b**(NVIDIA API): 원두 텍스트(이름·산지·가공·로스팅·노트) 임베딩.
+> - **qwen3.5 9B**(로컬 Ollama, task `enrich`): 규칙 매핑으로 못 채운 원두 속성(산미·바디·단맛)만 구조화.
+> - **nemotron-3-embed-1b**(NVIDIA API, task `embed`): 원두 텍스트(이름·산지·가공·로스팅·노트) 임베딩.
+> - **nemotron-3-super-120b-a12b**(NVIDIA API, task `explain`/`parse_note`/`parse_bean`): 추천 설명 문장 생성, 국내 로스터리 상품 후기(노트) 파싱.
+> - **deepseek-v4.1-flash**(NVIDIA API, task `judge`): 평가용 향미 태깅과 설명 품질(무모순·무환각) 1차 판정.
+> - **nemotron-3-super-120b-a12b**(NVIDIA API, task `judge2`): 1단계 향미 태깅 골드셋(2차 판정자) 라벨링 — 재현성을 위해 그대로 둔다.
+> - **openai/gpt-oss-20b**(NVIDIA API, task `judge_explain2`): 2단계 설명 품질(무모순·무환각) 2차 판정. `judge2`(nemotron)는 설명을 생성하는 `explain` 모델과 같아 자기 채점이 되므로, 설명 품질만은 다른 벤더의 별도 모델(`judge_explain2`)로 교차확인했다 — 향미 태깅의 2차 판정자(`judge2`)와는 다른 모델이다.
 >
 > 카페인·우유 조건 판정과 위반율 검증에는 생성형 AI를 쓰지 않았다(규칙·SQL 필터). 이 문서의 모든 수치는 손으로 적지 않고 저장소의 평가 JSON(`data/eval/open/*.json`)에서 `scripts/competition/render_numbers.py`로 옮겼다(1장).
 

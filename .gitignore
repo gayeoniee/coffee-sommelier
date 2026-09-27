@@ -216,6 +216,7 @@ data/embedded/
 data/reports/
 !data/eval/*.csv
 !data/competition/*.csv
+!data/competition/reference/*.csv
 
 # web
 web/node_modules/
