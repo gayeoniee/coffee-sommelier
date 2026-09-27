@@ -34,7 +34,9 @@ import hashlib
 import json
 import re
 import sys
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -49,7 +51,8 @@ TASK = "judge_explain2"
 SOURCE = "coffeereview_kaggle"
 FALLBACK_CHARS = 400
 BATCH_SIZE = 10
-DEFAULT_RPM = 40  # client-side cap; NVIDIA also 429s us into pipeline.llm's own backoff if we're too fast
+DEFAULT_RPM = 60  # client-side cap; NVIDIA also 429s us into pipeline.llm's own backoff if we're too fast
+DEFAULT_WORKERS = 8  # concurrent in-flight requests -- gpt-oss-20b batch calls run ~10-15s each
 
 _KEYWORD_SENTENCE = re.compile(r"[^.!?\n]*\b(mouthfeel|body|texture)\b[^.!?\n]*[.!?]?", re.I)
 _SENT_SPLIT = re.compile(r"(?<=[.!?])\s+")
@@ -117,7 +120,60 @@ def coerce_body(v) -> int | None:
     return iv if 1 <= iv <= 5 else None
 
 
-def run(enriched_dir: Path, batch_size: int, rpm: float, limit: int | None) -> dict[str, int]:
+class Throttle:
+    """Client-side request-rate cap shared across worker threads (like pipeline.embed.py's Embedder._throttle,
+    generalised to more than one caller at a time)."""
+
+    def __init__(self, rpm: float):
+        self.gap = 60.0 / rpm if rpm else 0.0
+        self._lock = threading.Lock()
+        self._last: float | None = None
+
+    def wait(self) -> None:
+        if not self.gap:
+            return
+        with self._lock:
+            now = time.monotonic()
+            if self._last is not None:
+                remaining = self.gap - (now - self._last)
+                if remaining > 0:
+                    time.sleep(remaining)
+            self._last = time.monotonic()
+
+
+def _lenient_json(raw: str) -> dict:
+    """extract_json(), but tolerant of a literal (unescaped) control character inside a string value --
+    gpt-oss-20b occasionally emits a raw newline mid-string when a snippet itself contained one. Strict JSON
+    forbids that; `strict=False` accepts it the same way most real-world JSON parsers do."""
+    try:
+        return extract_json(raw)
+    except ValueError:
+        import re
+        m = re.search(r"\{.*\}", re.sub(r"<think>.*?</think>", "", raw, flags=re.S), re.S)
+        if not m:
+            raise
+        return json.loads(m.group(0), strict=False)
+
+
+def process_batch(chunk: list[tuple[str, str, str]], client, throttle: Throttle) -> list[dict]:
+    """One batch (<= batch_size beans): one chat request -> one cache entry per bean. A failed request marks
+    every bean in the batch "failed" (body=None) rather than blocking the rest of the run."""
+    throttle.wait()
+    messages = build_messages([(k, s) for k, s, _ in chunk])
+    try:
+        parsed = _lenient_json(client.chat(messages))
+    except (LLMError, ValueError) as e:
+        return [{"key": key, "hash": h, "status": "failed", "error": str(e), "snippet": snippet[:200],
+                 "body": None, "model": None} for key, snippet, h in chunk]
+    out = []
+    for key, snippet, h in chunk:
+        raw_v = (parsed.get(key) or {}).get("body") if isinstance(parsed.get(key), dict) else None
+        out.append({"key": key, "hash": h, "status": "ok", "snippet": snippet[:200],
+                    "body": coerce_body(raw_v), "model": client.last_model})
+    return out
+
+
+def run(enriched_dir: Path, batch_size: int, rpm: float, limit: int | None, workers: int) -> dict[str, int]:
     items = targets(enriched_dir, settings.NORMALIZED_DIR)
     cache_path = enriched_dir / "body_heaviness.jsonl"
     cache = load_cache(cache_path)
@@ -137,49 +193,30 @@ def run(enriched_dir: Path, batch_size: int, rpm: float, limit: int | None) -> d
         return stats
 
     client = client_for(TASK)
+    throttle = Throttle(rpm)
     enriched_dir.mkdir(parents=True, exist_ok=True)
-    last_call = None
-    gap = 60.0 / rpm if rpm else 0.0
+    chunks = [todo[i:i + batch_size] for i in range(0, len(todo), batch_size)]
+    if limit is not None:
+        chunks = chunks[:limit]
+    total = len(chunks)
 
     with cache_path.open("a", encoding="utf-8") as f:
         if cache_path.exists() and cache_path.stat().st_size and ends_torn(cache_path):
             f.write("\n")
-        for i in range(0, len(todo), batch_size):
-            if limit is not None and stats["batches"] >= limit:
-                print(f"--limit {limit} batches reached, stopping early")
-                break
-            chunk = todo[i:i + batch_size]
-            if gap and last_call is not None:
-                wait = gap - (time.monotonic() - last_call)
-                if wait > 0:
-                    time.sleep(wait)
-            last_call = time.monotonic()
-            stats["requests"] += 1
-            messages = build_messages([(k, s) for k, s, _ in chunk])
-            try:
-                raw = client.chat(messages)
-                parsed = extract_json(raw)
-            except (LLMError, ValueError) as e:
-                for key, snippet, h in chunk:
-                    entry = {"key": key, "hash": h, "status": "failed", "error": str(e),
-                             "snippet": snippet[:200], "body": None, "model": None}
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            futures = [pool.submit(process_batch, chunk, client, throttle) for chunk in chunks]
+            for fut in as_completed(futures):
+                entries = fut.result()
+                for entry in entries:
                     f.write(json.dumps(entry, ensure_ascii=False) + "\n")
-                    stats["failed"] += 1
+                    stats[{"failed": "failed", "ok": "ok"}[entry["status"]]] += 1
+                    if entry["status"] == "ok" and entry["body"] is None:
+                        stats["null"] += 1
+                f.flush()
+                stats["requests"] += 1
                 stats["batches"] += 1
-                print(f"batch {stats['batches']}: FAILED ({e})", flush=True)
-                continue
-            for key, snippet, h in chunk:
-                v = coerce_body((parsed.get(key) or {}).get("body")) if isinstance(parsed.get(key), dict) else None
-                entry = {"key": key, "hash": h, "status": "ok", "snippet": snippet[:200], "body": v,
-                         "model": client.last_model}
-                f.write(json.dumps(entry, ensure_ascii=False) + "\n")
-                stats["ok"] += 1
-                if v is None:
-                    stats["null"] += 1
-            f.flush()
-            stats["batches"] += 1
-            print(f"batch {stats['batches']}/{(len(todo) + batch_size - 1)//batch_size}: "
-                  f"{len(chunk)} beans ({stats['requests']} requests so far)", flush=True)
+                print(f"batch {stats['batches']}/{total}: {len(entries)} beans "
+                      f"({stats['requests']} requests so far)", flush=True)
     return stats
 
 
@@ -187,9 +224,10 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--batch-size", type=int, default=BATCH_SIZE)
     ap.add_argument("--rpm", type=float, default=DEFAULT_RPM)
+    ap.add_argument("--workers", type=int, default=DEFAULT_WORKERS, help="concurrent in-flight requests")
     ap.add_argument("--limit", type=int, default=None, help="stop after this many batches (smoke testing)")
     args = ap.parse_args()
-    stats = run(settings.ENRICHED_DIR, args.batch_size, args.rpm, args.limit)
+    stats = run(settings.ENRICHED_DIR, args.batch_size, args.rpm, args.limit, args.workers)
     print(json.dumps(stats, ensure_ascii=False, indent=2))
     return 0
 
