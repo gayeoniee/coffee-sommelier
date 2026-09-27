@@ -78,8 +78,10 @@ jobs:
           # hasn't been created yet (e.g. the open variant, before Task 3's deploy step) is skipped, not an error.
           for name in coffee-sommelier-api coffee-sommelier-open-api; do
             sid=$(curl -fsS -H "Authorization: Bearer $RENDER_API_KEY" \
-              "https://api.render.com/v1/services?name=$name&limit=1" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d[0]["service"]["id"] if d else "")')
+              "https://api.render.com/v1/services?name=$name&limit=1" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d[0]["service"]["id"] if d else "")') \
+              || { echo "$name deploy trigger failed"; continue; }
             if [ -z "$sid" ]; then echo "$name: no such service; skipping"; continue; fi
             curl -fsS -X POST -H "Authorization: Bearer $RENDER_API_KEY" -H "Content-Type: application/json" \
-              "https://api.render.com/v1/services/$sid/deploys" -d "{\"commitId\": \"${{ github.sha }}\"}" | python3 -c 'import sys,json;d=json.load(sys.stdin);print("deploy", d["id"], d["status"])'
+              "https://api.render.com/v1/services/$sid/deploys" -d "{\"commitId\": \"${{ github.sha }}\"}" | python3 -c 'import sys,json;d=json.load(sys.stdin);print("deploy", d["id"], d["status"])' \
+              || { echo "$name deploy trigger failed"; continue; }
           done
