@@ -103,23 +103,53 @@ def tag_prf(truth: set, pred: set) -> tuple[float, float, float]:
     return _prf(len(truth & pred), len(pred - truth), len(truth - pred))
 
 
+LOO_TAGFREE_QUERY_EMBEDDINGS = settings.EVAL_DIR / "loo_tagfree_query_embeddings.jsonl"
+
+
+def _load_tagfree_query_embeddings() -> dict[int, list[float]]:
+    """Cached tag-free query embeddings for the fixed n=200/seed=42 LOO targets
+    (scripts/train_tag_model.py writes this for exactly that id set; see docs/adr/0008-learned-tag-model.md).
+    Missing file -> {} and callers fall back to the stored (possibly tag-leaked) embedding, same as before."""
+    if not LOO_TAGFREE_QUERY_EMBEDDINGS.exists():
+        return {}
+    out = {}
+    for line in LOO_TAGFREE_QUERY_EMBEDDINGS.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            row = json.loads(line)
+            out[row["id"]] = row["vector"]
+    return out
+
+
 def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str, ...] = (),
-                 target_sources: tuple[str, ...] = ()) -> dict:
+                 target_sources: tuple[str, ...] = (), tag_model=None) -> dict:
+    """Attribute (acidity/body/sweetness) predictions are unchanged: stored query embedding, k=10 neighbours.
+
+    Tag predictions default to LEAK-FREE query embeddings when cached (see `_load_tagfree_query_embeddings`):
+    pipeline/embed.py's embedding_text() folds a coffee's own already-known flavor_tags into its stored
+    embedding, so scoring `repo.coffee_embedding(cid)` against `truth.tags` is partly circular (docs/adr/0008).
+    This affects only the `tags`/`tags_model` blocks below (not the attribute blocks, which never touch tags).
+    `tag_model`, when given (an app.core.tagmodel.TagModel), adds a `tags_model` block scored on the SAME
+    query embedding as `tags`, so the two are directly comparable."""
     tag_to_cat, _ = repo.taxonomy()
     base_rates = repo.tag_base_rates()
+    tagfree = _load_tagfree_query_embeddings()
     stats = {a: {"n": 0, "exact": 0, "within1": 0} for a in ATTRS}
     by_conf: dict[str, dict] = {}
     neighbor_sources: Counter = Counter()
     with_tags = 0
     tag_n = tag_tp = tag_fp = tag_fn = 0
     cat_tp = cat_fp = cat_fn = 0
+    model_n = model_tp = model_fp = model_fn = 0
+    model_cat_tp = model_cat_fp = model_cat_fn = 0
+    leak_free_used = 0
     not_targets = tuple(dict.fromkeys(exclude_sources + NEVER_LOO_TARGETS))
     ids = repo.random_coffee_ids_for_loo(n, seed, exclude_sources=not_targets, sources=target_sources)
     for cid in ids:
         truth = repo.get_coffee(cid)
-        near = repo.neighbors(repo.coffee_embedding(cid), k=10, exclude_id=cid, exclude_sources=exclude_sources)
+        emb = repo.coffee_embedding(cid)
+        near = repo.neighbors(emb, k=10, exclude_id=cid, exclude_sources=exclude_sources)
         neighbor_sources.update(repo.coffee_sources([x.coffee_id for x in near]).values())
-        pred = predict_from_neighbors(near, base_rates=base_rates)
+        pred = predict_from_neighbors(near, base_rates=base_rates)          # attributes: unchanged
         with_tags += bool(pred.tags)
         for a in ATTRS:
             t, v = truth.attr(a), getattr(pred, a)
@@ -133,10 +163,19 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
             c = by_conf.setdefault(pred.confidence, {"n": 0, "within1": 0})
             c["n"] += 1
             c["within1"] += abs(pred.acidity - truth.acidity) <= 1
+
+        tag_vec = tagfree.get(cid)
+        if tag_vec is not None:
+            leak_free_used += 1
+            tag_near = repo.neighbors(tag_vec, k=10, exclude_id=cid, exclude_sources=exclude_sources)
+        else:
+            tag_vec, tag_near = emb, near                # no cached leak-free embedding: fall back, as before
+        tag_pred = predict_from_neighbors(tag_near, base_rates=base_rates)
+
         truth_tags = {t.lower() for t in truth.tags}
         if truth_tags:
             tag_n += 1
-            pred_tags = {t.lower() for t in pred.tags}
+            pred_tags = {t.lower() for t in tag_pred.tags}
             tag_tp += len(truth_tags & pred_tags)
             tag_fp += len(pred_tags - truth_tags)
             tag_fn += len(truth_tags - pred_tags)
@@ -145,22 +184,45 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
             cat_tp += len(truth_cats & pred_cats)
             cat_fp += len(pred_cats - truth_cats)
             cat_fn += len(truth_cats - pred_cats)
+
+            if tag_model is not None:
+                model_n += 1
+                model_tags = {t for t, _ in tag_model.tags(tag_vec)}
+                model_tp += len(truth_tags & model_tags)
+                model_fp += len(model_tags - truth_tags)
+                model_fn += len(truth_tags - model_tags)
+                mtc = {tag_to_cat[t] for t in truth_tags if t in tag_to_cat}
+                mpc = {tag_to_cat[t] for t in model_tags if t in tag_to_cat}
+                model_cat_tp += len(mtc & mpc)
+                model_cat_fp += len(mpc - mtc)
+                model_cat_fn += len(mtc - mpc)
     def rate(d: dict, k: str) -> float | None:
         return round(d[k] / d["n"], 4) if d["n"] else None
 
     total_nb = sum(neighbor_sources.values())
     tag_p, tag_r, tag_f1 = _prf(tag_tp, tag_fp, tag_fn)
     _, _, cat_f1 = _prf(cat_tp, cat_fp, cat_fn)
-    return {"n": n, "seed": seed, "exclude_sources": list(exclude_sources),
-            "target_sources": list(target_sources) or "all non-excluded sources",
-            "targets": len(ids), "target_ids_sha1": hashlib.sha1(",".join(map(str, sorted(ids))).encode()).hexdigest(),
-            "neighbor_source_share": {k: round(v / total_nb, 4) for k, v in neighbor_sources.most_common()},
-            "predictions_with_tags": round(with_tags / len(ids), 4) if ids else None,
-            "embedding_model": embed_model(),
-            **{a: {"n": s["n"], "exact": rate(s, "exact"), "within1": rate(s, "within1")} for a, s in stats.items()},
-            "acidity_within1_by_confidence": {k: {"n": v["n"], "within1": rate(v, "within1")} for k, v in by_conf.items()},
-            "tags": {"n": tag_n, "precision": round(tag_p, 4), "recall": round(tag_r, 4), "f1": round(tag_f1, 4),
-                    "category_f1": round(cat_f1, 4)}}
+    out = {"n": n, "seed": seed, "exclude_sources": list(exclude_sources),
+          "target_sources": list(target_sources) or "all non-excluded sources",
+          "targets": len(ids), "target_ids_sha1": hashlib.sha1(",".join(map(str, sorted(ids))).encode()).hexdigest(),
+          "neighbor_source_share": {k: round(v / total_nb, 4) for k, v in neighbor_sources.most_common()},
+          "predictions_with_tags": round(with_tags / len(ids), 4) if ids else None,
+          "embedding_model": embed_model(),
+          **{a: {"n": s["n"], "exact": rate(s, "exact"), "within1": rate(s, "within1")} for a, s in stats.items()},
+          "acidity_within1_by_confidence": {k: {"n": v["n"], "within1": rate(v, "within1")} for k, v in by_conf.items()},
+          "tags_query_embeddings": {"leak_free": leak_free_used, "stored_fallback": len(ids) - leak_free_used,
+                                    "note": "leak-free tag-free query embeddings are the default when cached "
+                                            "(data/eval/loo_tagfree_query_embeddings.jsonl, exactly the "
+                                            "n=200/seed=42 targets); other target draws fall back to the "
+                                            "stored (tag-including) embedding, as before docs/adr/0008."},
+          "tags": {"n": tag_n, "precision": round(tag_p, 4), "recall": round(tag_r, 4), "f1": round(tag_f1, 4),
+                  "category_f1": round(cat_f1, 4)}}
+    if tag_model is not None:
+        mp, mr, mf1 = _prf(model_tp, model_fp, model_fn)
+        _, _, mcat_f1 = _prf(model_cat_tp, model_cat_fp, model_cat_fn)
+        out["tags_model"] = {"n": model_n, "precision": round(mp, 4), "recall": round(mr, 4), "f1": round(mf1, 4),
+                            "category_f1": round(mcat_f1, 4)}
+    return out
 
 
 def tag_names(repo) -> dict:
@@ -432,6 +494,7 @@ def explain_quality(repo) -> dict:
 
 
 def main(argv: list[str]) -> int:
+    from app.core.tagmodel import TagModel
     from app.repo import Repo
     names = argv or ["all"]
     order = ["violations", "loo", "loo_open", "coverage", "coverage_open", "compare3", "loo_repro", "convergence",
@@ -439,11 +502,12 @@ def main(argv: list[str]) -> int:
     targets = order if names == ["all"] else names
     offline = {"explain_recheck"}                     # no DB, no LLM
     repo = None if set(targets) <= offline else Repo(settings.DATABASE_URL)
+    tag_model = TagModel.load() if repo is not None else None    # adds `tags_model` to loo/loo_open when present
     outputs = {"explain_recheck": "explain_quality"}  # the re-score rewrites the saved explain_quality result
     fns = {
         "violations": violation_rate,
-        "loo": loo_accuracy,
-        "loo_open": lambda r: loo_accuracy(r, exclude_sources=OPEN_LICENSE_EXCLUDE),
+        "loo": lambda r: loo_accuracy(r, tag_model=tag_model),
+        "loo_open": lambda r: loo_accuracy(r, exclude_sources=OPEN_LICENSE_EXCLUDE, tag_model=tag_model),
         "coverage": coverage,
         "coverage_open": lambda r: coverage(r, exclude_sources=OPEN_LICENSE_EXCLUDE),
         "tag_names": tag_names,                      # Fix B check; run by name only, not in `all`
