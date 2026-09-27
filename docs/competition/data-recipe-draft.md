@@ -51,7 +51,7 @@
 
 ### A-0. 기본 정보
 - 참가유형: **데이터레시피 제안**
-- 제출 서비스(공모전 제출본, coffeereview 미포함): <https://coffee-sommelier-open.vercel.app> — 화면 상단에 "공모전 제출본" 배너가 뜬다. 코드 저장소: <https://github.com/gayeoniee/wine-sommelier_rag>
+- 제출 서비스(공모전 제출본, coffeereview 미포함): <https://coffee-sommelier-open.vercel.app> — 화면 상단에 "공모전 제출본" 배너가 뜬다. 코드 저장소: <https://github.com/gayeoniee/coffee-sommelier>
 - 참고(전체 포트폴리오판, coffeereview 포함 — 제출용 아님): <https://coffee-sommelier-psi.vercel.app>
 - 참가인원: 【작성 필요: 개인/팀】
 - 소속: 【작성 필요: 예) 취업준비생】
@@ -213,7 +213,7 @@
 - **기대효과**: 카페인 제한이 있는 사용자가 매장에서 30초 안에 조건을 지키는 음료를 고를 수 있다. 소규모 로스터리 원두가 정보가 적어도 추천 후보에 오른다. 브랜드는 디카페인 옵션 정보를 구조화해 수요를 파악할 수 있다.
 - **활용방안 도입문**: "조건은 필터로, 취향은 점수로, 모르는 값은 이웃으로 예측하고 신뢰도를 공개한다."
 - **분석결과 활용방안(상세)**
-  - 단기: 공개 웹앱으로 게스트 사용(로그인 없음) → <https://coffee-sommelier-open.vercel.app>(제출본, coffeereview 미포함), 코드와 재현 방법 → <https://github.com/gayeoniee/wine-sommelier_rag>. 전체 원두 데이터가 궁금하면 참고용 전체 포트폴리오판 <https://coffee-sommelier-psi.vercel.app>(제출용 아님)도 함께 볼 수 있다. 식약처 식품영양성분DB의 카페인 필드로 메뉴를 수집하지 못한 7개 브랜드(투썸플레이스·컴포즈·이디야·할리스·폴바셋·블루보틀·커피빈)의 카페인을 채운다.
+  - 단기: 공개 웹앱으로 게스트 사용(로그인 없음) → <https://coffee-sommelier-open.vercel.app>(제출본, coffeereview 미포함), 코드와 재현 방법 → <https://github.com/gayeoniee/coffee-sommelier>. 전체 원두 데이터가 궁금하면 참고용 전체 포트폴리오판 <https://coffee-sommelier-psi.vercel.app>(제출용 아님)도 함께 볼 수 있다. 식약처 식품영양성분DB의 카페인 필드로 메뉴를 수집하지 못한 7개 브랜드(투썸플레이스·컴포즈·이디야·할리스·폴바셋·블루보틀·커피빈)의 카페인을 채운다.
   - 장기: 소상공인 상권정보(커피전문점 업종)와 결합해 위치 기반 추천, 관세청 디카페인 생두·원두 수입 통계(HS 0901.12 / 0901.22)로 수요 추세 대시보드, 알레르기·당류 조건이 있는 음식 메뉴 추천으로 확장.
 - **[필수] 데이터 수집 및 활용 동의**: 【작성 필요: 체크 — 체크하기 전에 3장의 업로드 가능 여부를 다시 확인】
 

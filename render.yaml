@@ -1,5 +1,5 @@
 # Render Blueprint: the FastAPI backend as a free Docker web service.
-# One-click: https://render.com/deploy?repo=https://github.com/gayeoniee/wine-sommelier_rag
+# One-click: https://render.com/deploy?repo=https://github.com/gayeoniee/coffee-sommelier
 # Secrets (sync: false) are asked for once in the dashboard when the Blueprint is created.
 services:
   - type: web

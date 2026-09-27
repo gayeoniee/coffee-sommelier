@@ -36,7 +36,7 @@ case "$VARIANT" in
   open) NAME=coffee-sommelier-open; RENDER_SERVICE=coffee-sommelier-open-api ;;
   *) echo "오류: 알 수 없는 VARIANT=$VARIANT (full 또는 open)" >&2; exit 1 ;;
 esac
-REPO_URL=https://github.com/gayeoniee/wine-sommelier_rag
+REPO_URL=https://github.com/gayeoniee/coffee-sommelier
 NEON_REGION=aws-ap-southeast-1           # Singapore, next to Render singapore and Vercel sin1
 NEONCTL="npx -y neonctl@6"
 VERCEL="npx -y vercel@60"

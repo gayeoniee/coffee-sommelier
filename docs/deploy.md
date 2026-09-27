@@ -66,7 +66,7 @@ NEON_DATABASE_URL='postgresql://...' bash scripts/deploy/migrate_to_neon.sh
 
 ### (c) Render (백엔드)
 
-1. 브라우저에서 https://render.com/deploy?repo=https://github.com/gayeoniee/wine-sommelier_rag 를 연다 → GitHub로 로그인.
+1. 브라우저에서 https://render.com/deploy?repo=https://github.com/gayeoniee/coffee-sommelier 를 연다 → GitHub로 로그인.
 2. 블루프린트가 `render.yaml`을 읽어 무료 도커 웹 서비스 `coffee-sommelier-api`(singapore, 헬스체크 `/health`)를 보여 준다. 입력칸:
    - `DATABASE_URL` = (a)의 Neon 연결 문자열
    - `NVIDIA_API_KEY` = `.env`의 값
