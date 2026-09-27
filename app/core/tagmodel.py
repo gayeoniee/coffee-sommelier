@@ -55,14 +55,21 @@ class TagModel:
 
     @classmethod
     def load(cls, path: str | Path | None = None) -> "TagModel | None":
-        """`path` names an exact file (.json or .json.gz). With no `path`, tries
-        config/tag_model.json then config/tag_model.json.gz. Missing/unreadable -> None (logged once)."""
+        """`path` names an exact file (.json or .json.gz). With no `path`, picks the file for the active data
+        variant: under DATA_VARIANT=open, ONLY config/tag_model_open.json[.gz] -- the category-level model
+        trained on licence-clean sources (docs/adr/0009-learned-attribute-model.md Goal B2), shipped only if it
+        beat the neighbour vote's category F1 by >=0.05 in CV. It never falls back to config/tag_model.json:
+        that model's labels are coffeereview_kaggle-derived (licence-restricted, docs/adr/0008-learned-tag-
+        model.md), so it must never load under the open-data deployment, open-file-missing or not. Any other
+        variant loads config/tag_model.json[.gz]. Missing/unreadable -> None (logged once)."""
         global _warned_missing
         if path is not None:
             candidates = [Path(path)]
         else:
+            from app import config
             from pipeline import settings
-            candidates = [settings.CONFIG_DIR / "tag_model.json", settings.CONFIG_DIR / "tag_model.json.gz"]
+            name = "tag_model_open.json" if config.DATA_VARIANT == "open" else "tag_model.json"
+            candidates = [settings.CONFIG_DIR / name, settings.CONFIG_DIR / (name + ".gz")]
         for p in candidates:
             if not p.exists():
                 continue

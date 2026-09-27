@@ -100,15 +100,36 @@ def test_matches_tiny_sklearn_reference_on_random_data():
             assert abs(got[label] - expected[i]) < 1e-4
 
 
-def test_tag_model_disabled_for_open_data_variant(monkeypatch):
-    """The model's labels are coffeereview_kaggle-derived (licence-restricted); the open-data deployment
-    (DATA_VARIANT=open) must never load it, licence gate independent of whether config/tag_model.json exists."""
+def test_tag_model_enabled_for_open_data_variant_the_gate_is_in_load_not_here(monkeypatch):
+    """_tag_model_enabled() no longer hard-disables the open variant: Goal B2 (docs/adr/0009) lets the open
+    deployment load its OWN licence-clean tag_model_open.json when one has been shipped. The licence gate on
+    the coffeereview_kaggle-derived full model lives in TagModel.load()'s file selection instead (see the test
+    below), not in this flag."""
     from app import config
     from app.graphs import _tag_model_enabled
 
     monkeypatch.setattr(config, "DATA_VARIANT", "open")
     monkeypatch.delenv("TAG_MODEL", raising=False)
-    assert _tag_model_enabled() is False
+    assert _tag_model_enabled() is True
+
+
+def test_load_under_open_variant_never_resolves_to_the_full_licence_restricted_file(tmp_path, monkeypatch):
+    """Under DATA_VARIANT=open, load() must only ever look for tag_model_open.json -- never fall back to
+    tag_model.json, even when the open file doesn't exist (the open deployment then loads no tag model at all,
+    same as before Goal B2)."""
+    from app import config
+    from pipeline import settings
+
+    monkeypatch.setattr(settings, "CONFIG_DIR", tmp_path)
+    monkeypatch.setattr(config, "DATA_VARIANT", "open")
+    doc = {"tags": ["lemon"], "threshold": 0.3, "embed_model": "m",
+          "W1": [[1.0], [0.0]], "b1": [0.0], "W2": [[1.0]], "b2": [0.0]}
+    (tmp_path / "tag_model.json").write_text(json.dumps(doc), encoding="utf-8")   # full file present, but...
+    assert TagModel.load() is None                                                # ...never loaded under open
+
+    (tmp_path / "tag_model_open.json").write_text(json.dumps(doc), encoding="utf-8")
+    m = TagModel.load()
+    assert m is not None and m.labels == ["lemon"]
 
 
 def test_tag_model_disabled_by_explicit_env_override(monkeypatch):
