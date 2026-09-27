@@ -325,6 +325,7 @@
 - **정답 라벨이 사람 라벨이 아니다.** 평가 라벨은 다른 LLM 두 개가 붙인 실버 라벨이다(judge 간 산미 ±1 일치 100%).
 - **런타임 분리**: 평가 코드는 `exclude_sources`로 coffeereview를 뺄 수 있지만, **앱이 실제로 쓰는 DB에서는 아직 빠져 있지 않다.** 시연·배포 전에 coffeereview 없이 DB를 다시 만들어야 한다(체크리스트 참고).
 - 우유 판정 수기 라벨은 한 사람이 붙였다(검수자 없음).
+- **제출본은 학습형 태그 모델을 쓰지 않는다** — 학습 데이터가 coffeereview 파생(`config/tag_model.json`, [ADR 0008](../adr/0008-learned-tag-model.md)). `DATA_VARIANT=open`이면 자동으로 적재하지 않고 기존 이웃 투표만 쓴다.
 
 ## 6. 재현 방법
 

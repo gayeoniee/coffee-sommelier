@@ -1,4 +1,4 @@
-# 설계 결정 — 면접에서 물을 만한 질문 13개
+# 설계 결정 — 면접에서 물을 만한 질문 14개
 
 각 답은 "무엇을 골랐나 → 왜 → 수치 → 원자료" 순서다. 수치는 모두 `data/eval/*.json` 또는 ADR에서 옮겼다. 구조 그림은 [architecture.md](architecture.md), 결정 기록 원문은 [docs/adr/](adr/)에 있다.
 
@@ -16,7 +16,8 @@
 | 10 | [왜 이웃 정렬을 결정적으로 만들었나](#10-왜-이웃-정렬을-결정적으로-만들었나) | [ADR 0006](adr/0006-deterministic-neighbors.md) |
 | 11 | [왜 설명 품질을 판정자 두 명으로 재나](#11-왜-설명-품질을-판정자-두-명으로-재나) | [ADR 0005](adr/0005-explain-quality-eval.md) |
 | 12 | [데이터 라이선스는 어떻게 정했나 (전체판과 오픈판)](#12-데이터-라이선스는-어떻게-정했나-전체판과-오픈판) | [loo_open](../data/eval/phase2_loo_open.json), [compare3](../data/eval/phase2_compare3.json) |
-| 13 | [무엇이 안 됐나](#13-무엇이-안-됐나) | 아래 각 링크 |
+| 13 | [왜 향미 태그 예측을 학습형 모델로 바꿨나](#13-왜-향미-태그-예측을-학습형-모델로-바꿨나) | [ADR 0008](adr/0008-learned-tag-model.md), [phase2_tag_model.json](../data/eval/phase2_tag_model.json) |
+| 14 | [무엇이 안 됐나](#14-무엇이-안-됐나) | 아래 각 링크 |
 
 ---
 
@@ -68,9 +69,26 @@ AI 흐름에는 분기("DB에 있는 원두인가"), 폴백(LLM 실패 → 템�
 
 가장 큰 소스인 coffeereview(Kaggle 스크랩, 약 7.4천 건)는 원 저작권이 Coffee Review에 있어 비상업 포트폴리오 용도로만 쓰고 원본은 레포에 넣지 않았다. 대신 그 데이터를 뺀 오픈 라이선스판을 평가(`exclude_sources`)와 배포(https://coffee-sommelier-open.vercel.app) 양쪽에 따로 만들어, 공모전처럼 라이선스가 엄격한 곳에 낼 수 있게 했다. 대가는 수치로 드러난다: 원두 9,155 → 1,655개, LOO 산미 ±1 0.735 → 0.5202(n=198), 디카페인 168 → 6개. 국내 로스터리 5곳의 사실 정보(설명 문구 미저장, robots.txt 준수)를 더하면 LOO는 그대로지만 디카페인이 6 → 13개로 늘어, 한국에서 살 수 있는 디카페인 후보가 처음 생긴다. 프랜차이즈 추천(조건 위반 0/102)은 메뉴 데이터만 쓰므로 두 판이 같다. 원자료: [phase2_loo_open.json](../data/eval/phase2_loo_open.json), [phase2_compare3.json](../data/eval/phase2_compare3.json).
 
-### 13. 무엇이 안 됐나
+### 13. 왜 향미 태그 예측을 학습형 모델로 바꿨나
 
-- **규칙 기반 향미 태그가 가장 약한 고리다.** 정답 대비 Jaccard 0.40(n=48)이고, 이웃 예측 태그 F1도 0.3974(n=168)다. 부정 표현("no bitterness") 오탐은 아직 고치지 않았다. 일반어("chocolate" 등 전역에 흔한 태그) 오탐은 전역 빈도 대비 이웃 비율(lift)이 일정 배수 이상일 때만 채택하는 게이트로 완화했다 — 정밀도 0.3871→0.3933, F1은 0.4082→0.3974로 소폭만 내려갔다([ADR 0007](adr/0007-tag-lift-gate.md), [gold_enrich_judge2_scores.json](../data/eval/gold_enrich_judge2_scores.json), [phase2_loo.json](../data/eval/phase2_loo.json)).
+이웃 투표(lift 게이트 포함, ADR 0007)의 LOO 태그 F1은 0.3974(n=168)로 계속 가장 약한 지표였다. 스파이크
+([docs/spikes/2026-09-27-tag-model-spike.md](spikes/2026-09-27-tag-model-spike.md))에서 같은 1024차원
+임베딩 위에 MLP(1024→128→54, 다중 라벨)를 학습시켰더니 F1이 크게 뛰었지만, `pipeline/embed.py`가 원두
+자기 자신의 `flavor_tags`를 그 원두의 저장 임베딩 텍스트에 이미 넣고 있어서(정답이 입력에 들어있는
+누수) 그 수치를 그대로 믿을 수 없었다. 그래서 학습·평가 양쪽 다 태그를 뺀 텍스트로 다시 임베딩했다
+(`embedding_text(..., include_tags=False)`, query 모드, 7,327건·238요청) — `app/graphs/analyze_bean.py`가
+실제로 임베딩하는 사용자 입력 텍스트도 태그가 없으니, 이제 학습·운영 입력의 분포가 같다. 결과: 고정 200개
+중 태그 보유 168개를 **같은 누수 없는 질의 임베딩**으로 채점하면 이웃 투표 F1 0.3695 vs 학습 모델 F1
+**0.7329**(카테고리 F1 0.6298 → 0.8292) — 학습에서 완전히 뺀 국내 로스터리 태그 39건(한국어 노트 기반,
+coffeereview 출처 아님)에서도 학습 모델이 이웃 투표를 이긴다(F1 0.434 vs 0.249). 학습 라벨이
+coffeereview 파생이라 오픈 데이터판(`DATA_VARIANT=open`)에는 이 모델을 올리지 않고 이웃 투표만 쓴다.
+가중치는 1.24MB(2MB 예산 이내), 순수 파이썬 순전파는 호출당 7.1ms(50ms 예산의 15%). 원자료:
+[ADR 0008](adr/0008-learned-tag-model.md), [phase2_tag_model.json](../data/eval/phase2_tag_model.json),
+[phase2_loo.json](../data/eval/phase2_loo.json).
+
+### 14. 무엇이 안 됐나
+
+- **속성 예측(산미/바디/단맛)은 여전히 이웃 평균이다.** 향미 태그만 학습형 모델로 바꿨고(13번), 산미·바디·단맛과 신뢰도는 그대로 이웃 가중 평균이다 — 다음 개선 후보.
 - **국내 로스터리 데이터는 예측에 기여하지 못했다.** CQI 대상 200개의 이웃 중 로스터리 원두는 0%라 compare3의 LOO가 세 판 모두 0.495로 같다. 기여는 커버리지(디카페인 6 → 13)뿐이다([phase2_compare3.json](../data/eval/phase2_compare3.json)).
 - **설명의 환각은 절반만 줄었다.** 규칙 통과는 18/24(재채점 전 21/24)지만 두 판정자가 모두 환각 없음으로 본 건 14/22다. 남은 환각은 "균형이 좋아요" 같은 평가적 수사와 1~5 수치를 "보통"으로 뭉개는 버릇이다([ADR 0005](adr/0005-explain-quality-eval.md)).
 - **메뉴는 10개 브랜드 중 7개만 실측이다.** 투썸(봇 차단)·이디야(robots.txt 차단 경로)·블루보틀(음료 메뉴 미공개)은 브랜드 원두 추정 카드만 나온다.
