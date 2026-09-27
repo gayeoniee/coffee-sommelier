@@ -30,7 +30,7 @@
 | 예측 신뢰도별 산미 ±1 (낮음 / 보통 / 높음) | 0.4 (n=10) / 0.7077 (n=130) / 0.85 (n=60) | [phase2_loo.json](data/eval/phase2_loo.json) |
 | LOO 향미 태그 F1 (마이크로) | 0.3695 (n=168) — 이웃 투표, 누수 없는 태그 프리 질의 임베딩 기준(이전 0.3974는 정답 태그가 섞인 저장 임베딩으로 잰 값, [ADR 0008](docs/adr/0008-learned-tag-model.md)) | [phase2_loo.json](data/eval/phase2_loo.json) |
 | LOO 향미 태그 F1 (학습 모델, 같은 임베딩) | **0.7286 (n=168)** — 이웃 투표 대비 +0.359, coffeereview 파생 라벨이라 오픈판엔 안 씀 | [phase2_tag_model.json](data/eval/phase2_tag_model.json), [ADR 0008](docs/adr/0008-learned-tag-model.md) |
-| LOO 산미/바디/단맛 MAE (학습 모델 vs 이웃 평균, 같은 임베딩) | **0.6231/0.7649/0.4393** vs 0.7336/0.8831/0.5618 (전체판) · 오픈판(단맛 미탑재) 1.14/0.9919 vs 1.0981/1.0286 | [phase2_attr_model.json](data/eval/phase2_attr_model.json), [ADR 0009](docs/adr/0009-learned-attribute-model.md) |
+| LOO 산미/바디/단맛 MAE (학습 모델 vs 이웃 평균, 같은 임베딩) | **0.6231/0.7649/0.4393** vs 0.7336/0.8831/0.5618 (전체판) · 오픈판은 바디만 탑재 0.9919 vs 1.0286 (산미는 모델 1.14 > 이웃 1.0981이라 제외, 단맛은 라벨 부족) | [phase2_attr_model.json](data/eval/phase2_attr_model.json), [ADR 0009](docs/adr/0009-learned-attribute-model.md) |
 | 3-way 비교: 전체 / 오픈 / 오픈 + 국내 로스터리 (CQI 고정 200개) | 산미 ±1 0.495 / 0.495 / 0.495 · 디카페인 원두 168 / 6 / 13 | [phase2_compare3.json](data/eval/phase2_compare3.json) |
 | LOO 재현성 (같은 인자로 2회) | 결과 JSON sha256 동일 (`identical: true`) | [phase2_loo_repro.json](data/eval/phase2_loo_repro.json) |
 | 설명 품질 (24케이스) | 규칙 통과 18/24(2문장 한도 재채점; 재채점 전 21/24) · 모순 없음 판정자 2명 합의 17/22 · 폴백 0/24 | [phase2_explain_quality.json](data/eval/phase2_explain_quality.json) |
