@@ -144,7 +144,7 @@ class FakeRepo:
 
 
 def fake_deps(repo=None, tokens=("잘 ", "맞아요"), fail_keys=(), parse=None, embed_fails=False,
-              json_fails=False) -> Deps:
+              json_fails=False, tag_model=None) -> Deps:
     repo = repo or FakeRepo()
     calls = {"stream": 0, "json": 0, "embed": 0}
 
@@ -169,7 +169,7 @@ def fake_deps(repo=None, tokens=("잘 ", "맞아요"), fail_keys=(), parse=None,
             raise LLMError("embed boom")
         return [0.0] * 8
 
-    d = Deps(repo=repo, embed=embed, stream_text=stream_text, chat_json=chat_json)
+    d = Deps(repo=repo, embed=embed, stream_text=stream_text, chat_json=chat_json, tag_model=tag_model)
     d.calls = calls
     return d
 

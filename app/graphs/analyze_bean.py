@@ -9,7 +9,7 @@ from langgraph.graph import END, START, StateGraph
 from app.config import PARSE_BEAN_TASK
 from app.core.explain import card, template_explanation
 from app.core.parse import BeanParse, bean_parse_messages, merge_llm_parse, needs_llm_parse, parse_bean_text
-from app.core.predict import item_from_prediction, predict_from_neighbors
+from app.core.predict import item_from_prediction, predict_from_neighbors, with_model_tags
 from app.core.scoring import passes, score_item
 from app.graphs.common import explain_to_stream
 from app.models import Item, ParsedBean, Prediction, Profile
@@ -55,6 +55,7 @@ def build_analyze_graph(deps):
         _, tag_ko = await asyncio.to_thread(deps.repo.taxonomy)
         base_rates = await asyncio.to_thread(deps.repo.tag_base_rates)
         degraded = False
+        vec = None
         try:
             vec = await deps.embed(parsed.text)
             neighbors = await asyncio.to_thread(deps.repo.neighbors, vec, K_NEIGHBORS, parsed.origin_country,
@@ -65,6 +66,10 @@ def build_analyze_graph(deps):
         pred = predict_from_neighbors(neighbors, tag_ko, base_rates=base_rates)
         if degraded:
             pred = replace(pred, confidence="low")
+        elif deps.tag_model is not None:
+            # the learned tag model (app/core/tagmodel.py) replaces the neighbour-vote's tags when it's loaded
+            # and the embedding call succeeded; attributes/confidence/n_neighbors stay from predict_from_neighbors.
+            pred = with_model_tags(pred, deps.tag_model.tags(vec), tag_ko)
         return {"item": item_from_prediction(parsed, pred), "prediction": pred}
 
     async def score(state: AnalyzeState) -> dict:

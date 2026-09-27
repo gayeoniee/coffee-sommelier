@@ -1,3 +1,4 @@
+from dataclasses import replace
 from math import log, sqrt
 
 from app.models import ATTRS, Item, Neighbor, ParsedBean, Prediction
@@ -78,6 +79,20 @@ def predict_from_neighbors(neighbors: list[Neighbor], tag_ko: dict[str, str] | N
         evidence.append(f"유사 원두 산미 평균 {values['acidity']:.1f}/5")
     return Prediction(acidity=values["acidity"], body=values["body"], sweetness=values["sweetness"],
                       confidence=confidence, tags=tags, evidence=evidence, n_neighbors=len(neighbors))
+
+
+def with_model_tags(pred: Prediction, tag_probs: list[tuple[str, float]], tag_ko: dict[str, str] | None = None
+                    ) -> Prediction:
+    """Replace the neighbour-vote tags/evidence with the learned tag model's predictions (app/core/tagmodel.py),
+    keeping the attribute predictions (acidity/body/sweetness/confidence) and n_neighbors untouched -- the
+    model only replaces the TAG half of `predict_from_neighbors`'s output (docs/adr/0008-learned-tag-model.md)."""
+    tag_ko = tag_ko or {}
+    tags = [t for t, _ in tag_probs]
+    # drop only the neighbour-vote's tag-mention lines ("유사 원두 N개 중 M개에서 '...' 언급"); the acidity
+    # evidence line ("유사 원두 산미 평균 ...") also starts with "유사 원두" but has no "언급" -- keep it.
+    kept_evidence = [e for e in pred.evidence if not (e.startswith("유사 원두") and "언급" in e)]
+    model_evidence = [f"향미 모델: {', '.join(f'{tag_ko.get(t, t)} {p:.2f}' for t, p in tag_probs)}"] if tag_probs else []
+    return replace(pred, tags=tags, evidence=model_evidence + kept_evidence)
 
 
 def item_from_prediction(parsed: ParsedBean, pred: Prediction) -> Item:

@@ -1,3 +1,4 @@
+from app.core.tagmodel import TagModel
 from app.graphs.analyze_bean import build_analyze_graph
 from app.models import Profile
 from tests.app.fakes import fake_deps, run_events
@@ -5,6 +6,15 @@ from tests.app.fakes import fake_deps, run_events
 
 def first_card(events):
     return next(e for e in events if e["type"] == "cards")["cards"][0]
+
+
+def _fake_tag_model() -> TagModel:
+    # fake_deps().embed() returns [0.0] * 8, so every input is 0 -- the hidden layer collapses to relu(b1), and
+    # w1 is irrelevant. b1=[1,3] -> hidden=[1,3]; w2 picks each hidden unit straight through to its own tag ->
+    # out=[1,3] -> sigmoid(3) > sigmoid(1), so "chocolate" outranks "lemon".
+    return TagModel(labels=["lemon", "chocolate"], threshold=0.3, embed_model="test",
+                    w1=[[0.0, 0.0] for _ in range(8)], b1=[1.0, 3.0],
+                    w2=[[1.0, 0.0], [0.0, 1.0]], b2=[0.0, 0.0])
 
 
 def test_coffee_id_uses_db_data_without_embedding():
@@ -46,6 +56,29 @@ def test_parse_failure_and_embedding_failure_degrade_to_low_confidence():
     deps2 = fake_deps(embed_fails=True)
     c2 = first_card(run_events(build_analyze_graph(deps2), {"text": "브라질 내추럴", "profile": Profile()}))
     assert c2["confidence"] == "low" and c2["n_neighbors"] == 4      # origin/process average fallback
+
+
+def test_unknown_bean_uses_tag_model_when_loaded():
+    deps = fake_deps(tag_model=_fake_tag_model())
+    c = first_card(run_events(build_analyze_graph(deps), {"text": "에티오피아 예가체프 워시드", "profile": Profile()}))
+    assert c["source"] == "predicted"
+    assert c["tags"] == ["chocolate", "lemon"]                  # sigmoid(3) > sigmoid(1): model overrides the vote
+    assert any(e.startswith("향미 모델: 초콜릿 0.95, 레몬 0.73") for e in c["evidence"])
+    assert c["acidity"] is not None and c["confidence"] != "low"  # attributes still come from the neighbour vote
+
+
+def test_degraded_embedding_falls_back_to_neighbor_vote_even_with_a_tag_model_loaded():
+    deps = fake_deps(embed_fails=True, tag_model=_fake_tag_model())
+    c = first_card(run_events(build_analyze_graph(deps), {"text": "브라질 내추럴", "profile": Profile()}))
+    assert c["confidence"] == "low"
+    assert not any(e.startswith("향미 모델:") for e in c["evidence"])
+
+
+def test_no_tag_model_loaded_keeps_neighbor_vote_tags():
+    deps = fake_deps()                                          # tag_model=None by default
+    c = first_card(run_events(build_analyze_graph(deps), {"text": "에티오피아 예가체프 워시드", "profile": Profile()}))
+    assert not any(e.startswith("향미 모델:") for e in c["evidence"])
+    assert c["tags"] == ["lemon"]
 
 
 def test_violation_is_reported_not_hidden():
