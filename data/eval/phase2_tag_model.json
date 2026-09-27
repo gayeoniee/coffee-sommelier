@@ -1,0 +1,158 @@
+{
+  "embed_model": "nvidia/nemotron-3-embed-1b",
+  "n_tagged_train": 7327,
+  "n_tags": 54,
+  "tags": [
+    "anise",
+    "apple",
+    "berry",
+    "bitter",
+    "black tea",
+    "blackberry",
+    "blueberry",
+    "brown sugar",
+    "caramelized",
+    "cherry",
+    "chocolate",
+    "cinnamon",
+    "citrus fruit",
+    "clove",
+    "cocoa",
+    "coconut",
+    "dark chocolate",
+    "dried fruit",
+    "fermented",
+    "floral",
+    "fresh",
+    "grape",
+    "grapefruit",
+    "hazelnut",
+    "honey",
+    "jasmine",
+    "lemon",
+    "lime",
+    "malt",
+    "maple syrup",
+    "molasses",
+    "nutmeg",
+    "nutty",
+    "orange",
+    "overall sweet",
+    "peach",
+    "pear",
+    "pipe tobacco",
+    "pomegranate",
+    "prune",
+    "pungent",
+    "raisin",
+    "raspberry",
+    "raw",
+    "rose",
+    "salty",
+    "smoky",
+    "sour",
+    "strawberry",
+    "sweet aromatics",
+    "tobacco",
+    "vanilla",
+    "winey",
+    "woody"
+  ],
+  "min_positives": 30,
+  "thresholds_swept": [
+    0.25,
+    0.3,
+    0.35,
+    0.4,
+    0.45,
+    0.5
+  ],
+  "picked_threshold": 0.3,
+  "holdout_n": 200,
+  "holdout_seed": 42,
+  "cv": {
+    "elapsed_s": 127.4,
+    "by_threshold": {
+      "0.25": {
+        "n": 7327,
+        "precision": 0.6761,
+        "recall": 0.6833,
+        "f1": 0.6797,
+        "category_f1": 0.7874
+      },
+      "0.3": {
+        "n": 7327,
+        "precision": 0.7134,
+        "recall": 0.6528,
+        "f1": 0.6817,
+        "category_f1": 0.7837
+      },
+      "0.35": {
+        "n": 7327,
+        "precision": 0.7457,
+        "recall": 0.6241,
+        "f1": 0.6795,
+        "category_f1": 0.7746
+      },
+      "0.4": {
+        "n": 7327,
+        "precision": 0.7715,
+        "recall": 0.5952,
+        "f1": 0.672,
+        "category_f1": 0.763
+      },
+      "0.45": {
+        "n": 7327,
+        "precision": 0.7926,
+        "recall": 0.5682,
+        "f1": 0.6619,
+        "category_f1": 0.7511
+      },
+      "0.5": {
+        "n": 7327,
+        "precision": 0.8143,
+        "recall": 0.5419,
+        "f1": 0.6507,
+        "category_f1": 0.7361
+      }
+    },
+    "best_threshold": 0.3
+  },
+  "holdout": {
+    "n_scored": 168,
+    "model": {
+      "n": 168,
+      "precision": 0.7799,
+      "recall": 0.6913,
+      "f1": 0.7329,
+      "category_f1": 0.8292
+    },
+    "neighbor_vote": {
+      "n": 168,
+      "precision": 0.3677,
+      "recall": 0.3712,
+      "f1": 0.3695,
+      "category_f1": 0.6298
+    },
+    "note": "both scored on the SAME tag-free (leak-free) query embeddings of the 200 fixed LOO targets; neighbor_vote uses production defaults (k=10, thr=0.3, lift=1.2)."
+  },
+  "korean_roasters": {
+    "n_scored": 39,
+    "model": {
+      "n": 39,
+      "precision": 0.4381,
+      "recall": 0.4299,
+      "f1": 0.434,
+      "category_f1": 0.6892
+    },
+    "neighbor_vote": {
+      "n": 39,
+      "precision": 0.2302,
+      "recall": 0.271,
+      "f1": 0.2489,
+      "category_f1": 0.4972
+    },
+    "note": "roasters_kr active beans with flavor_tags (Korean note-word rule tags, pipeline/enrich.py ko_rule_tags), excluded from training and never a target elsewhere; independent of the coffeereview-derived n=200 held-out set above. Tag-free query embeddings; neighbor_vote uses production defaults (k=10, thr=0.3, lift=1.2)."
+  },
+  "config_path": "config/tag_model.json"
+}

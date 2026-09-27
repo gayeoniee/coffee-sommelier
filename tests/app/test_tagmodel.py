@@ -100,6 +100,35 @@ def test_matches_tiny_sklearn_reference_on_random_data():
             assert abs(got[label] - expected[i]) < 1e-4
 
 
+def test_tag_model_disabled_for_open_data_variant(monkeypatch):
+    """The model's labels are coffeereview_kaggle-derived (licence-restricted); the open-data deployment
+    (DATA_VARIANT=open) must never load it, licence gate independent of whether config/tag_model.json exists."""
+    from app import config
+    from app.graphs import _tag_model_enabled
+
+    monkeypatch.setattr(config, "DATA_VARIANT", "open")
+    monkeypatch.delenv("TAG_MODEL", raising=False)
+    assert _tag_model_enabled() is False
+
+
+def test_tag_model_disabled_by_explicit_env_override(monkeypatch):
+    from app import config
+    from app.graphs import _tag_model_enabled
+
+    monkeypatch.setattr(config, "DATA_VARIANT", "full")
+    monkeypatch.setenv("TAG_MODEL", "off")
+    assert _tag_model_enabled() is False
+
+
+def test_tag_model_enabled_by_default_for_non_open_variants(monkeypatch):
+    from app import config
+    from app.graphs import _tag_model_enabled
+
+    monkeypatch.setattr(config, "DATA_VARIANT", "full")
+    monkeypatch.delenv("TAG_MODEL", raising=False)
+    assert _tag_model_enabled() is True
+
+
 def test_predict_latency_under_50ms():
     rng_seed = 12345
 
