@@ -16,12 +16,12 @@
   "acidity": {
     "n": 198,
     "exact": 0.2626,
-    "within1": 0.5152
+    "within1": 0.5202
   },
   "body": {
     "n": 198,
-    "exact": 0.2828,
-    "within1": 0.596
+    "exact": 0.2929,
+    "within1": 0.6061
   },
   "sweetness": {
     "n": 8,
@@ -30,16 +30,69 @@
   },
   "acidity_within1_by_confidence": {
     "low": {
-      "n": 65,
-      "within1": 0.3846
+      "n": 64,
+      "within1": 0.375
     },
     "high": {
       "n": 31,
       "within1": 0.7097
     },
     "medium": {
-      "n": 102,
-      "within1": 0.5392
+      "n": 103,
+      "within1": 0.5534
+    }
+  },
+  "tags_query_embeddings": {
+    "leak_free": 0,
+    "stored_fallback": 200,
+    "note": "leak-free tag-free query embeddings are the default when cached (data/eval/loo_tagfree_query_embeddings.jsonl, exactly the n=200/seed=42 targets); other target draws fall back to the stored (tag-including) embedding, as before docs/adr/0008."
+  },
+  "tags": {
+    "n": 9,
+    "precision": 0.7143,
+    "recall": 0.5,
+    "f1": 0.5882,
+    "category_f1": 0.7742
+  },
+  "attrs_model": {
+    "acidity": {
+      "model": {
+        "n": 200,
+        "mae": 1.1191,
+        "within1": 0.47
+      },
+      "neighbor": {
+        "n": 198,
+        "mae": 1.096,
+        "within1": 0.5202
+      },
+      "note": "both scored on the same leak-free tag-free query embedding as `tags` above (docs/adr/0009-learned-attribute-model.md); neighbor = predict_from_neighbors's weighted average over that embedding's neighbours, production defaults (k=10)."
+    },
+    "body": {
+      "model": {
+        "n": 200,
+        "mae": 1.0238,
+        "within1": 0.555
+      },
+      "neighbor": {
+        "n": 198,
+        "mae": 0.9596,
+        "within1": 0.6061
+      },
+      "note": "both scored on the same leak-free tag-free query embedding as `tags` above (docs/adr/0009-learned-attribute-model.md); neighbor = predict_from_neighbors's weighted average over that embedding's neighbours, production defaults (k=10)."
+    },
+    "sweetness": {
+      "model": {
+        "n": 0,
+        "mae": null,
+        "within1": null
+      },
+      "neighbor": {
+        "n": 8,
+        "mae": 0.525,
+        "within1": 0.875
+      },
+      "note": "both scored on the same leak-free tag-free query embedding as `tags` above (docs/adr/0009-learned-attribute-model.md); neighbor = predict_from_neighbors's weighted average over that embedding's neighbours, production defaults (k=10)."
     }
   }
 }
