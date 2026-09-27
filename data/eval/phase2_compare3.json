@@ -3,12 +3,12 @@
     "full": {
       "exclude_sources": [],
       "coverage": {
-        "total": 9155,
-        "with_embedding": 9155,
-        "with_flavor_tags": 7534,
-        "with_acidity": 7868,
-        "decaf": 168,
-        "decaf_with_flavor_tags": 164,
+        "total": 9225,
+        "with_embedding": 9225,
+        "with_flavor_tags": 7589,
+        "with_acidity": 7888,
+        "decaf": 178,
+        "decaf_with_flavor_tags": 171,
         "menu_items_by_brand": {
           "brand:coffeebean": 42,
           "brand:compose": 42,
@@ -29,14 +29,15 @@
         "targets": 200,
         "target_ids_sha1": "d652320c4072789d0291eebd9d8a1605e1a72d2b",
         "neighbor_source_share": {
-          "cqi": 1.0
+          "cqi": 0.9995,
+          "roasters_kr": 0.0005
         },
         "predictions_with_tags": 0.0,
         "embedding_model": "nvidia/nemotron-3-embed-1b",
         "acidity": {
           "n": 200,
-          "exact": 0.235,
-          "within1": 0.495
+          "exact": 0.23,
+          "within1": 0.505
         },
         "body": {
           "n": 0,
@@ -50,16 +51,16 @@
         },
         "acidity_within1_by_confidence": {
           "low": {
-            "n": 76,
-            "within1": 0.3684
+            "n": 75,
+            "within1": 0.4133
           },
           "high": {
-            "n": 28,
-            "within1": 0.6429
+            "n": 29,
+            "within1": 0.6552
           },
           "medium": {
             "n": 96,
-            "within1": 0.5521
+            "within1": 0.5312
           }
         },
         "tags_query_embeddings": {
@@ -77,11 +78,11 @@
       },
       "decaf_probe": {
         "persona": "디카페인+산미",
-        "candidates": 168,
-        "with_evidence": 164,
+        "candidates": 178,
+        "with_evidence": 171,
         "by_source": {
           "coffeereview_kaggle": 155,
-          "roasters_kr": 7,
+          "roasters_kr": 17,
           "roasterdb": 5,
           "shopify": 1
         },
@@ -96,6 +97,22 @@
             "sweetness": 3,
             "tags": [
               "floral"
+            ]
+          },
+          {
+            "name": "원두 에티오피아 구지 우라가 시코 내추럴 디카페인",
+            "roaster": "모모스커피",
+            "source": "roasters_kr",
+            "score": 0.9113,
+            "acidity": null,
+            "body": null,
+            "sweetness": null,
+            "tags": [
+              "cherry",
+              "raspberry",
+              "black tea",
+              "vanilla",
+              "chocolate"
             ]
           },
           {
@@ -137,20 +154,6 @@
               "peach",
               "grape",
               "caramelized"
-            ]
-          },
-          {
-            "name": "Ethiopia Sidamo Decaffeinated",
-            "roaster": "Capricorn Coffees",
-            "source": "coffeereview_kaggle",
-            "score": 0.8626,
-            "acidity": 4,
-            "body": 3,
-            "sweetness": 4,
-            "tags": [
-              "floral",
-              "lemon",
-              "pungent"
             ]
           }
         ]
@@ -322,12 +325,12 @@
         "coffeereview_kaggle"
       ],
       "coverage": {
-        "total": 1762,
-        "with_embedding": 1762,
-        "with_flavor_tags": 148,
-        "with_acidity": 1603,
-        "decaf": 13,
-        "decaf_with_flavor_tags": 9,
+        "total": 1832,
+        "with_embedding": 1832,
+        "with_flavor_tags": 203,
+        "with_acidity": 1623,
+        "decaf": 23,
+        "decaf_with_flavor_tags": 16,
         "menu_items_by_brand": {
           "brand:coffeebean": 42,
           "brand:compose": 42,
@@ -350,7 +353,8 @@
         "targets": 200,
         "target_ids_sha1": "d652320c4072789d0291eebd9d8a1605e1a72d2b",
         "neighbor_source_share": {
-          "cqi": 1.0
+          "cqi": 0.9995,
+          "roasters_kr": 0.0005
         },
         "predictions_with_tags": 0.0,
         "embedding_model": "nvidia/nemotron-3-embed-1b",
@@ -398,14 +402,30 @@
       },
       "decaf_probe": {
         "persona": "디카페인+산미",
-        "candidates": 13,
-        "with_evidence": 9,
+        "candidates": 23,
+        "with_evidence": 16,
         "by_source": {
-          "roasters_kr": 7,
+          "roasters_kr": 17,
           "roasterdb": 5,
           "shopify": 1
         },
         "top": [
+          {
+            "name": "원두 에티오피아 구지 우라가 시코 내추럴 디카페인",
+            "roaster": "모모스커피",
+            "source": "roasters_kr",
+            "score": 0.9113,
+            "acidity": null,
+            "body": null,
+            "sweetness": null,
+            "tags": [
+              "cherry",
+              "raspberry",
+              "black tea",
+              "vanilla",
+              "chocolate"
+            ]
+          },
           {
             "name": "Decaf EA Ethiopia",
             "roaster": "Ceremony Coffee Roasters",
@@ -459,20 +479,6 @@
             "tags": [
               "peach",
               "hazelnut"
-            ]
-          },
-          {
-            "name": "Decaf El Buho 250g Decaf Coffee",
-            "roaster": "Small Batch Coffee",
-            "source": "roasterdb",
-            "score": 0.7387,
-            "acidity": null,
-            "body": null,
-            "sweetness": 4,
-            "tags": [
-              "grape",
-              "vanilla",
-              "malt"
             ]
           }
         ]

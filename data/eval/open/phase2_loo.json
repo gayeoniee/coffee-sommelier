@@ -6,9 +6,9 @@
   "targets": 200,
   "target_ids_sha1": "fe0ef3546102a0886102a2ffe16e2b9dae119a09",
   "neighbor_source_share": {
-    "cqi": 0.9745,
-    "roasterdb": 0.0215,
-    "roasters_kr": 0.004
+    "cqi": 0.9725,
+    "roasterdb": 0.021,
+    "roasters_kr": 0.0065
   },
   "predictions_with_tags": 0.03,
   "embedding_model": "nvidia/nemotron-3-embed-1b",
@@ -18,13 +18,13 @@
     "within1": 0.5126
   },
   "body": {
-    "n": 5,
-    "exact": 0.6,
+    "n": 6,
+    "exact": 0.6667,
     "within1": 1.0
   },
   "sweetness": {
-    "n": 6,
-    "exact": 0.5,
+    "n": 7,
+    "exact": 0.7143,
     "within1": 1.0
   },
   "acidity_within1_by_confidence": {
@@ -33,12 +33,12 @@
       "within1": 0.3649
     },
     "high": {
-      "n": 33,
-      "within1": 0.697
+      "n": 34,
+      "within1": 0.7059
     },
     "medium": {
-      "n": 92,
-      "within1": 0.5652
+      "n": 91,
+      "within1": 0.5604
     }
   },
   "tags_query_embeddings": {
@@ -52,5 +52,53 @@
     "recall": 0.4091,
     "f1": 0.5143,
     "category_f1": 0.7273
+  },
+  "tags_model": {
+    "n": 9,
+    "precision": 0.8421,
+    "recall": 0.7273,
+    "f1": 0.7805,
+    "category_f1": 0.9565
+  },
+  "attrs_model": {
+    "acidity": {
+      "model": {
+        "n": 200,
+        "mae": 0.9502,
+        "within1": 0.59
+      },
+      "neighbor": {
+        "n": 199,
+        "mae": 1.1051,
+        "within1": 0.5126
+      },
+      "note": "both scored on the same leak-free tag-free query embedding as `tags` above (docs/adr/0009-learned-attribute-model.md); neighbor = predict_from_neighbors's weighted average over that embedding's neighbours, production defaults (k=10)."
+    },
+    "body": {
+      "model": {
+        "n": 7,
+        "mae": 0.38,
+        "within1": 1.0
+      },
+      "neighbor": {
+        "n": 6,
+        "mae": 0.3117,
+        "within1": 1.0
+      },
+      "note": "both scored on the same leak-free tag-free query embedding as `tags` above (docs/adr/0009-learned-attribute-model.md); neighbor = predict_from_neighbors's weighted average over that embedding's neighbours, production defaults (k=10)."
+    },
+    "sweetness": {
+      "model": {
+        "n": 7,
+        "mae": 0.3857,
+        "within1": 1.0
+      },
+      "neighbor": {
+        "n": 7,
+        "mae": 0.4343,
+        "within1": 1.0
+      },
+      "note": "both scored on the same leak-free tag-free query embedding as `tags` above (docs/adr/0009-learned-attribute-model.md); neighbor = predict_from_neighbors's weighted average over that embedding's neighbours, production defaults (k=10)."
+    }
   }
 }

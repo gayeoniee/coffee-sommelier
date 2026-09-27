@@ -1,11 +1,11 @@
 {
   "exclude_sources": [],
-  "total": 9155,
-  "with_embedding": 9155,
-  "with_flavor_tags": 7534,
-  "with_acidity": 7868,
-  "decaf": 168,
-  "decaf_with_flavor_tags": 164,
+  "total": 9225,
+  "with_embedding": 9225,
+  "with_flavor_tags": 7589,
+  "with_acidity": 7888,
+  "decaf": 178,
+  "decaf_with_flavor_tags": 171,
   "menu_items_by_brand": {
     "brand:coffeebean": 42,
     "brand:compose": 42,
