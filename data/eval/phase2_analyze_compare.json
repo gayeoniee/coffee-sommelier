@@ -1,372 +1,686 @@
 {
- "full": [
-  {
-   "text": "에티오피아 예가체프 워시드 디카페인",
-   "s": 2.7,
-   "conf": "medium",
-   "n_nb": 10,
-   "attrs": [
-    3.09,
-    3.78,
-    null
-   ],
-   "tags": [
-    "꽃향",
-    "초콜릿",
-    "코코아",
-    "메이플 시럽"
-   ],
-   "evidence": 3,
-   "score": 66,
-   "decaf": true,
-   "fb": 0
-  },
-  {
-   "text": "콜롬비아 수프리모 미디엄 로스트 초콜릿 견과",
-   "s": 1.7,
-   "conf": "medium",
-   "n_nb": 10,
-   "attrs": [
-    3.16,
-    2.33,
-    3.75
-   ],
-   "tags": [
-    "초콜릿",
-    "자극적",
-    "건포도"
-   ],
-   "evidence": 3,
-   "score": 77,
-   "decaf": false,
-   "fb": 1
-  },
-  {
-   "text": "케냐 AA 자몽 블랙커런트",
-   "s": 2.5,
-   "conf": "medium",
-   "n_nb": 10,
-   "attrs": [
-    4.3,
-    2.78,
-    3.99
-   ],
-   "tags": [
-    "다크 초콜릿",
-    "자극적",
-    "블랙베리"
-   ],
-   "evidence": 3,
-   "score": 81,
-   "decaf": false,
-   "fb": 0
-  },
-  {
-   "text": "브라질 세라도 내추럴 다크 로스트",
-   "s": 2.1,
-   "conf": "medium",
-   "n_nb": 10,
-   "attrs": [
-    2.87,
-    3.78,
-    4.75
-   ],
-   "tags": [
-    "초콜릿"
-   ],
-   "evidence": 2,
-   "score": 57,
-   "decaf": false,
-   "fb": 0
-  },
-  {
-   "text": "과테말라 안티구아 허니 프로세스 스위스워터 디카페인",
-   "s": 3.0,
-   "conf": "medium",
-   "n_nb": 10,
-   "attrs": [
-    3.2,
-    3.0,
-    3.97
-   ],
-   "tags": [
-    "초콜릿"
-   ],
-   "evidence": 2,
-   "score": 66,
-   "decaf": true,
-   "fb": 0
-  },
-  {
-   "text": "파나마 게이샤 재스민 베르가못",
-   "s": 1.3,
-   "conf": "high",
-   "n_nb": 10,
-   "attrs": [
-    4.1,
-    4.39,
-    4.16
-   ],
-   "tags": [
-    "꽃향",
-    "코코아",
-    "재스민",
-    "초콜릿",
-    "신선한 풀"
-   ],
-   "evidence": 3,
-   "score": 72,
-   "decaf": false,
-   "fb": 1
-  },
-  {
-   "text": "인도네시아 만델링 흙내 묵직한 바디",
-   "s": 3.7,
-   "conf": "medium",
-   "n_nb": 10,
-   "attrs": [
-    1.98,
-    1.89,
-    3.66
-   ],
-   "tags": [
-    "초콜릿"
-   ],
-   "evidence": 2,
-   "score": 61,
-   "decaf": false,
-   "fb": 0
-  },
-  {
-   "text": "코스타리카 타라주 허니 캐러멜 사과",
-   "s": 1.5,
-   "conf": "medium",
-   "n_nb": 10,
-   "attrs": [
-    2.87,
-    4.36,
-    4.4
-   ],
-   "tags": [
-    "꿀",
-    "사과",
-    "체리"
-   ],
-   "evidence": 3,
-   "score": 68,
-   "decaf": false,
-   "fb": 0
-  },
-  {
-   "text": "르완다 부르봉 워시드 홍차 살구",
-   "s": 1.8,
-   "conf": "medium",
-   "n_nb": 10,
-   "attrs": [
-    2.92,
-    3.78,
-    4.76
-   ],
-   "tags": [
-    "꽃향",
-    "초콜릿",
-    "신선한 풀",
-    "코코아"
-   ],
-   "evidence": 3,
-   "score": 63,
-   "decaf": false,
-   "fb": 0
-  },
-  {
-   "text": "온두라스 디카페인 마운틴워터 캐러멜",
-   "s": 2.6,
-   "conf": "medium",
-   "n_nb": 10,
-   "attrs": [
-    3.15,
-    3.76,
-    4.14
-   ],
-   "tags": [
-    "초콜릿"
-   ],
-   "evidence": 2,
-   "score": 61,
-   "decaf": true,
-   "fb": 0
-  }
- ],
- "open": [
-  {
-   "text": "에티오피아 예가체프 워시드 디카페인",
-   "s": 2.2,
-   "conf": "medium",
-   "n_nb": 10,
-   "attrs": [
-    4.43,
-    3.43,
-    null
-   ],
-   "tags": [],
-   "evidence": 1,
-   "score": 88,
-   "decaf": true,
-   "fb": 0
-  },
-  {
-   "text": "콜롬비아 수프리모 미디엄 로스트 초콜릿 견과",
-   "s": 3.1,
-   "conf": "low",
-   "n_nb": 10,
-   "attrs": [
-    null,
-    null,
-    null
-   ],
-   "tags": [
-    "초콜릿",
-    "다크 초콜릿",
-    "체리",
-    "milk chocolate"
-   ],
-   "evidence": 2,
-   "score": 66,
-   "decaf": false,
-   "fb": 0
-  },
-  {
-   "text": "케냐 AA 자몽 블랙커런트",
-   "s": 2.4,
-   "conf": "high",
-   "n_nb": 10,
-   "attrs": [
-    4.11,
-    4.42,
-    null
-   ],
-   "tags": [],
-   "evidence": 1,
-   "score": 71,
-   "decaf": false,
-   "fb": 0
-  },
-  {
-   "text": "브라질 세라도 내추럴 다크 로스트",
-   "s": 2.2,
-   "conf": "low",
-   "n_nb": 10,
-   "attrs": [
-    2.7,
-    3.55,
-    null
-   ],
-   "tags": [],
-   "evidence": 1,
-   "score": 64,
-   "decaf": false,
-   "fb": 0
-  },
-  {
-   "text": "과테말라 안티구아 허니 프로세스 스위스워터 디카페인",
-   "s": 3.8,
-   "conf": "high",
-   "n_nb": 10,
-   "attrs": [
-    4.0,
-    4.24,
-    4.25
-   ],
-   "tags": [
-    "코코아"
-   ],
-   "evidence": 2,
-   "score": 63,
-   "decaf": true,
-   "fb": 0
-  },
-  {
-   "text": "파나마 게이샤 재스민 베르가못",
-   "s": 4.0,
-   "conf": "medium",
-   "n_nb": 9,
-   "attrs": [
-    4.05,
-    3.44,
-    null
-   ],
-   "tags": [],
-   "evidence": 1,
-   "score": 83,
-   "decaf": false,
-   "fb": 0
-  },
-  {
-   "text": "인도네시아 만델링 흙내 묵직한 바디",
-   "s": 4.2,
-   "conf": "medium",
-   "n_nb": 10,
-   "attrs": [
-    3.12,
-    3.34,
-    null
-   ],
-   "tags": [],
-   "evidence": 1,
-   "score": 72,
-   "decaf": false,
-   "fb": 0
-  },
-  {
-   "text": "코스타리카 타라주 허니 캐러멜 사과",
-   "s": 2.5,
-   "conf": "medium",
-   "n_nb": 8,
-   "attrs": [
-    3.54,
-    3.79,
-    4.21
-   ],
-   "tags": [
-    "꿀",
-    "체리"
-   ],
-   "evidence": 3,
-   "score": 73,
-   "decaf": false,
-   "fb": 0
-  },
-  {
-   "text": "르완다 부르봉 워시드 홍차 살구",
-   "s": 2.6,
-   "conf": "medium",
-   "n_nb": 10,
-   "attrs": [
-    3.02,
-    3.01,
-    4.41
-   ],
-   "tags": [],
-   "evidence": 1,
-   "score": 72,
-   "decaf": false,
-   "fb": 0
-  },
-  {
-   "text": "온두라스 디카페인 마운틴워터 캐러멜",
-   "s": 3.7,
-   "conf": "medium",
-   "n_nb": 10,
-   "attrs": [
-    2.2,
-    1.62,
-    4.29
-   ],
-   "tags": [],
-   "evidence": 1,
-   "score": 63,
-   "decaf": true,
-   "fb": 0
-  }
- ]
+ "after_lift_gate": {
+  "full": [
+   {
+    "text": "에티오피아 예가체프 워시드 디카페인",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "메이플 시럽",
+     "꽃향",
+     "코코아",
+     "초콜릿"
+    ],
+    "evidence": 3,
+    "attrs": [
+     3.09,
+     3.78,
+     null
+    ],
+    "fb": 0
+   },
+   {
+    "text": "콜롬비아 수프리모 미디엄 로스트 초콜릿 견과",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "건포도",
+     "자극적",
+     "초콜릿"
+    ],
+    "evidence": 3,
+    "attrs": [
+     3.16,
+     2.33,
+     3.75
+    ],
+    "fb": 0
+   },
+   {
+    "text": "케냐 AA 자몽 블랙커런트",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "블랙베리",
+     "다크 초콜릿",
+     "자극적"
+    ],
+    "evidence": 3,
+    "attrs": [
+     4.3,
+     2.78,
+     3.99
+    ],
+    "fb": 0
+   },
+   {
+    "text": "브라질 세라도 내추럴 다크 로스트",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "초콜릿"
+    ],
+    "evidence": 2,
+    "attrs": [
+     2.87,
+     3.78,
+     4.75
+    ],
+    "fb": 0
+   },
+   {
+    "text": "과테말라 안티구아 허니 프로세스 스위스워터 디카페인",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "초콜릿"
+    ],
+    "evidence": 2,
+    "attrs": [
+     3.2,
+     3.0,
+     3.97
+    ],
+    "fb": 0
+   },
+   {
+    "text": "파나마 게이샤 재스민 베르가못",
+    "error": 0,
+    "conf": "high",
+    "tags": [
+     "재스민",
+     "꽃향",
+     "코코아",
+     "신선한 풀",
+     "초콜릿"
+    ],
+    "evidence": 3,
+    "attrs": [
+     4.1,
+     4.39,
+     4.16
+    ],
+    "fb": 0
+   },
+   {
+    "text": "인도네시아 만델링 흙내 묵직한 바디",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "초콜릿"
+    ],
+    "evidence": 2,
+    "attrs": [
+     1.98,
+     1.89,
+     3.66
+    ],
+    "fb": 0
+   },
+   {
+    "text": "코스타리카 타라주 허니 캐러멜 사과",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "꿀",
+     "사과",
+     "체리"
+    ],
+    "evidence": 3,
+    "attrs": [
+     2.87,
+     4.36,
+     4.4
+    ],
+    "fb": 0
+   },
+   {
+    "text": "르완다 부르봉 워시드 홍차 살구",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "꽃향",
+     "신선한 풀",
+     "코코아",
+     "초콜릿"
+    ],
+    "evidence": 3,
+    "attrs": [
+     2.92,
+     3.78,
+     4.76
+    ],
+    "fb": 0
+   },
+   {
+    "text": "온두라스 디카페인 마운틴워터 캐러멜",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "초콜릿"
+    ],
+    "evidence": 2,
+    "attrs": [
+     3.15,
+     3.76,
+     4.14
+    ],
+    "fb": 0
+   }
+  ],
+  "open": [
+   {
+    "text": "에티오피아 예가체프 워시드 디카페인",
+    "error": 0,
+    "conf": "medium",
+    "tags": [],
+    "evidence": 1,
+    "attrs": [
+     4.43,
+     3.43,
+     null
+    ],
+    "fb": 0
+   },
+   {
+    "text": "콜롬비아 수프리모 미디엄 로스트 초콜릿 견과",
+    "error": 0,
+    "conf": "low",
+    "tags": [
+     "밀크 초콜릿",
+     "초콜릿",
+     "다크 초콜릿",
+     "체리"
+    ],
+    "evidence": 2,
+    "attrs": [
+     null,
+     null,
+     null
+    ],
+    "fb": 1
+   },
+   {
+    "text": "케냐 AA 자몽 블랙커런트",
+    "error": 0,
+    "conf": "high",
+    "tags": [],
+    "evidence": 1,
+    "attrs": [
+     4.11,
+     4.42,
+     null
+    ],
+    "fb": 1
+   },
+   {
+    "text": "브라질 세라도 내추럴 다크 로스트",
+    "error": 0,
+    "conf": "low",
+    "tags": [],
+    "evidence": 1,
+    "attrs": [
+     2.7,
+     3.55,
+     null
+    ],
+    "fb": 0
+   },
+   {
+    "text": "과테말라 안티구아 허니 프로세스 스위스워터 디카페인",
+    "error": 0,
+    "conf": "high",
+    "tags": [
+     "코코아"
+    ],
+    "evidence": 2,
+    "attrs": [
+     4.0,
+     4.24,
+     4.25
+    ],
+    "fb": 0
+   },
+   {
+    "text": "파나마 게이샤 재스민 베르가못",
+    "error": 0,
+    "conf": "medium",
+    "tags": [],
+    "evidence": 1,
+    "attrs": [
+     4.05,
+     3.44,
+     null
+    ],
+    "fb": 0
+   },
+   {
+    "text": "인도네시아 만델링 흙내 묵직한 바디",
+    "error": 0,
+    "conf": "medium",
+    "tags": [],
+    "evidence": 1,
+    "attrs": [
+     3.12,
+     3.34,
+     null
+    ],
+    "fb": 0
+   },
+   {
+    "text": "코스타리카 타라주 허니 캐러멜 사과",
+    "error": 0,
+    "conf": "medium",
+    "tags": [
+     "꿀",
+     "체리"
+    ],
+    "evidence": 3,
+    "attrs": [
+     3.54,
+     3.79,
+     4.21
+    ],
+    "fb": 0
+   },
+   {
+    "text": "르완다 부르봉 워시드 홍차 살구",
+    "error": 0,
+    "conf": "medium",
+    "tags": [],
+    "evidence": 1,
+    "attrs": [
+     3.02,
+     3.01,
+     4.41
+    ],
+    "fb": 0
+   },
+   {
+    "text": "온두라스 디카페인 마운틴워터 캐러멜",
+    "error": 0,
+    "conf": "medium",
+    "tags": [],
+    "evidence": 1,
+    "attrs": [
+     2.2,
+     1.62,
+     4.29
+    ],
+    "fb": 0
+   }
+  ]
+ },
+ "before": {
+  "full": [
+   {
+    "text": "에티오피아 예가체프 워시드 디카페인",
+    "s": 2.7,
+    "conf": "medium",
+    "n_nb": 10,
+    "attrs": [
+     3.09,
+     3.78,
+     null
+    ],
+    "tags": [
+     "꽃향",
+     "초콜릿",
+     "코코아",
+     "메이플 시럽"
+    ],
+    "evidence": 3,
+    "score": 66,
+    "decaf": true,
+    "fb": 0
+   },
+   {
+    "text": "콜롬비아 수프리모 미디엄 로스트 초콜릿 견과",
+    "s": 1.7,
+    "conf": "medium",
+    "n_nb": 10,
+    "attrs": [
+     3.16,
+     2.33,
+     3.75
+    ],
+    "tags": [
+     "초콜릿",
+     "자극적",
+     "건포도"
+    ],
+    "evidence": 3,
+    "score": 77,
+    "decaf": false,
+    "fb": 1
+   },
+   {
+    "text": "케냐 AA 자몽 블랙커런트",
+    "s": 2.5,
+    "conf": "medium",
+    "n_nb": 10,
+    "attrs": [
+     4.3,
+     2.78,
+     3.99
+    ],
+    "tags": [
+     "다크 초콜릿",
+     "자극적",
+     "블랙베리"
+    ],
+    "evidence": 3,
+    "score": 81,
+    "decaf": false,
+    "fb": 0
+   },
+   {
+    "text": "브라질 세라도 내추럴 다크 로스트",
+    "s": 2.1,
+    "conf": "medium",
+    "n_nb": 10,
+    "attrs": [
+     2.87,
+     3.78,
+     4.75
+    ],
+    "tags": [
+     "초콜릿"
+    ],
+    "evidence": 2,
+    "score": 57,
+    "decaf": false,
+    "fb": 0
+   },
+   {
+    "text": "과테말라 안티구아 허니 프로세스 스위스워터 디카페인",
+    "s": 3.0,
+    "conf": "medium",
+    "n_nb": 10,
+    "attrs": [
+     3.2,
+     3.0,
+     3.97
+    ],
+    "tags": [
+     "초콜릿"
+    ],
+    "evidence": 2,
+    "score": 66,
+    "decaf": true,
+    "fb": 0
+   },
+   {
+    "text": "파나마 게이샤 재스민 베르가못",
+    "s": 1.3,
+    "conf": "high",
+    "n_nb": 10,
+    "attrs": [
+     4.1,
+     4.39,
+     4.16
+    ],
+    "tags": [
+     "꽃향",
+     "코코아",
+     "재스민",
+     "초콜릿",
+     "신선한 풀"
+    ],
+    "evidence": 3,
+    "score": 72,
+    "decaf": false,
+    "fb": 1
+   },
+   {
+    "text": "인도네시아 만델링 흙내 묵직한 바디",
+    "s": 3.7,
+    "conf": "medium",
+    "n_nb": 10,
+    "attrs": [
+     1.98,
+     1.89,
+     3.66
+    ],
+    "tags": [
+     "초콜릿"
+    ],
+    "evidence": 2,
+    "score": 61,
+    "decaf": false,
+    "fb": 0
+   },
+   {
+    "text": "코스타리카 타라주 허니 캐러멜 사과",
+    "s": 1.5,
+    "conf": "medium",
+    "n_nb": 10,
+    "attrs": [
+     2.87,
+     4.36,
+     4.4
+    ],
+    "tags": [
+     "꿀",
+     "사과",
+     "체리"
+    ],
+    "evidence": 3,
+    "score": 68,
+    "decaf": false,
+    "fb": 0
+   },
+   {
+    "text": "르완다 부르봉 워시드 홍차 살구",
+    "s": 1.8,
+    "conf": "medium",
+    "n_nb": 10,
+    "attrs": [
+     2.92,
+     3.78,
+     4.76
+    ],
+    "tags": [
+     "꽃향",
+     "초콜릿",
+     "신선한 풀",
+     "코코아"
+    ],
+    "evidence": 3,
+    "score": 63,
+    "decaf": false,
+    "fb": 0
+   },
+   {
+    "text": "온두라스 디카페인 마운틴워터 캐러멜",
+    "s": 2.6,
+    "conf": "medium",
+    "n_nb": 10,
+    "attrs": [
+     3.15,
+     3.76,
+     4.14
+    ],
+    "tags": [
+     "초콜릿"
+    ],
+    "evidence": 2,
+    "score": 61,
+    "decaf": true,
+    "fb": 0
+   }
+  ],
+  "open": [
+   {
+    "text": "에티오피아 예가체프 워시드 디카페인",
+    "s": 2.2,
+    "conf": "medium",
+    "n_nb": 10,
+    "attrs": [
+     4.43,
+     3.43,
+     null
+    ],
+    "tags": [],
+    "evidence": 1,
+    "score": 88,
+    "decaf": true,
+    "fb": 0
+   },
+   {
+    "text": "콜롬비아 수프리모 미디엄 로스트 초콜릿 견과",
+    "s": 3.1,
+    "conf": "low",
+    "n_nb": 10,
+    "attrs": [
+     null,
+     null,
+     null
+    ],
+    "tags": [
+     "초콜릿",
+     "다크 초콜릿",
+     "체리",
+     "milk chocolate"
+    ],
+    "evidence": 2,
+    "score": 66,
+    "decaf": false,
+    "fb": 0
+   },
+   {
+    "text": "케냐 AA 자몽 블랙커런트",
+    "s": 2.4,
+    "conf": "high",
+    "n_nb": 10,
+    "attrs": [
+     4.11,
+     4.42,
+     null
+    ],
+    "tags": [],
+    "evidence": 1,
+    "score": 71,
+    "decaf": false,
+    "fb": 0
+   },
+   {
+    "text": "브라질 세라도 내추럴 다크 로스트",
+    "s": 2.2,
+    "conf": "low",
+    "n_nb": 10,
+    "attrs": [
+     2.7,
+     3.55,
+     null
+    ],
+    "tags": [],
+    "evidence": 1,
+    "score": 64,
+    "decaf": false,
+    "fb": 0
+   },
+   {
+    "text": "과테말라 안티구아 허니 프로세스 스위스워터 디카페인",
+    "s": 3.8,
+    "conf": "high",
+    "n_nb": 10,
+    "attrs": [
+     4.0,
+     4.24,
+     4.25
+    ],
+    "tags": [
+     "코코아"
+    ],
+    "evidence": 2,
+    "score": 63,
+    "decaf": true,
+    "fb": 0
+   },
+   {
+    "text": "파나마 게이샤 재스민 베르가못",
+    "s": 4.0,
+    "conf": "medium",
+    "n_nb": 9,
+    "attrs": [
+     4.05,
+     3.44,
+     null
+    ],
+    "tags": [],
+    "evidence": 1,
+    "score": 83,
+    "decaf": false,
+    "fb": 0
+   },
+   {
+    "text": "인도네시아 만델링 흙내 묵직한 바디",
+    "s": 4.2,
+    "conf": "medium",
+    "n_nb": 10,
+    "attrs": [
+     3.12,
+     3.34,
+     null
+    ],
+    "tags": [],
+    "evidence": 1,
+    "score": 72,
+    "decaf": false,
+    "fb": 0
+   },
+   {
+    "text": "코스타리카 타라주 허니 캐러멜 사과",
+    "s": 2.5,
+    "conf": "medium",
+    "n_nb": 8,
+    "attrs": [
+     3.54,
+     3.79,
+     4.21
+    ],
+    "tags": [
+     "꿀",
+     "체리"
+    ],
+    "evidence": 3,
+    "score": 73,
+    "decaf": false,
+    "fb": 0
+   },
+   {
+    "text": "르완다 부르봉 워시드 홍차 살구",
+    "s": 2.6,
+    "conf": "medium",
+    "n_nb": 10,
+    "attrs": [
+     3.02,
+     3.01,
+     4.41
+    ],
+    "tags": [],
+    "evidence": 1,
+    "score": 72,
+    "decaf": false,
+    "fb": 0
+   },
+   {
+    "text": "온두라스 디카페인 마운틴워터 캐러멜",
+    "s": 3.7,
+    "conf": "medium",
+    "n_nb": 10,
+    "attrs": [
+     2.2,
+     1.62,
+     4.29
+    ],
+    "tags": [],
+    "evidence": 1,
+    "score": 63,
+    "decaf": true,
+    "fb": 0
+   }
+  ]
+ }
 }
