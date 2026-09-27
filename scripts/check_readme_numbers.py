@@ -46,6 +46,8 @@ def _checks() -> list[Check]:
     cov, loo, c3 = ("phase2_coverage.json",), ("phase2_loo.json",), ("phase2_compare3.json",)
     v3 = lambda d, k: [d["phase2_compare3.json"]["variants"][x]["loo"][k]["within1"]  # noqa: E731
                        for x in ("full", "open", "open_plus")]
+    v3n = lambda d, k: [d["phase2_compare3.json"]["variants"][x]["loo"][k]["n"]  # noqa: E731
+                        for x in ("full", "open", "open_plus")]
     checks = [
         Check("violations", (r"위반율[^\n]*?(\d+)/(\d+)건",), ("phase2_violations.json",),
               lambda d: (d["phase2_violations.json"]["violations"], d["phase2_violations.json"]["checked"]), True),
@@ -76,8 +78,13 @@ def _checks() -> list[Check]:
               lambda d: (d["phase2_loo_open.json"]["body"]["within1"], d["phase2_loo_open.json"]["body"]["n"])),
         Check("compare3_acidity", (r"LOO 산미 ±1 이내 \(CQI 고정 200개\)\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)",),
               c3, lambda d: tuple(v3(d, "acidity"))),
-        Check("compare3_body", (r"LOO 바디 ±1 이내\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)\s*\|",),
-              c3, lambda d: tuple(v3(d, "body"))),
+        # body's within1/exact are null for every compare3 variant, not just sometimes: the fixed target
+        # source is CQI only, and CQI's "Body" is always None (docs/adr/0010-body-heaviness.md -- it was a
+        # quality score, not a heaviness fact, and CQI has no review text to re-derive one from). So the
+        # meaningful, checkable claim here is body's target COUNT (n, a real number: 0 for every variant),
+        # not an accuracy rate that will never exist for this fixed-CQI design.
+        Check("compare3_body", (r"LOO 바디 n \(CQI 고정 200개\)\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)",),
+              c3, lambda d: tuple(v3n(d, "body"))),
         Check("explain_rule_pass", (r"규칙 통과 (\d+)/(\d+)",), ("phase2_explain_quality.json",),
               lambda d: (d["phase2_explain_quality.json"]["summary"]["rule_pass"],
                          d["phase2_explain_quality.json"]["summary"]["n"])),
