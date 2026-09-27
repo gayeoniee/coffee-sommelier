@@ -1,16 +1,19 @@
 import json
 
 from pipeline.enrich import (
-    EnrichOutput, is_note_list, ko_rule_tags, ko_tag_vocab, needs_llm, rule_tags, run_enrich, tag_vocab,
+    EnrichOutput, apply_body_heaviness, is_note_list, ko_body_cue, ko_rule_tags, ko_tag_vocab, needs_llm,
+    rule_tags, run_enrich, tag_vocab,
 )
 from pipeline.llm import LLMError
 from pipeline.records import CoffeeRecord, ReviewRecord, TaxonomyNode, read_jsonl, write_jsonl
 
 VOCAB = ["lemon", "chocolate", "dark chocolate", "black tea", "honey"]
+NO_HEAVINESS = {"body_heaviness_applied": 0, "body_heaviness_nulled": 0, "cqi_body_nulled": 0}
 
 
 def coffee(key, **kw):
-    return CoffeeRecord(key=key, name=kw.pop("name", key), source="t", collected_at="2026-09-24", **kw)
+    return CoffeeRecord(key=key, name=kw.pop("name", key), source=kw.pop("source", "t"),
+                        collected_at="2026-09-24", **kw)
 
 
 def test_rule_tags_prefers_longest_match():
@@ -64,7 +67,8 @@ def test_run_enrich_rules_llm_failures_and_resume(tmp_path):
     norm, out = setup_norm(tmp_path), tmp_path / "enriched"
     client = FakeClient(fail_keys=["FailMe"])
     stats = run_enrich(norm, out, client)
-    assert stats == {"coffees": 4, "llm_calls": 2, "llm_ok": 1, "llm_failed": 1, "cache_torn_lines": 0}
+    assert stats == {"coffees": 4, "llm_calls": 2, "llm_ok": 1, "llm_failed": 1, "cache_torn_lines": 0,
+                      **NO_HEAVINESS}
     by = {c.key: c for c in read_jsonl(out / "coffees.jsonl", CoffeeRecord)}
     assert by["c1"].flavor_tags == ["lemon", "black tea"]      # rule tags kept, LLM tags not used
     assert (by["c1"].acidity, by["c1"].body, by["c1"].sweetness) == (5, 2, 3)  # rule value wins, LLM fills gaps
@@ -142,6 +146,80 @@ def test_korean_matching_skips_prose():
     assert not is_note_list("에티오피아 커피나무에서 자란 원두로 발효 공정을 거쳐 블루베리 향이 납니다.")
     ko = ko_tag_vocab(KO_TAX)
     assert rule_tags("콜롬비아 디카페인. 블루베리와 꿀.", [], ko_vocab=ko) == []
+
+
+def test_ko_body_cue():
+    assert ko_body_cue("묵직하고 진한 바디") == 4
+    assert ko_body_cue("무거운 텍스처") == 4
+    assert ko_body_cue("풀바디, 카카오") == 4
+    assert ko_body_cue("가벼운 산미와 깔끔한 마무리") == 2
+    assert ko_body_cue("라이트한 바디감") == 2
+    assert ko_body_cue("깔끔한 바디") == 2
+    assert ko_body_cue("체리, 자스민") is None
+    assert ko_body_cue("") is None
+    assert ko_body_cue(None) is None
+
+
+def test_apply_rules_sets_body_from_korean_cue_for_roasters_kr_only():
+    c = coffee("rk1", source="roasters_kr")
+    from pipeline.enrich import _apply_rules
+    out = _apply_rules(c, "묵직한 바디, 다크초콜릿", [], ko_vocab=None)
+    assert out.body == 4
+
+    other = coffee("cr1", source="coffeereview_kaggle")
+    out2 = _apply_rules(other, "묵직한 바디", [], ko_vocab=None)
+    assert out2.body is None                              # cue only fires for roasters_kr
+
+    already_set = coffee("rk2", source="roasters_kr", body=3)
+    out3 = _apply_rules(already_set, "묵직한 바디", [], ko_vocab=None)
+    assert out3.body == 3                                 # existing value wins
+
+
+def test_apply_body_heaviness_merges_relabel_and_nulls_cqi(tmp_path):
+    out_dir = tmp_path / "enriched"
+    out_dir.mkdir(parents=True)
+    (out_dir / "body_heaviness.jsonl").write_text(
+        "\n".join(json.dumps(r) for r in [
+            {"key": "cr1", "hash": "h1", "status": "ok", "body": 5},
+            {"key": "cr2", "hash": "h2", "status": "ok", "body": None},   # judged, but text said nothing
+            {"key": "cr3", "hash": "h3", "status": "failed", "error": "boom"},
+        ]) + "\n", encoding="utf-8")
+
+    coffees = [
+        coffee("cr1", source="coffeereview_kaggle", body=2),       # old wrong quintile value -> heaviness 5
+        coffee("cr2", source="coffeereview_kaggle", body=3),       # judged null -> None
+        coffee("cr3", source="coffeereview_kaggle", body=4),       # failed -> None
+        coffee("cr4", source="coffeereview_kaggle", body=1),       # never attempted (no cache entry) -> untouched
+        coffee("cq1", source="cqi", body=4),                       # CQI body is a quality score -> always None
+        coffee("rk1", source="roasters_kr", body=2),               # untouched by this step
+    ]
+    out, stats = apply_body_heaviness(coffees, out_dir)
+    by = {c.key: c for c in out}
+    assert by["cr1"].body == 5
+    assert by["cr2"].body is None
+    assert by["cr3"].body is None
+    assert by["cr4"].body == 1
+    assert by["cq1"].body is None
+    assert by["rk1"].body == 2
+    assert stats == {"body_heaviness_applied": 1, "body_heaviness_nulled": 2, "cqi_body_nulled": 1}
+
+
+def test_run_enrich_applies_body_heaviness_and_nulls_cqi(tmp_path):
+    norm, out = tmp_path / "norm", tmp_path / "enriched"
+    write_jsonl(norm / "coffees.jsonl", [
+        coffee("cr1", source="coffeereview_kaggle", flavor_tags=["x"], acidity=3, body=2),
+        coffee("cq1", source="cqi", flavor_tags=["x"], acidity=3, body=4),
+    ])
+    write_jsonl(norm / "reviews.jsonl", [])
+    write_jsonl(norm / "taxonomy.jsonl", [])
+    out.mkdir(parents=True)
+    (out / "body_heaviness.jsonl").write_text(
+        json.dumps({"key": "cr1", "hash": "h", "status": "ok", "body": 5}) + "\n", encoding="utf-8")
+    stats = run_enrich(norm, out, FakeClient())
+    by = {c.key: c for c in read_jsonl(out / "coffees.jsonl", CoffeeRecord)}
+    assert by["cr1"].body == 5
+    assert by["cq1"].body is None
+    assert stats["body_heaviness_applied"] == 1 and stats["cqi_body_nulled"] == 1
 
 
 def test_run_enrich_tags_korean_notes_and_llm_fills_attrs(tmp_path):

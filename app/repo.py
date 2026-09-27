@@ -259,11 +259,19 @@ class Repo:
 
     def random_coffee_ids_for_loo(self, n: int, seed: int, exclude_sources: tuple[str, ...] = (),
                                   sources: tuple[str, ...] = ()) -> list[int]:
-        """`sources` (when given) limits the targets to those sources; `exclude_sources` drops sources."""
+        """`sources` (when given) limits the targets to those sources; `exclude_sources` drops sources.
+
+        Eligibility requires acidity only, not every attribute (docs/adr/0010-body-heaviness.md): body is now
+        sparse by design (CQI's "Body" was a quality score, not heaviness, so it's None -- see ADR 0010 --
+        and some coffeereview reviews simply don't mention weight). Requiring body too would have shrunk the
+        eligible pool by exactly the coffees ADR 0010 correctly emptied, which also would have silently
+        replaced the fixed acidity target draw with a different, non-comparable one. `app.eval.loo_accuracy`
+        already scores each attribute only over the targets whose OWN truth value is present, so body/
+        sweetness naturally get their own (smaller) n without needing a stricter target gate here."""
         extra = ((" AND source <> ALL(%(xs)s)" if exclude_sources else "")
                  + (" AND source = ANY(%(only)s)" if sources else ""))
         rows = self._all("SELECT id FROM coffees WHERE active AND embedding IS NOT NULL AND acidity IS NOT NULL"
-                         f" AND body IS NOT NULL{extra} ORDER BY id",
+                         f"{extra} ORDER BY id",
                          {"xs": list(exclude_sources), "only": list(sources)})
         ids = [r["id"] for r in rows]
         return random.Random(seed).sample(ids, min(n, len(ids)))

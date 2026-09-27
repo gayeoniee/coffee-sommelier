@@ -68,9 +68,9 @@ EVAL = {
     "phase2_bench.json": {"sequential_total_s": 4.59, "parallel_total_s": 2.03},
     "phase2_convergence.json": {"mae_by_step": [0.7792, 0.75, 0.7117]},
     "phase2_compare3.json": {"variants": {
-        "full": {"loo": {"acidity": {"within1": 0.495}, "body": {"within1": 0.595}}},
-        "open": {"loo": {"acidity": {"within1": 0.495}, "body": {"within1": 0.595}}},
-        "open_plus": {"loo": {"acidity": {"within1": 0.495}, "body": {"within1": 0.595}}},
+        "full": {"loo": {"acidity": {"within1": 0.495}, "body": {"n": 0, "within1": None}}},
+        "open": {"loo": {"acidity": {"within1": 0.495}, "body": {"n": 0, "within1": None}}},
+        "open_plus": {"loo": {"acidity": {"within1": 0.495}, "body": {"n": 0, "within1": None}}},
     }},
 }
 
@@ -85,7 +85,7 @@ GOOD_README = """
 | 설명 품질 | 규칙 통과 18/24 |
 | 설명 3개 순차 vs 병렬 (지연) | 4.59초 → 2.03초 |
 | LOO 산미 ±1 이내 (CQI 고정 200개) | 0.495 | 0.495 | 0.495 |
-| LOO 바디 ±1 이내 | 0.595 | 0.595 | 0.595 |
+| LOO 바디 n (CQI 고정 200개) | 0 | 0 | 0 |
 | 학습 수렴 프로필 오차 | 0.7792 → 0.7117 |
 """
 

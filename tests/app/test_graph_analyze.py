@@ -125,6 +125,38 @@ def test_tag_model_and_attr_model_compose_independently():
     assert any(e.startswith("향미 모델:") for e in c["evidence"])
 
 
+def test_text_cue_overrides_neighbor_average_and_adds_evidence():
+    deps = fake_deps()                                          # no learned models loaded
+    c = first_card(run_events(build_analyze_graph(deps),
+                              {"text": "에티오피아 예가체프 워시드, 묵직한 바디감", "profile": Profile()}))
+    assert c["source"] == "predicted"
+    assert c["body"] == 4.5                                     # text cue overrides the neighbour average
+    assert any("묵직" in e and "바디 4.5" in e for e in c["evidence"])
+
+
+def test_text_cue_overrides_learned_attr_model_too():
+    deps = fake_deps(attr_model=_fake_attr_model())              # model would otherwise say body=1.5
+    c = first_card(run_events(build_analyze_graph(deps),
+                              {"text": "에티오피아 예가체프 워시드, 묵직한 바디감", "profile": Profile()}))
+    assert c["body"] == 4.5                                      # text cue outranks the model value too
+    assert c["acidity"] == 4.5                                   # untouched model value (no acidity cue)
+
+
+def test_text_cue_flavor_tags_are_unioned_ahead_of_predicted_tags():
+    deps = fake_deps()
+    c = first_card(run_events(build_analyze_graph(deps),
+                              {"text": "에티오피아 예가체프 워시드, 레몬 향", "profile": Profile()}))
+    assert c["tags"][0] == "lemon"                                # text-extracted tag comes first
+    assert c["evidence"][0] == "문구의 향미: 레몬"
+
+
+def test_no_text_cue_leaves_prediction_unchanged():
+    deps = fake_deps()
+    c = first_card(run_events(build_analyze_graph(deps),
+                              {"text": "에티오피아 예가체프 워시드", "profile": Profile()}))
+    assert c["body"] != 4.5 and not any("문구에" in e for e in c["evidence"])
+
+
 def test_violation_is_reported_not_hidden():
     deps = fake_deps()
     c = first_card(run_events(build_analyze_graph(deps), {"coffee_id": 1,

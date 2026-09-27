@@ -1,6 +1,7 @@
 from dataclasses import replace
 from math import log, sqrt
 
+from app.core.textcues import ATTR_KO, attr_cues, text_tags
 from app.models import ATTRS, Item, Neighbor, ParsedBean, Prediction
 
 MIN_NEIGHBORS = 3
@@ -102,6 +103,30 @@ def with_model_attrs(pred: Prediction, attr_values: dict[str, float | None]) -> 
     untouched -- the model only replaces the ATTRIBUTE half of `predict_from_neighbors`'s output
     (docs/adr/0009-learned-attribute-model.md)."""
     return replace(pred, **{a: v if v is not None else getattr(pred, a) for a, v in attr_values.items()})
+
+
+def with_text_cues(pred: Prediction, text: str, tag_to_cat: dict[str, str], tag_ko: dict[str, str] | None = None
+                   ) -> Prediction:
+    """Explicit acidity/body/sweetness/flavor cues read straight out of the user's own text
+    (app/core/textcues.py) outrank both the learned model and the neighbour average -- the user is stating
+    the fact directly, not something we're inferring. Text-extracted tags are UNIONED ahead of the predicted
+    tags (their own evidence line goes first) and the combined list is capped at MAX_TAGS. Confidence and
+    n_neighbors are untouched (docs/adr/0010-body-heaviness.md)."""
+    tag_ko = tag_ko or {}
+    cues = attr_cues(text)
+    evidence = list(pred.evidence)
+    for attr, (value, phrase) in cues.items():
+        evidence.append(f"문구에 '{phrase}' 명시 → {ATTR_KO[attr]} {value}")
+
+    extra_tags = text_tags(text, tag_to_cat, tag_ko)
+    tags = pred.tags
+    if extra_tags:
+        tags = list(dict.fromkeys([*extra_tags, *pred.tags]))[:MAX_TAGS]
+        evidence = [f"문구의 향미: {', '.join(tag_ko.get(t, t) for t in extra_tags)}"] + evidence
+
+    if not cues and not extra_tags:
+        return pred
+    return replace(pred, tags=tags, evidence=evidence, **{a: v for a, (v, _) in cues.items()})
 
 
 def item_from_prediction(parsed: ParsedBean, pred: Prediction) -> Item:

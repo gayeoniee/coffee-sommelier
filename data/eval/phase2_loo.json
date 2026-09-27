@@ -4,99 +4,98 @@
   "exclude_sources": [],
   "target_sources": "all non-excluded sources",
   "targets": 200,
-  "target_ids_sha1": "a8821651f4e3a5e9611dd81eb5bd62db507990fa",
+  "target_ids_sha1": "444014a07d7a727e6f05625ba38ba1604423c7bb",
   "neighbor_source_share": {
-    "coffeereview_kaggle": 0.839,
-    "cqi": 0.16,
-    "shopify": 0.001
+    "coffeereview_kaggle": 0.84,
+    "cqi": 0.16
   },
   "predictions_with_tags": 0.83,
   "embedding_model": "nvidia/nemotron-3-embed-1b",
   "acidity": {
     "n": 200,
-    "exact": 0.425,
+    "exact": 0.42,
     "within1": 0.735
   },
   "body": {
-    "n": 200,
-    "exact": 0.3,
-    "within1": 0.64
+    "n": 153,
+    "exact": 0.3072,
+    "within1": 0.6405
   },
   "sweetness": {
-    "n": 96,
-    "exact": 0.5312,
-    "within1": 0.875
+    "n": 95,
+    "exact": 0.5263,
+    "within1": 0.8737
   },
   "acidity_within1_by_confidence": {
-    "low": {
-      "n": 12,
-      "within1": 0.4167
-    },
     "medium": {
-      "n": 128,
-      "within1": 0.7109
+      "n": 123,
+      "within1": 0.7317
     },
     "high": {
-      "n": 60,
-      "within1": 0.85
+      "n": 66,
+      "within1": 0.8333
+    },
+    "low": {
+      "n": 11,
+      "within1": 0.1818
     }
   },
   "tags_query_embeddings": {
-    "leak_free": 200,
-    "stored_fallback": 0,
+    "leak_free": 199,
+    "stored_fallback": 1,
     "note": "leak-free tag-free query embeddings are the default when cached (data/eval/loo_tagfree_query_embeddings.jsonl, exactly the n=200/seed=42 targets); other target draws fall back to the stored (tag-including) embedding, as before docs/adr/0008."
   },
   "tags": {
     "n": 168,
-    "precision": 0.3677,
-    "recall": 0.3712,
-    "f1": 0.3695,
-    "category_f1": 0.6298
+    "precision": 0.3672,
+    "recall": 0.3693,
+    "f1": 0.3683,
+    "category_f1": 0.6267
   },
   "tags_model": {
     "n": 168,
-    "precision": 0.7797,
+    "precision": 0.7848,
     "recall": 0.6837,
-    "f1": 0.7286,
-    "category_f1": 0.8249
+    "f1": 0.7308,
+    "category_f1": 0.8269
   },
   "attrs_model": {
     "acidity": {
       "model": {
         "n": 200,
-        "mae": 0.6233,
+        "mae": 0.6274,
         "within1": 0.81
       },
       "neighbor": {
         "n": 198,
-        "mae": 0.7336,
+        "mae": 0.7307,
         "within1": 0.7273
       },
       "note": "both scored on the same leak-free tag-free query embedding as `tags` above (docs/adr/0009-learned-attribute-model.md); neighbor = predict_from_neighbors's weighted average over that embedding's neighbours, production defaults (k=10)."
     },
     "body": {
       "model": {
-        "n": 200,
-        "mae": 0.7644,
-        "within1": 0.735
+        "n": 153,
+        "mae": 0.6706,
+        "within1": 0.7778
       },
       "neighbor": {
-        "n": 200,
-        "mae": 0.8831,
-        "within1": 0.645
+        "n": 153,
+        "mae": 0.8709,
+        "within1": 0.634
       },
       "note": "both scored on the same leak-free tag-free query embedding as `tags` above (docs/adr/0009-learned-attribute-model.md); neighbor = predict_from_neighbors's weighted average over that embedding's neighbours, production defaults (k=10)."
     },
     "sweetness": {
       "model": {
         "n": 99,
-        "mae": 0.4395,
+        "mae": 0.4406,
         "within1": 0.9293
       },
       "neighbor": {
-        "n": 96,
-        "mae": 0.5618,
-        "within1": 0.8854
+        "n": 95,
+        "mae": 0.5653,
+        "within1": 0.8842
       },
       "note": "both scored on the same leak-free tag-free query embedding as `tags` above (docs/adr/0009-learned-attribute-model.md); neighbor = predict_from_neighbors's weighted average over that embedding's neighbours, production defaults (k=10)."
     }

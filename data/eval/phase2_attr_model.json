@@ -4,26 +4,26 @@
   "embed_model": "nvidia/nemotron-3-embed-1b",
   "holdout_n": 200,
   "holdout_seed": 42,
-  "config_path": "config/attr_model.json.gz",
+  "config_path": "config/attr_model.json",
   "attrs": {
     "acidity": {
       "shipped": true,
       "n_labels": 7668,
       "model_type": "mlp",
       "cv": {
-        "ridge_mae": 0.6652,
-        "mlp_mae": 0.6565,
+        "ridge_mae": 0.6653,
+        "mlp_mae": 0.6569,
         "picked": "mlp"
       },
       "holdout": {
         "n_scored": 200,
         "model": {
-          "mae": 0.6231,
+          "mae": 0.6272,
           "within1": 0.81
         },
         "neighbor_avg": {
           "n": 198,
-          "mae": 0.7336,
+          "mae": 0.7297,
           "within1": 0.7273
         },
         "note": "both scored on the SAME tag-free (leak-free) query embeddings of the fixed held-out targets; neighbor_avg is predict_from_neighbors's weighted average (production defaults, k=10) over the production neighbour pool."
@@ -31,23 +31,23 @@
     },
     "body": {
       "shipped": true,
-      "n_labels": 8798,
-      "model_type": "mlp",
+      "n_labels": 6436,
+      "model_type": "ridge",
       "cv": {
-        "ridge_mae": 0.8217,
-        "mlp_mae": 0.8193,
-        "picked": "mlp"
+        "ridge_mae": 0.7317,
+        "mlp_mae": 0.7481,
+        "picked": "ridge"
       },
       "holdout": {
-        "n_scored": 200,
+        "n_scored": 153,
         "model": {
-          "mae": 0.7649,
-          "within1": 0.725
+          "mae": 0.6695,
+          "within1": 0.7778
         },
         "neighbor_avg": {
-          "n": 200,
-          "mae": 0.8831,
-          "within1": 0.645
+          "n": 153,
+          "mae": 0.8703,
+          "within1": 0.634
         },
         "note": "both scored on the SAME tag-free (leak-free) query embeddings of the fixed held-out targets; neighbor_avg is predict_from_neighbors's weighted average (production defaults, k=10) over the production neighbour pool."
       }
@@ -58,18 +58,18 @@
       "model_type": "ridge",
       "cv": {
         "ridge_mae": 0.4787,
-        "mlp_mae": 0.4945,
+        "mlp_mae": 0.4946,
         "picked": "ridge"
       },
       "holdout": {
         "n_scored": 99,
         "model": {
-          "mae": 0.4393,
+          "mae": 0.4407,
           "within1": 0.9293
         },
         "neighbor_avg": {
           "n": 96,
-          "mae": 0.5618,
+          "mae": 0.5628,
           "within1": 0.8854
         },
         "note": "both scored on the SAME tag-free (leak-free) query embeddings of the fixed held-out targets; neighbor_avg is predict_from_neighbors's weighted average (production defaults, k=10) over the production neighbour pool."

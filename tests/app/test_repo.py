@@ -254,6 +254,30 @@ def test_loo_target_filter_sources_and_decaf_beans(repo):
     assert [(i.name, src) for i, src in only_open] == [("Decaf Ethiopia Sidamo", "t")]
 
 
+def test_loo_target_gate_requires_acidity_only_not_body(repo):
+    """docs/adr/0010-body-heaviness.md: CQI's body is None by design (it was a quality score, not a heaviness
+    fact -- see the ADR), and some coffeereview reviews just don't mention weight either. A target eligible on
+    acidity alone must still be drawn (and scored for acidity); body/sweetness are then scored only over
+    whichever of those targets happen to have their own truth value present."""
+    with repo.pool.connection() as conn:
+        rid = conn.execute(
+            "INSERT INTO coffees (key, name, roaster, is_decaf, acidity, sweetness, flavor_tags, embedding,"
+            " source, collected_at) VALUES ('cqi1','CQI Sample','R',false,4,3,%s,%s::vector,'cqi_like',"
+            "'2026-09-26') RETURNING id", (["chocolate"], to_vector_literal(vec(3)))).fetchone()["id"]
+    assert repo.get_coffee(rid).body is None                      # body genuinely absent, not just unset here
+
+    # the gate itself: this id is eligible for LOO despite body being null
+    assert repo.random_coffee_ids_for_loo(10, seed=1, sources=("cqi_like",)) == [rid]
+
+    # end to end through loo_accuracy: acidity/sweetness score it, body skips it (n stays 0)
+    from app.eval import loo_accuracy
+    result = loo_accuracy(repo, n=10, seed=1, target_sources=("cqi_like",))
+    assert result["targets"] == 1
+    assert result["acidity"]["n"] == 1
+    assert result["sweetness"]["n"] == 1
+    assert result["body"]["n"] == 0
+
+
 def test_dev_db_every_active_flavor_tag_has_a_korean_name():
     """Fix B: no English tag (e.g. "milk chocolate") should reach the UI untranslated. Checks the real dev DB
     (not the throwaway coffee_test fixture) since that's where the actual catalog's tags live."""
