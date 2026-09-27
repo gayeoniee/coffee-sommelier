@@ -4,73 +4,73 @@
   "embed_model": "nvidia/nemotron-3-embed-1b",
   "holdout_n": 200,
   "holdout_seed": 42,
-  "config_path": "config/attr_model.json.gz",
+  "config_path": "config/attr_model.json",
   "attrs": {
     "acidity": {
       "shipped": true,
       "n_labels": 7668,
       "model_type": "mlp",
       "cv": {
-        "ridge_mae": 0.6652,
-        "mlp_mae": 0.6565,
+        "ridge_mae": 0.6699,
+        "mlp_mae": 0.663,
         "picked": "mlp"
       },
       "holdout": {
         "n_scored": 200,
         "model": {
-          "mae": 0.6231,
-          "within1": 0.81
+          "mae": 0.547,
+          "within1": 0.875
         },
         "neighbor_avg": {
-          "n": 198,
-          "mae": 0.7336,
-          "within1": 0.7273
+          "n": 199,
+          "mae": 0.611,
+          "within1": 0.8191
         },
         "note": "both scored on the SAME tag-free (leak-free) query embeddings of the fixed held-out targets; neighbor_avg is predict_from_neighbors's weighted average (production defaults, k=10) over the production neighbour pool."
       }
     },
     "body": {
       "shipped": true,
-      "n_labels": 8798,
-      "model_type": "mlp",
+      "n_labels": 6389,
+      "model_type": "ridge",
       "cv": {
-        "ridge_mae": 0.8217,
-        "mlp_mae": 0.8193,
-        "picked": "mlp"
+        "ridge_mae": 0.7341,
+        "mlp_mae": 0.7508,
+        "picked": "ridge"
       },
       "holdout": {
         "n_scored": 200,
         "model": {
-          "mae": 0.7649,
-          "within1": 0.725
+          "mae": 0.7241,
+          "within1": 0.735
         },
         "neighbor_avg": {
           "n": 200,
-          "mae": 0.8831,
-          "within1": 0.645
+          "mae": 0.8497,
+          "within1": 0.655
         },
         "note": "both scored on the SAME tag-free (leak-free) query embeddings of the fixed held-out targets; neighbor_avg is predict_from_neighbors's weighted average (production defaults, k=10) over the production neighbour pool."
       }
     },
     "sweetness": {
       "shipped": true,
-      "n_labels": 4745,
+      "n_labels": 4728,
       "model_type": "ridge",
       "cv": {
-        "ridge_mae": 0.4787,
-        "mlp_mae": 0.4945,
+        "ridge_mae": 0.4759,
+        "mlp_mae": 0.4976,
         "picked": "ridge"
       },
       "holdout": {
-        "n_scored": 99,
+        "n_scored": 116,
         "model": {
-          "mae": 0.4393,
-          "within1": 0.9293
+          "mae": 0.4925,
+          "within1": 0.931
         },
         "neighbor_avg": {
-          "n": 96,
-          "mae": 0.5618,
-          "within1": 0.8854
+          "n": 111,
+          "mae": 0.552,
+          "within1": 0.8739
         },
         "note": "both scored on the SAME tag-free (leak-free) query embeddings of the fixed held-out targets; neighbor_avg is predict_from_neighbors's weighted average (production defaults, k=10) over the production neighbour pool."
       }

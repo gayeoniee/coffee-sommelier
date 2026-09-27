@@ -26,41 +26,38 @@
         "target_sources": [
           "cqi"
         ],
-        "targets": 200,
-        "target_ids_sha1": "d652320c4072789d0291eebd9d8a1605e1a72d2b",
-        "neighbor_source_share": {
-          "cqi": 1.0
-        },
-        "predictions_with_tags": 0.0,
+        "targets": 0,
+        "target_ids_sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+        "neighbor_source_share": {},
+        "predictions_with_tags": null,
         "embedding_model": "nvidia/nemotron-3-embed-1b",
         "acidity": {
-          "n": 200,
-          "exact": 0.245,
-          "within1": 0.495
+          "n": 0,
+          "exact": null,
+          "within1": null
         },
         "body": {
-          "n": 200,
-          "exact": 0.275,
-          "within1": 0.595
+          "n": 0,
+          "exact": null,
+          "within1": null
         },
         "sweetness": {
           "n": 0,
           "exact": null,
           "within1": null
         },
-        "acidity_within1_by_confidence": {
-          "low": {
-            "n": 70,
-            "within1": 0.3714
-          },
-          "high": {
-            "n": 26,
-            "within1": 0.6538
-          },
-          "medium": {
-            "n": 104,
-            "within1": 0.5385
-          }
+        "acidity_within1_by_confidence": {},
+        "tags_query_embeddings": {
+          "leak_free": 0,
+          "stored_fallback": 0,
+          "note": "leak-free tag-free query embeddings are the default when cached (data/eval/loo_tagfree_query_embeddings.jsonl, exactly the n=200/seed=42 targets); other target draws fall back to the stored (tag-including) embedding, as before docs/adr/0008."
+        },
+        "tags": {
+          "n": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "category_f1": 0.0
         }
       },
       "decaf_probe": {
@@ -75,6 +72,18 @@
         },
         "top": [
           {
+            "name": "Decaf Organic Sumatra Gayo Mountain",
+            "roaster": "Humboldt Bay Coffee",
+            "source": "coffeereview_kaggle",
+            "score": 0.928,
+            "acidity": null,
+            "body": null,
+            "sweetness": 3,
+            "tags": [
+              "floral"
+            ]
+          },
+          {
             "name": "Decaf EA Ethiopia",
             "roaster": "Ceremony Coffee Roasters",
             "source": "roasterdb",
@@ -87,15 +96,17 @@
             ]
           },
           {
-            "name": "House Blend Decaf",
-            "roaster": "San Alto/Oasis Coffee",
+            "name": "Sumatra Decaf",
+            "roaster": "Caribou Coffee",
             "source": "coffeereview_kaggle",
-            "score": 0.878,
-            "acidity": 4,
-            "body": 3,
-            "sweetness": 3,
+            "score": 0.8876,
+            "acidity": null,
+            "body": 2,
+            "sweetness": null,
             "tags": [
-              "floral"
+              "floral",
+              "pungent",
+              "dried fruit"
             ]
           },
           {
@@ -114,29 +125,17 @@
             ]
           },
           {
-            "name": "Decaf Espresso, Costa Rica La Lapa",
-            "roaster": "Terroir Coffee",
+            "name": "Ethiopia Sidamo Decaffeinated",
+            "roaster": "Capricorn Coffees",
             "source": "coffeereview_kaggle",
             "score": 0.8626,
-            "acidity": 3,
+            "acidity": 4,
             "body": 3,
-            "sweetness": 3,
+            "sweetness": 4,
             "tags": [
-              "berry",
               "floral",
-              "chocolate"
-            ]
-          },
-          {
-            "name": "Donut House Decaf (K-Cup)",
-            "roaster": "Green Mountain Coffee",
-            "source": "coffeereview_kaggle",
-            "score": 0.8411,
-            "acidity": null,
-            "body": 3,
-            "sweetness": 2,
-            "tags": [
-              "raisin"
+              "lemon",
+              "pungent"
             ]
           }
         ]
@@ -174,41 +173,38 @@
         "target_sources": [
           "cqi"
         ],
-        "targets": 200,
-        "target_ids_sha1": "d652320c4072789d0291eebd9d8a1605e1a72d2b",
-        "neighbor_source_share": {
-          "cqi": 1.0
-        },
-        "predictions_with_tags": 0.0,
+        "targets": 0,
+        "target_ids_sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+        "neighbor_source_share": {},
+        "predictions_with_tags": null,
         "embedding_model": "nvidia/nemotron-3-embed-1b",
         "acidity": {
-          "n": 200,
-          "exact": 0.235,
-          "within1": 0.495
+          "n": 0,
+          "exact": null,
+          "within1": null
         },
         "body": {
-          "n": 200,
-          "exact": 0.28,
-          "within1": 0.595
+          "n": 0,
+          "exact": null,
+          "within1": null
         },
         "sweetness": {
           "n": 0,
           "exact": null,
           "within1": null
         },
-        "acidity_within1_by_confidence": {
-          "low": {
-            "n": 66,
-            "within1": 0.3636
-          },
-          "high": {
-            "n": 26,
-            "within1": 0.6538
-          },
-          "medium": {
-            "n": 108,
-            "within1": 0.537
-          }
+        "acidity_within1_by_confidence": {},
+        "tags_query_embeddings": {
+          "leak_free": 0,
+          "stored_fallback": 0,
+          "note": "leak-free tag-free query embeddings are the default when cached (data/eval/loo_tagfree_query_embeddings.jsonl, exactly the n=200/seed=42 targets); other target draws fall back to the stored (tag-including) embedding, as before docs/adr/0008."
+        },
+        "tags": {
+          "n": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "category_f1": 0.0
         }
       },
       "decaf_probe": {
@@ -321,41 +317,38 @@
         "target_sources": [
           "cqi"
         ],
-        "targets": 200,
-        "target_ids_sha1": "d652320c4072789d0291eebd9d8a1605e1a72d2b",
-        "neighbor_source_share": {
-          "cqi": 1.0
-        },
-        "predictions_with_tags": 0.0,
+        "targets": 0,
+        "target_ids_sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+        "neighbor_source_share": {},
+        "predictions_with_tags": null,
         "embedding_model": "nvidia/nemotron-3-embed-1b",
         "acidity": {
-          "n": 200,
-          "exact": 0.235,
-          "within1": 0.495
+          "n": 0,
+          "exact": null,
+          "within1": null
         },
         "body": {
-          "n": 200,
-          "exact": 0.28,
-          "within1": 0.595
+          "n": 0,
+          "exact": null,
+          "within1": null
         },
         "sweetness": {
           "n": 0,
           "exact": null,
           "within1": null
         },
-        "acidity_within1_by_confidence": {
-          "low": {
-            "n": 66,
-            "within1": 0.3636
-          },
-          "high": {
-            "n": 26,
-            "within1": 0.6538
-          },
-          "medium": {
-            "n": 108,
-            "within1": 0.537
-          }
+        "acidity_within1_by_confidence": {},
+        "tags_query_embeddings": {
+          "leak_free": 0,
+          "stored_fallback": 0,
+          "note": "leak-free tag-free query embeddings are the default when cached (data/eval/loo_tagfree_query_embeddings.jsonl, exactly the n=200/seed=42 targets); other target draws fall back to the stored (tag-including) embedding, as before docs/adr/0008."
+        },
+        "tags": {
+          "n": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "category_f1": 0.0
         }
       },
       "decaf_probe": {

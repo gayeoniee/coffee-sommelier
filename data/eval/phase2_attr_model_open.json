@@ -6,59 +6,42 @@
     "shopify"
   ],
   "embed_model": "nvidia/nemotron-3-embed-1b",
-  "holdout_n": 200,
+  "holdout_n": 4,
   "holdout_seed": 42,
-  "config_path": "config/attr_model_open.json",
+  "config_path": null,
   "attrs": {
     "acidity": {
-      "shipped": true,
-      "n_labels": 1373,
+      "shipped": false,
+      "n_labels": 1569,
       "model_type": "ridge",
       "cv": {
-        "ridge_mae": 1.0549,
-        "mlp_mae": 1.0837,
+        "ridge_mae": 1.0591,
+        "mlp_mae": 1.0647,
         "picked": "ridge"
       },
       "holdout": {
-        "n_scored": 200,
+        "n_scored": 4,
         "model": {
-          "mae": 1.14,
-          "within1": 0.45
-        },
-        "neighbor_avg": {
-          "n": 200,
-          "mae": 1.0981,
+          "mae": 1.1064,
           "within1": 0.5
         },
+        "neighbor_avg": {
+          "n": 4,
+          "mae": 0.3125,
+          "within1": 1.0
+        },
         "note": "both scored on the SAME tag-free (leak-free) query embeddings of the fixed held-out targets; neighbor_avg is predict_from_neighbors's weighted average (production defaults, k=10) over the production neighbour pool."
-      }
+      },
+      "reason": "docs/adr/0010-body-heaviness.md: the held-out draw (repo.random_coffee_ids_for_loo, sources=(cqi,roasters_kr,shopify)) requires acidity AND body both non-null, and CQI's body is now None for every row (ADR 0010), so the held-out pool collapsed from n=200 to n=4 -- far too small to trust for a decision either way. train_attr_model.py's label-count gate alone would still ship this head (1,569 labels, above MIN_OPEN_LABELS), but ADR 0009 already established acidity underperforms the neighbour average for the open variant on a real n=200 held-out (model 1.14 vs neighbor 1.0981); this n=4 sample cannot safely overturn that, so the removal from ADR 0009 stands and the head is not shipped."
     },
     "body": {
-      "shipped": true,
-      "n_labels": 1379,
-      "model_type": "ridge",
-      "cv": {
-        "ridge_mae": 1.0105,
-        "mlp_mae": 1.0385,
-        "picked": "ridge"
-      },
-      "holdout": {
-        "n_scored": 200,
-        "model": {
-          "mae": 0.9919,
-          "within1": 0.54
-        },
-        "neighbor_avg": {
-          "n": 200,
-          "mae": 1.0286,
-          "within1": 0.545
-        },
-        "note": "both scored on the SAME tag-free (leak-free) query embeddings of the fixed held-out targets; neighbor_avg is predict_from_neighbors's weighted average (production defaults, k=10) over the production neighbour pool."
-      }
+      "shipped": false,
+      "n_labels": 29,
+      "reason": "too few open-licence labels"
     },
     "sweetness": {
       "shipped": false,
-      "n_labels": 36,
+      "n_labels": 34,
       "reason": "too few open-licence labels"
     }
   }

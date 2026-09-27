@@ -6,54 +6,54 @@
     "roasters_kr"
   ],
   "target_sources": "all non-excluded sources",
-  "targets": 200,
-  "target_ids_sha1": "befbe183b5fab3d59f50887988ee19cf41d16fff",
+  "targets": 32,
+  "target_ids_sha1": "67b1bfebe01bf83a56b4717db5252f23b3571e9b",
   "neighbor_source_share": {
-    "cqi": 0.9655,
-    "roasterdb": 0.032,
-    "shopify": 0.0025
+    "roasterdb": 0.7438,
+    "cqi": 0.1844,
+    "shopify": 0.0719
   },
-  "predictions_with_tags": 0.04,
+  "predictions_with_tags": 0.875,
   "embedding_model": "nvidia/nemotron-3-embed-1b",
   "acidity": {
-    "n": 198,
-    "exact": 0.2576,
-    "within1": 0.5202
+    "n": 28,
+    "exact": 0.75,
+    "within1": 0.8571
   },
   "body": {
-    "n": 198,
-    "exact": 0.2929,
-    "within1": 0.6061
+    "n": 23,
+    "exact": 0.913,
+    "within1": 1.0
   },
   "sweetness": {
-    "n": 6,
-    "exact": 0.5,
-    "within1": 0.8333
+    "n": 27,
+    "exact": 0.5556,
+    "within1": 0.8889
   },
   "acidity_within1_by_confidence": {
-    "low": {
-      "n": 64,
-      "within1": 0.375
-    },
     "high": {
-      "n": 30,
-      "within1": 0.7
+      "n": 23,
+      "within1": 0.8696
     },
     "medium": {
-      "n": 104,
-      "within1": 0.5577
+      "n": 4,
+      "within1": 1.0
+    },
+    "low": {
+      "n": 1,
+      "within1": 0.0
     }
   },
   "tags_query_embeddings": {
-    "leak_free": 4,
-    "stored_fallback": 196,
+    "leak_free": 1,
+    "stored_fallback": 31,
     "note": "leak-free tag-free query embeddings are the default when cached (data/eval/loo_tagfree_query_embeddings.jsonl, exactly the n=200/seed=42 targets); other target draws fall back to the stored (tag-including) embedding, as before docs/adr/0008."
   },
   "tags": {
-    "n": 9,
-    "precision": 0.7,
-    "recall": 0.4667,
-    "f1": 0.56,
-    "category_f1": 0.7742
+    "n": 32,
+    "precision": 0.5278,
+    "recall": 0.38,
+    "f1": 0.4419,
+    "category_f1": 0.7308
   }
 }
