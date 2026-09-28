@@ -218,6 +218,46 @@ def test_brand_profiles_match_the_derivation_output():
             assert bean.label_source == d["label_source"], (b.key, slot)
 
 
+OPEN_LABEL_SOURCES = {"official_gauge", "official_cue", "open_feature_model", "estimate"}
+
+
+def test_open_brand_profiles_are_licence_clean():
+    """ADR 0012 오픈판: every brand has an open profile per bean, and no open value comes from the full-variant
+    learned models (official_notes_model: attr/tag models trained on coffeereview labels, ADR 0008/0009)."""
+    from pipeline import settings
+    sca = _sca_tags()
+    for b in normalize_brands(settings.CURATED_DIR):
+        for full, open_ in ((b.bean, b.bean_open), (b.decaf_bean, b.decaf_bean_open)):
+            assert (full is None) == (open_ is None), b.key
+            if open_ is None:
+                continue
+            assert set(open_.label_source) == {"acidity", "body", "sweetness", "flavor_tags"}, b.key
+            assert set(open_.label_source.values()) <= OPEN_LABEL_SOURCES, (b.key, open_.label_source)
+            assert "official_notes_model" not in open_.label_source.values(), b.key
+            assert set(open_.flavor_tags) <= sca, b.key
+            # the feature model ships acidity/sweetness only; body is a cue or the hand estimate
+            assert open_.label_source["body"] != "open_feature_model", b.key
+            if set(open_.label_source.values()) != {"estimate"}:
+                assert open_.official_note, b.key
+
+
+def test_open_brand_profiles_match_the_open_derivation_output():
+    """brands.yaml bean_open/decaf_bean_open come from scripts/derive_brand_beans.py --variant open."""
+    import json
+
+    from pipeline import settings
+    derived = {r["brand"]: r for r in json.loads((settings.EVAL_DIR / "brand_beans_derived_open.json")
+                                                 .read_text(encoding="utf-8"))}
+    for b in normalize_brands(settings.CURATED_DIR):
+        for slot, bean in (("house", b.bean_open), ("decaf", b.decaf_bean_open)):
+            if bean is None:
+                continue
+            d = derived[b.key][slot]
+            assert {"acidity": bean.acidity, "body": bean.body, "sweetness": bean.sweetness,
+                    "flavor_tags": bean.flavor_tags} == d["values"], (b.key, slot)
+            assert bean.label_source == d["label_source"], (b.key, slot)
+
+
 def test_bean_profile_range_is_validated():
     import pytest
     from pydantic import ValidationError

@@ -78,6 +78,12 @@ echo "== 3/4 cleanup: drop any coffeereview rows that reached coffees via the en
 # reviews.coffee_id is NOT NULL with ON DELETE CASCADE, but that's moot here too: normalize already
 # excluded coffeereview's own reviews from NORMALIZED_DIR, so none were loaded for them.
 psql_open -c "DELETE FROM coffees WHERE source = 'coffeereview_kaggle'"
+# Brand bean profiles: brands.yaml carries both the full-variant values (bean/decaf_bean, partly derived with
+# models trained on coffeereview labels) and the licence-clean open ones (bean_open/decaf_bean_open; ADR 0012).
+# The app reads only the *_open columns under DATA_VARIANT=open (app/repo.py brand_bean_columns); overwrite the
+# full columns with them too so this DB -- which is what gets migrated to the submission deploy -- holds no
+# coffeereview-derived brand value at all.
+psql_open -c "UPDATE brands SET bean = bean_open, decaf_bean = decaf_bean_open"
 
 echo "== 4/4 verification =="
 echo "-- total coffees --"

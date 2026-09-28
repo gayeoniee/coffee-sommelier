@@ -7,6 +7,7 @@ from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 from psycopg_pool import ConnectionPool
 
+from app import config
 from app.core.explain import sample_card
 from app.core.flavors import build_tag_to_category, load_tag_ko_extra, merge_tag_ko
 from app.core.scoring import is_milk_drink, needs_decaf_order
@@ -28,6 +29,13 @@ def _coffee_item(r: dict) -> Item:
                 sweetness=r["sweetness"], tags=tuple(r["flavor_tags"] or ()), is_decaf=r["is_decaf"],
                 confidence="high", brand=r["roaster"], coffee_id=r["id"], origin_country=r["origin_country"],
                 process=r["process"])
+
+
+def brand_bean_columns() -> tuple[str, str]:
+    """(house, decaf) brands columns for the running data variant: the open/competition variant reads only the
+    licence-clean profiles (bean_open/decaf_bean_open; docs/adr/0012-official-brand-beans.md), never the full
+    variant's, which were partly derived with models trained on coffeereview labels."""
+    return ("bean_open", "decaf_bean_open") if config.DATA_VARIANT == "open" else ("bean", "decaf_bean")
 
 
 class Repo:
@@ -149,7 +157,8 @@ class Repo:
 
     def _menu_item(self, b: dict, m: dict, caffeine_rule: str) -> Item:
         order_decaf = needs_decaf_order(caffeine_rule, m["is_decaf"], m["decaf_option"], m["caffeine_mg"])
-        bean = (b["decaf_bean"] if (m["is_decaf"] or order_decaf) and b["decaf_bean"] else b["bean"]) or {}
+        house, decaf = brand_bean_columns()
+        bean = (b[decaf] if (m["is_decaf"] or order_decaf) and b.get(decaf) else b.get(house)) or {}
         key = f"menu:{m['id']}" if m["id"] is not None else f"{b['key']}:{m['name']}"
         return Item(key=key, name=m["name"], source="brand_bean", acidity=bean.get("acidity"), body=bean.get("body"),
                     sweetness=bean.get("sweetness"), tags=tuple(bean.get("flavor_tags", ())), is_decaf=m["is_decaf"],

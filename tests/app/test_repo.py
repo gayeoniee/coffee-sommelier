@@ -38,9 +38,15 @@ def repo(db_conn):
     dbean = Jsonb({"acidity": 2, "body": 3, "sweetness": 3, "flavor_tags": ["caramelized"],
                    "official_note": "공식: 디카페인 — 캐러멜 향"})
     plain_bean = Jsonb({"acidity": 2, "body": 4, "sweetness": 2, "flavor_tags": ["chocolate"]})
-    c.execute("INSERT INTO brands (key, name, decaf_available, decaf_surcharge_krw, verified_at, bean, decaf_bean) VALUES "
-              "('brand:sb', '스타벅스', true, 300, '2026-09-24', %s, %s), "
-              "('brand:tw', '투썸', true, 200, '2026-09-24', %s, %s)", (bean, dbean, plain_bean, plain_bean))
+    bean_open = Jsonb({"acidity": 3, "body": 4, "sweetness": 4.5, "flavor_tags": ["caramelized"],
+                       "official_note": "공식: 하우스 블렌드 — 강한 바디감"})
+    dbean_open = Jsonb({"acidity": 2.5, "body": 3, "sweetness": 3, "flavor_tags": ["nutty"],
+                        "official_note": "공식: 디카페인 — 캐러멜 향"})
+    c.execute("INSERT INTO brands (key, name, decaf_available, decaf_surcharge_krw, verified_at, bean, decaf_bean, "
+              "bean_open, decaf_bean_open) VALUES "
+              "('brand:sb', '스타벅스', true, 300, '2026-09-24', %s, %s, %s, %s), "
+              "('brand:tw', '투썸', true, 200, '2026-09-24', %s, %s, %s, %s)",
+              (bean, dbean, bean_open, dbean_open, plain_bean, plain_bean, plain_bean, plain_bean))
     c.execute("INSERT INTO menu_items (key, brand_id, name, is_decaf, decaf_option, caffeine_mg, collected_at) VALUES "
               "('m1', (SELECT id FROM brands WHERE key='brand:sb'), '아메리카노', false, true, 150, '2026-09-24'), "
               "('m2', (SELECT id FROM brands WHERE key='brand:sb'), '카페 라떼', false, true, 75, '2026-09-24')")
@@ -87,6 +93,24 @@ def test_brand_items_carry_the_official_bean_note_of_the_bean_actually_used(repo
     """ADR 0012: the card evidence line follows the bean behind the drink -- decaf order → decaf bean's note."""
     assert {i.name: i for i in repo.brand_items("brand:sb", "any")}["아메리카노"].bean_note == "공식: 하우스 블렌드 — 강한 바디감"
     assert {i.name: i for i in repo.brand_items("brand:sb", "decaf_only")}["아메리카노"].bean_note == "공식: 디카페인 — 캐러멜 향"
+
+
+def test_brand_items_use_the_open_profiles_only_under_the_open_variant(repo, monkeypatch):
+    """ADR 0012 오픈판: DATA_VARIANT=open reads bean_open/decaf_bean_open (licence-clean), never bean/decaf_bean."""
+    from app import config
+
+    def attrs(caffeine_rule):
+        am = {i.name: i for i in repo.brand_items("brand:sb", caffeine_rule)}["아메리카노"]
+        return am.acidity, am.body, am.sweetness, am.tags
+
+    monkeypatch.setattr(config, "DATA_VARIANT", "full")
+    assert attrs("any") == (2, 4, 2, ("chocolate",))
+    assert attrs("decaf_only") == (2, 3, 3, ("caramelized",))
+    monkeypatch.setattr(config, "DATA_VARIANT", "open")
+    assert attrs("any") == (3, 4, 4.5, ("caramelized",))
+    assert attrs("decaf_only") == (2.5, 3, 3, ("nutty",))
+    menu_id = {i.name: i for i in repo.brand_items("brand:sb", "any")}["아메리카노"].menu_item_id
+    assert repo.get_menu_item(menu_id, "decaf_only").tags == ("nutty",)
 
 
 def test_brand_items_decaf_option_and_synthetic_menu(repo):

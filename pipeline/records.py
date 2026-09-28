@@ -49,13 +49,19 @@ class BeanProfile(BaseModel):
     """Taste of a brand's house/decaf bean. `label_source` says where each value came from
     (docs/adr/0012-official-brand-beans.md): the brand's published gauge, the learned models + text cues run on
     the brand's official description (scripts/derive_brand_beans.py), or a hand estimate. `official_note` is the
-    one-line official description shown as card evidence (None when the brand publishes none)."""
+    one-line official description shown as card evidence (None when the brand publishes none).
+
+    The open/competition variant (DATA_VARIANT=open, docs/adr/0011) has its own licence-clean profile per bean
+    (BrandRecord.bean_open / decaf_bean_open, same script with `--variant open`): official_gauge, official_cue
+    (a text cue or flavor word in the brand's own copy, app/core/textcues.py), open_feature_model (the
+    roaster-gauge feature model, app/core/featuremodel.py) or estimate -- never official_notes_model, whose
+    learned models were trained on licence-restricted coffeereview labels (docs/adr/0008, 0009)."""
     acidity: float = Field(ge=1, le=5)
     body: float = Field(ge=1, le=5)
     sweetness: float = Field(ge=1, le=5)
     flavor_tags: list[str] = Field(default_factory=list)
-    label_source: dict[str, Literal["official_gauge", "official_notes_model", "estimate"]] = Field(
-        default_factory=dict)
+    label_source: dict[str, Literal["official_gauge", "official_notes_model", "official_cue", "open_feature_model",
+                                    "estimate"]] = Field(default_factory=dict)
     official_note: str | None = None
 
 
@@ -71,6 +77,8 @@ class BrandRecord(BaseModel):
     verified_at: str
     bean: BeanProfile | None = None
     decaf_bean: BeanProfile | None = None
+    bean_open: BeanProfile | None = None        # DATA_VARIANT=open counterparts (licence-clean sources only)
+    decaf_bean_open: BeanProfile | None = None
     decaf_option_categories: list[str] = Field(default_factory=list)
 
 
