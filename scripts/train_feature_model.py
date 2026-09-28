@@ -78,6 +78,10 @@ R = 4
 # final_spec. Decisions: ADR 0011 (acidity/sweetness), ADR 0013 (acidity -> "+B"), ADR 0014 (sweetness kept after
 # the Zenodo panel check).
 SHIPPED_RECIPES = {"acidity": ("ablation", "+B"), "sweetness": ("gauges", False)}
+# ADR 0016: the note-free flavor-tag model ("feat" in scripts/eval_open_tags.py) ships in the same config file
+SHIP_TAG_MODEL = True
+# ADR 0016: sweetness abstains without support (E1 coverage 51%, answered +-1 and MAE better on E1 and E2)
+ABSTAIN = ("sweetness",)
 CONFIG_PATH = settings.CONFIG_DIR / "feature_model_open.json"
 
 
@@ -342,9 +346,22 @@ def shipped_config(rows: list[dict]) -> str:
     if weak:
         labels += (f"; {', '.join(sorted(weak))} also trained on note-word weak labels (weight {W_B}, re-centred;"
                    " app/core/weaklabels.py, ADR 0013)")
-    doc = {"labels": labels, "recipes": "scripts/train_feature_model.py SHIPPED_RECIPES (ADR 0011, 0013, 0014)",
-           "eval": "data/eval/open/phase3_feature_model.json + data/eval/open/phase4_open_labels.json",
+    doc = {"labels": labels, "recipes": "scripts/train_feature_model.py SHIPPED_RECIPES (ADR 0011, 0013, 0014, 0016)",
+           "eval": "data/eval/open/phase3_feature_model.json + data/eval/open/phase4_open_labels.json"
+                   " + data/eval/open/phase5_open_tags.json + data/eval/open/phase5_open_v3.json",
            "attrs": {a: specs[a] for a in ATTRS if a in specs}}
+    if ABSTAIN:
+        doc["abstain"] = {"attrs": list(ABSTAIN),
+                          "rule": "answer only with a text cue or a neighbour value (>= 3 of the k=10 neighbours carry"
+                                  " the attribute); otherwise None + '단맛: 근거 부족' (ADR 0016)"}
+    v3 = settings.DATA_DIR / "eval" / "open" / "phase5_open_v3.json"
+    if v3.exists():      # calibrated per-attribute confidence from grouped-CV residuals (scripts/eval_open_v3.py)
+        cal = json.loads(v3.read_text(encoding="utf-8"))["calibration"]
+        doc["calibration"] = {"rule": cal["rule"], "levels": cal["levels"]}
+    if SHIP_TAG_MODEL:
+        from scripts.eval_open_tags import shipped_tag_spec    # the E1/E2-measured "feat" candidate (ADR 0016)
+        with psycopg.connect(OPEN_URL, row_factory=dict_row) as conn:
+            doc["tags"] = shipped_tag_spec(conn)
     return json.dumps(doc, indent=1, ensure_ascii=False) + "\n"
 
 

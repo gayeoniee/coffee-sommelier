@@ -56,4 +56,21 @@ describe("ResultCard", () => {
     render(<ResultCard card={{ ...card, is_decaf: true, order_decaf: false, caffeine_mg: 11.2 }} onLog={() => {}} />);
     expect(screen.getByText("카페인 11.2mg")).toBeInTheDocument();
   });
+
+  it("shows per-attribute calibrated confidence and an abstained attribute as '?' (open variant)", () => {
+    const open: Card = { ...card, source: "predicted", confidence: "medium", n_neighbors: 10, order_decaf: false,
+      acidity: 3.4, body: 3, sweetness: null, attr_confidence: { acidity: "medium", body: "high" },
+      evidence: ["단맛: 근거 부족"] };
+    render(<ResultCard card={open} onLog={() => {}} />);
+    expect(screen.getByText("?")).toHaveAttribute("title", "근거 부족");
+    expect(screen.getByText("근거↓")).toBeInTheDocument();
+    expect(screen.getByText("높음")).toBeInTheDocument();
+    expect(screen.getByText("단맛: 근거 부족")).toBeInTheDocument();
+    expect(screen.getByText("유사 원두 10개 기반 예측 · 신뢰도 보통")).toBeInTheDocument();
+  });
+
+  it("shows no per-attribute confidence column without attr_confidence (full variant)", () => {
+    render(<ResultCard card={card} onLog={() => {}} />);
+    expect(screen.queryByText("보통")).not.toBeInTheDocument();
+  });
 });

@@ -8,7 +8,7 @@ from langgraph.graph import END, START, StateGraph
 
 from app.config import PARSE_BEAN_TASK
 from app.core.explain import card, template_explanation
-from app.core.featuremodel import with_feature_model
+from app.core.featuremodel import calibrated_confidence, with_feature_model
 from app.core.parse import BeanParse, bean_parse_messages, merge_llm_parse, needs_llm_parse, parse_bean_text
 from app.core.predict import (
     item_from_prediction, predict_from_neighbors, with_model_attrs, with_model_tags, with_text_cues,
@@ -88,6 +88,10 @@ def build_analyze_graph(deps):
         # explicit cues in the user's own text (app/core/textcues.py) outrank both the model and the neighbour
         # average -- applied last, regardless of degraded/model state (docs/adr/0010-body-heaviness.md).
         pred = with_text_cues(pred, parsed.text, tag_ko=tag_ko, tag_to_cat=tag_to_cat)
+        if deps.feature_model is not None and not degraded:
+            # open variant: calibrated per-attribute confidence from grouped-CV residuals (ADR 0016); the
+            # degraded path keeps "low"
+            pred = calibrated_confidence(deps.feature_model, pred, parsed, tag_to_cat, tag_ko)
         # a missing core attribute caps the confidence (one -> medium, two+ -> low)
         pred = replace(pred, confidence=cap_confidence(pred.confidence, (pred.acidity, pred.body, pred.sweetness)))
         return {"item": item_from_prediction(parsed, pred), "prediction": pred}

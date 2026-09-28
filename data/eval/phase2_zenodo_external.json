@@ -56,7 +56,7 @@
   "model_files_sha1": {
     "attr_model.json": "fa15cf7ad595",
     "tag_model.json": "57fd105ee18b",
-    "feature_model_open.json": "d0df642d3366"
+    "feature_model_open.json": "108e3fe13fba"
   },
   "variants": {
     "full": {
@@ -68,7 +68,8 @@
         "within1": 0.8367,
         "spearman": 0.7007,
         "mean_truth": 2.329,
-        "mean_pred": 2.104
+        "mean_pred": 2.104,
+        "coverage": 1.0
       },
       "body": {
         "n": 195,
@@ -76,7 +77,8 @@
         "within1": 0.8872,
         "spearman": 0.1817,
         "mean_truth": 2.948,
-        "mean_pred": 2.939
+        "mean_pred": 2.939,
+        "coverage": 1.0
       },
       "sweetness": {
         "n": 196,
@@ -84,7 +86,8 @@
         "within1": 0.4184,
         "spearman": 0.6266,
         "mean_truth": 2.507,
-        "mean_pred": 3.666
+        "mean_pred": 3.666,
+        "coverage": 1.0
       },
       "tags_before_text_cues": {
         "n": 192,
@@ -103,7 +106,8 @@
         "within1": 0.8163,
         "spearman": 0.6168,
         "mean_truth": 2.329,
-        "mean_pred": 2.299
+        "mean_pred": 2.299,
+        "coverage": 1.0
       },
       "body": {
         "n": 160,
@@ -111,22 +115,24 @@
         "within1": 0.7875,
         "spearman": -0.033,
         "mean_truth": 2.94,
-        "mean_pred": 3.434
+        "mean_pred": 3.434,
+        "coverage": 0.8205
       },
       "sweetness": {
-        "n": 196,
-        "mae": 1.375,
-        "within1": 0.4184,
-        "spearman": -0.2255,
-        "mean_truth": 2.507,
-        "mean_pred": 3.771
+        "n": 174,
+        "mae": 1.3226,
+        "within1": 0.4425,
+        "spearman": -0.2583,
+        "mean_truth": 2.546,
+        "mean_pred": 3.754,
+        "coverage": 0.8878
       },
       "tags_before_text_cues": {
         "n": 192,
-        "precision": 0.3686,
-        "recall": 0.2632,
-        "f1": 0.3071,
-        "category_f1": 0.5416
+        "precision": 0.3712,
+        "recall": 0.2645,
+        "f1": 0.3089,
+        "category_f1": 0.539
       }
     },
     "open_neighbours": {
@@ -138,7 +144,8 @@
         "within1": 0.5978,
         "spearman": 0.4881,
         "mean_truth": 2.333,
-        "mean_pred": 3.012
+        "mean_pred": 3.012,
+        "coverage": 0.9388
       },
       "body": {
         "n": 160,
@@ -146,7 +153,8 @@
         "within1": 0.7875,
         "spearman": -0.033,
         "mean_truth": 2.94,
-        "mean_pred": 3.434
+        "mean_pred": 3.434,
+        "coverage": 0.8205
       },
       "sweetness": {
         "n": 174,
@@ -154,7 +162,8 @@
         "within1": 0.2471,
         "spearman": 0.0059,
         "mean_truth": 2.546,
-        "mean_pred": 4.047
+        "mean_pred": 4.047,
+        "coverage": 0.8878
       },
       "tags_before_text_cues": {
         "n": 192,

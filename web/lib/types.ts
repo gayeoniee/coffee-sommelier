@@ -34,6 +34,8 @@ export type Card = {
   template: string;
   evidence?: string[];
   n_neighbors?: number;
+  // open variant: calibrated confidence per attribute (absent attribute = abstained / no value)
+  attr_confidence?: Partial<Record<"acidity" | "body" | "sweetness", "high" | "medium" | "low">>;
 };
 
 export type Brand = {

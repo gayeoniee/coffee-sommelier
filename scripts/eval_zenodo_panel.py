@@ -341,6 +341,7 @@ def main() -> int:
             tax = (tag_to_cat, tag_ko, repo.tag_base_rates())
             vocab = list(tag_to_cat)
             pairs = {a: [] for a in ATTRS}
+            n_truth = {a: 0 for a in ATTRS}      # an abstained prediction (None, ADR 0016) lowers coverage
             tag_rows = []
             parsed_origin = 0
             for s in samples:
@@ -350,6 +351,7 @@ def main() -> int:
                 parsed_origin += parse_bean_text(s["text"]).origin_country is not None
                 for a in ATTRS:
                     t, p = s["truth"][a], getattr(pred, a)
+                    n_truth[a] += t is not None
                     if t is not None and p is not None:
                         pairs[a].append((t, p))
                         by_sample.setdefault(name, {})[(s["id"], a)] = p
@@ -363,7 +365,8 @@ def main() -> int:
                               "open": "coffee_open DB neighbours → roaster-gauge feature model → text cues",
                               "open_neighbours": "coffee_open DB neighbours → text cues (feature model off)"}[name],
                 "parsed_origin": parsed_origin,
-                **{a: attr_metrics(pairs[a]) for a in ATTRS},
+                **{a: {**attr_metrics(pairs[a]), "coverage": round(len(pairs[a]) / n_truth[a], 4) if n_truth[a] else None}
+                   for a in ATTRS},
                 "tags_before_text_cues": tag_metrics(tag_rows, tag_to_cat)}
         finally:
             repo.close()

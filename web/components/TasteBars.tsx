@@ -1,4 +1,4 @@
-import { ATTR_KO, fmt1 } from "@/lib/labels";
+import { ATTR_KO, CONFIDENCE_KO, fmt1 } from "@/lib/labels";
 import type { Card, Profile } from "@/lib/types";
 
 const KEYS = ["acidity", "body", "sweetness"] as const;
@@ -18,7 +18,14 @@ export default function TasteBars({ card, profile }: { card: Card; profile?: Pro
                      aria-label={`내 선호 ${fmt1(profile[k])}`} />
               )}
             </div>
-            <span className="w-7 text-right tabular-nums">{v == null ? "?" : fmt1(v)}</span>
+            <span className="w-7 text-right tabular-nums" title={v == null ? "근거 부족" : undefined}>
+              {v == null ? "?" : fmt1(v)}
+            </span>
+            {card.attr_confidence && (
+              <span className="w-8 shrink-0 text-right text-[10px] text-roast/80">
+                {v == null ? "근거↓" : CONFIDENCE_KO[card.attr_confidence[k] ?? "low"]}
+              </span>
+            )}
           </div>
         );
       })}

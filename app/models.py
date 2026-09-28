@@ -80,6 +80,8 @@ class Prediction:
     tags: list[str]
     evidence: list[str]
     n_neighbors: int
+    # open variant: calibrated per-attribute confidence (docs/adr/0016-open-variant-v3.md); None elsewhere
+    attr_confidence: dict[str, str] | None = None
 
 
 @dataclass(frozen=True)

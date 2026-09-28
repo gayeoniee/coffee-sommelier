@@ -132,6 +132,8 @@ def card(item: Item, score: float, template: str, violation: str | None = None,
     if prediction is not None:
         c["evidence"] = prediction.evidence
         c["n_neighbors"] = prediction.n_neighbors
+        if prediction.attr_confidence is not None:     # open variant: calibrated per attribute (ADR 0016)
+            c["attr_confidence"] = prediction.attr_confidence
     elif item.bean_note:    # franchise card: the brand's own bean line is the evidence (docs/adr/0012)
         c["evidence"] = [item.bean_note]
     return c

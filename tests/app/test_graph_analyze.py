@@ -298,3 +298,69 @@ def test_predicted_card_confidence_capped_when_an_attribute_is_missing():
     assert item_from_prediction(ParsedBean(text="x"), pred).confidence == "medium"
     pred2 = Prediction(acidity=None, body=3.0, sweetness=None, confidence="high", tags=[], evidence=[], n_neighbors=10)
     assert item_from_prediction(ParsedBean(text="x"), pred2).confidence == "low"
+
+
+# --- open variant v3 (docs/adr/0016-open-variant-v3.md) -------------------------------------------------------
+def _v3_model(**extra):
+    from app.core.featuremodel import FeatureModel
+    doc = {"attrs": {"acidity": {"intercept": 3.0, "weights": {"process_washed": 0.4, "nbr": 0.0}},
+                     "sweetness": {"intercept": 3.8, "weights": {"roast_dark": 0.5}}}, **extra}
+    return FeatureModel.from_doc(doc)
+
+
+class _NoSweetRepo:
+    """FakeRepo whose neighbours carry no sweetness labels (the open pool often has none)."""
+    def __new__(cls):
+        from app.models import Neighbor
+        from tests.app.fakes import FakeRepo
+
+        class R(FakeRepo):
+            def neighbors(self, vec, k=10, origin=None, process=None, exclude_id=None):
+                return [Neighbor(100 + i, f"n{i}", 0.9, 4.0, 2, None, ("lemon",)) for i in range(k)]
+        return R()
+
+
+def test_open_sweetness_abstains_without_support_and_says_so():
+    deps = fake_deps(repo=_NoSweetRepo(), feature_model=_v3_model(abstain={"attrs": ["sweetness"]}))
+    c = first_card(run_events(build_analyze_graph(deps), {"text": "에티오피아 예가체프 워시드", "profile": Profile()}))
+    assert c["sweetness"] is None and "단맛: 근거 부족" in c["evidence"]
+    assert not any(e.startswith("특징 모델 단맛") for e in c["evidence"])
+    assert c["acidity"] == 3.4 and c["confidence"] != "high"           # capped: one attribute missing
+
+
+def test_open_sweetness_answers_with_neighbour_support_or_a_cue():
+    deps = fake_deps(feature_model=_v3_model(abstain={"attrs": ["sweetness"]}))   # fake neighbours carry sweetness 3
+    c = first_card(run_events(build_analyze_graph(deps), {"text": "에티오피아 예가체프 워시드", "profile": Profile()}))
+    assert c["sweetness"] == 3.8 and "단맛: 근거 부족" not in c["evidence"]
+    deps = fake_deps(repo=_NoSweetRepo(), feature_model=_v3_model(abstain={"attrs": ["sweetness"]}))
+    c = first_card(run_events(build_analyze_graph(deps), {"text": "에티오피아 예가체프 워시드, 달콤한", "profile": Profile()}))
+    assert c["sweetness"] == 4.0 and "단맛: 근거 부족" not in c["evidence"]      # the guest's own cue answers it
+
+
+def test_open_calibrated_confidence_per_attribute_on_the_card():
+    cal = {"levels": {"acidity": {"*": "medium", "facts": "medium"}, "body": {"*": "high"},
+                      "sweetness": {"*": "low"}}}
+    deps = fake_deps(feature_model=_v3_model(calibration=cal))
+    c = first_card(run_events(build_analyze_graph(deps), {"text": "에티오피아 예가체프 워시드", "profile": Profile()}))
+    assert c["attr_confidence"] == {"acidity": "medium", "body": "high", "sweetness": "low"}
+    assert c["confidence"] == "low"                                    # the lowest shown attribute
+    c = first_card(run_events(build_analyze_graph(deps),
+                              {"text": "에티오피아 예가체프 워시드, 달콤한", "profile": Profile()}))
+    assert c["attr_confidence"]["sweetness"] == "high"                 # a cue is the guest's own statement
+    base = first_card(run_events(build_analyze_graph(fake_deps()), {"text": "에티오피아 예가체프 워시드",
+                                                                     "profile": Profile()}))
+    assert "attr_confidence" not in base                               # full variant: unchanged
+
+
+def test_open_note_free_tag_model_replaces_the_vote_only_without_note_words():
+    tags = {"features": ["region_east_africa", "process_washed"], "threshold": 0.3, "max_tags": 5,
+            "tags": {"jasmine": {"intercept": -1.0, "weights": {"region_east_africa": 2.0}},
+                     "chocolate": {"intercept": -3.0, "weights": {}}}}
+    deps = fake_deps(feature_model=_v3_model(tags=tags))
+    c = first_card(run_events(build_analyze_graph(deps), {"text": "에티오피아 예가체프 워시드", "profile": Profile()}))
+    assert c["tags"] == ["jasmine"]                                     # sigmoid(1) >= 0.3; chocolate 0.05 < 0.3
+    assert c["evidence"][0].startswith("향미 모델(산지·가공·로스팅): ")
+    assert not any("언급" in e for e in c["evidence"])                   # the vote's tag lines are gone
+    c = first_card(run_events(build_analyze_graph(deps),
+                              {"text": "에티오피아 예가체프 워시드, 레몬", "profile": Profile()}))
+    assert c["tags"][0] == "lemon" and "jasmine" not in c["tags"]       # note words present: vote + own words
