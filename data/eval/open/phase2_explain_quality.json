@@ -10,11 +10,11 @@
     "n": 24,
     "generated": 24,
     "fallbacks": 0,
-    "rule_pass": 21,
-    "rule_pass_rate": 0.875,
+    "rule_pass": 20,
+    "rule_pass_rate": 0.8333,
     "rule_failures": {
       "foreign_words": 2,
-      "length": 0,
+      "length": 2,
       "numbers_grounded": 0,
       "condition_mentioned": 0,
       "polarity": 1
@@ -415,7 +415,7 @@
       "text": "카페인이 100mg을 넘거나 알 수 없어서 주문 전 확인이 필요해요. 산미는 보통 수준이지만 손님은 산미를 싫어하고 바디를 강하게 선호하는데, 이 음료의 바디는 3.92로 선호에 가까워요. 향미에 코코아가 있어 좋아하는 견과/코코아와 parcialmente 일치해요.",
       "rules": {
         "foreign_words": false,
-        "length": true,
+        "length": false,
         "numbers_grounded": true,
         "condition_mentioned": true,
         "polarity": true
@@ -822,12 +822,12 @@
       "text": "디카페인이 아니에요. 손님은 디카페인만 원하시지만 이 음료는 카페인이 있어 취향에 맞지 않아요. 단맛은 강하게 좋아하시지만 향미에 딸기·블루베리 같은 과일 향이 있어 단맛 선호와는 방향이 달라요.",
       "rules": {
         "foreign_words": true,
-        "length": true,
+        "length": false,
         "numbers_grounded": true,
         "condition_mentioned": true,
         "polarity": true
       },
-      "rule_pass": true,
+      "rule_pass": false,
       "judges": {
         "judge": {
           "contradiction": false,
@@ -920,5 +920,19 @@
       },
       "judge_errors": null
     }
-  ]
+  ],
+  "rules_rescored": {
+    "note": "rule checks re-run offline over the saved texts with the current app/core/explain_check.py (`python -m app.eval explain_recheck`); generation and judge fields are from the original run",
+    "before": {
+      "rule_pass": 21,
+      "rule_pass_rate": 0.875,
+      "rule_failures": {
+        "foreign_words": 2,
+        "length": 0,
+        "numbers_grounded": 0,
+        "condition_mentioned": 0,
+        "polarity": 1
+      }
+    }
+  }
 }
