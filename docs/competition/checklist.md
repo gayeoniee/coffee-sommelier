@@ -33,7 +33,7 @@
 - [ ] (선택) 소상공인 상가(상권)정보 CSV, 관세청 HS 0901.12/0901.22 수입 통계 — 넣는다면 실제 수치를 받아서 넣기
 - [x] 포털에 올릴 CSV 3종 만들기(CSV만 가능): 컬럼정의 파일, 데이터 템플릿 예시, 데이터셋 파일. **coffeereview·RoasterDB·SCA 휠 파생 행은 넣지 않는다.** 업로드 세트는 `data/competition/01_컬럼정의.csv` ~ `06_데이터셋_milk_labels.csv` 6개 파일(UTF-8 BOM, `scripts/competition/export_csv.py`로 생성)이다 — 행 수 31 / 23 / 1,963 / 512 / 10 / 453(2026-09-28 재생성, 초안 B-4). 소스 이름은 bluebottle_kr·shopify_intl로 바꿨고, 메뉴는 사실 필드 5개만, RoasterDB 100행은 올리지 않는다. SCA 휠 파생 한국어 매핑(CC BY-NC-ND)은 업로드 세트에 넣지 않고 `data/competition/reference/07_sca_ko_참고.csv`(README.md에 "업로드 금지 — 참고용" 명시)에 참고용으로만 둔다.
 - [x] 결과 이미지 5장 교체(2026-09-28): 01 카페인 분포·02 필터 전후·03 국내 디카페인·04 외부 검증은 `scripts/competition/figures.py data/eval/open docs/competition/images`, 05 실서비스 카드는 `node web/scripts/card-shot.mjs` + `scripts/competition/card_composite.py`. 초안 B-6에 이미지마다 해석 문단.
-- [ ] (설명 문장 수정이 배포된 뒤) 05 카드 스크린샷을 다시 찍어 "(설명 문장 생략)" 없이 교체할지 결정
+- [x] 05 카드 스크린샷을 설명 문장 수정 배포 뒤 다시 찍어 설명 포함본으로 교체(2026-09-28)
 - [x] 키 없이 CSV만으로 최소 재현: `uv run python scripts/competition/min_repro.py`(초안 6-1)
 - [x] 본선 발표 개요·60초 시연 대본·예상 질문: [`presentation.md`](presentation.md)
 - [x] 배포 URL과 GitHub 공개 여부 결정: 제출본 <https://coffee-sommelier-open.vercel.app>(배너 "공모전 제출본"), 참고용 전체 포트폴리오판 <https://coffee-sommelier-psi.vercel.app>, 저장소 <https://github.com/gayeoniee/coffee-sommelier>(공개). 초안 A-0·B-7에 반영함.
