@@ -1,10 +1,15 @@
 import json
+import logging
 import re
 from dataclasses import dataclass
 from pathlib import Path
 
+import httpx
+
 from pipeline import settings
-from pipeline.http import PoliteClient
+from pipeline.http import PoliteClient, RobotsDisallowed
+
+log = logging.getLogger("pipeline.collect.web")
 
 STARBUCKS_URL = "https://www.starbucks.co.kr/upload/json/menu/{code}.js"
 MEGA_URL = "https://www.mega-mgccoffee.com/menu/menu.php"
@@ -115,9 +120,10 @@ class ShopifyCollector:
     name: str = "shopify"
     domains: tuple[str, ...] | None = None
     max_pages: int = 40
+    config_key: str = "shopify"     # config/sources.yaml list of stores to collect
 
     def collect(self, out_dir: Path, http) -> list[Path]:
-        domains = self.domains or tuple(s["domain"] for s in settings.load_config("sources.yaml")["shopify"])
+        domains = self.domains or tuple(s["domain"] for s in settings.load_config("sources.yaml")[self.config_key])
         files = []
         for domain in domains:
             products = []
@@ -129,6 +135,27 @@ class ShopifyCollector:
             p = out_dir / f"{domain}.json"
             p.write_text(json.dumps({"products": products}, ensure_ascii=False), encoding="utf-8")
             files.append(p)
+        return files
+
+
+@dataclass
+class ShopifyGaugedCollector(ShopifyCollector):
+    """Shopify roasters whose products.json carries the roaster's own intensity profile (tags / labelled lines;
+    pipeline/normalize/shopify_gauged.py, docs/adr/0013-open-labels-weak-supervision.md). Same /products.json
+    pagination as ShopifyCollector; PoliteClient checks robots.txt before every request."""
+
+    name: str = "shopify_gauged"
+    config_key: str = "shopify_gauged"
+
+    def collect(self, out_dir: Path, http) -> list[Path]:
+        """Per store: one store that disallows /products.json in robots.txt or errors is skipped, not fatal."""
+        domains = self.domains or tuple(s["domain"] for s in settings.load_config("sources.yaml")[self.config_key])
+        files = []
+        for domain in domains:
+            try:
+                files += ShopifyCollector(domains=(domain,), max_pages=self.max_pages).collect(out_dir, http)
+            except (RobotsDisallowed, httpx.HTTPError, ValueError) as e:
+                log.warning("shopify_gauged: %s skipped (%s)", domain, e)
         return files
 
 

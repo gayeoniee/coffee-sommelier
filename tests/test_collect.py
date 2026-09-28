@@ -165,7 +165,7 @@ def test_coffeebean_paginates_each_category_and_stops_at_empty_page(tmp_path):
 def test_registry_lists_all_sources():
     from pipeline.collect.registry import ALL_COLLECTORS
     assert [c.name for c in ALL_COLLECTORS] == [
-        "cqi", "roasterdb", "sca_wheel", "coffeereview_kaggle", "starbucks", "mega", "paik", "shopify", "coffeebean", "compose", "hollys", "paulbassett", "ediya"]
+        "cqi", "roasterdb", "sca_wheel", "coffeereview_kaggle", "starbucks", "mega", "paik", "shopify", "coffeebean", "compose", "hollys", "paulbassett", "shopify_gauged", "ediya"]
 
 
 def test_hollys_saves_espresso_page(tmp_path):

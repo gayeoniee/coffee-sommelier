@@ -3,3 +3,58 @@ shopify:
   - domain: kr.bluebottlecoffee.com
     roaster: Blue Bottle Coffee
     product_types: ["원두"]
+
+# 로스터가 자기 원두에 직접 붙인 강도 표기(프로필 태그·"Acidity: Crisp" 줄)가 있는 Shopify 스토어.
+# 사실만 저장하고 강도 단어는 pipeline/normalize/shopify_gauged.py 한 사전으로 1~5 환산
+# (docs/adr/0013-open-labels-weak-supervision.md). tag_labels: 태그 → {속성: 사전 단어}.
+# 2026-09 조사: ~90개 스토어 중 products.json에 강도 표기가 있는 곳만. 모두 robots.txt가 /products.json 허용.
+# Has Bean은 Ozone과 같은 카탈로그라 제외, Ozone·Has Bean의 "Acidity 6/8"은 CoE 품질 점수라 읽지 않는다.
+shopify_gauged:
+  - domain: kissthehippo.com
+    roaster: Kiss the Hippo
+    product_types: ["Coffee"]
+    tag_labels:
+      "VIBRANT & BRIGHT": {acidity: bright}
+      "Mellow & Balanced": {acidity: mellow}
+  - domain: intelligentsia.com
+    roaster: Intelligentsia
+    product_types: ["Coffee"]
+    tag_labels:
+      "Roast Type: Bright": {acidity: bright}
+      "Roast Level: Bright": {acidity: bright}
+      "Roast Profile: Bright": {acidity: bright}
+      "Roast Type: Comforting": {acidity: comforting}
+      "Roast Level: Comforting": {acidity: comforting}
+      "Roast Profile: Comforting": {acidity: comforting}
+      "Roast Type: Traditional": {acidity: traditional}
+  - domain: cafebritt.com
+    roaster: Café Britt
+    product_types: ["Coffee"]
+    tag_labels:
+      "By Flavor Profile_Bright & Vibrant": {acidity: bright}
+      "By Flavor Profile_Balanced & Classic": {acidity: balanced}
+      "By Flavor Profile_Bold & Smooth": {acidity: bold, body: bold}
+  - domain: ozonecoffee.co.uk
+    roaster: Ozone Coffee
+    product_types: ["coffee", "merchandise"]
+    require_tag: "type:Coffee"
+    tag_labels:
+      "quiz-bright": {acidity: bright}
+      "quiz-classic": {acidity: classic}
+      "quiz-bold": {acidity: bold, body: bold}
+  - domain: cafedonpablo.com
+    roaster: Café Don Pablo
+    product_types: ["Coffee"]
+    tag_labels:
+      "Low Acidity": {acidity: low}
+  - domain: volcanicacoffee.com
+    roaster: Volcanica Coffee
+    product_types: ["Coffee"]
+    exclude_tags: ["Flavored", "Decaf Flavored"]
+    tag_labels:
+      "Low Acid": {acidity: low}
+  - domain: coffeesupreme.com
+    roaster: Coffee Supreme
+  - domain: freshroastedcoffee.com
+    roaster: Fresh Roasted Coffee
+    product_type_pattern: "^RST"
