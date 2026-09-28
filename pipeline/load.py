@@ -1,7 +1,10 @@
 import logging
 from pathlib import Path
 
+import yaml
 from psycopg.types.json import Jsonb
+
+from pipeline import settings
 
 from pipeline.enrich import read_json_lines
 from pipeline.query import to_vector_literal
@@ -64,19 +67,50 @@ def _retire_missing(cur, table: str, keys: list[str], protected_ids_sql: str) ->
     return deleted, len(kept)
 
 
+# Coffee "groups" for a scoped (refresh) load: a group that produced no rows this run is left alone, so one broken
+# roastery/store scraper never retires its beans (docs/adr/0015-automated-refresh.md). Multi-shop sources are
+# grouped per shop (the roaster column); single-feed sources are one group.
+PER_ROASTER_SOURCES = ("roasters_kr", "shopify_gauged")
+
+
+def coffee_group(source: str, roaster: str | None) -> str:
+    return f"{source}:{roaster or ''}" if source in PER_ROASTER_SOURCES else source
+
+
+def load_milk_labels(curated_dir: Path | None = None) -> dict[str, bool]:
+    """Hand milk labels, menu name -> contains milk (data/curated/menu_milk_labels.yaml)."""
+    path = (curated_dir or settings.CURATED_DIR) / "menu_milk_labels.yaml"
+    return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+
+
+def _out_of_scope_keys(cur, sql: str, in_scope) -> list[str]:
+    return [k for k, *group in cur.execute(sql).fetchall() if not in_scope(*group)]
+
+
 def _require_rows(rows: list, name: str) -> list:
     if not rows:
         raise ValueError(f"{name} 소스가 비어 있어요 — 전체 카탈로그를 지우지 않도록 적재를 중단합니다")
     return rows
 
 
-def run_load(conn, norm_dir: Path, enriched_dir: Path, embedded_dir: Path) -> dict[str, int]:
+def run_load(conn, norm_dir: Path, enriched_dir: Path, embedded_dir: Path, *,
+             coffee_scope: set[str] | None = None, brand_scope: set[str] | None = None,
+             milk_labels: dict[str, bool] | None = None) -> dict[str, int]:
     """Upsert the knowledge tables by key in one transaction (a failed load rolls back).
 
     User tables are never touched; rows that vanished from the source are deleted unless a tasting
     (or a brand bean) still references them — those stay with active = false. An empty coffees or brands
     source is refused rather than wiping the catalog.
+
+    Scoped load (the automated refresh, docs/adr/0015-automated-refresh.md): with `coffee_scope` (a set of
+    `coffee_group` ids) only coffees -- and their reviews -- in those groups can be retired; with `brand_scope`
+    (brand keys) only those brands' menu items can. Everything else already in the DB is kept as is, and the
+    enrich_log is left alone (the run enriched a subset).
+
+    A menu item whose name has no hand milk label (`milk_labels`, default data/curated/menu_milk_labels.yaml)
+    is loaded with needs_review = true, which keeps it out of recommendations until someone labels it.
     """
+    labels = load_milk_labels() if milk_labels is None else milk_labels
     coffees = _require_rows(read_jsonl(enriched_dir / "coffees.jsonl", CoffeeRecord), "coffees")
     brands = _require_rows(read_jsonl(norm_dir / "brands.jsonl", BrandRecord), "brands")
     cur = conn.cursor()
@@ -133,20 +167,33 @@ def run_load(conn, norm_dir: Path, enriched_dir: Path, embedded_dir: Path) -> di
     # As with reviews above: filter against the current source brands, not the (possibly stale) id map.
     items = [m for m in all_items if m.brand_key in brand_key_set]
     _upsert(cur, "menu_items", ["key", "brand_id", "name", "name_en", "category", "is_decaf", "decaf_option",
-                                "caffeine_mg", "coffee_id", "source_url", "collected_at"],
+                                "caffeine_mg", "coffee_id", "source_url", "collected_at", "needs_review"],
             [(m.key, brand_ids[m.brand_key], m.name, m.name_en, m.category, m.is_decaf, m.decaf_option,
-              m.caffeine_mg, coffee_ids.get(m.coffee_key), m.source_url, m.collected_at) for m in items])
+              m.caffeine_mg, coffee_ids.get(m.coffee_key), m.source_url, m.collected_at, m.name not in labels)
+             for m in items])
 
-    deleted_reviews = _delete_missing(cur, "reviews", [r.key for r in reviews])
-    deleted_menu, kept_menu = _retire_missing(cur, "menu_items", [m.key for m in items], PROTECTED_MENU_ITEMS)
+    review_keys, menu_keys, coffee_keys = [r.key for r in reviews], [m.key for m in items], list(source_keys)
+    if coffee_scope is not None:
+        def in_scope(src, roaster):
+            return coffee_group(src, roaster) in coffee_scope
+        coffee_keys += _out_of_scope_keys(cur, "SELECT key, source, roaster FROM coffees", in_scope)
+        review_keys += _out_of_scope_keys(
+            cur, "SELECT r.key, c.source, c.roaster FROM reviews r JOIN coffees c ON c.id = r.coffee_id", in_scope)
+    if brand_scope is not None:
+        menu_keys += _out_of_scope_keys(
+            cur, "SELECT m.key, b.key FROM menu_items m JOIN brands b ON b.id = m.brand_id",
+            lambda brand: brand in brand_scope)
+    deleted_reviews = _delete_missing(cur, "reviews", review_keys)
+    deleted_menu, kept_menu = _retire_missing(cur, "menu_items", menu_keys, PROTECTED_MENU_ITEMS)
     deleted_brands, kept_brands = _retire_missing(cur, "brands", brand_keys, PROTECTED_BRANDS)
-    deleted_coffees, kept_coffees = _retire_missing(cur, "coffees", source_keys, PROTECTED_COFFEES)
+    deleted_coffees, kept_coffees = _retire_missing(cur, "coffees", coffee_keys, PROTECTED_COFFEES)
 
     enrich_log = {e["key"]: e for e in _read_lines(enriched_dir / "cache.jsonl")}
-    cur.execute("DELETE FROM enrich_log")
-    cur.executemany(
-        "INSERT INTO enrich_log (row_ref, stage, status, error, model) VALUES (%s, 'enrich', %s, %s, %s)",
-        [(k, e["status"], e.get("error"), e.get("model")) for k, e in enrich_log.items()])
+    if coffee_scope is None:
+        cur.execute("DELETE FROM enrich_log")
+        cur.executemany(
+            "INSERT INTO enrich_log (row_ref, stage, status, error, model) VALUES (%s, 'enrich', %s, %s, %s)",
+            [(k, e["status"], e.get("error"), e.get("model")) for k, e in enrich_log.items()])
 
     conn.commit()
     return {"coffees": len(coffees), "reviews": len(reviews), "brands": len(brands), "menu_items": len(items),
@@ -155,4 +202,5 @@ def run_load(conn, norm_dir: Path, enriched_dir: Path, embedded_dir: Path) -> di
             "deleted_coffees": deleted_coffees, "deleted_reviews": deleted_reviews,
             "deleted_menu_items": deleted_menu, "deleted_brands": deleted_brands,
             "kept_referenced_coffees": kept_coffees, "kept_referenced_menu_items": kept_menu,
-            "kept_referenced_brands": kept_brands}
+            "kept_referenced_brands": kept_brands,
+            "needs_review_menu_items": sum(m.name not in labels for m in items)}

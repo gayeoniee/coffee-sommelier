@@ -113,6 +113,31 @@ def test_brand_items_use_the_open_profiles_only_under_the_open_variant(repo, mon
     assert repo.get_menu_item(menu_id, "decaf_only").tags == ("nutty",)
 
 
+def test_brand_items_skip_menu_items_waiting_for_a_milk_label(repo, db_conn):
+    """ADR 0015: needs_review items (new names with no hand milk label) are never recommended, nor counted."""
+    db_conn.execute("INSERT INTO menu_items (key, brand_id, name, collected_at, needs_review) VALUES "
+                    "('m9', (SELECT id FROM brands WHERE key='brand:sb'), '신메뉴 크림 콜드브루', '2026-09-28', true)")
+    db_conn.commit()
+    assert "신메뉴 크림 콜드브루" not in {i.name for i in repo.brand_items("brand:sb", "any")}
+    assert repo.coverage_counts()["menu_items_by_brand"] == {"brand:sb": 2}
+    db_conn.execute("UPDATE menu_items SET needs_review = false WHERE key = 'm9'")
+    db_conn.commit()
+    assert "신메뉴 크림 콜드브루" in {i.name for i in repo.brand_items("brand:sb", "any")}
+
+
+def test_brand_items_work_on_a_database_without_the_needs_review_column(repo, db_conn):
+    """Deploy-order safety: the app may start against a DB migrated before the column existed."""
+    db_conn.execute("ALTER TABLE menu_items DROP COLUMN needs_review")
+    db_conn.commit()
+    try:
+        fresh = Repo(repo.pool.conninfo)
+        assert {i.name for i in fresh.brand_items("brand:sb", "any")} == {"아메리카노", "카페 라떼"}
+        fresh.close()
+    finally:
+        db_conn.execute("ALTER TABLE menu_items ADD COLUMN IF NOT EXISTS needs_review boolean NOT NULL DEFAULT false")
+        db_conn.commit()
+
+
 def test_brand_items_decaf_option_and_synthetic_menu(repo):
     items = {i.name: i for i in repo.brand_items("brand:sb", "decaf_only")}
     am = items["아메리카노"]

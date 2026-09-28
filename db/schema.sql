@@ -145,3 +145,7 @@ ALTER TABLE brands ADD COLUMN IF NOT EXISTS active boolean NOT NULL DEFAULT true
 ALTER TABLE coffees ADD COLUMN IF NOT EXISTS altitude_m integer;
 ALTER TABLE coffees ADD COLUMN IF NOT EXISTS variety text;
 ALTER TABLE coffees ADD COLUMN IF NOT EXISTS attr_label_source jsonb NOT NULL DEFAULT '{}';
+
+-- 자동 갱신(docs/adr/0015-automated-refresh.md): 우유 라벨(data/curated/menu_milk_labels.yaml)에 없는 새 메뉴는
+-- 적재는 하되 사람이 라벨을 달 때까지 추천에서 뺀다(fail closed). 우유 여부는 그동안에도 키워드 판정(is_milk_drink)을 쓴다.
+ALTER TABLE menu_items ADD COLUMN IF NOT EXISTS needs_review boolean NOT NULL DEFAULT false;

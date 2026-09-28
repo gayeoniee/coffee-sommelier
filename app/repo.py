@@ -44,6 +44,7 @@ class Repo:
                                    check=ConnectionPool.check_connection, max_idle=300, open=True)
         self._taxonomy: tuple[dict, dict] | None = None
         self._tag_base_rates: dict[str, float] | None = None
+        self._needs_review_col: bool | None = None
 
     def close(self) -> None:
         self.pool.close()
@@ -139,10 +140,20 @@ class Repo:
     # ---- brands & menus ---------------------------------------------------
     # Catalog queries (browse, search, recommend, neighbors, eval) skip retired rows (active = false);
     # direct lookups by id (get_coffee, get_menu_item, raw_menu) don't, so past tastings still resolve.
+    def _served_menu(self, alias: str = "m") -> str:
+        """SQL condition for menu rows the app may recommend: active and not waiting for a milk label
+        (needs_review, docs/adr/0015-automated-refresh.md). A database migrated before that column existed has
+        no unreviewed rows, so the condition is only added once the column is there (deploy-order safe)."""
+        if self._needs_review_col is None:
+            self._needs_review_col = self._one(
+                "SELECT 1 AS ok FROM information_schema.columns WHERE table_schema = current_schema()"
+                " AND table_name = 'menu_items' AND column_name = 'needs_review'") is not None
+        return f"{alias}.active" + (f" AND NOT {alias}.needs_review" if self._needs_review_col else "")
+
     def list_brands(self) -> list[dict]:
         return self._all("SELECT b.key, b.name, b.decaf_available, b.decaf_surcharge_krw, b.notes,"
-                         " EXISTS (SELECT 1 FROM menu_items m WHERE m.brand_id = b.id AND m.active) AS has_menu"
-                         " FROM brands b WHERE b.active ORDER BY b.name")
+                         f" EXISTS (SELECT 1 FROM menu_items m WHERE m.brand_id = b.id AND {self._served_menu()})"
+                         " AS has_menu FROM brands b WHERE b.active ORDER BY b.name")
 
     def brand_items(self, brand_key: str, caffeine_rule: str) -> list[Item]:
         """The brand's drinks for this caffeine rule. A drink that would have to be ordered decaf is left out when the
@@ -151,8 +162,8 @@ class Repo:
         b = self._one("SELECT * FROM brands WHERE key = %s AND active", (brand_key,))
         if b is None:
             return []
-        menus = self._all("SELECT id, name, is_decaf, decaf_option, caffeine_mg FROM menu_items"
-                          " WHERE brand_id = %s AND active ORDER BY id", (b["id"],))
+        menus = self._all("SELECT m.id, m.name, m.is_decaf, m.decaf_option, m.caffeine_mg FROM menu_items m"
+                          f" WHERE m.brand_id = %s AND {self._served_menu()} ORDER BY m.id", (b["id"],))
         if not menus:
             menus = [{"id": None, "name": n, "is_decaf": False, "decaf_option": b["decaf_available"],
                       "caffeine_mg": None} for n in SYNTHETIC_MENU]
@@ -331,5 +342,5 @@ class Repo:
             " count(*) FILTER (WHERE is_decaf AND cardinality(flavor_tags) > 0) AS decaf_with_flavor_tags"
             f" FROM coffees WHERE active{extra}", {"xs": list(exclude_sources)})
         menus = self._all("SELECT b.key, count(*) AS n FROM menu_items m JOIN brands b ON b.id = m.brand_id"
-                          " WHERE m.active GROUP BY b.key ORDER BY b.key")
+                          f" WHERE {self._served_menu()} GROUP BY b.key ORDER BY b.key")
         return {**dict(row), "menu_items_by_brand": {r["key"]: r["n"] for r in menus}}

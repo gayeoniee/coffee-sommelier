@@ -62,7 +62,8 @@ def test_load_and_query(db_conn, tmp_path):
     assert counts == {"coffees": 2, "reviews": 1, "brands": 1, "menu_items": 1, "flavor_taxonomy": 2,
                       "enrich_log": 1, "dropped_reviews": 0, "dropped_menu_items": 0,
                       "deleted_coffees": 0, "deleted_reviews": 0, "deleted_menu_items": 0, "deleted_brands": 0,
-                      "kept_referenced_coffees": 0, "kept_referenced_menu_items": 0, "kept_referenced_brands": 0}
+                      "kept_referenced_coffees": 0, "kept_referenced_menu_items": 0, "kept_referenced_brands": 0,
+                      "needs_review_menu_items": 0}
     for table in ("coffees", "menu_items", "brands"):
         assert db_conn.execute(f"SELECT bool_and(active) FROM {table}").fetchone() == (True,)
     parent = db_conn.execute("SELECT p.key FROM flavor_taxonomy c JOIN flavor_taxonomy p ON c.parent_id = p.id").fetchone()
@@ -307,3 +308,61 @@ def test_load_refuses_missing_embeddings_file(db_conn, tmp_path):
     norm, enriched, _ = setup_files(tmp_path)
     with pytest.raises(ValueError, match="embed"):
         run_load(db_conn, norm, enriched, tmp_path / "no-such-model")
+
+
+def test_unlabelled_menu_name_is_loaded_but_needs_review(db_conn, tmp_path):
+    """ADR 0015: a menu name with no hand milk label fails closed -- loaded, flagged, kept out of recommendations."""
+    norm, enriched, embedded = setup_files(tmp_path)
+    write_jsonl(norm / "menu_items.jsonl", [
+        MenuItemRecord(key="m1", brand_key="brand:x", name="아메리카노", caffeine_mg=150, collected_at="2026-09-24"),
+        MenuItemRecord(key="m2", brand_key="brand:x", name="신메뉴 크림 라떼", collected_at="2026-09-24")])
+    counts = run_load(db_conn, norm, enriched, embedded, milk_labels={"아메리카노": False})
+    assert counts["needs_review_menu_items"] == 1
+    assert dict(db_conn.execute("SELECT key, needs_review FROM menu_items").fetchall()) == {"m1": False, "m2": True}
+    # labelled later -> the next load clears the flag
+    run_load(db_conn, norm, enriched, embedded, milk_labels={"아메리카노": False, "신메뉴 크림 라떼": True})
+    assert db_conn.execute("SELECT bool_or(needs_review) FROM menu_items").fetchone() == (False,)
+
+
+def _scoped_files(tmp_path):
+    norm, enriched, embedded = setup_files(tmp_path)
+    coffees = [CoffeeRecord(key=k, name=k, roaster=r, source=s, collected_at="2026-09-24")
+               for k, r, s in [("kr-a1", "A", "roasters_kr"), ("kr-a2", "A", "roasters_kr"),
+                               ("kr-b1", "B", "roasters_kr"), ("static1", None, "cqi")]]
+    write_jsonl(enriched / "coffees.jsonl", coffees)
+    (embedded / "embeddings.jsonl").write_text(
+        "".join(json.dumps({"key": c.key, "hash": "h", "vector": vec(i)}) + "\n" for i, c in enumerate(coffees)),
+        encoding="utf-8")
+    write_jsonl(norm / "reviews.jsonl", [])
+    write_jsonl(norm / "brands.jsonl", [BrandRecord(key=k, name=k, decaf_available=True, verified_at="2026-09-24")
+                                        for k in ("brand:x", "brand:y")])
+    write_jsonl(norm / "menu_items.jsonl", [
+        MenuItemRecord(key="x1", brand_key="brand:x", name="아메리카노", collected_at="2026-09-24"),
+        MenuItemRecord(key="y1", brand_key="brand:y", name="아메리카노", collected_at="2026-09-24")])
+    return norm, enriched, embedded, coffees
+
+
+def test_scoped_load_only_retires_rows_of_groups_that_were_refreshed(db_conn, tmp_path):
+    """Refresh load: roastery B's scraper failed (no rows) and cqi is static -> their rows stay; within the
+    refreshed roastery A a vanished bean is retired; brand y's menu scraper failed -> its menu stays."""
+    from pipeline.load import coffee_group
+
+    norm, enriched, embedded, coffees = _scoped_files(tmp_path)
+    run_load(db_conn, norm, enriched, embedded)
+    write_jsonl(enriched / "coffees.jsonl", [c for c in coffees if c.key == "kr-a1"])
+    write_jsonl(norm / "menu_items.jsonl", [])
+    counts = run_load(db_conn, norm, enriched, embedded,
+                      coffee_scope={coffee_group("roasters_kr", "A")}, brand_scope={"brand:x"})
+    assert counts["deleted_coffees"] == 1 and counts["deleted_menu_items"] == 1
+    assert {k for (k,) in db_conn.execute("SELECT key FROM coffees")} == {"kr-a1", "kr-b1", "static1"}
+    assert {k for (k,) in db_conn.execute("SELECT key FROM menu_items")} == {"y1"}
+    assert coffee_group("cqi", "x") == "cqi" and coffee_group("shopify_gauged", "S") == "shopify_gauged:S"
+
+
+def test_scoped_load_leaves_enrich_log_alone(db_conn, tmp_path):
+    norm, enriched, embedded, coffees = _scoped_files(tmp_path)
+    run_load(db_conn, norm, enriched, embedded)
+    assert db_conn.execute("SELECT count(*) FROM enrich_log").fetchone() == (1,)
+    (enriched / "cache.jsonl").write_text("", encoding="utf-8")
+    run_load(db_conn, norm, enriched, embedded, coffee_scope={"roasters_kr:A"})
+    assert db_conn.execute("SELECT count(*) FROM enrich_log").fetchone() == (1,)
