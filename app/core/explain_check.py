@@ -104,8 +104,8 @@ def direction_errors(text: str, drink: dict[str, float | None], guest: dict[str,
     """Direction words the text states about the drink's 산미/바디/단맛 that the numbers contradict.
 
     `drink`/`guest` are keyed acidity/body/sweetness on the 1~5 scale. Two forms are checked:
-    comparative "산미와 바디가 손님 선호보다 높아" (wrong when the drink is more than 0.25 on the other side of the
-    guest's value) and absolute "산미가 강하고" (wrong when the drink is <= 2.5 for 강/높, >= 3.5 for 약/낮).
+    comparative "산미와 바디가 손님 선호보다 높아" (wrong when the drink is not on the stated side of the guest's
+    value — "선호보다 훨씬 약해" for 2 vs 2 included) and absolute "산미가 강하고" (wrong when the drink is <= 2.5 for 강/높, >= 3.5 for 약/낮).
     Absolute claims that describe the guest ("…산미가 강한 걸 좋아하시는") are skipped."""
     errors = []
     for m in _SUBJECT.finditer(text):
@@ -121,7 +121,7 @@ def direction_errors(text: str, drink: dict[str, float | None], guest: dict[str,
                 continue
             if comp:
                 up = comp.group(1).startswith(_UP)
-                if (up and v - g < -0.25) or (not up and v - g > 0.25):
+                if (up and v - g <= 0) or (not up and v - g >= 0):
                     errors.append(f"{a}: '{m.group()}{comp.group()}' but drink {v:g} vs guest {g:g}")
             elif absolute:
                 up = absolute.group(1).startswith(_UP)

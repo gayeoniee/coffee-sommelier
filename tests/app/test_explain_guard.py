@@ -90,7 +90,9 @@ def test_direction_errors_catch_the_live_ediya_contradiction():
     drink, guest = {"acidity": 2, "body": 4, "sweetness": 2}, {"acidity": 4.5, "body": 2.5, "sweetness": 3}
     assert direction_errors("산미와 바디가 손님 선호보다 높아 아쉬워요.", drink, guest)      # 산미 2 < 4.5
     assert not direction_errors("산미는 손님 선호보다 훨씬 약하고 바디는 조금 강해요.", drink, guest)
-    assert direction_errors("산미가 강하고 향이 좋아요.", drink, guest)                   # absolute: 2 is not strong
+    # 3차 run, huehuetenango: 산미 2 vs 손님 2 described as "선호보다 훨씬 약해서" (deepseek: contradiction)
+    assert direction_errors("산미는 손님 선호보다 훨씬 약해요.", {"acidity": 2}, {"acidity": 2})
+    assert direction_errors("산미가 강하고 향이 좋아요.", drink, guest)                 # absolute: 2 is not strong
     assert not direction_errors("바디가 강한 편이에요.", drink, guest)
     assert not direction_errors("손님은 산미가 강한 걸 좋아하세요.", drink, guest)          # the guest, not the drink
     assert not direction_errors("산미가 강한 커피를 좋아하시는데 아쉬워요.", drink, guest)
