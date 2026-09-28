@@ -282,12 +282,18 @@ def test_brand_bean_is_loaded(db_conn, tmp_path):
     norm, enriched, embedded = setup_files(tmp_path)
     write_jsonl(norm / "brands.jsonl", [BrandRecord(
         key="brand:x", name="X", decaf_available=True, verified_at="2026-09-24",
-        bean=BeanProfile(acidity=2, body=4, sweetness=3, flavor_tags=["nutty"]),
+        bean=BeanProfile(acidity=2, body=4, sweetness=3, flavor_tags=["nutty"],
+                         label_source={"acidity": "official_notes_model", "body": "official_notes_model",
+                                       "sweetness": "estimate", "flavor_tags": "official_notes_model"},
+                         official_note="X 공식: 묵직한 바디"),
         decaf_bean=BeanProfile(acidity=2, body=3, sweetness=3, flavor_tags=["chocolate"]))])
     run_load(db_conn, norm, enriched, embedded)
     bean, decaf = db_conn.execute("SELECT bean, decaf_bean FROM brands WHERE key = 'brand:x'").fetchone()
-    assert bean == {"acidity": 2.0, "body": 4.0, "sweetness": 3.0, "flavor_tags": ["nutty"]}
-    assert decaf["flavor_tags"] == ["chocolate"]
+    assert bean == {"acidity": 2.0, "body": 4.0, "sweetness": 3.0, "flavor_tags": ["nutty"],
+                    "label_source": {"acidity": "official_notes_model", "body": "official_notes_model",
+                                     "sweetness": "estimate", "flavor_tags": "official_notes_model"},
+                    "official_note": "X 공식: 묵직한 바디"}          # read by app/repo.py _menu_item → card evidence
+    assert decaf["flavor_tags"] == ["chocolate"] and decaf["official_note"] is None
 
 
 def test_load_refuses_missing_embeddings_file(db_conn, tmp_path):

@@ -33,11 +33,14 @@ def repo(db_conn):
                   "sweetness, flavor_tags, flavor_summary, embedding, source, collected_at) "
                   "VALUES (%s,%s,'R',%s,%s,%s,%s,3,3,%s,%s,%s::vector,'t','2026-09-26')",
                   (f"c{i}", name, origin, process, decaf, acid, tags, f"summary {i}", to_vector_literal(vec(i))))
-    bean = Jsonb({"acidity": 2, "body": 4, "sweetness": 2, "flavor_tags": ["chocolate"]})
-    dbean = Jsonb({"acidity": 2, "body": 3, "sweetness": 3, "flavor_tags": ["caramelized"]})
+    bean = Jsonb({"acidity": 2, "body": 4, "sweetness": 2, "flavor_tags": ["chocolate"],
+                  "official_note": "공식: 하우스 블렌드 — 강한 바디감"})
+    dbean = Jsonb({"acidity": 2, "body": 3, "sweetness": 3, "flavor_tags": ["caramelized"],
+                   "official_note": "공식: 디카페인 — 캐러멜 향"})
+    plain_bean = Jsonb({"acidity": 2, "body": 4, "sweetness": 2, "flavor_tags": ["chocolate"]})
     c.execute("INSERT INTO brands (key, name, decaf_available, decaf_surcharge_krw, verified_at, bean, decaf_bean) VALUES "
               "('brand:sb', '스타벅스', true, 300, '2026-09-24', %s, %s), "
-              "('brand:tw', '투썸', true, 200, '2026-09-24', %s, %s)", (bean, dbean, bean, dbean))
+              "('brand:tw', '투썸', true, 200, '2026-09-24', %s, %s)", (bean, dbean, plain_bean, plain_bean))
     c.execute("INSERT INTO menu_items (key, brand_id, name, is_decaf, decaf_option, caffeine_mg, collected_at) VALUES "
               "('m1', (SELECT id FROM brands WHERE key='brand:sb'), '아메리카노', false, true, 150, '2026-09-24'), "
               "('m2', (SELECT id FROM brands WHERE key='brand:sb'), '카페 라떼', false, true, 75, '2026-09-24')")
@@ -80,6 +83,12 @@ def test_taxonomy_tag_ko_is_topped_up_by_the_extra_file(repo):
     assert tag_ko["citrus fruit"] == "시트러스"          # taxonomy names are still there alongside the extra ones
 
 
+def test_brand_items_carry_the_official_bean_note_of_the_bean_actually_used(repo):
+    """ADR 0012: the card evidence line follows the bean behind the drink -- decaf order → decaf bean's note."""
+    assert {i.name: i for i in repo.brand_items("brand:sb", "any")}["아메리카노"].bean_note == "공식: 하우스 블렌드 — 강한 바디감"
+    assert {i.name: i for i in repo.brand_items("brand:sb", "decaf_only")}["아메리카노"].bean_note == "공식: 디카페인 — 캐러멜 향"
+
+
 def test_brand_items_decaf_option_and_synthetic_menu(repo):
     items = {i.name: i for i in repo.brand_items("brand:sb", "decaf_only")}
     am = items["아메리카노"]
@@ -91,6 +100,7 @@ def test_brand_items_decaf_option_and_synthetic_menu(repo):
     synthetic = repo.brand_items("brand:tw", "decaf_only")   # brand without menu rows
     assert [i.name for i in synthetic] == ["아메리카노", "카페라떼"]
     assert all(i.decaf_option and i.menu_item_id is None and i.order_decaf for i in synthetic)
+    assert all(i.bean_note is None for i in synthetic)         # no official description → no note
     assert repo.brand_items("brand:none", "any") == []
     assert repo.get_menu_item(am.menu_item_id, "decaf_only").order_decaf is True
 

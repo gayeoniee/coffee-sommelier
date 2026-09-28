@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Iterable, TypeVar
+from typing import Iterable, Literal, TypeVar
 
 from pydantic import BaseModel, Field
 
@@ -46,11 +46,17 @@ class ReviewRecord(BaseModel):
 
 
 class BeanProfile(BaseModel):
-    """Hand-curated taste of a brand's house bean (estimated from brand notes)."""
+    """Taste of a brand's house/decaf bean. `label_source` says where each value came from
+    (docs/adr/0012-official-brand-beans.md): the brand's published gauge, the learned models + text cues run on
+    the brand's official description (scripts/derive_brand_beans.py), or a hand estimate. `official_note` is the
+    one-line official description shown as card evidence (None when the brand publishes none)."""
     acidity: float = Field(ge=1, le=5)
     body: float = Field(ge=1, le=5)
     sweetness: float = Field(ge=1, le=5)
     flavor_tags: list[str] = Field(default_factory=list)
+    label_source: dict[str, Literal["official_gauge", "official_notes_model", "estimate"]] = Field(
+        default_factory=dict)
+    official_note: str | None = None
 
 
 class BrandRecord(BaseModel):

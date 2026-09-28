@@ -98,6 +98,8 @@ def explain_messages(item: Item, profile: Profile, score: float, prediction: Pre
         "조건 위반": violation,
         "근거": prediction.evidence if prediction else None,
     }
+    if item.bean_note:      # franchise drink with an official bean description (docs/adr/0012); absent otherwise
+        payload["원두 공식 설명"] = item.bean_note
     system = SYSTEM_PROMPT + (VIOLATION_RULE if violation else "") + length_rule(violation) + NO_THINK
     return [{"role": "system", "content": system},
             {"role": "user", "content": json.dumps(payload, ensure_ascii=False)}]
@@ -122,4 +124,6 @@ def card(item: Item, score: float, template: str, violation: str | None = None,
     if prediction is not None:
         c["evidence"] = prediction.evidence
         c["n_neighbors"] = prediction.n_neighbors
+    elif item.bean_note:    # franchise card: the brand's own bean line is the evidence (docs/adr/0012)
+        c["evidence"] = [item.bean_note]
     return c

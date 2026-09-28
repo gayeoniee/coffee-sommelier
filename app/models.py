@@ -26,6 +26,7 @@ class Item:
     menu_item_id: int | None = None
     origin_country: str | None = None
     process: str | None = None
+    bean_note: str | None = None    # franchise drink: the brand's official bean line (docs/adr/0012), card evidence
 
     def attr(self, name: str) -> float | None:
         return getattr(self, name)

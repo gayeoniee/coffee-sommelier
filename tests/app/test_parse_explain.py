@@ -85,6 +85,25 @@ def test_card_shape():
     assert c["violation"] is None and "evidence" not in c
 
 
+def test_franchise_card_shows_the_official_bean_note_as_evidence():
+    it = Item(key="menu:3", name="아메리카노", source="brand_bean", acidity=2, body=4,
+              bean_note="스타벅스 공식: 에스프레소 로스트(다크) — 강한 바디감과 캬라멜 향")
+    c = card(it, 0.8, "t")
+    assert c["evidence"] == ["스타벅스 공식: 에스프레소 로스트(다크) — 강한 바디감과 캬라멜 향"]
+    assert "n_neighbors" not in c
+
+
+def test_explain_payload_carries_the_official_bean_note_only_when_present():
+    with_note = Item(key="menu:3", name="아메리카노", source="brand_bean", bean_note="공식: 캐러멜 향 99.9%")
+    payload = json.loads(explain_messages(with_note, Profile(), 0.8)[1]["content"])
+    assert payload["원두 공식 설명"] == "공식: 캐러멜 향 99.9%"
+    # a number quoted from the official note is grounded (app/core/explain_check.py numbers_grounded)
+    assert check_explanation("디카페인 원두는 99.9% 카페인을 뺐어요.", payload, 80, None)["numbers_grounded"]
+    without = json.loads(explain_messages(Item(key="menu:1", name="카페 라떼", source="brand_bean"),
+                                          Profile(), 0.8)[1]["content"])
+    assert "원두 공식 설명" not in without       # unchanged payload for every other item (explain_quality cases)
+
+
 def test_template_explanation_predicted_source_shows_confidence():
     low = Item(key="input", name="예가체프", source="predicted", confidence="low", acidity=4)
     text = template_explanation(low, Profile(), 0.5, {})

@@ -1,0 +1,1051 @@
+[
+  {
+    "brand": "brand:starbucks",
+    "name": "스타벅스",
+    "house": {
+      "bean_name": "에스프레소 로스트 (Espresso Roast)",
+      "source_url": "https://www.starbucks.co.kr/coffee/product_view.do?PRODUCT_CD=11017024",
+      "verified_at": "2026-09-28",
+      "status": "official",
+      "before": {
+        "acidity": 2,
+        "body": 4,
+        "sweetness": 2,
+        "flavor_tags": [
+          "dark chocolate",
+          "caramelized"
+        ]
+      },
+      "values": {
+        "acidity": 2.0,
+        "body": 4.0,
+        "sweetness": 2.5,
+        "flavor_tags": [
+          "caramelized"
+        ]
+      },
+      "label_source": {
+        "acidity": "official_notes_model",
+        "body": "official_notes_model",
+        "sweetness": "official_notes_model",
+        "flavor_tags": "official_notes_model"
+      },
+      "basis": {
+        "acidity": "model 1.99",
+        "body": "model 4.2",
+        "sweetness": "model 2.37",
+        "flavor_tags": {
+          "from_text": [
+            "caramelized"
+          ],
+          "model": [
+            [
+              "dark chocolate",
+              0.615
+            ],
+            [
+              "woody",
+              0.353
+            ],
+            [
+              "caramelized",
+              0.315
+            ]
+          ]
+        }
+      },
+      "query_text": "스타벅스 에스프레소 로스트 (Espresso Roast) | dark | 강한 바디감과 캬라멜 향",
+      "model_attrs": {
+        "acidity": 1.99,
+        "body": 4.2,
+        "sweetness": 2.37
+      },
+      "card_note": "스타벅스 공식: 에스프레소 로스트(다크) — 강한 바디감과 캬라멜 향"
+    },
+    "decaf": {
+      "bean_name": "스타벅스 디카페인 (워터 프로세스)",
+      "source_url": "https://www.starbucks.co.kr/coffee/story.do",
+      "verified_at": "2026-09-28",
+      "status": "partial",
+      "before": {
+        "acidity": 2,
+        "body": 3,
+        "sweetness": 2,
+        "flavor_tags": [
+          "chocolate",
+          "caramelized"
+        ]
+      },
+      "values": {
+        "acidity": 2,
+        "body": 3,
+        "sweetness": 2,
+        "flavor_tags": [
+          "chocolate",
+          "caramelized"
+        ]
+      },
+      "label_source": {
+        "acidity": "estimate",
+        "body": "estimate",
+        "sweetness": "estimate",
+        "flavor_tags": "estimate"
+      },
+      "basis": {
+        "reason": "매장 디카페인 샷에 쓰는 원두의 맛 설명은 공식 사이트에 없다(원두 상품은 '디카페인 하우스 블렌드'(미디엄) 하나뿐이고 이는 매장 에스프레소용이라는 근거가 없음). 공정(워터 프로세스)만 공식 → 값은 추정 유지."
+      },
+      "card_note": "스타벅스 공식: 디카페인은 워터 프로세스(99.9%) 원두"
+    }
+  },
+  {
+    "brand": "brand:twosome",
+    "name": "투썸플레이스",
+    "house": {
+      "bean_name": null,
+      "source_url": "https://www.twosome.co.kr",
+      "verified_at": "2026-09-28",
+      "status": "unavailable",
+      "before": {
+        "acidity": 2,
+        "body": 4,
+        "sweetness": 2,
+        "flavor_tags": [
+          "dark chocolate",
+          "nutty"
+        ]
+      },
+      "values": {
+        "acidity": 2,
+        "body": 4,
+        "sweetness": 2,
+        "flavor_tags": [
+          "dark chocolate",
+          "nutty"
+        ]
+      },
+      "label_source": {
+        "acidity": "estimate",
+        "body": "estimate",
+        "sweetness": "estimate",
+        "flavor_tags": "estimate"
+      },
+      "basis": {
+        "reason": "공식 사이트가 봇을 403으로 차단(PoliteClient GET https://www.twosome.co.kr/ → 403 Forbidden). 공식 설명 미확인 → 추정 유지."
+      },
+      "card_note": null
+    },
+    "decaf": {
+      "bean_name": null,
+      "source_url": "https://www.twosome.co.kr",
+      "verified_at": "2026-09-28",
+      "status": "unavailable",
+      "before": {
+        "acidity": 2,
+        "body": 3,
+        "sweetness": 3,
+        "flavor_tags": [
+          "chocolate",
+          "nutty"
+        ]
+      },
+      "values": {
+        "acidity": 2,
+        "body": 3,
+        "sweetness": 3,
+        "flavor_tags": [
+          "chocolate",
+          "nutty"
+        ]
+      },
+      "label_source": {
+        "acidity": "estimate",
+        "body": "estimate",
+        "sweetness": "estimate",
+        "flavor_tags": "estimate"
+      },
+      "basis": {
+        "reason": "위와 같음(봇 차단)."
+      },
+      "card_note": null
+    }
+  },
+  {
+    "brand": "brand:mega",
+    "name": "메가MGC커피",
+    "house": {
+      "bean_name": "메가MGC커피 블렌드",
+      "source_url": "https://www.mega-mgccoffee.com/menu/menu.php",
+      "verified_at": "2026-09-24",
+      "status": "official",
+      "before": {
+        "acidity": 1,
+        "body": 4,
+        "sweetness": 2,
+        "flavor_tags": [
+          "nutty",
+          "dark chocolate"
+        ]
+      },
+      "values": {
+        "acidity": 2.5,
+        "body": 4.5,
+        "sweetness": 3.5,
+        "flavor_tags": [
+          "nutty"
+        ]
+      },
+      "label_source": {
+        "acidity": "official_notes_model",
+        "body": "official_notes_model",
+        "sweetness": "official_notes_model",
+        "flavor_tags": "official_notes_model"
+      },
+      "basis": {
+        "acidity": "model 2.44",
+        "body": "cue '묵직한 바디' → 4.5",
+        "sweetness": "model 3.68",
+        "flavor_tags": {
+          "from_text": [],
+          "model": [
+            [
+              "sweet aromatics",
+              0.63
+            ],
+            [
+              "nutty",
+              0.591
+            ],
+            [
+              "woody",
+              0.377
+            ],
+            [
+              "caramelized",
+              0.375
+            ]
+          ]
+        }
+      },
+      "query_text": "메가MGC커피 메가MGC커피 블렌드 | 풍부한 바디감 아메리카노의 묵직한 바디감 100% 아라비카 프리미엄 원두를 국내 로스팅 (https://www.mega-mgccoffee.com/about/brand/)",
+      "model_attrs": {
+        "acidity": 2.44,
+        "body": 5.0,
+        "sweetness": 3.68
+      },
+      "card_note": "메가MGC커피 공식: 블렌드 원두 — 풍부한·묵직한 바디감"
+    },
+    "decaf": {
+      "bean_name": "메가MGC커피 디카페인",
+      "source_url": "https://www.mega-mgccoffee.com/menu/menu.php",
+      "verified_at": "2026-09-24",
+      "status": "official",
+      "before": {
+        "acidity": 1,
+        "body": 3,
+        "sweetness": 2,
+        "flavor_tags": [
+          "nutty",
+          "chocolate"
+        ]
+      },
+      "values": {
+        "acidity": 2.0,
+        "body": 4.5,
+        "sweetness": 3.5,
+        "flavor_tags": [
+          "woody"
+        ]
+      },
+      "label_source": {
+        "acidity": "official_notes_model",
+        "body": "official_notes_model",
+        "sweetness": "official_notes_model",
+        "flavor_tags": "official_notes_model"
+      },
+      "basis": {
+        "acidity": "model 1.83",
+        "body": "cue '묵직한 바디' → 4.5",
+        "sweetness": "model 3.36",
+        "flavor_tags": {
+          "from_text": [],
+          "model": [
+            [
+              "woody",
+              0.85
+            ],
+            [
+              "sweet aromatics",
+              0.564
+            ],
+            [
+              "cocoa",
+              0.336
+            ],
+            [
+              "caramelized",
+              0.323
+            ],
+            [
+              "chocolate",
+              0.302
+            ]
+          ]
+        }
+      },
+      "query_text": "메가MGC커피 메가MGC커피 디카페인 | decaf | 향과 풍미 그대로 카페인만을 낮춰 디카페인 아메리카노의 묵직한 바디감",
+      "model_attrs": {
+        "acidity": 1.83,
+        "body": 2.76,
+        "sweetness": 3.36
+      },
+      "card_note": "메가MGC커피 공식: 디카페인 — 향과 풍미 그대로, 묵직한 바디감"
+    }
+  },
+  {
+    "brand": "brand:compose",
+    "name": "컴포즈커피",
+    "house": {
+      "bean_name": null,
+      "source_url": "https://composecoffee.com/about",
+      "verified_at": "2026-09-28",
+      "status": "unavailable",
+      "before": {
+        "acidity": 1,
+        "body": 4,
+        "sweetness": 2,
+        "flavor_tags": [
+          "nutty",
+          "dark chocolate"
+        ]
+      },
+      "values": {
+        "acidity": 1,
+        "body": 4,
+        "sweetness": 2,
+        "flavor_tags": [
+          "nutty",
+          "dark chocolate"
+        ]
+      },
+      "label_source": {
+        "acidity": "estimate",
+        "body": "estimate",
+        "sweetness": "estimate",
+        "flavor_tags": "estimate"
+      },
+      "basis": {
+        "reason": "브랜드 소개(/about)·메뉴 갤러리·영양성분표 어디에도 원두 맛 설명이 없다(메뉴는 이름·영양성분만). 기존 '콜롬비아 슈가케인, 묵직한 바디·견과·다크초콜릿'은 뉴스 출처 → 추정 유지."
+      },
+      "card_note": null
+    },
+    "decaf": {
+      "bean_name": null,
+      "source_url": "https://composecoffee.com/compose",
+      "verified_at": "2026-09-28",
+      "status": "unavailable",
+      "before": {
+        "acidity": 2,
+        "body": 4,
+        "sweetness": 2,
+        "flavor_tags": [
+          "nutty",
+          "dark chocolate"
+        ]
+      },
+      "values": {
+        "acidity": 2,
+        "body": 4,
+        "sweetness": 2,
+        "flavor_tags": [
+          "nutty",
+          "dark chocolate"
+        ]
+      },
+      "label_source": {
+        "acidity": "estimate",
+        "body": "estimate",
+        "sweetness": "estimate",
+        "flavor_tags": "estimate"
+      },
+      "basis": {
+        "reason": "디카페인 메뉴는 이름·영양성분만 공개, 원두 설명 없음 → 추정 유지."
+      },
+      "card_note": null
+    }
+  },
+  {
+    "brand": "brand:paik",
+    "name": "빽다방",
+    "house": {
+      "bean_name": "빽다방 시그니처 블렌딩",
+      "source_url": "https://paikdabang.com/about/coffee_story/",
+      "verified_at": "2026-09-28",
+      "status": "official",
+      "before": {
+        "acidity": 1,
+        "body": 4,
+        "sweetness": 2,
+        "flavor_tags": [
+          "nutty",
+          "chocolate"
+        ]
+      },
+      "values": {
+        "acidity": 1.5,
+        "body": 4.5,
+        "sweetness": 4.0,
+        "flavor_tags": [
+          "cinnamon",
+          "brown sugar",
+          "dark chocolate"
+        ]
+      },
+      "label_source": {
+        "acidity": "official_notes_model",
+        "body": "official_notes_model",
+        "sweetness": "official_notes_model",
+        "flavor_tags": "official_notes_model"
+      },
+      "basis": {
+        "acidity": "model 1.42",
+        "body": "cue '묵직한 바디' → 4.5",
+        "sweetness": "cue '단맛' → 4.0",
+        "flavor_tags": {
+          "from_text": [
+            "cinnamon",
+            "brown sugar",
+            "dark chocolate",
+            "peanuts"
+          ],
+          "model": [
+            [
+              "dark chocolate",
+              0.493
+            ],
+            [
+              "chocolate",
+              0.467
+            ],
+            [
+              "nutty",
+              0.414
+            ]
+          ]
+        }
+      },
+      "query_text": "빽다방 빽다방 시그니처 블렌딩 | medium-dark | 브라질 원두 고유의 묵직한 바디감이 느껴지며, 시나몬, 브라운슈가, 다크초콜릿의 단맛과, 마카다미아, 땅콩, 크래커의 고소함이 느껴지는 매력적인 커피입니다. '파젠다 엄'에서 생산된 스페셜티 원두와 좋은 품질의 브라질 원두 (DOT 프로세싱, 뉴크롭)",
+      "model_attrs": {
+        "acidity": 1.42,
+        "body": 3.99,
+        "sweetness": 3.31
+      },
+      "card_note": "빽다방 공식: 시그니처 블렌딩 — 묵직한 바디, 시나몬·브라운슈가·다크초콜릿"
+    },
+    "decaf": {
+      "bean_name": "빽다방 디카페인",
+      "source_url": "https://paikdabang.com/menu/menu_coffee/",
+      "verified_at": "2026-09-24",
+      "status": "unavailable",
+      "before": {
+        "acidity": 2,
+        "body": 3,
+        "sweetness": 2,
+        "flavor_tags": [
+          "chocolate"
+        ]
+      },
+      "values": {
+        "acidity": 2,
+        "body": 3,
+        "sweetness": 2,
+        "flavor_tags": [
+          "chocolate"
+        ]
+      },
+      "label_source": {
+        "acidity": "estimate",
+        "body": "estimate",
+        "sweetness": "estimate",
+        "flavor_tags": "estimate"
+      },
+      "basis": {
+        "reason": "디카페인 메뉴 설명에 원두 맛 표현이 없음 → 추정 유지."
+      },
+      "card_note": null
+    }
+  },
+  {
+    "brand": "brand:ediya",
+    "name": "이디야커피",
+    "house": {
+      "bean_name": "이디야 블렌드 원두",
+      "source_url": "https://www.ediya.com/contents/ediya_bean.html",
+      "verified_at": "2026-09-28",
+      "status": "official",
+      "before": {
+        "acidity": 2,
+        "body": 3,
+        "sweetness": 2,
+        "flavor_tags": [
+          "chocolate",
+          "nutty"
+        ]
+      },
+      "values": {
+        "acidity": 2.0,
+        "body": 4.0,
+        "sweetness": 3.0,
+        "flavor_tags": [
+          "smoky"
+        ]
+      },
+      "label_source": {
+        "acidity": "official_notes_model",
+        "body": "official_notes_model",
+        "sweetness": "official_notes_model",
+        "flavor_tags": "official_notes_model"
+      },
+      "basis": {
+        "acidity": "model 1.94",
+        "body": "model 3.91",
+        "sweetness": "model 3.22",
+        "flavor_tags": {
+          "from_text": [
+            "smoky"
+          ],
+          "model": [
+            [
+              "smoky",
+              0.982
+            ],
+            [
+              "sweet aromatics",
+              0.4
+            ],
+            [
+              "nutty",
+              0.377
+            ]
+          ]
+        }
+      },
+      "query_text": "이디야커피 이디야 블렌드 원두 | 커피 본연의 풍부한 향을 첫 느낌으로, 고소한 단맛과 구수한 쓴맛, 깊고 중후한 긴 여운을 품고 있는 균형 잡힌 향미의 조화 이디야의 스모키한 맛과 풍부한 바디감 고품질의 아라비카 100% 원두 (커피벨트 스페셜티 급 생두 블렌딩)",
+      "model_attrs": {
+        "acidity": 1.94,
+        "body": 3.91,
+        "sweetness": 3.22
+      },
+      "card_note": "이디야 공식: 블렌드 원두 — 고소한 단맛·구수한 쓴맛, 스모키하고 풍부한 바디감"
+    },
+    "decaf": {
+      "bean_name": null,
+      "source_url": "https://www.ediya.com/contents/drink.html",
+      "verified_at": "2026-09-28",
+      "status": "unavailable",
+      "before": {
+        "acidity": 2,
+        "body": 3,
+        "sweetness": 3,
+        "flavor_tags": [
+          "chocolate",
+          "caramelized"
+        ]
+      },
+      "values": {
+        "acidity": 2,
+        "body": 3,
+        "sweetness": 3,
+        "flavor_tags": [
+          "chocolate",
+          "caramelized"
+        ]
+      },
+      "label_source": {
+        "acidity": "estimate",
+        "body": "estimate",
+        "sweetness": "estimate",
+        "flavor_tags": "estimate"
+      },
+      "basis": {
+        "reason": "음료 상세는 /inc/ajax_brand.php 로만 내려오는데 robots.txt 가 /inc/ 를 막는다. 원두 페이지에는 매장 디카페인 원두 설명이 없음(스틱커피 '듀얼 블렌딩' 디카페인만) → 추정 유지."
+      },
+      "card_note": null
+    }
+  },
+  {
+    "brand": "brand:hollys",
+    "name": "할리스",
+    "house": {
+      "bean_name": "할리스 시그니처 블렌드",
+      "source_url": "https://www.hollys.co.kr/menu/bean.do",
+      "verified_at": "2026-09-28",
+      "status": "official",
+      "before": {
+        "acidity": 2,
+        "body": 3,
+        "sweetness": 2,
+        "flavor_tags": [
+          "chocolate",
+          "nutty"
+        ]
+      },
+      "values": {
+        "acidity": 1.5,
+        "body": 3.0,
+        "sweetness": 4.0,
+        "flavor_tags": [
+          "cocoa"
+        ]
+      },
+      "label_source": {
+        "acidity": "official_notes_model",
+        "body": "official_notes_model",
+        "sweetness": "official_notes_model",
+        "flavor_tags": "official_notes_model"
+      },
+      "basis": {
+        "acidity": "cue '부드러운 산미' → 1.5",
+        "body": "model 3.2",
+        "sweetness": "model 3.91",
+        "flavor_tags": {
+          "from_text": [],
+          "model": [
+            [
+              "cocoa",
+              0.605
+            ]
+          ]
+        }
+      },
+      "query_text": "할리스 할리스 시그니처 블렌드 | 부드러운 산미와 고소한 풍미 (캡슐) 시그니처 블렌드: 균형잡힌 바디와 부드럽고 중후한 풍미",
+      "model_attrs": {
+        "acidity": 1.57,
+        "body": 3.2,
+        "sweetness": 3.91
+      },
+      "card_note": "할리스 공식: 시그니처 블렌드 — 부드러운 산미와 고소한 풍미, 균형잡힌 바디"
+    },
+    "decaf": {
+      "bean_name": "할리스 디카페인 콜드브루",
+      "source_url": "https://www.hollys.co.kr/menu/espresso.do",
+      "verified_at": "2026-09-27",
+      "status": "official",
+      "before": {
+        "acidity": 2,
+        "body": 2,
+        "sweetness": 3,
+        "flavor_tags": [
+          "brown sugar"
+        ]
+      },
+      "values": {
+        "acidity": 2.5,
+        "body": 2.0,
+        "sweetness": 4.0,
+        "flavor_tags": [
+          "chocolate",
+          "hazelnut"
+        ]
+      },
+      "label_source": {
+        "acidity": "official_notes_model",
+        "body": "official_notes_model",
+        "sweetness": "official_notes_model",
+        "flavor_tags": "official_notes_model"
+      },
+      "basis": {
+        "acidity": "model 2.32",
+        "body": "model 2.2",
+        "sweetness": "cue '단맛' → 4.0",
+        "flavor_tags": {
+          "from_text": [],
+          "model": [
+            [
+              "chocolate",
+              0.795
+            ],
+            [
+              "hazelnut",
+              0.634
+            ],
+            [
+              "sweet aromatics",
+              0.46
+            ],
+            [
+              "caramelized",
+              0.439
+            ],
+            [
+              "prune",
+              0.356
+            ]
+          ]
+        }
+      },
+      "query_text": "할리스 할리스 디카페인 콜드브루 | decaf | 할리스만의 노하우로 블렌딩한 디카페인 원액을 더해, 깔끔한 후미와 은은한 단맛을 느낄 수 있는 디카페인 콜드브루",
+      "model_attrs": {
+        "acidity": 2.32,
+        "body": 2.2,
+        "sweetness": 3.15
+      },
+      "card_note": "할리스 공식: 디카페인 콜드브루 — 깔끔한 후미와 은은한 단맛"
+    }
+  },
+  {
+    "brand": "brand:paulbassett",
+    "name": "폴바셋",
+    "house": {
+      "bean_name": "시그니처 블렌드 (Signature Blend)",
+      "source_url": "https://www.baristapaulbassett.co.kr/contactus/coffeebeans/Signature.pb",
+      "verified_at": "2026-09-28",
+      "status": "official",
+      "before": {
+        "acidity": 4,
+        "body": 3,
+        "sweetness": 3,
+        "flavor_tags": [
+          "chocolate",
+          "citrus fruit"
+        ]
+      },
+      "values": {
+        "acidity": 4.5,
+        "body": 3.5,
+        "sweetness": 4.0,
+        "flavor_tags": [
+          "chocolate"
+        ]
+      },
+      "label_source": {
+        "acidity": "official_notes_model",
+        "body": "official_notes_model",
+        "sweetness": "official_notes_model",
+        "flavor_tags": "official_notes_model"
+      },
+      "basis": {
+        "acidity": "cue '상큼한' → 4.5",
+        "body": "model 3.71",
+        "sweetness": "cue 'Sweet' → 4.0",
+        "flavor_tags": {
+          "from_text": [
+            "chocolate"
+          ],
+          "model": [
+            [
+              "chocolate",
+              0.998
+            ]
+          ]
+        }
+      },
+      "query_text": "폴바셋 시그니처 블렌드 (Signature Blend) | “Sweet Dessert Style”의 커피 진하고 달콤한 초콜릿의 맛과 상큼한 신맛이 이루는 조화가 일품 초콜릿의 달콤한 풍미와 신맛의 조화가 인상적인 커피 풍부한 바디, 깔끔한 뒷맛이 특징인 브라질 산 원두와 화사한 산미의 에티오피아 산 원두가 블렌딩",
+      "model_attrs": {
+        "acidity": 2.27,
+        "body": 3.71,
+        "sweetness": 4.19
+      },
+      "card_note": "폴바셋 공식: 시그니처 블렌드(브라질+에티오피아) — 달콤한 초콜릿과 상큼한 신맛"
+    },
+    "decaf": {
+      "bean_name": "폴바셋 디카페인",
+      "source_url": "https://www.baristapaulbassett.co.kr/menu/List.pb?cid1=A",
+      "verified_at": "2026-09-26",
+      "status": "official",
+      "before": {
+        "acidity": 3,
+        "body": 3,
+        "sweetness": 3,
+        "flavor_tags": [
+          "chocolate",
+          "citrus fruit"
+        ]
+      },
+      "values": {
+        "acidity": 3.0,
+        "body": 3.0,
+        "sweetness": 3.5,
+        "flavor_tags": [
+          "citrus fruit"
+        ]
+      },
+      "label_source": {
+        "acidity": "official_notes_model",
+        "body": "official_notes_model",
+        "sweetness": "official_notes_model",
+        "flavor_tags": "official_notes_model"
+      },
+      "basis": {
+        "acidity": "model 3.0",
+        "body": "model 2.89",
+        "sweetness": "model 3.73",
+        "flavor_tags": {
+          "from_text": [],
+          "model": [
+            [
+              "sweet aromatics",
+              0.855
+            ],
+            [
+              "citrus fruit",
+              0.624
+            ],
+            [
+              "overall sweet",
+              0.5
+            ],
+            [
+              "caramelized",
+              0.349
+            ],
+            [
+              "winey",
+              0.308
+            ]
+          ]
+        }
+      },
+      "query_text": "폴바셋 폴바셋 디카페인 | decaf | 부드럽고 깔끔한 풍미",
+      "model_attrs": {
+        "acidity": 3.0,
+        "body": 2.89,
+        "sweetness": 3.73
+      },
+      "card_note": "폴바셋 공식: 디카페인 — 부드럽고 깔끔한 풍미"
+    }
+  },
+  {
+    "brand": "brand:bluebottle",
+    "name": "블루보틀",
+    "house": {
+      "bean_name": "헤이즈 벨리 에스프레소 (Hayes Valley Espresso)",
+      "source_url": "https://kr.bluebottlecoffee.com/products/hayes-valley-espresso",
+      "verified_at": "2026-09-28",
+      "status": "official",
+      "before": {
+        "acidity": 3,
+        "body": 3,
+        "sweetness": 3,
+        "flavor_tags": [
+          "chocolate",
+          "berry"
+        ]
+      },
+      "values": {
+        "acidity": 2.0,
+        "body": 4.0,
+        "sweetness": 4.0,
+        "flavor_tags": [
+          "chocolate"
+        ]
+      },
+      "label_source": {
+        "acidity": "official_notes_model",
+        "body": "official_notes_model",
+        "sweetness": "official_notes_model",
+        "flavor_tags": "official_notes_model"
+      },
+      "basis": {
+        "acidity": "model 2.16",
+        "body": "model 3.94",
+        "sweetness": "cue '달콤' → 4.0",
+        "flavor_tags": {
+          "from_text": [
+            "chocolate"
+          ],
+          "model": [
+            [
+              "chocolate",
+              1.0
+            ],
+            [
+              "hazelnut",
+              0.935
+            ],
+            [
+              "honey",
+              0.769
+            ],
+            [
+              "strawberry",
+              0.615
+            ],
+            [
+              "cocoa",
+              0.332
+            ]
+          ]
+        }
+      },
+      "query_text": "블루보틀 헤이즈 벨리 에스프레소 (Hayes Valley Espresso) | 스트레이트로 마시면 풍성한 황갈색 크레마와 인상 깊은 점도를 즐길 수 있습니다. 우유나 크림을 추가하면 한층 더 달콤하고 부드러운 초콜릿 풍미를 즐기실 수 있습니다. 테이스팅 노트: 초콜릿",
+      "model_attrs": {
+        "acidity": 2.16,
+        "body": 3.94,
+        "sweetness": 4.2
+      },
+      "card_note": "블루보틀 공식: 헤이즈 벨리 에스프레소 — 인상 깊은 점도, 달콤하고 부드러운 초콜릿"
+    },
+    "decaf": {
+      "bean_name": "나이트 라이트 디카페인 (Night Light Decaf)",
+      "source_url": "https://kr.bluebottlecoffee.com/products/night-light-decaf",
+      "verified_at": "2026-09-28",
+      "status": "official",
+      "before": {
+        "acidity": 3,
+        "body": 3,
+        "sweetness": 4,
+        "flavor_tags": [
+          "vanilla",
+          "caramelized",
+          "lime"
+        ]
+      },
+      "values": {
+        "acidity": 3.0,
+        "body": 2.5,
+        "sweetness": 4.0,
+        "flavor_tags": [
+          "molasses"
+        ]
+      },
+      "label_source": {
+        "acidity": "official_notes_model",
+        "body": "official_notes_model",
+        "sweetness": "official_notes_model",
+        "flavor_tags": "official_notes_model"
+      },
+      "basis": {
+        "acidity": "model 2.77",
+        "body": "model 2.59",
+        "sweetness": "cue '단맛' → 4.0",
+        "flavor_tags": {
+          "from_text": [
+            "molasses"
+          ],
+          "model": [
+            [
+              "citrus fruit",
+              0.825
+            ],
+            [
+              "sweet aromatics",
+              0.807
+            ],
+            [
+              "caramelized",
+              0.716
+            ],
+            [
+              "overall sweet",
+              0.55
+            ]
+          ]
+        }
+      },
+      "query_text": "블루보틀 나이트 라이트 디카페인 (Night Light Decaf) | medium | decaf | 둥글둥글하면서도 끝없이 이어지는 당밀의 단맛과 부드러운 질감 블랙 커피로 마시면 부드러우면서 꽉 찬 커피 향미 테이스팅 노트: 당밀",
+      "model_attrs": {
+        "acidity": 2.77,
+        "body": 2.59,
+        "sweetness": 4.64
+      },
+      "card_note": "블루보틀 공식: 나이트 라이트 디카페인(미디엄) — 당밀의 단맛과 부드러운 질감"
+    }
+  },
+  {
+    "brand": "brand:coffeebean",
+    "name": "커피빈",
+    "house": {
+      "bean_name": "에스프레소 로스트 (Espresso Roast)",
+      "source_url": "https://www.coffeebeankorea.com/product/bean_guide.asp",
+      "verified_at": "2026-09-28",
+      "status": "partial",
+      "before": {
+        "acidity": 2,
+        "body": 4,
+        "sweetness": 2,
+        "flavor_tags": [
+          "dark chocolate",
+          "caramelized"
+        ]
+      },
+      "values": {
+        "acidity": 2,
+        "body": 4,
+        "sweetness": 2,
+        "flavor_tags": [
+          "dark chocolate",
+          "caramelized"
+        ]
+      },
+      "label_source": {
+        "acidity": "estimate",
+        "body": "estimate",
+        "sweetness": "estimate",
+        "flavor_tags": "estimate"
+      },
+      "basis": {
+        "reason": "원두 가이드에 로스팅(dark)만 있고 상품 상세 페이지가 없다(링크 없음). 맛 설명 없음 → 추정 유지."
+      },
+      "card_note": "커피빈 공식: 에스프레소 로스트(다크 로스트)"
+    },
+    "decaf": {
+      "bean_name": "에스프레소 로스트 블렌드 디카페인 (Espresso Roast Blend Decaf)",
+      "source_url": "https://www.coffeebeankorea.com/product/view.asp?ProductNo=1035",
+      "verified_at": "2026-09-28",
+      "status": "official",
+      "before": {
+        "acidity": 2,
+        "body": 3,
+        "sweetness": 2,
+        "flavor_tags": [
+          "dark chocolate"
+        ]
+      },
+      "values": {
+        "acidity": 2.0,
+        "body": 2.5,
+        "sweetness": 4.0,
+        "flavor_tags": [
+          "caramelized"
+        ]
+      },
+      "label_source": {
+        "acidity": "official_notes_model",
+        "body": "official_notes_model",
+        "sweetness": "official_notes_model",
+        "flavor_tags": "official_notes_model"
+      },
+      "basis": {
+        "acidity": "model 2.15",
+        "body": "model 2.52",
+        "sweetness": "cue '달콤' → 4.0",
+        "flavor_tags": {
+          "from_text": [
+            "caramelized"
+          ],
+          "model": [
+            [
+              "chocolate",
+              0.654
+            ],
+            [
+              "cherry",
+              0.626
+            ],
+            [
+              "woody",
+              0.477
+            ]
+          ]
+        }
+      },
+      "query_text": "커피빈 에스프레소 로스트 블렌드 디카페인 (Espresso Roast Blend Decaf) | decaf 비 화학적 카페인 제거법인 Swiss Water Process | 캐러멜 향 Velvety 흙 맛, 달콤 쌉사름한 끝 맛 원두커피 100 % 원산지 : 미국 (로스팅 국가)",
+      "model_attrs": {
+        "acidity": 2.15,
+        "body": 2.52,
+        "sweetness": 3.63
+      },
+      "card_note": "커피빈 공식: 에스프레소 로스트 디카페인 — 캐러멜 향, 흙 맛, 달콤 쌉사름한 끝 맛"
+    }
+  }
+]

@@ -155,7 +155,8 @@ class Repo:
                     sweetness=bean.get("sweetness"), tags=tuple(bean.get("flavor_tags", ())), is_decaf=m["is_decaf"],
                     decaf_option=m["decaf_option"], order_decaf=order_decaf, caffeine_mg=m["caffeine_mg"],
                     is_milk=is_milk_drink(m["name"]), confidence="medium", brand=b["name"],
-                    decaf_surcharge_krw=b["decaf_surcharge_krw"], menu_item_id=m["id"])
+                    decaf_surcharge_krw=b["decaf_surcharge_krw"], menu_item_id=m["id"],
+                    bean_note=bean.get("official_note"))
 
     def get_menu_item(self, menu_item_id: int, caffeine_rule: str) -> Item | None:
         m = self._one("SELECT id, brand_id, name, is_decaf, decaf_option, caffeine_mg FROM menu_items WHERE id = %s",

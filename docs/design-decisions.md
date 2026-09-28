@@ -1,4 +1,4 @@
-# 설계 결정 — 면접에서 물을 만한 질문 17개
+# 설계 결정 — 면접에서 물을 만한 질문 18개
 
 각 답은 "무엇을 골랐나 → 왜 → 수치 → 원자료" 순서다. 수치는 모두 `data/eval/*.json` 또는 ADR에서 옮겼다. 구조 그림은 [architecture.md](architecture.md), 결정 기록 원문은 [docs/adr/](adr/)에 있다.
 
@@ -21,6 +21,7 @@
 | 15 | [왜 바디를 무게감으로 다시 라벨링했나](#15-왜-바디를-무게감으로-다시-라벨링했나) | [ADR 0010](adr/0010-body-heaviness.md), [phase2_attr_model.json](../data/eval/phase2_attr_model.json) |
 | 16 | [무엇이 안 됐나](#16-무엇이-안-됐나) | 아래 각 링크 |
 | 17 | [왜 오픈판 속성 예측에 로스터리 게이지와 특징 모델을 썼나](#17-왜-오픈판-속성-예측에-로스터리-게이지와-특징-모델을-썼나) | [ADR 0011](adr/0011-roaster-gauges-feature-model.md) |
+| 18 | [프랜차이즈 원두 값은 어디서 오나](#18-프랜차이즈-원두-값은-어디서-오나) | [ADR 0012](adr/0012-official-brand-beans.md), [brand_beans_derived.json](../data/eval/brand_beans_derived.json) |
 
 ---
 
@@ -171,3 +172,16 @@ ADR 0009와 사실상 동일하고, `compare3`의 산미 ±1도 다시 0.495로 
 우선순위는 문구 단서 > 특징 모델 > 이웃 평균. 라벨이 4개 로스터리뿐이라 로스터리별 척도 관행 차이가 오차의
 큰 몫이고, 단맛 개선은 72건 중 4건 차이다.
 원자료: [ADR 0011](adr/0011-roaster-gauges-feature-model.md), [phase3_feature_model.json](../data/eval/open/phase3_feature_model.json)
+
+### 18. 프랜차이즈 원두 값은 어디서 오나
+
+프랜차이즈 카드의 산미·바디·단맛·향미는 원래 뉴스 기사와 메모를 보고 손으로 고른 값이었다. 이제는 각 브랜드 공식
+사이트에서 매장 음료에 쓰는 원두의 공식 설명(이름·로스팅·블렌드·맛 문구 원문)을 robots.txt를 지켜 모으고
+(`data/curated/brand_beans_official.yaml`), 그 문구를 **처음 보는 원두와 같은 경로**(태그 프리 쿼리 임베딩 → 전체판
+학습 모델, 문구에 직접 쓰인 "묵직한 바디"·"상큼한" 같은 단서가 모델보다 우선)에 넣어 값을 만든다. 값마다 출처를
+`official_gauge | official_notes_model | estimate`로 남기고, 카드 근거 줄에는 공식 문구 한 줄이 그대로 나온다.
+20개 원두(10개 브랜드 × 하우스/디카페인) 중 12개가 공식 맛 설명을 얻었고, 8개(투썸 봇 차단, 컴포즈 설명 없음 등)는
+추정을 유지했다. 게이지를 게시한 브랜드는 없었다. 조건 위반은 0/102 그대로, 페르소나 4명의 브랜드별 상위 3개
+메뉴 다양성(서로 다른 이름 27/24/27/24)도 그대로다. 향미 태그는 모델보다 브랜드가 직접 쓴 단어를 우선한다 —
+마케팅 문구는 학습 분포(영어 리뷰·로스터리 노트) 밖이라, 브랜드가 쓰지 않은 "체리" 같은 태그를 카드에 붙이지 않으려고.
+원자료: [ADR 0012](adr/0012-official-brand-beans.md), [brand_beans_derived.json](../data/eval/brand_beans_derived.json).

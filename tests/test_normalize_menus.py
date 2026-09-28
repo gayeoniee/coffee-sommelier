@@ -3,6 +3,7 @@ import shutil
 from pathlib import Path
 
 import pytest
+import yaml
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -167,21 +168,54 @@ def test_shopify_roast_only_from_roast_sentences(tmp_path):
     assert [c.roast_level for c in n.coffees] == [None, "medium", "light"]
 
 
-SCA_TAGS_USED = {"chocolate", "dark chocolate", "cocoa", "nutty", "almonds", "hazelnut", "caramelized",
-                 "brown sugar", "vanilla", "honey", "citrus fruit", "lemon", "lime", "orange", "berry",
-                 "floral", "black tea", "brown roast", "smoky"}
+def _sca_tags() -> set[str]:
+    """Every node name of the SCA wheel taxonomy (data/curated/sca_ko.yaml keys are 'a>b>c' paths)."""
+    from pipeline import settings
+    paths = yaml.safe_load((settings.CURATED_DIR / "sca_ko.yaml").read_text(encoding="utf-8"))
+    return {node for path in paths for node in path.split(">")}
 
 
 def test_every_brand_has_bean_profiles():
     from pipeline import settings
+    sca = _sca_tags()
     brands = normalize_brands(settings.CURATED_DIR)
     assert len(brands) == 10
     for b in brands:
         assert b.bean is not None, b.key
-        assert set(b.bean.flavor_tags) <= SCA_TAGS_USED, b.key
+        assert set(b.bean.flavor_tags) <= sca, b.key
         if b.decaf_available:
             assert b.decaf_bean is not None, b.key
-            assert set(b.decaf_bean.flavor_tags) <= SCA_TAGS_USED, b.key
+            assert set(b.decaf_bean.flavor_tags) <= sca, b.key
+
+
+def test_every_brand_bean_value_has_a_label_source_and_official_ones_have_a_note():
+    """ADR 0012: each of acidity/body/sweetness/flavor_tags says where it came from; a value derived from the
+    brand's official description always carries that description's card line."""
+    from pipeline import settings
+    for b in normalize_brands(settings.CURATED_DIR):
+        for bean in (b.bean, b.decaf_bean):
+            if bean is None:
+                continue
+            assert set(bean.label_source) == {"acidity", "body", "sweetness", "flavor_tags"}, b.key
+            if set(bean.label_source.values()) != {"estimate"}:
+                assert bean.official_note, b.key
+
+
+def test_brand_profiles_match_the_derivation_output():
+    """brands.yaml is hand-edited from data/eval/brand_beans_derived.json (comments survive); they must agree."""
+    import json
+
+    from pipeline import settings
+    derived = {r["brand"]: r for r in json.loads((settings.EVAL_DIR / "brand_beans_derived.json")
+                                                 .read_text(encoding="utf-8"))}
+    for b in normalize_brands(settings.CURATED_DIR):
+        for slot, bean in (("house", b.bean), ("decaf", b.decaf_bean)):
+            if bean is None:
+                continue
+            d = derived[b.key][slot]
+            assert {"acidity": bean.acidity, "body": bean.body, "sweetness": bean.sweetness,
+                    "flavor_tags": bean.flavor_tags} == d["values"], (b.key, slot)
+            assert bean.label_source == d["label_source"], (b.key, slot)
 
 
 def test_bean_profile_range_is_validated():
