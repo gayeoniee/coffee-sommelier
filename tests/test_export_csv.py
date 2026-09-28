@@ -1,6 +1,7 @@
 from scripts.competition.export_csv import (
     ALLOWED_COFFEE_SOURCES,
     BRAND_COLUMNS,
+    EXPORTED_COFFEE_SOURCES,
     COFFEE_COLUMNS,
     MENU_ITEM_COLUMNS,
     MILK_LABEL_COLUMNS,
@@ -46,13 +47,22 @@ class TestRowsForCoffees:
             _raw_coffee(key="roasterdb:c", source="roasterdb"),
             _raw_coffee(key="roasters_kr:d", source="roasters_kr"),
             _raw_coffee(key="shopify:e", source="shopify"),
+            _raw_coffee(key="shopify_gauged:f", source="shopify_gauged"),
         ])
         sources = {r["source"] for r in rows}
-        assert sources == {"cqi", "roasters_kr", "shopify"}
+        assert sources == {"cqi", "roasters_kr", "bluebottle_kr", "shopify_intl"}
         assert sources.isdisjoint({"coffeereview_kaggle", "roasterdb"})
 
     def test_allowed_sources_constant_matches_filter(self):
-        assert set(ALLOWED_COFFEE_SOURCES) == {"cqi", "roasters_kr", "shopify"}
+        assert set(ALLOWED_COFFEE_SOURCES) == {"cqi", "roasters_kr", "shopify", "shopify_gauged"}
+        assert set(EXPORTED_COFFEE_SOURCES) == {"cqi", "roasters_kr", "bluebottle_kr", "shopify_intl"}
+
+    def test_label_sources_come_from_attr_label_source_only_when_value_present(self):
+        rows = rows_for_coffees([_raw_coffee(acidity=4, body=None,
+                                             attr_label_source={"acidity": "gauge", "body": "llm_review"})])
+        assert rows[0]["acidity_label_source"] == "gauge"
+        assert rows[0]["body_label_source"] is None
+        assert "attr_label_source" not in rows[0]
 
     def test_keeps_row_order_and_values(self):
         rows = rows_for_coffees([_raw_coffee(key="cqi:a"), _raw_coffee(key="cqi:b")])
@@ -67,6 +77,8 @@ class TestRowsForMenuItems:
                "collected_at": "2026-01-01", "active": True}
         rows = rows_for_menu_items([raw])
         assert set(rows[0]) == set(MENU_ITEM_COLUMNS)
+        # 데이터베이스제작자 권리를 고려해 사실 필드 5개만
+        assert set(MENU_ITEM_COLUMNS) == {"brand_key", "name", "is_decaf", "caffeine_mg", "source_url"}
         assert rows[0]["brand_key"] == "mega"
         assert "brand_id" not in rows[0] and "id" not in rows[0]
 
@@ -125,7 +137,12 @@ class TestScaKoReferenceNotUploaded:
 class TestColumnDefinitions:
     def test_row_count_matches_sum_of_table_columns(self):
         defs = build_column_definitions()
-        assert len(defs) == len(COFFEE_COLUMNS) + len(MENU_ITEM_COLUMNS) + len(BRAND_COLUMNS)
+        assert len(defs) == (len(COFFEE_COLUMNS) + len(MENU_ITEM_COLUMNS) + len(BRAND_COLUMNS)
+                             + len(MILK_LABEL_COLUMNS))
+
+    def test_only_acidity_and_body_are_targets(self):
+        targets = {d["컬럼명"] for d in build_column_definitions() if d["타깃여부"] == "Y"}
+        assert targets == {"coffees.acidity", "coffees.body"}
 
     def test_each_row_has_required_fields_and_sequential_numbers(self):
         defs = build_column_definitions()

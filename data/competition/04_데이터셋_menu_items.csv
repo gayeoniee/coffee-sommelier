@@ -1,472 +1,513 @@
-﻿brand_key,name,name_en,category,is_decaf,decaf_option,caffeine_mg,source_url,collected_at
-brand:coffeebean,드립커피,Drip Coffee,브루드 커피,false,false,148.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,카페라떼,Cafe Latte,에스프레소 음료,false,true,91.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,카페모카,Cafe Mocha,에스프레소 음료,false,true,102.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,카페수아,Cafe Sua,에스프레소 음료,false,true,182.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,카푸치노,Cappuccino,에스프레소 음료,false,true,91.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,콜드브루,Cold Brew,브루드 커피,false,false,190.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,마끼아토네,Macchiatone,에스프레소 음료,false,true,91.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,아메리카노,Americano,에스프레소 음료,false,true,182.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,커피빈라떼,Coffeebean Latte,에스프레소 음료,false,true,193.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,커피빈카노,Coffeebeancano,에스프레소 음료,false,true,193.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,에스프레소 더블,Espresso Double,에스프레소 음료,false,true,182.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,에스프레소 싱글,Espresso Single,에스프레소 음료,false,true,91.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,마끼아토 더블,Macchiato Double,에스프레소 음료,false,true,198.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,마끼아토 싱글,Macchiato Single,에스프레소 음료,false,true,91.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,콜드브루 라떼,Cold Brew Latte,브루드 커피,false,false,152.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,콜드브루 수아,Cold Brew Sua,브루드 커피,false,false,152.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,헤이즐넛 라떼,Hazelnut Latte,에스프레소 음료,false,true,91.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,바닐라빈 오트라떼,vanilla Bean Oat Latte,에스프레소 음료,false,true,91.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,헤이즐넛 아메리카노,Hazelnut Americano,에스프레소 음료,false,true,182.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,카페모카 아이스 블렌디드,Cafe Mocha Ice Blended,아이스 블렌디드 (COFFEE),false,false,159.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,헤이즐넛 아이스 블렌디드,Hazelnut Ice Blended,아이스 블렌디드 (COFFEE),false,false,148.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,바닐라빈 오트 콜드브루,vanilla Bean Oat Cold Brew,브루드 커피,false,false,144.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,바닐라 라떼,Vanilla latte,에스프레소 음료,false,true,91.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,아이스 드립커피,Iced Drip Coffee,브루드 커피,false,false,74.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,아이스 카페라떼,Iced Cafe Latte,에스프레소 음료,false,true,91.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,아이스 카페모카,Iced Cafe Mocha,에스프레소 음료,false,true,102.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,아이스 카페수아,Iced Cafe Sua,에스프레소 음료,false,true,182.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,아이스 카푸치노,Iced Cappuccino,에스프레소 음료,false,true,91.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,캐러멜 마키아또,Caramel Macchiato,에스프레소 음료,false,true,91.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,브라운 마끼아토네,Brown Macchiatone,에스프레소 음료,false,true,91.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,아이스 아메리카노,Iced Americano,에스프레소 음료,false,true,91.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,아이스 에스프레소,Iced Espresso,에스프레소 음료,false,true,273.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,아이스 커피빈라떼,Iced Coffeebean Latte,에스프레소 음료,false,true,193.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,아이스 커피빈카노,Iced Coffeebeancano,에스프레소 음료,false,true,193.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,아이스 헤이즐넛 라떼,Iced Hazelnut Latte,에스프레소 음료,false,true,91.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,아이스 바닐라빈 오트라떼,Iced vanilla Bean Oat Latte,에스프레소 음료,false,true,91.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,아이스 헤이즐넛 아메리카노,Hazelnut Iced Americano,에스프레소 음료,false,true,91.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,아이스 바닐라 라떼,Iced Vanilla latte,에스프레소 음료,false,true,91.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,바닐라 아이스 블렌디드,Vanilla Ice Blended,아이스 블렌디드 (COFFEE),false,false,148.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,아이스 캐러멜 마키아또,Iced Caramel Macchiato,에스프레소 음료,false,true,91.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,캐러멜 아이스 블렌디드,Caramel Ice Blended,아이스 블렌디드 (COFFEE),false,false,148.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:coffeebean,플랫 화이트,Flat White,에스프레소 음료,false,true,198.0,https://www.coffeebeankorea.com/menu/list.asp,2026-09-26
-brand:compose,매샷추,,커피ㆍ콜드브루,false,true,123.87,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,아샷추,,커피ㆍ콜드브루,false,true,201.45,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,돌체라떼,,커피ㆍ콜드브루,false,true,247.75,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,쫀득카노,,커피ㆍ콜드브루,false,true,185.81,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,카페라떼,,커피ㆍ콜드브루,false,true,247.75,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,카페모카,,커피ㆍ콜드브루,false,true,253.56,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,카푸치노,,커피ㆍ콜드브루,false,true,247.75,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,콜드브루,,커피ㆍ콜드브루,false,false,181.0,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,달고나라떼,,커피ㆍ콜드브루,false,true,185.81,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,바닐라라떼,,커피ㆍ콜드브루,false,true,247.75,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,아메리카노,,커피ㆍ콜드브루,false,true,185.81,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,에스프레소,,커피ㆍ콜드브루,false,true,185.81,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,꿀아메리카노,,커피ㆍ콜드브루,false,true,185.81,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,너티크림라떼,,커피ㆍ콜드브루,false,true,123.97,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,콜드브루라떼,,커피ㆍ콜드브루,false,false,181.0,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,헤이즐넛라떼,,커피ㆍ콜드브루,false,true,247.75,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,바닐라크림라떼,,커피ㆍ콜드브루,false,true,124.75,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,아인슈페너라떼,,커피ㆍ콜드브루,false,true,247.85,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,캬라멜마끼아또,,커피ㆍ콜드브루,false,true,247.75,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,컴포즈믹스커피,,커피ㆍ콜드브루,false,false,215.52,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,디카페인콜드브루,,커피ㆍ콜드브루,true,false,8.5,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,베러댄아인슈페너,,커피ㆍ콜드브루,false,true,185.91,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,디카페인콜드브루라떼,,커피ㆍ콜드브루,true,false,8.5,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,파인애플 커피,,커피ㆍ콜드브루,false,true,123.87,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,디카페인 돌체라떼,,커피ㆍ콜드브루,true,false,12.21,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,디카페인 카페라떼,,커피ㆍ콜드브루,true,false,12.21,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,디카페인 바닐라라떼,,커피ㆍ콜드브루,true,false,12.21,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,디카페인 아메리카노,,커피ㆍ콜드브루,true,false,9.16,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,디카페인 헤이즐넛라떼,,커피ㆍ콜드브루,true,false,12.21,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,올데이 오트,,커피ㆍ콜드브루,true,false,9.16,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,빅포즈 아샷추,,커피ㆍ콜드브루,false,true,209.26,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,빅포즈 돌체라떼,,커피ㆍ콜드브루,false,true,495.49,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,빅포즈 카페라떼,,커피ㆍ콜드브루,false,true,495.49,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,빅포즈 바닐라라떼,,커피ㆍ콜드브루,false,true,495.49,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,빅포즈 아메리카노,,커피ㆍ콜드브루,false,true,371.62,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,에어리 아메리카노,,커피ㆍ콜드브루,false,true,185.81,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,빅포즈 디카페인라떼,,커피ㆍ콜드브루,true,false,24.43,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,빅포즈 파인애플커피,,커피ㆍ콜드브루,false,true,185.81,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,빅포즈 헤이즐넛라떼,,커피ㆍ콜드브루,false,true,495.49,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,빅포즈 디카페인 아메리카노,,커피ㆍ콜드브루,true,false,18.32,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,흑당 카페라떼,,커피ㆍ콜드브루,false,true,123.87,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:compose,흑당 버블 카페라떼,,커피ㆍ콜드브루,false,true,123.87,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition,2026-09-26
-brand:hollys,아샷추,Iced Tea with an Espresso Shot,에스프레소,false,false,74.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,아포가토,Affogato,에스프레소,false,false,93.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,카푸치노,Cappuccino,에스프레소,false,false,127.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,콜드브루,Cold Brew,에스프레소,false,false,195.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,아메리카노,Caffe Americano,에스프레소,false,false,114.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,에스프레소,Espresso,에스프레소,false,false,61.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,블랙아리아 딥라떼,Black Aria Deep Latte,에스프레소,false,false,153.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,블랙아리아 아메리카노,Black Aria Americano,에스프레소,false,false,153.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,콜드브루 라떼,Cold Brew Latte,에스프레소,false,false,195.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,디카페인 콜드브루,Decaf Cold Brew,에스프레소,true,false,6.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,콜드브루 딜라이트,Cold Brew Delight,에스프레소,false,false,195.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,디카페인 콜드브루 라떼,Decaf Cold Brew Latte,에스프레소,true,false,3.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,디카페인 콜드브루 아샷추,Iced Tea + Decaf Cold Brew,에스프레소,true,false,15.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,디카페인 콜드브루 바닐라 딜라이트,Decaf Cold Brew Vanilla Delight,에스프레소,true,false,25.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,블랙샷 라떼,Black Shot Latte,에스프레소,false,false,93.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,바닐라 딜라이트,Vanilla Delight,에스프레소,false,false,83.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,카라멜 마키아또,Caramel Macchiato,에스프레소,false,false,127.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,눈표범 아인슈페너,Snow Leopard Einspanner,에스프레소,false,false,127.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,몬스터 아메리카노,Monster Americano,에스프레소,false,false,134.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,흑임자 버터크림 라떼,Black Sesame Buttercream Latte,에스프레소,false,false,93.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,바닐라 딜라이트 아인슈페너,Vanilla Delight Einspanner,에스프레소,false,false,138.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,할리스 데일리 커피,HOLLYS Daily Coffee,에스프레소,false,false,195.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,할리스 데일리 커피 디카페인,HOLLYS Daily Coffee (Decaf),에스프레소,true,false,6.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,돌체 라떼,Dolce Latte,에스프레소,false,false,93.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,카페 라떼,Caffe Latte,에스프레소,false,false,127.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,카페 모카,Caffe Mocha,에스프레소,false,false,132.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:hollys,저당 바닐라 딜라이트,Low Sugar Vanilla Delight,에스프레소,false,false,79.0,https://www.hollys.co.kr/menu/espresso.do,2026-09-26
-brand:mega,녹차,Green Tea,커피,false,false,78.5,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,레몬차,Lemon Tea,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,유자차,Citron Tea,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,자몽차,Grapefruit Tea,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,핫초코,Hot Chocolate,커피,false,false,21.9,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,곡물라떼,Grain Latte,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,녹차라떼,Green Tea Latte,커피,false,false,72.5,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,딸기라떼,Strawberry Latte,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,딸기주스,Strawberry Juice,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,얼그레이,Earl Grey,커피,false,false,87.2,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,연유라떼,Condensed milk Latte,커피,false,false,194.2,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,체리콜라,Cherry Cola,커피,false,false,23.9,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,카페라떼,Caffe Latte,커피,false,false,199.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,카페모카,Caffe Mocha,커피,false,false,232.5,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,카푸치노,Cappuccino,커피,false,false,192.3,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,캐모마일,Chamomile,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,큐브라떼,Cube Latte,커피,false,false,313.4,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,페퍼민트,Peppermint Tea,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,흑당라떼,Brown Sugar Latte (No Pearls),커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,고구마라떼,Sweet Potato Latte,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,녹차프라페,Green Tea Frappe,커피,false,false,110.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,라임모히또,Lime Mojito,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,레몬에이드,Lemonade,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,메가리카노,32oz Americano,커피,false,false,290.8,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,메가에이드,MEGA Ade,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,민트프라페,Mint Frappe,커피,false,false,5.6,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,밀크쉐이크,Milkshake,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,바닐라라떼,Vanilla Latte,커피,false,false,195.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,사과유자차,Applecitron Tea,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,아메리카노,Americano,커피,false,false,199.7,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,아이스초코,Ice Choco,커피,false,false,21.3,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,에스프레소,Espresso,커피,false,false,104.8,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,왕메가초코,32oz MEGA Chocolate,커피,false,false,35.6,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,유자생강차,Citron Ginger Tea,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,자몽에이드,Grapefruit Ade,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,커피프라페,Coffee Frappe,커피,false,false,162.6,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,쿠키프라페,Cookie Frappe,커피,false,false,6.8,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,토피넛라떼,Toffeenut Latte,커피,false,false,54.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,할메가커피,MEGA Mix Coffee,커피,false,false,99.6,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,골드키위주스,Gold Kiwi Juice,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,꿀아메리카노,Honey Americano,커피,false,false,198.6,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,딸기퐁크러쉬,Strawberry Pongcrush,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,왕할메가커피,BIG MEGA Mix Coffee,커피,false,false,196.4,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,청포도에이드,Green Grape Ade,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,콜드브루라떼,Coldbrew Latte,커피,false,false,131.7,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,헤이즐넛라떼,Hazelnut Latte,커피,false,false,216.9,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,흑당버블라떼,Brown Sugar Bubble Latte,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,골드망고스무디,Gold Mango Smoothie,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,딸기바나나주스,Strawberry-Banana Juice,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,딸기쿠키프라페,Strawberry Cookie Frappe,커피,false,false,2.6,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,로얄밀크티라떼,Royal Milk Tea Latte,커피,false,false,118.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,리얼초코프라페,Real Chocolate Frappe,커피,false,false,32.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,바나나퐁크러쉬,Banana Pongcrush,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,복숭아아이스티,Peach Iced Tea,커피,false,false,24.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,블루레몬에이드,Blue Lemon Ade,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,오레오초코라떼,Oreo Chocolate Latte,커피,false,false,11.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,왕메가사과유자,BIG MEGA Apple Citron Tea,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,왕메가아이스티,32oz MEGA Peach Iced Tea,커피,false,false,41.2,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,왕메가카페라떼,BIG MEGA Caffe Latte,커피,false,false,347.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,카라멜마끼아또,Caramel Macchiato,커피,false,false,200.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,플레인퐁크러쉬,Plain Pongcrush,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,할메가미숫커피,MEGA MGC Mix Coffee Blend with Grain Powder,커피,false,false,180.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,허니자몽블랙티,Honey Grapefruit Black Tea,커피,false,false,70.9,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,흑당밀크티라떼,Brown Sugar Milk tea Latte (No pearls),커피,false,false,30.6,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,딸기요거트스무디,Strawberry Yogurt Smoothie,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,망고요거트스무디,Mango Yogurt Smoothie,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,바닐라아메리카노,Vanilla Americano,커피,false,false,211.5,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,블루베리플럼주스,Blueberry Plum Juice,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,왕메가헛개리카노,BIG MEGA  Oriental Raisin-Tea Americano,커피,false,false,234.6,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,초코허니퐁크러쉬,Chocolate Honey Pong Crush,커피,false,false,10.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,콜드브루디카페인,Decaf Coldbrew,커피,true,false,13.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,콜드브루오리지널,Coldbrew,커피,false,false,156.4,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,플레인요거트스무디,Plain Yogurt Smoothie,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,헤이즐넛아메리카노,Hazelnut Americano,커피,false,false,196.7,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,흑당버블밀크티라떼,Brown Sugar Bubble Milktea Latte,커피,false,false,14.3,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,블루베리요거트스무디,Blueberry Yogurt Smoothie,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,콜드브루디카페인라떼,Decaf Coldbrew Latte,커피,true,false,14.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,하우스밀크 라떼,House Milk Latte,커피,false,false,118.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,에스프레소 도피오,Espresso doppio,커피,false,false,184.7,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,초코젤라또 말차라떼,Choco-gelato Matcha Tea Latte,커피,false,false,153.8,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,디카페인 연유라떼,Decaf Condensed Milk Latte,커피,true,false,14.9,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,디카페인 카페라떼,Decaf Cafe Latte,커피,true,false,14.4,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,디카페인 카페모카,Decaf Cafe Mocha,커피,true,false,22.5,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,디카페인 카푸치노,Decaf Cappuccino,커피,true,false,11.4,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,디카페인 메가리카노,Decaf Megaricano,커피,true,false,10.9,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,디카페인 바닐라라떼,Decaf Vanilla Latte,커피,true,false,8.4,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,디카페인 아메리카노,Decaf Americano,커피,true,false,10.8,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,디카페인 에스프레소,Decaf Espresso,커피,true,false,4.9,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,무카페인 오르조라떼,Caffeine-Free Orzo Latte,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,디카페인 꿀아메리카노,Decaf Honey Americano,커피,true,false,8.7,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,디카페인 왕메가카페라떼,Decaf BIG MEGA Caffe Latte,커피,true,false,11.2,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,디카페인 카라멜마끼아또,Decaf Caramel Macchiato,커피,true,false,6.5,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,디카페인 왕메가헛개리카노,Decaf BIG MEGA  Oriental Raisin-Tea Americano,커피,true,false,13.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,디카페인 헤이즐넛 라떼,Decaf Hazelnut Latte,커피,true,false,4.8,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,디카페인 헤이즐넛 아메리카노,Decaf Hazelnut Americano,커피,true,false,11.2,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,디카페인 바닐라 아메리카노,Decaf Vanilla Americano,커피,true,false,8.8,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,디카페인 라이트 바닐라 아몬드라떼,Decaf Light vanilla almond latte,커피,true,false,9.5,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,라이트 바닐라 아몬드라떼,Light vanilla almond latte,커피,false,false,206.2,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,코코넛 커피 스무디,Coconut Coffee Smoothie,커피,false,false,173.8,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,저당 골든애플 블랙티,Low-Sugar Golden Apple Black Tea,커피,false,false,68.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,제로 레몬말차 아이스티,Zero Lemon Matcha Iced Tea,커피,false,false,0.4,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,제로 부스트 에이드,ZERO SUGAR Energy-Drink Ade,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,제로 복숭아 아이스티,ZERO Sugar Peach Iced Tea,커피,false,false,14.5,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,자몽 톡톡 스무디,Grapefruit Smoothie,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,귤 톡톡 젤리스무디,Tangerine Jelly Smoothie,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,ARIH 포스트바이오틱에너지 드링크 레몬크레스트,ARIH POSTBIOTIC ENERGY DRINK LEMON CREST,커피,false,false,100.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,ARIH 포스트바이오틱에너지 드링크 트로피칼웨이브,ARIH POSTBIOTIC ENERGY DRINK TROPICAL WAVE,커피,false,false,100.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,ARIH 포스트바이오틱 에너지드링크 오렌지아워,ARIH POSTBIOTIC ENERGY DRINK ORANGE HOUR,커피,false,false,100.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,ARIH 듀얼바이오틱 소다클리어레몬,ARIH DUAL BIOTIC SODA CLEAR LEMON,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,ARIH 듀얼바이오틱 소다포지티브 오렌지,ARIH DUAL BIOTIC SODA ORANGE,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,ARIH 듀얼바이오틱 소다피치망고 호라이즌,ARIH DUAL BIOTIC SODA PEACH & MANGO,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,ARIH 듀얼바이오틱 소다레드 루비 갈로어,ARIH DUAL BIOTIC SODA RED RUBY,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,(HOT)헛개리카노,Oriental Raisin-Tea Americano,커피,false,false,,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,(HOT)디카페인 헛개리카노,Decaf Oriental Raisin-Tea Americano,커피,true,false,9.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,(HOT)상큼 리치티,(HOT) Zesty Lychee Tea,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,(ICE)헛개리카노,Oriental Raisin-Tea Americano,커피,false,false,181.2,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,(ICE)디카페인 헛개리카노,Decaf Oriental Raisin-Tea Americano,커피,true,false,5.3,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,(ICE)상큼 리치티,(ICE) Zesty Lychee Tea,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:mega,저당 꿀배 XO야쿠르트,XO,커피,false,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1,2026-09-24
-brand:paik,더블에스프레소,double espresso,커피,false,false,269.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,코코넛커피스무디,COCONUT COFFEE SMOOTHIE,커피,false,false,199.2,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,아이스티샷추가(아샷추),PEACH ICED TEA WITH ESPRESSO,커피,false,false,100.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,원조커피크림 라떼,,커피,false,false,257.1,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,원조커피크림 미숫가루,,커피,false,false,46.5,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,아이스티샷 망고추가(아샷망추),"PEACH ICED TEA WITH SHOT, MANGO",커피,false,false,106.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 더블에스프레소,DECAF DOUBLE ESPRESSO,커피,true,false,1.9,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 바나나커피쉐이크,DECAF BANANA COFFEE SHAKE,커피,true,false,0.4,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 코코넛커피스무디,DECAF COCONUT COFFEE SMOOTHIE,커피,true,false,3.5,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 아이스티샷추가(아샷추),PEACH ICED TEA WITH DECAF ESPRESSO,커피,true,false,27.9,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 아이스크림 카페라떼,DECAF ICE CREAM CAFE LATTE,커피,true,false,0.8,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 아이스크림 바닐라라떼,DECAF ICE CREAM VANILLA LATTE,커피,true,false,0.8,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 아이스티샷 망고추가(아샷망추),"PEACH ICED TEA WITH DECAF SHOT, MANGO",커피,true,false,26.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 흑당버블 카페라떼,DECAF BROWN SUGAR BUBBLE CAFE LATTE,커피,true,false,0.4,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,콜드브루 디카페인 커피원액,COLD BREW DECAF BASE,커피,true,false,,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,콜드브루 오리지널 커피원액,COLD BREW ORIGINAL BASE,커피,false,false,,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,챔피언스 유자셔벗 아메리카노,,커피,false,false,190.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 빽사이즈 아이스티샷 망고추가,"EXTRA LARGE PEACH ICED TEA WITH DECAF SHOT, MANGO",커피,true,false,36.6,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 챔피언스 유자셔벗 아메리카노,,커피,true,false,20.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 챔피언스 유자 아메리카노,,커피,true,false,17.9,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 크리미 콜드브루 바닐라,DECAF CREAMY COLD BREW-VANILLA,커피,true,false,10.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 크리미 콜드브루 카라멜,DECAF CREAMY COLD BREW-CARAMEL,커피,true,false,9.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,챔피언스 유자 아메리카노,,커피,false,false,204.5,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,바나나 커피쉐이크,BANANA COFFEE SHAKE,커피,false,false,89.5,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,크리미 콜드브루 바닐라,CREAMY COLD BREW-VANILLA,커피,false,false,129.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,크리미 콜드브루 카라멜,CREAMY COLD BREW-CARAMEL,커피,false,false,170.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,헤이즐넛아메리카노(HOT),HAZELNUT AMERICANO,커피,false,false,190.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,카라멜마키아또(HOT),caramel macchiato,커피,false,false,165.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,코코넛카페라떼(HOT),COCONUT CAFE LATTE,커피,false,false,242.9,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,꿀아메리카노(HOT),HONEY AMERICANO,커피,false,false,175.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,달달연유라떼(HOT),condensed milk latte,커피,false,false,187.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,콜드브루라떼(HOT),COLD BREW LATTE(HOT),커피,false,false,202.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,헤이즐넛라떼(HOT),HAZELNUT LATTE,커피,false,false,184.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,바닐라라떼(HOT),vanilla latte,커피,false,false,168.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,아메리카노(HOT),AMERICANO,커피,false,false,197.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 바나나카페라떼(HOT),DECAF BANANA CAFE LATTE,커피,true,false,0.3,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 코코넛카페라떼(HOT),DECAF COCONUT CAFE LATTE,커피,true,false,4.1,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 꿀아메리카노(HOT),DECAF HONEY AMERICANO,커피,true,false,0.7,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 달달연유라떼(HOT),DECAF CONDENSED MILK LATTE,커피,true,false,1.4,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 콜드브루라떼(HOT),,커피,true,false,13.2,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 헤이즐넛라떼(HOT),DECAF HAZELNUT LATTE,커피,true,false,0.8,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 바닐라라떼(HOT),DECAF VANILLA LATTE,커피,true,false,0.8,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 아메리카노(HOT),DECAF AMERICANO,커피,true,false,1.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 헤이즐넛 아메리카노(HOT),DECAF HAZELNUT AMERICANO,커피,true,false,0.8,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 콜드브루 연유라떼(HOT),DECAF CONDENSED MILK COLD BREW LATTE,커피,true,false,12.6,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 콜드브루 흑당라떼(HOT),DECAF BLACK SUGAR COLD BREW LATTE,커피,true,false,12.5,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 챔피언스 블랙 벨벳 라떼 HOT,,커피,true,false,3.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 카페라떼(HOT),DECAF CAFE LATTE,커피,true,false,0.8,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 카페모카(HOT),DECAF CAFE MOCHA,커피,true,false,136.7,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 콜드브루(HOT),DECAF COLD BREW(HOT),커피,true,false,11.3,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,콜드브루 연유라떼(HOT),CONDENSED MILK COLD BREW LATTE,커피,false,false,197.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,콜드브루 흑당라떼(HOT),BLACK SUGAR COLD BREW LATTE,커피,false,false,197.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 카라멜 마키아또(HOT),DECAF CARAMEL MACCHIATO,커피,true,false,0.7,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,챔피언스 블랙 벨벳 라떼 HOT,,커피,false,false,209.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,원조커피(HOT),original mixed coffee,커피,false,false,345.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,카페라떼(HOT),cafe latte,커피,false,false,152.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,카페모카(HOT),CAFE MOCHA,커피,false,false,299.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,콜드브루(HOT),COLD BREW(HOT),커피,false,false,174.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,바나나 카페라떼(HOT),BANANA CAFE LATTE,커피,false,false,94.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,아이스크림바닐라라떼(ICED),ICE CREAM VANILA LATTE,커피,false,false,172.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,아이스크림카페라떼(ICED),ICE CREAM CAFÉ LATTE,커피,false,false,176.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,아이스크림카페모카(ICED),ICE CREAM CAFÉ MOCHA,커피,false,false,309.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,헤이즐넛아메리카노(ICED),HAZELNUT AMERICANO,커피,false,false,166.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,카라멜마키아또(ICED),caramel macchiato,커피,false,false,171.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,코코넛카페라떼(ICED),COCONUT CAFE LATTE,커피,false,false,177.2,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,꿀아메리카노(ICED),HONEY AMERICANO,커피,false,false,161.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,달달연유라떼(ICED),condensed milk latte,커피,false,false,164.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,콜드브루라떼(ICED),COLD BREW LATTE(ICED),커피,false,false,171.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,헤이즐넛라떼(ICED),HAZELNUT LATTE,커피,false,false,170.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,피스타치오 생크림 카페라떼(ICED),,커피,false,false,221.6,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,바닐라라떼(ICED),VANILLA LATTE,커피,false,false,156.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,아메리카노(ICED),AMERICANO,커피,false,false,166.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 아이스크림카페모카(ICED),DECAF ICE CREAM CAFE MOCHA,커피,true,false,113.9,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 바나나카페라떼(ICED),DECAF BANANA CAFE LATTE,커피,true,false,0.3,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 코코넛카페라떼(ICED),DECAF COCONUT CAFE LATTE,커피,true,false,2.8,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,빽사이즈 아이스티샷추가(ICED),EXTRA LARGE PEACH ICED TEA WITH ESPRESSO,커피,false,false,179.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 꿀아메리카노(ICED),DECAF HONEY AMERICANO,커피,true,false,0.7,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 달달연유라떼(ICED),DECAF CONDENSED MILK LATTE,커피,true,false,1.1,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 콜드브루라떼(ICED),DECAF COLD BREW LATTE(ICED),커피,true,false,12.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 헤이즐넛라떼(ICED),DECAF HAZELNUT LATTE,커피,true,false,0.7,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,빽사이즈 아이스티샷 망고추가(ICED),"EXTRA LARGE PEACH ICED TEA WITH SHOT, MANGO",커피,false,false,177.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 피스타치오 생크림 카페라떼(ICED),,커피,true,false,5.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 바닐라라떼(ICED),DECAF VANILLA LATTE,커피,true,false,0.8,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 아메리카노(ICED),DECAF AMERICANO,커피,true,false,1.2,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,빽사이즈 바닐라라떼(ICED),EXTRA LARGE VANILLA LATTE,커피,false,false,322.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,빽사이즈 아메리카노(ICED),EXTRA LARGE AMERICANO,커피,false,false,293.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 빽사이즈 아이스티샷추가(ICED),EXTRA LARGE PEACH ICED TEA WITH DECAF ESPRESSO,커피,true,false,38.1,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 빽사이즈 바닐라라떼(ICED),DECAF EXTRA LARGE VANILLA LATTE,커피,true,false,1.8,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 빽사이즈 아메리카노(ICED),DECAF EXTRA LARGE AMERICANO,커피,true,false,1.6,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 헤이즐넛 아메리카노(ICED),DECAF HAZELNUT AMERICANO,커피,true,false,0.7,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 빽사이즈 카페라떼(ICED),DECAF EXTRA LARGE CAFE LATTE,커피,true,false,2.3,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 콜드브루 연유라떼(ICED),DECAF CONDENSED MILK COLD BREW LATTE,커피,true,false,11.8,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 콜드브루 흑당라떼(ICED),DECAF BLACK SUGAR COLD BREW LATTE,커피,true,false,12.8,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 챔피언스 블랙 벨벳 라떼 ICED,,커피,true,false,3.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 카페라떼(ICED),DECAF CAFE LATTE,커피,true,false,0.7,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 카페모카(ICED),DECAF CAFE MOCHA,커피,true,false,117.8,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 콜드브루(ICED),DECAF COLD BREW(ICED),커피,true,false,12.4,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,빽사이즈 원조커피(ICED),EXTRA LARGE ORIGINAL MIXED COFFEE,커피,false,false,456.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,빽사이즈 카페라떼(ICED),EXTRA LARGE CAFE LATTE,커피,false,false,286.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,콜드브루 연유라떼(ICED),CONDENSED MILK COLD BREW LATTE,커피,false,false,187.7,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,콜드브루 흑당라떼(ICED),BLACK SUGAR COLD BREW LATTE,커피,false,false,195.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,흑당버블 카페라떼(ICED),BROWN SUGAR BUBBLE CAFÉ LATTE,커피,false,false,76.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 생크림 아메리카노(ICED),,커피,true,false,5.4,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 생크림 카페라떼(ICED),,커피,true,false,5.5,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,디카페인 카라멜 마키아또(ICED),DECAF CARAMEL MACCHIATO,커피,true,false,0.8,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,챔피언스 블랙 벨벳 라떼 ICED,,커피,false,false,165.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,원조커피(ICED),ORIGINAL MIXED COFFEE,커피,false,false,346.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,카페라떼(ICED),cafe latte,커피,false,false,163.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,카페모카(ICED),CAFE MOCHA,커피,false,false,270.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,콜드브루(ICED),COLD BREW,커피,false,false,177.8,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,생크림 아메리카노(ICED),,커피,false,false,231.9,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,에어폼 아메리카노(ICED),AIR FOAM AMERICANO,커피,false,false,293.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,바나나 카페라떼(ICED),BANANA CAFE LATTE,커피,false,false,78.0,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paik,생크림 카페라떼(ICED),,커피,false,false,231.5,https://paikdabang.com/menu/menu_coffee/,2026-09-24
-brand:paulbassett,룽고,Lungo,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB170054,2026-09-26
-brand:paulbassett,카페라떼,Cafe Latte,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB170080,2026-09-26
-brand:paulbassett,카푸치노,Cappuccino,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB170083,2026-09-26
-brand:paulbassett,리스트레토,Ristretto,커피,false,true,150.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB170055,2026-09-26
-brand:paulbassett,아메리카노,Americano,커피,false,true,160.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179548,2026-09-26
-brand:paulbassett,에스프레소,Espresso,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB170065,2026-09-26
-brand:paulbassett,에스프레소 마키아토,Espresso Macchiato,커피,false,true,113.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB170060,2026-09-26
-brand:paulbassett,디카페인 카페라떼,Decaf Cafe Latte,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181113,2026-09-26
-brand:paulbassett,디카페인 카페오트,Decaf Cafe Oat,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181111,2026-09-26
-brand:paulbassett,디카페인 카푸치노,Decaf Cappuccino,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181115,2026-09-26
-brand:paulbassett,바닐라빈 카페라떼,Vanilla Bean Cafe Latte,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB180980,2026-09-26
-brand:paulbassett,제주말차 카페라떼,Jeju Matcha Cream Cafe Latte,커피,false,false,384.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB182564,2026-09-26
-brand:paulbassett,디카페인 아메리카노,Decaf Americano,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181109,2026-09-26
-brand:paulbassett,디카페인 플랫화이트,Decaf Flat White,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181116,2026-09-26
-brand:paulbassett,디카페인 락토프리 카페라떼,Decaf Lactose-free Cafe Latte,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181118,2026-09-26
-brand:paulbassett,디카페인 바닐라빈 카페라떼,Decaf VanillaBean Cafe Latte,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181120,2026-09-26
-brand:paulbassett,디카페인 스페니쉬 카페라떼,Decaf Spanish Cafe Latte,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181122,2026-09-26
-brand:paulbassett,디카페인 시나몬 카페라떼,Decaf Cinnamon Cafe Latte,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181108,2026-09-26
-brand:paulbassett,디카페인 카라멜 마키아토,Decaf Caramel Macchiato,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181124,2026-09-26
-brand:paulbassett,락토프리 카페 라떼,Lactose-free Cafe Latte,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179976,2026-09-26
-brand:paulbassett,디카페인 밀크 소프트 아포가토,Decaf Milk Soft Affogato,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181142,2026-09-26
-brand:paulbassett,스페니쉬 카페 라떼 [연유],Spanish Cafe Latte,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179699,2026-09-26
-brand:paulbassett,아이스 룽고,Iced Lungo,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB170134,2026-09-26
-brand:paulbassett,아이스 카페라떼,Iced Cafe Latte,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB170157,2026-09-26
-brand:paulbassett,카라멜 마키아토,Caramel Macchiato,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179897,2026-09-26
-brand:paulbassett,아이스 아메리카노,Iced Americano,커피,false,true,160.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179549,2026-09-26
-brand:paulbassett,아이스 플랫화이트,Iced Flat White,커피,false,true,185.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB182117,2026-09-26
-brand:paulbassett,아이스 디카페인카라멜 마키아토,Iced Decaf Caramel Macchiato,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181141,2026-09-26
-brand:paulbassett,초콜릿 에스프레소 콘 파나,Chocolate Espresso Con Panna,커피,false,true,114.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB180699,2026-09-26
-brand:paulbassett,아이스 디카페인 카페라떼,Ice Decaf Cafe Latte,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181133,2026-09-26
-brand:paulbassett,아이스 디카페인 카페오트,Iced Decaf Cafe Oat,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181131,2026-09-26
-brand:paulbassett,아이스 바닐라빈 카페라떼,Iced Vanilla Bean Cafe Latte,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB180978,2026-09-26
-brand:paulbassett,아이스 제주말차 카페라떼,Iced Jeju Matcha Cafe Latte,커피,false,false,364.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB182566,2026-09-26
-brand:paulbassett,아이스 디카페인 아메리카노,Ice Decaf Americano,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181127,2026-09-26
-brand:paulbassett,아이스 디카페인 플랫화이트,Ice Decaf Flat White,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB182141,2026-09-26
-brand:paulbassett,아이스 디카페인 아이스크림 카페라떼,Decaf Ice Cream Cafe Latte,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181129,2026-09-26
-brand:paulbassett,아이스 디카페인 락토프리 카페라떼,Iced  Decaf Lactose-free Cafe Latte,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181135,2026-09-26
-brand:paulbassett,아이스 디카페인 바닐라빈 카페라떼,Iced Decaf VanillaBean Cafe Latte,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181137,2026-09-26
-brand:paulbassett,아이스 디카페인 스페니쉬 카페라떼,Ice Decaf Spanish Cafe Latte,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181139,2026-09-26
-brand:paulbassett,아이스 디카페인 시나몬 카페라떼,Ice Decaf Iced Cinnamon Cafe Latte,커피,true,false,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181126,2026-09-26
-brand:paulbassett,아이스 락토프리 카페 라떼,Iced Lactose-free Cafe Latte,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179978,2026-09-26
-brand:paulbassett,아이스 스페니쉬 카페 라떼 [연유],Iced Spanish Cafe Latte,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179700,2026-09-26
-brand:paulbassett,아이스 카라멜 마키아토,Iced Caramel Macchiato,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179898,2026-09-26
-brand:paulbassett,아이스 시나몬 카페 라떼,Iced Cinnamon Cafe Latte,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179376,2026-09-26
-brand:paulbassett,시나몬 카페 라떼,Cinnamon Cafe Latte,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179371,2026-09-26
-brand:paulbassett,아이스 카페 모카,Cafe Mocha,커피,false,true,245.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181192,2026-09-26
-brand:paulbassett,아이스 카페 오트,Iced Cafe Oat,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB180772,2026-09-26
-brand:paulbassett,카페 모카,Cafe Mocha,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181190,2026-09-26
-brand:paulbassett,카페 오트,Cafe Oat,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB180770,2026-09-26
-brand:paulbassett,플랫 화이트,Flat White,커피,false,true,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179737,2026-09-26
-brand:paulbassett,너티 멜로우 콜드브루,Nutty Mellow Cold Brew,커피,false,false,135.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB184039,2026-09-26
-brand:paulbassett,너티 멜로우 콜드브루 라떼,Nutty Mellow Cold Brew Latte,커피,false,false,135.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB184042,2026-09-26
-brand:paulbassett,아이스 카페 소이 밀크 with 허니,Cafe Soy Milk with Honey,커피,false,true,212.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB183976,2026-09-26
-brand:paulbassett,카페 소이 밀크 with 허니,Cafe Soy Milk with Honey,커피,false,true,206.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB183974,2026-09-26
-brand:paulbassett,커피큐브 WITH 카페라떼,Coffee Cube with Cafe Latte,커피,false,false,370.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB182863,2026-09-26
-brand:paulbassett,커피큐브 WITH 아메리카노,Coffee Cube with Americano,커피,false,false,308.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB183714,2026-09-26
-brand:starbucks,카푸치노,,카푸치노,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,코르타도,,라떼,false,true,225.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,에스프레소,,에스프레소,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,밀크카라멜 라떼,,라떼,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,에스프레소 마키아또,,에스프레소 마키아또,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,에스프레소 플라이트,,에스프레소,false,true,,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,에스프레소 프라푸치노,,블렌디드 커피,false,false,120.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js,2026-09-24
-brand:starbucks,에스프레소 플라이트 도산,,에스프레소,false,true,,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,에스프레소 콘 파나,,도피오,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,사케라또 아포가토,,에스프레소,false,true,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,스타벅스 에어로카노,,아메리카노,false,true,150.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,스파클링 시트러스 에스프레소,,에스프레소,false,true,105.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,헤이즐넛 스타벅스 더블 샷,,에스프레소,false,true,150.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,사케라또 비안코 오버 아이스,,라떼,false,true,315.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,스타벅스 돌체 라떼,,라떼,false,true,150.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,베르가못 딸기 크림 프라푸치노,,블렌디드 크림,false,false,0.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js,2026-09-24
-brand:starbucks,스타벅스 자몽 허니 에어로카노,,아메리카노,false,true,150.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,베르가못 제주 말차 크림 프라푸치노,,블렌디드 크림,false,false,30.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js,2026-09-24
-brand:starbucks,스타벅스 꿀 호떡 라떼,,라떼,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,스타벅스 꿀 호떡 크림 프라푸치노,,블렌디드 커피,false,false,0.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js,2026-09-24
-brand:starbucks,바닐라 라떼,,라떼,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,아이스 카푸치노,,카푸치노,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,카라멜 마키아또,,마키아또,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,클래식 아포가토,,에스프레소,false,true,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,카라멜 프라푸치노,,블렌디드 커피,false,false,85.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js,2026-09-24
-brand:starbucks,아이스 밀크카라멜 라떼,,라떼,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,바닐라 스타벅스 더블 샷,,에스프레소,false,true,150.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,아이스 스타벅스 돌체 라떼,,라떼,false,true,150.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,아이스 스타벅스 꿀 호떡 라떼,,라떼,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,아이스 바닐라 라떼,,라떼,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,화이트 초콜릿 모카,,모카,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,아이스 카라멜 마키아또,,마키아또,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,화이트 타이거 프라푸치노,,블렌디드 크림,false,false,0.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js,2026-09-24
-brand:starbucks,아이스 화이트 초콜릿 모카,,모카,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,아이스 인절미 크림 라떼,,라떼,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,아이스 라벤더 카페 브레베,,라떼,false,true,105.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,아이스 바닐라 빈 라떼,,라떼,false,true,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,아이스 카페 라떼,,라떼,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,아이스 카페 모카,,모카,false,true,95.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,인절미 크림 라떼,,라떼,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,클래식 민트 모카,,모카,false,true,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,라벤더 카페 브레베,,라떼,false,true,105.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,아이스 플랫 화이트,,리스트레또 비안코,false,true,130.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,아이스 카페 아메리카노,,아메리카노,false,true,150.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,아이스 블랙 글레이즈드 라떼,,라떼,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,아이스 우베 코코넛 마키아또,,마키아또,false,true,105.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,초콜릿 크림 칩 프라푸치노,,블렌디드 크림,false,false,10.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js,2026-09-24
-brand:starbucks,바닐라 빈 라떼,,라떼,false,true,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,카페 라떼,,라떼,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,카페 모카,,모카,false,true,95.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,플랫 화이트,,리스트레또 비안코,false,true,130.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,카페 아메리카노,,아메리카노,false,true,150.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,블랙 글레이즈드 라떼,,라떼,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,딸기 글레이즈드 크림 프라푸치노,,블렌디드 크림,false,false,5.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js,2026-09-24
-brand:starbucks,더블 에스프레소 칩 프라푸치노,,블렌디드 커피,false,false,130.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js,2026-09-24
-brand:starbucks,커피 스타벅스 더블 샷,,에스프레소,false,true,150.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,번트 카라멜 라떼,,라떼,false,true,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,제주 비자림 리저브 에스프레소 라떼,,라떼,false,true,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,제주 오름 초당옥수수 프라푸치노,,블렌디드 크림,false,false,0.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js,2026-09-24
-brand:starbucks,제주 까망 크림 프라푸치노,,블렌디드 크림,false,false,0.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js,2026-09-24
-brand:starbucks,제주 말차 크림 프라푸치노,,블렌디드 크림,false,false,80.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js,2026-09-24
-brand:starbucks,제주 쑥떡 크림 프라푸치노,,블렌디드 크림,false,false,0.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js,2026-09-24
-brand:starbucks,피넛 쿠키 크림 프라푸치노,,블렌디드 크림,false,false,0.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js,2026-09-24
-brand:starbucks,피넛 크림 쿠키 아인슈페너,,라떼,false,true,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,자바 칩 프라푸치노,,블렌디드 커피,false,false,100.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js,2026-09-24
-brand:starbucks,스타벅스 1호점 카페 라떼,,라떼,false,true,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,스타벅스 1호점 크림 라떼,,라떼,false,true,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,스타벅스 1호점 카페 아메리카노,,아메리카노,false,true,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,아이스 스타벅스 1호점 카페 라떼,,라떼,false,true,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,아이스 스타벅스 1호점 크림 라떼,,라떼,false,true,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
-brand:starbucks,아이스 스타벅스 1호점 카페 아메리카노,,아메리카노,false,true,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js,2026-09-24
+﻿brand_key,name,is_decaf,caffeine_mg,source_url
+brand:coffeebean,드립커피,false,148.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,카페라떼,false,91.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,카페모카,false,102.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,카페수아,false,182.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,카푸치노,false,91.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,콜드브루,false,190.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,마끼아토네,false,91.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,아메리카노,false,182.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,커피빈라떼,false,193.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,커피빈카노,false,193.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,에스프레소 더블,false,182.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,에스프레소 싱글,false,91.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,마끼아토 더블,false,198.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,마끼아토 싱글,false,91.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,콜드브루 라떼,false,152.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,콜드브루 수아,false,152.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,헤이즐넛 라떼,false,91.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,바닐라빈 오트라떼,false,91.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,헤이즐넛 아메리카노,false,182.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,카페모카 아이스 블렌디드,false,159.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,헤이즐넛 아이스 블렌디드,false,148.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,바닐라빈 오트 콜드브루,false,144.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,바닐라 라떼,false,91.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,아이스 드립커피,false,74.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,아이스 카페라떼,false,91.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,아이스 카페모카,false,102.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,아이스 카페수아,false,182.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,아이스 카푸치노,false,91.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,캐러멜 마키아또,false,91.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,브라운 마끼아토네,false,91.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,아이스 아메리카노,false,91.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,아이스 에스프레소,false,273.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,아이스 커피빈라떼,false,193.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,아이스 커피빈카노,false,193.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,아이스 헤이즐넛 라떼,false,91.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,아이스 바닐라빈 오트라떼,false,91.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,아이스 헤이즐넛 아메리카노,false,91.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,아이스 바닐라 라떼,false,91.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,바닐라 아이스 블렌디드,false,148.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,아이스 캐러멜 마키아또,false,91.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,캐러멜 아이스 블렌디드,false,148.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeebean,플랫 화이트,false,198.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:compose,매샷추,false,123.87,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,아샷추,false,201.45,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,돌체라떼,false,247.75,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,쫀득카노,false,185.81,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,카페라떼,false,247.75,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,카페모카,false,253.56,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,카푸치노,false,247.75,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,콜드브루,false,181.0,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,달고나라떼,false,185.81,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,바닐라라떼,false,247.75,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,아메리카노,false,185.81,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,에스프레소,false,185.81,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,꿀아메리카노,false,185.81,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,너티크림라떼,false,123.97,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,콜드브루라떼,false,181.0,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,헤이즐넛라떼,false,247.75,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,바닐라크림라떼,false,124.75,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,아인슈페너라떼,false,247.85,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,캬라멜마끼아또,false,247.75,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,컴포즈믹스커피,false,215.52,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,디카페인콜드브루,true,8.5,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,베러댄아인슈페너,false,185.91,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,디카페인콜드브루라떼,true,8.5,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,파인애플 커피,false,123.87,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,디카페인 돌체라떼,true,12.21,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,디카페인 카페라떼,true,12.21,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,디카페인 바닐라라떼,true,12.21,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,디카페인 아메리카노,true,9.16,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,디카페인 헤이즐넛라떼,true,12.21,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,올데이 오트,true,9.16,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,빅포즈 아샷추,false,209.26,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,빅포즈 돌체라떼,false,495.49,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,빅포즈 카페라떼,false,495.49,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,빅포즈 바닐라라떼,false,495.49,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,빅포즈 아메리카노,false,371.62,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,에어리 아메리카노,false,185.81,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,빅포즈 디카페인라떼,true,24.43,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,빅포즈 파인애플커피,false,185.81,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,빅포즈 헤이즐넛라떼,false,495.49,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,빅포즈 디카페인 아메리카노,true,18.32,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,흑당 카페라떼,false,123.87,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:compose,흑당 버블 카페라떼,false,123.87,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:ediya,달달커피,false,162.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,얼박샷추,false,261.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,카푸치노,false,202.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,콜드브루,false,181.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,에스프레소 코코넛,false,202.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,시그니처 라떼,false,202.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,콜드브루 라떼,false,181.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,디카페인 카푸치노,true,7.0,"https://ediya.com/contents/drink.html?chked_val=155,"
+brand:ediya,디카페인 콜드브루,true,12.0,"https://ediya.com/contents/drink.html?chked_val=155,"
+brand:ediya,아포가토 오리지널,false,101.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,제로슈가 달달커피,false,47.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,꿀화이트 아메리카노,false,202.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,디카페인 에스프레소,true,4.0,"https://ediya.com/contents/drink.html?chked_val=155,"
+brand:ediya,헤이즐넛 아메리카노,false,202.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,디카페인 에스프레소 코코넛,true,7.0,"https://ediya.com/contents/drink.html?chked_val=155,"
+brand:ediya,디카페인 아이스크림 카페라떼,true,7.0,"https://ediya.com/contents/drink.html?chked_val=155,"
+brand:ediya,디카페인 시그니처 라떼,true,7.0,"https://ediya.com/contents/drink.html?chked_val=155,"
+brand:ediya,디카페인 콜드브루 라떼,true,12.0,"https://ediya.com/contents/drink.html?chked_val=155,"
+brand:ediya,디카페인 아포가토 오리지널,true,3.0,"https://ediya.com/contents/drink.html?chked_val=155,"
+brand:ediya,디카페인 꿀화이트 아메리카노,true,7.0,"https://ediya.com/contents/drink.html?chked_val=155,"
+brand:ediya,디카페인 헤이즐넛 아메리카노,true,7.0,"https://ediya.com/contents/drink.html?chked_val=155,"
+brand:ediya,디카페인 바닐라 라떼,true,7.0,"https://ediya.com/contents/drink.html?chked_val=155,"
+brand:ediya,디카페인 카라멜 마끼아또,true,7.0,"https://ediya.com/contents/drink.html?chked_val=155,"
+brand:ediya,디카페인 민트 모카,true,12.0,"https://ediya.com/contents/drink.html?chked_val=155,"
+brand:ediya,디카페인 카페 라떼,true,7.0,"https://ediya.com/contents/drink.html?chked_val=155,"
+brand:ediya,디카페인 카페 모카,true,50.0,"https://ediya.com/contents/drink.html?chked_val=155,"
+brand:ediya,디카페인 연유 콜드브루,true,12.0,"https://ediya.com/contents/drink.html?chked_val=155,"
+brand:ediya,디카페인 흑당 콜드브루,true,12.0,"https://ediya.com/contents/drink.html?chked_val=155,"
+brand:ediya,디카페인 카페 아메리카노,true,7.0,"https://ediya.com/contents/drink.html?chked_val=155,"
+brand:ediya,디카페인 연유 카페 라떼,true,7.0,"https://ediya.com/contents/drink.html?chked_val=155,"
+brand:ediya,얼박샷추(디카페인 원두),false,163.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,바닐라 라떼,false,202.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,카라멜 마끼아또,false,202.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,화이트 초콜릿 모카,false,202.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,민트 모카,false,207.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,카페 라떼,false,202.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,카페 모카,false,245.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,연유 콜드브루,false,181.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,흑당 콜드브루,false,181.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,카페 아메리카노,false,202.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:ediya,연유 카페 라떼,false,202.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:hollys,아샷추,false,74.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,아포가토,false,93.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,카푸치노,false,127.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,콜드브루,false,195.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,아메리카노,false,114.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,에스프레소,false,61.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,블랙아리아 딥라떼,false,153.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,블랙아리아 아메리카노,false,153.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,콜드브루 라떼,false,195.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,디카페인 콜드브루,true,6.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,콜드브루 딜라이트,false,195.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,디카페인 콜드브루 라떼,true,3.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,디카페인 콜드브루 아샷추,true,15.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,디카페인 콜드브루 바닐라 딜라이트,true,25.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,블랙샷 라떼,false,93.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,바닐라 딜라이트,false,83.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,카라멜 마키아또,false,127.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,눈표범 아인슈페너,false,127.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,몬스터 아메리카노,false,134.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,흑임자 버터크림 라떼,false,93.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,바닐라 딜라이트 아인슈페너,false,138.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,할리스 데일리 커피,false,195.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,할리스 데일리 커피 디카페인,true,6.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,돌체 라떼,false,93.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,카페 라떼,false,127.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,카페 모카,false,132.0,https://www.hollys.co.kr/menu/espresso.do
+brand:hollys,저당 바닐라 딜라이트,false,79.0,https://www.hollys.co.kr/menu/espresso.do
+brand:mega,녹차,false,78.5,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,레몬차,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,유자차,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,자몽차,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,핫초코,false,21.9,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,곡물라떼,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,녹차라떼,false,72.5,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,딸기라떼,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,딸기주스,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,얼그레이,false,87.2,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,연유라떼,false,194.2,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,체리콜라,false,23.9,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,카페라떼,false,199.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,카페모카,false,232.5,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,카푸치노,false,192.3,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,캐모마일,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,큐브라떼,false,313.4,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,페퍼민트,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,흑당라떼,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,고구마라떼,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,녹차프라페,false,110.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,라임모히또,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,레몬에이드,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,메가리카노,false,290.8,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,메가에이드,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,민트프라페,false,5.6,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,밀크쉐이크,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,바닐라라떼,false,195.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,사과유자차,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,아메리카노,false,199.7,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,아이스초코,false,21.3,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,에스프레소,false,104.8,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,왕메가초코,false,35.6,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,유자생강차,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,자몽에이드,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,커피프라페,false,162.6,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,쿠키프라페,false,6.8,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,토피넛라떼,false,54.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,할메가커피,false,99.6,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,골드키위주스,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,꿀아메리카노,false,198.6,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,딸기퐁크러쉬,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,왕할메가커피,false,196.4,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,청포도에이드,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,콜드브루라떼,false,131.7,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,헤이즐넛라떼,false,216.9,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,흑당버블라떼,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,골드망고스무디,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,딸기바나나주스,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,딸기쿠키프라페,false,2.6,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,로얄밀크티라떼,false,118.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,리얼초코프라페,false,32.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,바나나퐁크러쉬,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,복숭아아이스티,false,24.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,블루레몬에이드,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,오레오초코라떼,false,11.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,왕메가사과유자,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,왕메가아이스티,false,41.2,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,왕메가카페라떼,false,347.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,카라멜마끼아또,false,200.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,플레인퐁크러쉬,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,할메가미숫커피,false,180.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,허니자몽블랙티,false,70.9,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,흑당밀크티라떼,false,30.6,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,딸기요거트스무디,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,망고요거트스무디,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,바닐라아메리카노,false,211.5,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,블루베리플럼주스,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,왕메가헛개리카노,false,234.6,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,초코허니퐁크러쉬,false,10.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,콜드브루디카페인,true,13.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,콜드브루오리지널,false,156.4,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,플레인요거트스무디,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,헤이즐넛아메리카노,false,196.7,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,흑당버블밀크티라떼,false,14.3,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,블루베리요거트스무디,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,콜드브루디카페인라떼,true,14.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,하우스밀크 라떼,false,118.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,에스프레소 도피오,false,184.7,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,초코젤라또 말차라떼,false,153.8,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,디카페인 연유라떼,true,14.9,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,디카페인 카페라떼,true,14.4,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,디카페인 카페모카,true,22.5,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,디카페인 카푸치노,true,11.4,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,디카페인 메가리카노,true,10.9,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,디카페인 바닐라라떼,true,8.4,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,디카페인 아메리카노,true,10.8,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,디카페인 에스프레소,true,4.9,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,무카페인 오르조라떼,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,디카페인 꿀아메리카노,true,8.7,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,디카페인 왕메가카페라떼,true,11.2,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,디카페인 카라멜마끼아또,true,6.5,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,디카페인 왕메가헛개리카노,true,13.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,디카페인 헤이즐넛 라떼,true,4.8,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,디카페인 헤이즐넛 아메리카노,true,11.2,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,디카페인 바닐라 아메리카노,true,8.8,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,디카페인 라이트 바닐라 아몬드라떼,true,9.5,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,라이트 바닐라 아몬드라떼,false,206.2,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,코코넛 커피 스무디,false,173.8,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,저당 골든애플 블랙티,false,68.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,제로 레몬말차 아이스티,false,0.4,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,제로 부스트 에이드,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,제로 복숭아 아이스티,false,14.5,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,자몽 톡톡 스무디,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,귤 톡톡 젤리스무디,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,ARIH 포스트바이오틱에너지 드링크 레몬크레스트,false,100.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,ARIH 포스트바이오틱에너지 드링크 트로피칼웨이브,false,100.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,ARIH 포스트바이오틱 에너지드링크 오렌지아워,false,100.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,ARIH 듀얼바이오틱 소다클리어레몬,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,ARIH 듀얼바이오틱 소다포지티브 오렌지,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,ARIH 듀얼바이오틱 소다피치망고 호라이즌,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,ARIH 듀얼바이오틱 소다레드 루비 갈로어,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,(HOT)헛개리카노,false,,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,(HOT)디카페인 헛개리카노,true,9.1,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,(HOT)상큼 리치티,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,(ICE)헛개리카노,false,181.2,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,(ICE)디카페인 헛개리카노,true,5.3,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,(ICE)상큼 리치티,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:mega,저당 꿀배 XO야쿠르트,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
+brand:paik,더블에스프레소,false,269.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,코코넛커피스무디,false,199.2,https://paikdabang.com/menu/menu_coffee/
+brand:paik,아이스티샷추가(아샷추),false,100.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,원조커피크림 라떼,false,257.1,https://paikdabang.com/menu/menu_coffee/
+brand:paik,원조커피크림 미숫가루,false,46.5,https://paikdabang.com/menu/menu_coffee/
+brand:paik,아이스티샷 망고추가(아샷망추),false,106.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 더블에스프레소,true,1.9,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 바나나커피쉐이크,true,0.4,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 코코넛커피스무디,true,3.5,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 아이스티샷추가(아샷추),true,27.9,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 아이스크림 카페라떼,true,0.8,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 아이스크림 바닐라라떼,true,0.8,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 아이스티샷 망고추가(아샷망추),true,26.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 흑당버블 카페라떼,true,0.4,https://paikdabang.com/menu/menu_coffee/
+brand:paik,콜드브루 디카페인 커피원액,true,,https://paikdabang.com/menu/menu_coffee/
+brand:paik,콜드브루 오리지널 커피원액,false,,https://paikdabang.com/menu/menu_coffee/
+brand:paik,챔피언스 유자셔벗 아메리카노,false,190.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 빽사이즈 아이스티샷 망고추가,true,36.6,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 챔피언스 유자셔벗 아메리카노,true,20.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 챔피언스 유자 아메리카노,true,17.9,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 크리미 콜드브루 바닐라,true,10.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 크리미 콜드브루 카라멜,true,9.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,챔피언스 유자 아메리카노,false,204.5,https://paikdabang.com/menu/menu_coffee/
+brand:paik,바나나 커피쉐이크,false,89.5,https://paikdabang.com/menu/menu_coffee/
+brand:paik,크리미 콜드브루 바닐라,false,129.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,크리미 콜드브루 카라멜,false,170.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,헤이즐넛아메리카노(HOT),false,190.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,카라멜마키아또(HOT),false,165.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,코코넛카페라떼(HOT),false,242.9,https://paikdabang.com/menu/menu_coffee/
+brand:paik,꿀아메리카노(HOT),false,175.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,달달연유라떼(HOT),false,187.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,콜드브루라떼(HOT),false,202.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,헤이즐넛라떼(HOT),false,184.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,바닐라라떼(HOT),false,168.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,아메리카노(HOT),false,197.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 바나나카페라떼(HOT),true,0.3,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 코코넛카페라떼(HOT),true,4.1,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 꿀아메리카노(HOT),true,0.7,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 달달연유라떼(HOT),true,1.4,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 콜드브루라떼(HOT),true,13.2,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 헤이즐넛라떼(HOT),true,0.8,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 바닐라라떼(HOT),true,0.8,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 아메리카노(HOT),true,1.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 헤이즐넛 아메리카노(HOT),true,0.8,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 콜드브루 연유라떼(HOT),true,12.6,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 콜드브루 흑당라떼(HOT),true,12.5,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 챔피언스 블랙 벨벳 라떼 HOT,true,3.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 카페라떼(HOT),true,0.8,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 카페모카(HOT),true,136.7,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 콜드브루(HOT),true,11.3,https://paikdabang.com/menu/menu_coffee/
+brand:paik,콜드브루 연유라떼(HOT),false,197.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,콜드브루 흑당라떼(HOT),false,197.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 카라멜 마키아또(HOT),true,0.7,https://paikdabang.com/menu/menu_coffee/
+brand:paik,챔피언스 블랙 벨벳 라떼 HOT,false,209.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,원조커피(HOT),false,345.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,카페라떼(HOT),false,152.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,카페모카(HOT),false,299.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,콜드브루(HOT),false,174.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,바나나 카페라떼(HOT),false,94.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,아이스크림바닐라라떼(ICED),false,172.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,아이스크림카페라떼(ICED),false,176.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,아이스크림카페모카(ICED),false,309.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,헤이즐넛아메리카노(ICED),false,166.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,카라멜마키아또(ICED),false,171.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,코코넛카페라떼(ICED),false,177.2,https://paikdabang.com/menu/menu_coffee/
+brand:paik,꿀아메리카노(ICED),false,161.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,달달연유라떼(ICED),false,164.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,콜드브루라떼(ICED),false,171.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,헤이즐넛라떼(ICED),false,170.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,피스타치오 생크림 카페라떼(ICED),false,221.6,https://paikdabang.com/menu/menu_coffee/
+brand:paik,바닐라라떼(ICED),false,156.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,아메리카노(ICED),false,166.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 아이스크림카페모카(ICED),true,113.9,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 바나나카페라떼(ICED),true,0.3,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 코코넛카페라떼(ICED),true,2.8,https://paikdabang.com/menu/menu_coffee/
+brand:paik,빽사이즈 아이스티샷추가(ICED),false,179.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 꿀아메리카노(ICED),true,0.7,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 달달연유라떼(ICED),true,1.1,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 콜드브루라떼(ICED),true,12.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 헤이즐넛라떼(ICED),true,0.7,https://paikdabang.com/menu/menu_coffee/
+brand:paik,빽사이즈 아이스티샷 망고추가(ICED),false,177.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 피스타치오 생크림 카페라떼(ICED),true,5.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 바닐라라떼(ICED),true,0.8,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 아메리카노(ICED),true,1.2,https://paikdabang.com/menu/menu_coffee/
+brand:paik,빽사이즈 바닐라라떼(ICED),false,322.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,빽사이즈 아메리카노(ICED),false,293.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 빽사이즈 아이스티샷추가(ICED),true,38.1,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 빽사이즈 바닐라라떼(ICED),true,1.8,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 빽사이즈 아메리카노(ICED),true,1.6,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 헤이즐넛 아메리카노(ICED),true,0.7,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 빽사이즈 카페라떼(ICED),true,2.3,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 콜드브루 연유라떼(ICED),true,11.8,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 콜드브루 흑당라떼(ICED),true,12.8,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 챔피언스 블랙 벨벳 라떼 ICED,true,3.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 카페라떼(ICED),true,0.7,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 카페모카(ICED),true,117.8,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 콜드브루(ICED),true,12.4,https://paikdabang.com/menu/menu_coffee/
+brand:paik,빽사이즈 원조커피(ICED),false,456.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,빽사이즈 카페라떼(ICED),false,286.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,콜드브루 연유라떼(ICED),false,187.7,https://paikdabang.com/menu/menu_coffee/
+brand:paik,콜드브루 흑당라떼(ICED),false,195.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,흑당버블 카페라떼(ICED),false,76.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 생크림 아메리카노(ICED),true,5.4,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 생크림 카페라떼(ICED),true,5.5,https://paikdabang.com/menu/menu_coffee/
+brand:paik,디카페인 카라멜 마키아또(ICED),true,0.8,https://paikdabang.com/menu/menu_coffee/
+brand:paik,챔피언스 블랙 벨벳 라떼 ICED,false,165.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,원조커피(ICED),false,346.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,카페라떼(ICED),false,163.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,카페모카(ICED),false,270.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,콜드브루(ICED),false,177.8,https://paikdabang.com/menu/menu_coffee/
+brand:paik,생크림 아메리카노(ICED),false,231.9,https://paikdabang.com/menu/menu_coffee/
+brand:paik,에어폼 아메리카노(ICED),false,293.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,바나나 카페라떼(ICED),false,78.0,https://paikdabang.com/menu/menu_coffee/
+brand:paik,생크림 카페라떼(ICED),false,231.5,https://paikdabang.com/menu/menu_coffee/
+brand:paulbassett,룽고,false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB170054
+brand:paulbassett,카페라떼,false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB170080
+brand:paulbassett,카푸치노,false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB170083
+brand:paulbassett,리스트레토,false,150.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB170055
+brand:paulbassett,아메리카노,false,160.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179548
+brand:paulbassett,에스프레소,false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB170065
+brand:paulbassett,에스프레소 마키아토,false,113.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB170060
+brand:paulbassett,디카페인 카페라떼,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181113
+brand:paulbassett,디카페인 카페오트,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181111
+brand:paulbassett,디카페인 카푸치노,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181115
+brand:paulbassett,바닐라빈 카페라떼,false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB180980
+brand:paulbassett,제주말차 카페라떼,false,384.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB182564
+brand:paulbassett,디카페인 아메리카노,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181109
+brand:paulbassett,디카페인 플랫화이트,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181116
+brand:paulbassett,디카페인 락토프리 카페라떼,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181118
+brand:paulbassett,디카페인 바닐라빈 카페라떼,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181120
+brand:paulbassett,디카페인 스페니쉬 카페라떼,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181122
+brand:paulbassett,디카페인 시나몬 카페라떼,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181108
+brand:paulbassett,디카페인 카라멜 마키아토,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181124
+brand:paulbassett,락토프리 카페 라떼,false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179976
+brand:paulbassett,디카페인 밀크 소프트 아포가토,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181142
+brand:paulbassett,스페니쉬 카페 라떼 [연유],false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179699
+brand:paulbassett,아이스 룽고,false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB170134
+brand:paulbassett,아이스 카페라떼,false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB170157
+brand:paulbassett,카라멜 마키아토,false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179897
+brand:paulbassett,아이스 아메리카노,false,160.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179549
+brand:paulbassett,아이스 플랫화이트,false,185.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB182117
+brand:paulbassett,아이스 디카페인카라멜 마키아토,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181141
+brand:paulbassett,초콜릿 에스프레소 콘 파나,false,114.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB180699
+brand:paulbassett,아이스 디카페인 카페라떼,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181133
+brand:paulbassett,아이스 디카페인 카페오트,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181131
+brand:paulbassett,아이스 바닐라빈 카페라떼,false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB180978
+brand:paulbassett,아이스 제주말차 카페라떼,false,364.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB182566
+brand:paulbassett,아이스 디카페인 아메리카노,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181127
+brand:paulbassett,아이스 디카페인 플랫화이트,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB182141
+brand:paulbassett,아이스 디카페인 아이스크림 카페라떼,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181129
+brand:paulbassett,아이스 디카페인 락토프리 카페라떼,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181135
+brand:paulbassett,아이스 디카페인 바닐라빈 카페라떼,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181137
+brand:paulbassett,아이스 디카페인 스페니쉬 카페라떼,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181139
+brand:paulbassett,아이스 디카페인 시나몬 카페라떼,true,10.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181126
+brand:paulbassett,아이스 락토프리 카페 라떼,false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179978
+brand:paulbassett,아이스 스페니쉬 카페 라떼 [연유],false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179700
+brand:paulbassett,아이스 카라멜 마키아토,false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179898
+brand:paulbassett,아이스 시나몬 카페 라떼,false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179376
+brand:paulbassett,시나몬 카페 라떼,false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179371
+brand:paulbassett,아이스 카페 모카,false,245.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181192
+brand:paulbassett,아이스 카페 오트,false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB180772
+brand:paulbassett,카페 모카,false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB181190
+brand:paulbassett,카페 오트,false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB180770
+brand:paulbassett,플랫 화이트,false,225.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB179737
+brand:paulbassett,너티 멜로우 콜드브루,false,135.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB184039
+brand:paulbassett,너티 멜로우 콜드브루 라떼,false,135.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB184042
+brand:paulbassett,아이스 카페 소이 밀크 with 허니,false,212.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB183976
+brand:paulbassett,카페 소이 밀크 with 허니,false,206.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB183974
+brand:paulbassett,커피큐브 WITH 카페라떼,false,370.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB182863
+brand:paulbassett,커피큐브 WITH 아메리카노,false,308.0,https://www.baristapaulbassett.co.kr/menu/View.pb?dpid=PB183714
+brand:starbucks,카푸치노,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,코르타도,false,225.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,에스프레소,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,밀크카라멜 라떼,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,에스프레소 마키아또,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,에스프레소 플라이트,false,,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,에스프레소 프라푸치노,false,120.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js
+brand:starbucks,에스프레소 플라이트 도산,false,,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,에스프레소 콘 파나,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,사케라또 아포가토,false,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,스타벅스 에어로카노,false,150.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,스파클링 시트러스 에스프레소,false,105.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,헤이즐넛 스타벅스 더블 샷,false,150.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,사케라또 비안코 오버 아이스,false,315.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,스타벅스 돌체 라떼,false,150.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,베르가못 딸기 크림 프라푸치노,false,0.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js
+brand:starbucks,스타벅스 자몽 허니 에어로카노,false,150.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,베르가못 제주 말차 크림 프라푸치노,false,30.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js
+brand:starbucks,스타벅스 꿀 호떡 라떼,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,스타벅스 꿀 호떡 크림 프라푸치노,false,0.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js
+brand:starbucks,바닐라 라떼,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,아이스 카푸치노,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,카라멜 마키아또,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,클래식 아포가토,false,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,카라멜 프라푸치노,false,85.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js
+brand:starbucks,아이스 밀크카라멜 라떼,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,바닐라 스타벅스 더블 샷,false,150.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,아이스 스타벅스 돌체 라떼,false,150.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,아이스 스타벅스 꿀 호떡 라떼,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,아이스 바닐라 라떼,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,화이트 초콜릿 모카,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,아이스 카라멜 마키아또,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,화이트 타이거 프라푸치노,false,0.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js
+brand:starbucks,아이스 화이트 초콜릿 모카,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,아이스 인절미 크림 라떼,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,아이스 라벤더 카페 브레베,false,105.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,아이스 바닐라 빈 라떼,false,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,아이스 카페 라떼,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,아이스 카페 모카,false,95.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,인절미 크림 라떼,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,클래식 민트 모카,false,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,라벤더 카페 브레베,false,105.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,아이스 플랫 화이트,false,130.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,아이스 카페 아메리카노,false,150.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,아이스 블랙 글레이즈드 라떼,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,아이스 우베 코코넛 마키아또,false,105.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,초콜릿 크림 칩 프라푸치노,false,10.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js
+brand:starbucks,바닐라 빈 라떼,false,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,카페 라떼,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,카페 모카,false,95.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,플랫 화이트,false,130.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,카페 아메리카노,false,150.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,블랙 글레이즈드 라떼,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,딸기 글레이즈드 크림 프라푸치노,false,5.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js
+brand:starbucks,더블 에스프레소 칩 프라푸치노,false,130.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js
+brand:starbucks,커피 스타벅스 더블 샷,false,150.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,번트 카라멜 라떼,false,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,제주 비자림 리저브 에스프레소 라떼,false,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,제주 오름 초당옥수수 프라푸치노,false,0.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js
+brand:starbucks,제주 까망 크림 프라푸치노,false,0.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js
+brand:starbucks,제주 말차 크림 프라푸치노,false,80.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js
+brand:starbucks,제주 쑥떡 크림 프라푸치노,false,0.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js
+brand:starbucks,피넛 쿠키 크림 프라푸치노,false,0.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js
+brand:starbucks,피넛 크림 쿠키 아인슈페너,false,75.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,자바 칩 프라푸치노,false,100.0,https://www.starbucks.co.kr/upload/json/menu/W0000004.js
+brand:starbucks,스타벅스 1호점 카페 라떼,false,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,스타벅스 1호점 크림 라떼,false,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,스타벅스 1호점 카페 아메리카노,false,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,아이스 스타벅스 1호점 카페 라떼,false,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,아이스 스타벅스 1호점 크림 라떼,false,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:starbucks,아이스 스타벅스 1호점 카페 아메리카노,false,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js

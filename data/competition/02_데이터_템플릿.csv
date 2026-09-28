@@ -1,17 +1,23 @@
 ﻿테이블명,coffees
-key,name,roaster,origin_country,origin_region,process,roast_level,is_decaf,decaf_process,acidity,body,sweetness,flavor_tags,source,source_url,collected_at
-cqi:example-1,예시 원두 A,예시 로스터리,Ethiopia,Yirgacheffe,washed,light,false,,4,3,3,floral;citrus,cqi,https://example.com/coffees/1,2026-01-01
-roasters_kr:example-2,예시 원두 B,예시 국내 로스터리,Colombia,Huila,natural,medium,true,sugarcane,3,4,4,caramel;nutty,roasters_kr,https://example.com/coffees/2,2026-01-02
-shopify:example-3,예시 원두 C,예시 브랜드,Brazil,Cerrado,pulped natural,medium-dark,false,,2,4,3,chocolate,shopify,https://example.com/coffees/3,2026-01-03
+key,name,roaster,origin_country,origin_region,process,roast_level,is_decaf,decaf_process,acidity,acidity_label_source,body,body_label_source,sweetness,flavor_tags,source,source_url,collected_at
+cqi:example-1,예시 원두 A,예시 로스터리,Ethiopia,Yirgacheffe,washed,light,false,,4,cqi_quality,,,,floral;citrus,cqi,https://example.com/coffees/1,2026-01-01
+roasters_kr:example-2,예시 원두 B,예시 국내 로스터리,Colombia,Huila,natural,medium,true,sugarcane,3,gauge,4,gauge,4,caramel;nutty,roasters_kr,https://example.com/coffees/2,2026-01-02
+shopify_gauged:example-3,예시 원두 C,예시 해외 로스터,Brazil,Cerrado,pulped natural,medium-dark,false,,2,roaster_profile,4,roaster_profile,,chocolate,shopify_intl,https://example.com/coffees/3,2026-01-03
 
 테이블명,menu_items
-brand_key,name,name_en,category,is_decaf,decaf_option,caffeine_mg,source_url,collected_at
-example-brand,예시 아메리카노,Example Americano,coffee,false,true,150.0,https://example.com/menu/1,2026-01-01
-example-brand,예시 카페라떼,Example Cafe Latte,coffee,false,true,150.0,https://example.com/menu/2,2026-01-01
-example-brand,예시 디카페인 라떼,Example Decaf Latte,coffee,true,true,5.0,https://example.com/menu/3,2026-01-01
+brand_key,name,is_decaf,caffeine_mg,source_url
+example-brand,예시 아메리카노,false,150.0,https://example.com/menu/1
+example-brand,예시 카페라떼,false,150.0,https://example.com/menu/2
+example-brand,예시 디카페인 라떼,true,5.0,https://example.com/menu/3
 
 테이블명,brands
 key,name,decaf_available,decaf_surcharge_krw,source_url,verified_at
 example-brand,예시 브랜드,true,500,https://example.com,2026-01-01
 example-brand-2,예시 브랜드 2,false,,https://example.com/2,2026-01-02
 example-brand-3,예시 브랜드 3,true,0,https://example.com/3,2026-01-03
+
+테이블명,milk_labels
+name,is_milk
+예시 아메리카노,false
+예시 카페라떼,true
+예시 디카페인 라떼,true
