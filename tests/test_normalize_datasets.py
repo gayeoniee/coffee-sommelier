@@ -138,3 +138,32 @@ def test_roasters_kr_maps_korean_facts(tmp_path):
     assert (c.is_decaf, c.decaf_process) == (True, "sugarcane-ea")
     assert by["roasters_kr:a:4"].roast_level == "dark"
     assert normalize_roasters_kr(tmp_path / "missing", "x").coffees == []
+
+
+def test_roasters_kr_gauges_become_labels_with_source(tmp_path):
+    (tmp_path / "beans.jsonl").write_text("\n".join([
+        _bean("g:1", name="예가체프", origin_country="에티오피아", gauge_acidity=4.5, gauge_body=2.0,
+              gauge_sweetness=2.5, gauge_scale="x: 0-5", altitude_m=2000, variety="Heirloom"),
+        _bean("g:2", name="블렌드", gauge_acidity=1.0, gauge_scale="x"),
+        _bean("g:3", name="무게이지"),
+    ]) + "\n", encoding="utf-8")
+    by = {c.key: c for c in normalize_roasters_kr(tmp_path, "unused").coffees}
+    g1 = by["roasters_kr:g:1"]
+    assert (g1.acidity, g1.body, g1.sweetness) == (5, 2, 3)          # half steps round up
+    assert g1.attr_label_source == {"acidity": "gauge", "body": "gauge", "sweetness": "gauge"}
+    assert (g1.altitude_m, g1.variety) == (2000, "Heirloom")
+    g2 = by["roasters_kr:g:2"]
+    assert (g2.acidity, g2.body, g2.attr_label_source) == (1, None, {"acidity": "gauge"})
+    assert by["roasters_kr:g:3"].attr_label_source == {}
+
+
+def test_cqi_exposes_altitude_variety_and_quality_label_source(tmp_path):
+    (tmp_path / "arabica_2023.csv").write_text(
+        "Unnamed: 0,ID,Country of Origin,Farm Name,Company,Region,Variety,Processing Method,Acidity,Body,Altitude,Owner\n"
+        "0,0,Colombia,Finca A,CQU,Cauca,Castillo,Washed / Wet,8.58,8.25,1800-2200,CQU\n"
+        "1,1,Kenya,Finca B,CQU,Nyeri,SL28,Washed / Wet,8.10,8.00,190164,CQU\n", encoding="utf-8")
+    by = {c.key: c for c in normalize_cqi(tmp_path, "2026-09-28").coffees}
+    a, b = by["cqi:arabica_2023:0"], by["cqi:arabica_2023:1"]
+    assert (a.altitude_m, a.variety) == (2000, "Castillo")
+    assert b.altitude_m is None                                       # implausible typo dropped
+    assert a.attr_label_source == {"acidity": "cqi_quality", "body": "cqi_quality"}

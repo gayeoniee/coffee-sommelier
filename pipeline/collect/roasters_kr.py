@@ -79,6 +79,7 @@ from bs4 import BeautifulSoup
 from pydantic import BaseModel, Field
 
 from pipeline.http import RobotsDisallowed
+from pipeline.rules import parse_altitude_m  # noqa: F401 (re-exported for tests)
 
 # --------------------------------------------------------------------------- #
 # Record model
@@ -519,18 +520,6 @@ def number_gauges(text: str | None) -> dict[str, float]:
         if attr not in out:
             out[attr] = float(m.group(2))
     return out
-
-
-def parse_altitude_m(text: str | None) -> int | None:
-    """Midpoint of a labelled altitude ("1,950-2,050m", "1,066m", "1600~2000 masl") in metres; implausible
-    values (outside 200-3000 m) are dropped."""
-    if not text:
-        return None
-    nums = [int(n.replace(",", "")) for n in re.findall(r"\d{1,2},\d{3}|\d{3,4}", text)[:2]]
-    if not nums:
-        return None
-    alt = round(sum(nums) / len(nums))
-    return alt if 200 <= alt <= 3000 else None
 
 
 def find_roast_word(text: str | None) -> str | None:

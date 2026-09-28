@@ -22,6 +22,13 @@ class CoffeeRecord(BaseModel):
     sweetness: int | None = Field(default=None, ge=1, le=5)
     flavor_tags: list[str] = Field(default_factory=list)
     flavor_summary: str | None = None
+    altitude_m: int | None = None          # labelled growing altitude (CQI, some roastery pages), metres
+    variety: str | None = None             # labelled cultivar, as written by the source
+    # Where each attribute label came from, per attribute: gauge (a roaster's published intensity gauge),
+    # korean_cue (a note-word rule), llm_review (LLM judged from the bean's own text), cqi_quality (a CQI
+    # cupping quality-score quintile), review_score (a coffeereview sub-score quintile). An attribute
+    # with no value has no entry. docs/adr/0011-roaster-gauges-feature-model.md
+    attr_label_source: dict[str, str] = Field(default_factory=dict)
     source: str
     source_url: str | None = None
     collected_at: str

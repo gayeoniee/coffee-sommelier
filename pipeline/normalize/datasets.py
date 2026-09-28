@@ -10,7 +10,7 @@ from pipeline.normalize import Normalized
 from pipeline.records import CoffeeRecord, ReviewRecord, TaxonomyNode
 from pipeline.rules import (
     clean, detect_decaf, join_text, normalize_country, normalize_process, normalize_roast,
-    num, opt_int, process_from_text, to_quintile,
+    num, opt_int, parse_altitude_m, process_from_text, round_half_up, to_quintile,
 )
 
 
@@ -38,6 +38,11 @@ def _fill_missing(base: dict | None, new: dict) -> dict:
 
 def _subs(r: dict, keys) -> dict[str, float]:
     return {k: v for k in keys if (v := num(r.get(k))) is not None}
+
+
+def _sources(**attrs: tuple[str, object]) -> dict[str, str]:
+    """attr_label_source entries for the attributes that actually got a value."""
+    return {a: src for a, (src, value) in attrs.items() if value is not None}
 
 
 # --- coffeereview (3 Kaggle scrapes of coffeereview.com) ------------------
@@ -97,12 +102,13 @@ def normalize_coffeereview(snap: Path, collected_at: str) -> Normalized:
     for i, (rk, v) in enumerate(items):
         key = f"coffeereview:{rk}"
         is_decaf, decaf_process = detect_decaf(v["name"], v["text"])
+        acidity, body = opt_int(acid_q.iloc[i]), opt_int(body_q.iloc[i])
         out.coffees.append(CoffeeRecord(
             key=key, name=v["name"] or "(unknown)", roaster=v["roaster"],
             origin_country=normalize_country(v["origin"]), origin_region=v["origin"],
             process=process_from_text(v["text"]), roast_level=normalize_roast(v["roast"]),
-            is_decaf=is_decaf, decaf_process=decaf_process,
-            acidity=opt_int(acid_q.iloc[i]), body=opt_int(body_q.iloc[i]),
+            is_decaf=is_decaf, decaf_process=decaf_process, acidity=acidity, body=body,
+            attr_label_source=_sources(acidity=("review_score", acidity), body=("review_score", body)),
             flavor_summary=v["summary"], source="coffeereview_kaggle", source_url=v["url"],
             collected_at=collected_at,
         ))
@@ -117,11 +123,11 @@ def normalize_coffeereview(snap: Path, collected_at: str) -> Normalized:
 # --- CQI -------------------------------------------------------------------
 _CQI_2018 = {"country": "Country.of.Origin", "region": "Region", "farm": "Farm.Name",
              "process": "Processing.Method", "acidity": "Acidity", "body": "Body",
-             "owner": "Owner", "company": "Company"}
+             "owner": "Owner", "company": "Company", "altitude": "altitude_mean_meters", "variety": "Variety"}
 _CQI_ROBUSTA = {**_CQI_2018, "acidity": "Salt...Acid", "body": "Mouthfeel"}
 _CQI_2023 = {"country": "Country of Origin", "region": "Region", "farm": "Farm Name",
              "process": "Processing Method", "acidity": "Acidity", "body": "Body",
-             "owner": "Owner", "company": "Company"}
+             "owner": "Owner", "company": "Company", "altitude": "Altitude", "variety": "Variety"}
 _CQI_FILES = {
     "arabica_2018.csv": (_CQI_2018, "https://github.com/jldbc/coffee-quality-database"),
     "robusta_2018.csv": (_CQI_ROBUSTA, "https://github.com/jldbc/coffee-quality-database"),
@@ -146,11 +152,14 @@ def normalize_cqi(snap: Path, collected_at: str) -> Normalized:
     acid_q, body_q = to_quintile(df["acid"]), to_quintile(df["body_n"])
     for i, v in enumerate(rows):
         is_decaf, decaf_process = detect_decaf(v["owner"], v["company"], v["farm"])
+        acidity, body = opt_int(acid_q.iloc[i]), opt_int(body_q.iloc[i])
         out.coffees.append(CoffeeRecord(
             key=v["key"], name=" ".join(x for x in (v["country"], v["region"], v["farm"]) if x) or "CQI sample",
             origin_country=normalize_country(v["country"]), origin_region=v["region"],
             process=normalize_process(v["process"]), is_decaf=is_decaf, decaf_process=decaf_process,
-            acidity=opt_int(acid_q.iloc[i]), body=opt_int(body_q.iloc[i]),
+            acidity=acidity, body=body,
+            attr_label_source=_sources(acidity=("cqi_quality", acidity), body=("cqi_quality", body)),
+            altitude_m=parse_altitude_m(v["altitude"]), variety=v["variety"],
             source="cqi", source_url=v["url"], collected_at=collected_at,
         ))
     return out
@@ -221,11 +230,16 @@ def normalize_roasters_kr(snap: Path, collected_at: str) -> Normalized:
         region = clean(r.get("origin_region"))
         if region is None and raw_country and _BLEND_SEP.search(raw_country):
             region = raw_country                 # blend: keep every origin; origin_country is the first one
+        # a roaster's own published intensity gauge is the label wherever the page shows one
+        # (docs/adr/0011-roaster-gauges-feature-model.md); the DB keeps 1-5 integers, so a half step rounds up
+        gauges = {a: round_half_up(r.get(f"gauge_{a}")) for a in ("acidity", "body", "sweetness")}
         out.coffees.append(CoffeeRecord(
             key=f"roasters_kr:{r['key']}", name=name, roaster=clean(r.get("roaster")),
             origin_country=normalize_country(raw_country), origin_region=region,
             process=normalize_process(r.get("process")), roast_level=roasters_kr_roast(r.get("roast_level")),
-            is_decaf=is_decaf, decaf_process=decaf_process,
+            is_decaf=is_decaf, decaf_process=decaf_process, **gauges,
+            attr_label_source={a: "gauge" for a, v in gauges.items() if v is not None},
+            altitude_m=r.get("altitude_m"), variety=clean(r.get("variety")),
             flavor_summary=", ".join(notes) or None, source="roasters_kr", source_url=clean(r.get("product_url")),
             collected_at=clean(r.get("collected_at")) or collected_at,
         ))

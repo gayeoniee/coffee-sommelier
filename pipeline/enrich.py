@@ -138,11 +138,14 @@ def _apply_rules(c: CoffeeRecord, text: str, vocab: list[str], ko_vocab: dict[st
         body = ko_body_cue(text)
         if body is not None:
             update["body"] = body
+            update["attr_label_source"] = {**c.attr_label_source, "body": "korean_cue"}
     return c.model_copy(update=update)
 
 
 def _merge_llm(c: CoffeeRecord, o: EnrichOutput, vocab: set[str]) -> CoffeeRecord:
     update = {k: getattr(o, k) for k in ("acidity", "body", "sweetness") if getattr(c, k) is None and getattr(o, k)}
+    if update:
+        update["attr_label_source"] = {**c.attr_label_source, **{k: "llm_review" for k in update}}
     if not c.flavor_tags:
         update["flavor_tags"] = [t.lower() for t in o.flavor_tags if t.lower() in vocab][:6]
     return c.model_copy(update=update)
@@ -177,6 +180,14 @@ def ends_torn(path: Path) -> bool:
         return f.read(1) != b"\n"
 
 
+def _with_source(c: CoffeeRecord, attr: str, value) -> dict[str, str]:
+    """c.attr_label_source after `attr` was re-labelled by the LLM heaviness judge (or cleared)."""
+    out = {k: v for k, v in c.attr_label_source.items() if k != attr}
+    if value is not None:
+        out[attr] = "llm_review"
+    return out
+
+
 def apply_body_heaviness(coffees: list[CoffeeRecord], out_dir: Path) -> tuple[list[CoffeeRecord], dict[str, int]]:
     """Replace coffees.body -- a quintile of a QUALITY sub-score, not heaviness (docs/adr/0010-body-heaviness.md)
     -- with the mouthfeel-heaviness values scripts/relabel_body.py judged from each bean's own review text.
@@ -202,11 +213,12 @@ def apply_body_heaviness(coffees: list[CoffeeRecord], out_dir: Path) -> tuple[li
                 continue
             body = entry.get("body") if entry.get("status") == "ok" else None
             stats["body_heaviness_applied" if body is not None else "body_heaviness_nulled"] += 1
-            out.append(c.model_copy(update={"body": body}))
+            out.append(c.model_copy(update={"body": body, "attr_label_source": _with_source(c, "body", body)}))
         elif c.source == "cqi":
             if c.body is not None:
                 stats["cqi_body_nulled"] += 1
-            out.append(c.model_copy(update={"body": None}) if c.body is not None else c)
+            out.append(c.model_copy(update={"body": None, "attr_label_source": _with_source(c, "body", None)})
+                       if c.body is not None else c)
         else:
             out.append(c)
     return out, stats

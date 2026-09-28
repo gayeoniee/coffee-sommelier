@@ -98,11 +98,11 @@ def run_load(conn, norm_dir: Path, enriched_dir: Path, embedded_dir: Path) -> di
     _upsert(cur, "coffees",
             ["key", "name", "roaster", "origin_country", "origin_region", "process", "roast_level", "is_decaf",
              "decaf_process", "acidity", "body", "sweetness", "flavor_tags", "flavor_summary", "embedding",
-             "source", "source_url", "collected_at"],
+             "source", "source_url", "collected_at", "altitude_m", "variety", "attr_label_source"],
             [(c.key, c.name, c.roaster, c.origin_country, c.origin_region, c.process, c.roast_level, c.is_decaf,
               c.decaf_process, c.acidity, c.body, c.sweetness, c.flavor_tags, c.flavor_summary,
               to_vector_literal(vectors[c.key]) if c.key in vectors else None, c.source, c.source_url,
-              c.collected_at) for c in coffees],
+              c.collected_at, c.altitude_m, c.variety, Jsonb(c.attr_label_source)) for c in coffees],
             casts={"embedding": "::vector"})
     source_key_set = set(source_keys)
     coffee_ids = _ids(conn, "coffees")

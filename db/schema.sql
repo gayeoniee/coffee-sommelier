@@ -136,3 +136,9 @@ ALTER TABLE brands ADD COLUMN IF NOT EXISTS decaf_bean jsonb;
 ALTER TABLE coffees ADD COLUMN IF NOT EXISTS active boolean NOT NULL DEFAULT true;
 ALTER TABLE menu_items ADD COLUMN IF NOT EXISTS active boolean NOT NULL DEFAULT true;
 ALTER TABLE brands ADD COLUMN IF NOT EXISTS active boolean NOT NULL DEFAULT true;
+
+-- 로스터리 공개 게이지 라벨과 특징 모델 (docs/adr/0011-roaster-gauges-feature-model.md):
+-- 재배 고도·품종(표기된 값만)과 속성별 라벨 출처 {"acidity": "gauge", "body": "korean_cue", ...}.
+ALTER TABLE coffees ADD COLUMN IF NOT EXISTS altitude_m integer;
+ALTER TABLE coffees ADD COLUMN IF NOT EXISTS variety text;
+ALTER TABLE coffees ADD COLUMN IF NOT EXISTS attr_label_source jsonb NOT NULL DEFAULT '{}';

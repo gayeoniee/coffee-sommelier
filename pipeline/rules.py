@@ -150,6 +150,27 @@ def process_from_text(text) -> str | None:
     return None
 
 
+# --- altitude ------------------------------------------------------------
+def parse_altitude_m(text) -> int | None:
+    """Midpoint of a labelled altitude ("1,950-2,050m", "1,066m", "1600~2000 masl", 1850.0) in metres;
+    implausible values (outside 200-3000 m -- CQI has typos like 190164) are dropped."""
+    t = clean(text)
+    if not t:
+        return None
+    nums = [float(n.replace(",", "")) for n in re.findall(r"\d{1,2},\d{3}(?:\.\d+)?|\d+(?:\.\d+)?", t)[:2]]
+    nums = [n for n in nums if n > 0]
+    if not nums:
+        return None
+    alt = round(sum(nums) / len(nums))
+    return alt if 200 <= alt <= 3000 else None
+
+
+def round_half_up(v: float | None) -> int | None:
+    """1-5 label from a half-step gauge (3.5 -> 4): Python's round() would send 2.5 and 4.5 to the even
+    neighbour, which is not what a roaster's "4.5 of 5" means."""
+    return None if v is None else int(v + 0.5)
+
+
 # --- roast ---------------------------------------------------------------
 _ROAST = [
     ("medium-light", re.compile(r"medium[\s-]*light|light[\s-]*medium|미디엄\s*라이트", re.I)),

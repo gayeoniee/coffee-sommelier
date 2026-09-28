@@ -233,3 +233,25 @@ def test_run_enrich_tags_korean_notes_and_llm_fills_attrs(tmp_path):
     assert c.flavor_tags == ["blueberry", "dark chocolate"]     # rule tags; the LLM's tags are not used
     assert (c.acidity, c.body, c.sweetness) == (4, 2, 3)        # attrs come from the LLM, as for other sources
     assert "블루베리, 다크 초콜릿" in client.seen[0]
+
+
+def test_label_source_tracks_korean_cue_llm_and_heaviness(tmp_path):
+    from pipeline.enrich import _apply_rules, _merge_llm
+    rk = coffee("rk1", source="roasters_kr", acidity=4, attr_label_source={"acidity": "gauge"})
+    cued = _apply_rules(rk, "묵직한 바디", [], ko_vocab=None)
+    assert cued.attr_label_source == {"acidity": "gauge", "body": "korean_cue"}
+    merged = _merge_llm(cued, EnrichOutput(acidity=2, body=2, sweetness=3), set())
+    assert (merged.acidity, merged.body, merged.sweetness) == (4, 4, 3)          # labels already set win
+    assert merged.attr_label_source == {"acidity": "gauge", "body": "korean_cue", "sweetness": "llm_review"}
+
+    out_dir = tmp_path / "e"
+    out_dir.mkdir()
+    (out_dir / "body_heaviness.jsonl").write_text(
+        json.dumps({"key": "cr1", "hash": "h", "status": "ok", "body": 5}) + "\n", encoding="utf-8")
+    out, _ = apply_body_heaviness([
+        coffee("cr1", source="coffeereview_kaggle", body=2, attr_label_source={"body": "review_score"}),
+        coffee("cq1", source="cqi", body=4, attr_label_source={"acidity": "cqi_quality", "body": "cqi_quality"}),
+    ], out_dir)
+    by = {c.key: c for c in out}
+    assert by["cr1"].attr_label_source == {"body": "llm_review"}
+    assert by["cq1"].attr_label_source == {"acidity": "cqi_quality"}
