@@ -37,7 +37,7 @@
 | 원두 분석: 전체판 vs 공모전(오픈)판 (한국어 원두 문구 10개, 운영) | 향미 태그 제시 10/10 vs 3/10, 근거 2.6 vs 1.4개/원두, 속성 결측 1 vs 8/30 — 프랜차이즈 추천·설명 품질은 동일, 미지 원두 분석만 오픈판이 약함 | [phase2_analyze_compare.json](data/eval/phase2_analyze_compare.json) |
 | 설명 3개 순차 vs 병렬 (지연) | 4.59초 → 2.03초 · 설명 첫 토큰 p50 0.77초 / p95 1.37초 (설명 품질 24건) | [phase2_bench.json](data/eval/phase2_bench.json), [phase2_explain_quality.json](data/eval/phase2_explain_quality.json) |
 | 학습 수렴: 모의 사용자 200명 × 10회 기록 후 프로필 오차 | 0.7792 → 0.7117 | [phase2_convergence.json](data/eval/phase2_convergence.json) |
-| 운영 통계 (Render 로그 24시간 집계) | 집계 구간 요청 0건 — 아직 수치 없음. 수동 스모크: 카드 18장 중 폴백 2 ([ADR 0004](docs/adr/0004-explain-thinking.md)) | [prod_stats_2026-09-26.json](data/eval/prod_stats_2026-09-26.json) |
+| 운영 통계 (Render 로그 48시간 집계) | 요청 54건, 카드 폴백 5/56(0.089) — 5건 모두 첫 토큰 전 빠른 실패(요청 전체 1.1~1.7초; NVIDIA 429·빈 응답), 첫 토큰 p50 705ms · p95 1,184.5ms. 조기 실패 재시도 추가 후 운영 조건 재현 A/B 폴백 10/140 → 0/140 ([ADR 0004](docs/adr/0004-explain-thinking.md)) | [prod_stats_2026-09-28.json](data/eval/prod_stats_2026-09-28.json), [phase2_fallback_retry.json](data/eval/phase2_fallback_retry.json) |
 
 ## 아키텍처
 

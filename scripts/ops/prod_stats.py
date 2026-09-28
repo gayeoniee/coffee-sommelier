@@ -10,6 +10,7 @@ import argparse
 import datetime as dt
 import json
 import os
+import time
 from pathlib import Path
 from typing import Iterable
 
@@ -19,6 +20,7 @@ RENDER_API_BASE = "https://api.render.com/v1"
 DEFAULT_SERVICE_NAME = "coffee-sommelier-api"
 REPO_ROOT = Path(__file__).resolve().parents[2]
 OUTPUT_DIR = REPO_ROOT / "data" / "eval"
+RATE_LIMIT_RETRIES, RATE_LIMIT_BACKOFF_S = 6, 5.0     # /v1/logs 429·5xx·타임아웃 → 5s, 10s, ... 기다렸다 같은 페이지 재요청
 
 
 def load_api_key() -> str:
@@ -117,7 +119,42 @@ def summarize(events: list[dict], window: dict | None = None) -> dict:
     if any("hedged" in e or "hedge_won" in e for e in events):
         summary["hedged"] = sum(int(e.get("hedged") or 0) for e in events)
         summary["hedge_won"] = sum(int(e.get("hedge_won") or 0) for e in events)
+    if any("retried" in e for e in events):
+        summary["retried"] = sum(int(e.get("retried") or 0) for e in events)
+    summary["fallback_breakdown"] = fallback_breakdown(events)
     return summary
+
+
+def fallback_breakdown(events: list[dict]) -> dict[str, int]:
+    """폴백 카드의 원인별 수(ADR 0004 "폴백 원인 분해").
+
+    `fb_<원인>` 카운터(app/graphs/common.py `fallback_reason`)를 기록하는 버전의 줄은 그대로 합산한다. 그 이전
+    버전의 줄은 원인이 없으므로 `ms_first_token`으로 추정한다: 카드 수보다 첫 토큰 기록이 모자란 만큼은 첫 토큰
+    전에 끝난 카드(`inferred_before_token`), 나머지는 첫 토큰 뒤에 끝난 카드(`inferred_after_token`)로 센다
+    — 12초 마감 타임아웃인지 빠른 오류인지는 `ms_total`로 가른다(마감보다 짧으면 오류).
+    """
+    out: dict[str, int] = {}
+    for e in events:
+        fb = int(e.get("fallback") or 0)
+        if not fb:
+            continue
+        reasons = {k[3:]: int(v or 0) for k, v in e.items() if k.startswith("fb_")}
+        if reasons:
+            for k, v in reasons.items():
+                out[k] = out.get(k, 0) + v
+            continue
+        cards = int(e.get("cards") or 0)
+        before = min(fb, max(0, cards - len(e.get("ms_first_token") or [])))
+        fast = int(e.get("ms_total") or 0) < EXPLAIN_DEADLINE_MS
+        if before:
+            key = "inferred_before_token_" + ("fast_error" if fast else "timeout")
+            out[key] = out.get(key, 0) + before
+        if fb - before:
+            out["inferred_after_token"] = out.get("inferred_after_token", 0) + fb - before
+    return out
+
+
+EXPLAIN_DEADLINE_MS = 12_000   # app/config.py EXPLAIN_DEADLINE_S (scripts/ops는 app을 import하지 않는다)
 
 
 def _get_service(client: httpx.Client, service_name: str) -> tuple[str, str]:
@@ -138,6 +175,7 @@ def fetch_logs(
     *,
     client: httpx.Client | None = None,
     now: dt.datetime | None = None,
+    sleep=time.sleep,
 ) -> list[str]:
     """Render 로그 API에서 최근 `hours`시간의 로그 메시지를 모두 가져온다(페이지네이션 포함).
 
@@ -146,7 +184,7 @@ def fetch_logs(
     """
     owns_client = client is None
     if client is None:
-        client = httpx.Client(headers={"Authorization": f"Bearer {api_key}"}, timeout=30.0)
+        client = httpx.Client(headers={"Authorization": f"Bearer {api_key}"}, timeout=60.0)
     try:
         service_id, owner_id = _get_service(client, service_name)
 
@@ -157,17 +195,26 @@ def fetch_logs(
 
         messages: list[str] = []
         while True:
-            resp = client.get(
-                f"{RENDER_API_BASE}/logs",
-                params={
-                    "ownerId": owner_id,
-                    "resource": [service_id],
-                    "startTime": start,
-                    "endTime": end,
-                    "limit": 100,
-                    "direction": "forward",
-                },
-            )
+            params = {
+                "ownerId": owner_id,
+                "resource": [service_id],
+                "startTime": start,
+                "endTime": end,
+                "limit": 100,
+                "direction": "forward",
+            }
+            for attempt in range(RATE_LIMIT_RETRIES + 1):
+                last = attempt == RATE_LIMIT_RETRIES
+                try:
+                    resp = client.get(f"{RENDER_API_BASE}/logs", params=params)
+                except httpx.TimeoutException:      # 로그 API가 가끔 30초 넘게 멈춘다 — 같은 페이지를 다시 요청
+                    if last:
+                        raise
+                    sleep(RATE_LIMIT_BACKOFF_S * (attempt + 1))
+                    continue
+                if not (resp.status_code == 429 or resp.status_code >= 500) or last:
+                    break
+                sleep(RATE_LIMIT_BACKOFF_S * (attempt + 1))   # 48h 조회는 페이지가 많아 429·503을 자주 맞는다
             resp.raise_for_status()
             data = resp.json()
             messages.extend(entry["message"] for entry in data.get("logs", []))
@@ -199,6 +246,11 @@ def _format_table(summary: dict) -> str:
     lines.append(f"| 에러율 | {_fmt(summary['error_rate'], '.3f')} |")
     if "hedged" in summary:
         lines.append(f"| 헤지 발사 / 헤지 승 | {summary['hedged']} / {summary['hedge_won']} |")
+    if "retried" in summary:
+        lines.append(f"| 조기 실패 재시도 | {summary['retried']} |")
+    if summary.get("fallback_breakdown"):
+        parts = ", ".join(f"{k}={v}" for k, v in sorted(summary["fallback_breakdown"].items()))
+        lines.append(f"| 폴백 원인 | {parts} |")
     return "\n".join(lines)
 
 

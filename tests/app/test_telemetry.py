@@ -56,6 +56,19 @@ def test_hedge_counters_accumulate_across_cards(caplog):
     assert rec["hedged"] == 2 and rec["hedge_won"] == 1
 
 
+def test_retry_and_fallback_reason_counters_accumulate(caplog):
+    caplog.set_level(logging.INFO, logger="telemetry")
+    tok = telemetry.begin("recommend", brand="brand:sb")
+    telemetry.add("retried", 1)
+    telemetry.add("retried", 1)
+    telemetry.add("fb_error_before_token", 1)
+    telemetry.add("fb_error_before_token", 1)
+    telemetry.add("fb_timeout_first_token", 1)
+    telemetry.end(tok, cards=3)
+    rec = json.loads(caplog.records[-1].getMessage())
+    assert rec["retried"] == 2 and rec["fb_error_before_token"] == 2 and rec["fb_timeout_first_token"] == 1
+
+
 def test_cards_field_is_overwritten_not_accumulated(caplog):
     caplog.set_level(logging.INFO, logger="telemetry")
     tok = telemetry.begin("recommend", brand="brand:sb")

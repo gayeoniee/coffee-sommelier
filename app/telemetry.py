@@ -23,7 +23,8 @@ _ctx: contextvars.ContextVar[dict[str, Any] | None] = contextvars.ContextVar("te
 _open: dict[int, dict[str, Any]] = {}      # keyed by id(token): Token is unhashable; the caller holds it
 
 _LIST_FIELDS = {"ms_first_token"}
-_COUNTER_FIELDS = {"fallback", "hedged", "hedge_won", "truncated"}
+_COUNTER_FIELDS = {"fallback", "hedged", "hedge_won", "truncated", "retried"}
+_COUNTER_PREFIXES = ("fb_",)       # per-reason fallback counters (app/graphs/common.py fallback_reason)
 
 
 class _StdoutHandler(logging.StreamHandler):
@@ -65,15 +66,15 @@ def begin(evt: str, **fields: Any) -> contextvars.Token:
 def add(key: str, value: Any) -> None:
     """Record a field on the in-flight request. No-op outside a `begin()`/`end()` pair.
 
-    List fields (`ms_first_token`) append; counter fields (`fallback`, `hedged`, `hedge_won`, `truncated`)
-    accumulate; everything else (`cards`, `error`, ...) is overwritten.
+    List fields (`ms_first_token`) append; counter fields (`fallback`, `hedged`, `hedge_won`, `truncated`,
+    `retried`, and every `fb_<reason>`) accumulate; everything else (`cards`, `error`, ...) is overwritten.
     """
     data = _ctx.get()
     if data is None:
         return
     if key in _LIST_FIELDS:
         data.setdefault(key, []).append(value)
-    elif key in _COUNTER_FIELDS:
+    elif key in _COUNTER_FIELDS or key.startswith(_COUNTER_PREFIXES):
         data[key] = data.get(key, 0) + value
     else:
         data[key] = value

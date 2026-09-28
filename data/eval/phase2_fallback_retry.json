@@ -1,0 +1,140 @@
+{
+  "date": "2026-09-28",
+  "production_48h": {
+    "source": "data/eval/prod_stats_2026-09-28.json",
+    "requests": 54,
+    "cards": 56,
+    "fallbacks": 5,
+    "fallback_rate": 0.08928571428571429,
+    "breakdown": {
+      "inferred_before_token_fast_error": 5
+    },
+    "fallback_ms_total": [
+      1451,
+      1135,
+      1686,
+      1332,
+      1101
+    ],
+    "first_token_ms_p50": 705.0,
+    "first_token_ms_p95": 1184.5,
+    "hedged": 1,
+    "hedge_won": 0,
+    "note": "old telemetry has no reason field; all 5 fallback cards had no first token and the whole /analyze request finished in 1.1-1.7 s, far below the 12 s deadline -> the explain stream failed fast before any token (not a timeout, not mid-stream, not truncation)."
+  },
+  "local_probe_primary_only": {
+    "raw_http_60_calls": "7/60 returned HTTP 429 {\"status\":429,\"title\":\"Too Many Requests\"} in ~0.45 s",
+    "stream_30_calls": "1/30 ended as an empty 200 stream in 0.51 s (no content, no error)"
+  },
+  "ab_prod_like_burst": {
+    "setup": "back-to-back /analyze-like calls (embed + explain stream), fallback target removed (production has no local Ollama), EARLY_RETRY alternated off/on per request, EXPLAIN_DEADLINE_S=12, HEDGE_AFTER_S=3",
+    "runs": [
+      {
+        "run": "ab1",
+        "requests": 120,
+        "retry_off": {
+          "n": 60,
+          "fallbacks": 4,
+          "fallback_errors": [
+            "all targets failed for explain: empty stream from nvidia/nemotron-3-super-120b-a12b"
+          ],
+          "retried": 0,
+          "hedged": 2,
+          "rescued_by_retry": 0,
+          "first_token_p50_s": 0.65
+        },
+        "retry_on": {
+          "n": 60,
+          "fallbacks": 0,
+          "fallback_errors": [],
+          "retried": 3,
+          "hedged": 2,
+          "rescued_by_retry": 3,
+          "first_token_p50_s": 0.68
+        }
+      },
+      {
+        "run": "ab2",
+        "requests": 160,
+        "retry_off": {
+          "n": 80,
+          "fallbacks": 6,
+          "fallback_errors": [
+            "all targets failed for explain: empty stream from nvidia/nemotron-3-super-120b-a12b"
+          ],
+          "retried": 0,
+          "hedged": 6,
+          "rescued_by_retry": 0,
+          "first_token_p50_s": 0.7
+        },
+        "retry_on": {
+          "n": 80,
+          "fallbacks": 0,
+          "fallback_errors": [],
+          "retried": 4,
+          "hedged": 2,
+          "rescued_by_retry": 4,
+          "first_token_p50_s": 0.72
+        }
+      }
+    ],
+    "total": {
+      "retry_off": {
+        "n": 140,
+        "fallbacks": 10
+      },
+      "retry_on": {
+        "n": 140,
+        "fallbacks": 0,
+        "retried": 7
+      }
+    }
+  },
+  "bench_3_runs": [
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "sequential_total_s": 4.32,
+      "parallel_total_s": 5.53,
+      "first_token_s": [
+        1.09,
+        0.65,
+        0.71
+      ],
+      "full_answer_s": [
+        1.72,
+        1.41,
+        1.19
+      ]
+    },
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "sequential_total_s": 6.23,
+      "parallel_total_s": 4.58,
+      "first_token_s": [
+        0.85,
+        0.67,
+        0.88
+      ],
+      "full_answer_s": [
+        1.32,
+        1.3,
+        3.61
+      ]
+    },
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "sequential_total_s": 5.14,
+      "parallel_total_s": 2.6,
+      "first_token_s": [
+        1.09,
+        0.66,
+        0.69
+      ],
+      "full_answer_s": [
+        3.12,
+        1.09,
+        0.93
+      ]
+    }
+  ]
+}

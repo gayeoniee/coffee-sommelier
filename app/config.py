@@ -12,6 +12,11 @@ DATA_VARIANT = os.getenv("DATA_VARIANT", "full")
 # No first token from the primary LLM within this many seconds → send the same request once more and
 # use whichever answers first (hedged request, ADR 0004). 0 disables.
 HEDGE_AFTER_S = float(os.getenv("HEDGE_AFTER_S", "3.0"))
+# The primary's FIRST request ends with no output (HTTP 429/5xx or an empty 200 stream) → wait this long and
+# send the same request once more instead of failing over (the fallback target is local-only; in production
+# that meant the template). Shares the one-extra-request budget with the hedge. EARLY_RETRY=0 disables.
+EARLY_RETRY = os.getenv("EARLY_RETRY", "1") == "1"
+EARLY_RETRY_BACKOFF_S = float(os.getenv("EARLY_RETRY_BACKOFF_S", "1.0"))
 
 
 def cookie_secure() -> bool:

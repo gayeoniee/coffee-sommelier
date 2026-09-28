@@ -100,6 +100,12 @@ async def _hedged_stream(t: Target, messages: list[dict], transport, hedge_after
     awaited, its response closed) before anything is forwarded. A request that fails before output just
     drops out of the race; if all do, the last error is raised (nothing yielded → caller may fail over).
     Once the winner has produced output, its later errors propagate unchanged.
+
+    Early-failure retry (ADR 0004 "폴백 원인 분해"): when the FIRST request ends without any output -- an
+    HTTP error (in production almost always 429 Too Many Requests) or an empty 200 stream -- before the
+    hedge has fired, the same second request is sent right away after `config.EARLY_RETRY_BACKOFF_S`
+    instead of waiting for the hedge timer. Retry and hedge share one budget: at most two requests per
+    call, whichever triggers first.
     """
     if hedge_after_s <= 0:
         async for tok in _stream_once(t, messages, transport):
@@ -128,6 +134,15 @@ async def _hedged_stream(t: Target, messages: list[dict], transport, hedge_after
                         winner, first = a, item
                 elif isinstance(item, Exception):
                     error = item                            # this attempt is out; the other may still win
+                # anything else (_END / TRUNCATED with no text yet): this attempt ended empty -- it's out too
+            if winner is None and not waiting and len(attempts) == 1 and config.EARLY_RETRY:
+                # the only request so far ended with no output (429 / 5xx / empty 200) before the hedge
+                # fired → spend the one extra request now instead of failing over to the fallback target
+                telemetry.add("retried", 1)
+                await asyncio.sleep(config.EARLY_RETRY_BACKOFF_S)
+                retry = _Attempt(t, messages, transport)
+                attempts.append(retry)
+                waiting[asyncio.ensure_future(retry.q.get())] = retry
         if winner is None:
             if error is not None:
                 raise error
@@ -136,7 +151,7 @@ async def _hedged_stream(t: Target, messages: list[dict], transport, hedge_after
         await _cancel_and_wait([*waiting, *(a.task for a in attempts if a is not winner)])
         waiting.clear()
         if winner is not attempts[0]:
-            telemetry.add("hedge_won", 1)
+            telemetry.add("hedge_won", 1)             # the second request (hedge or early retry) answered
         yield first
         while True:
             item = await winner.q.get()

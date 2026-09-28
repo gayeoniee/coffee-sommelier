@@ -152,6 +152,60 @@ def test_explain_to_stream_falls_back_when_truncated_with_no_complete_sentence(m
     assert not any(e["type"] == "explain_done" for e in events)
 
 
+def _explain_with_counts(monkeypatch, stream_text, deadline=None):
+    from app.graphs import common as graphs_common
+    counts: dict[str, int] = {}
+    monkeypatch.setattr(graphs_common.telemetry, "add",
+                        lambda k, v: counts.__setitem__(k, counts.get(k, 0) + (v if isinstance(v, int) else 0)))
+    if deadline is not None:
+        monkeypatch.setattr(graphs_common.config, "EXPLAIN_DEADLINE_S", deadline)
+    result, _ = run_explain(monkeypatch, stream_text)
+    assert result["fallback"] is True
+    return {k: v for k, v in counts.items() if k.startswith("fb_")}
+
+
+def test_fallback_reason_error_before_token(monkeypatch):
+    async def stream_text(task, messages):
+        raise LLMError("all targets failed: HTTP 429")
+        yield  # pragma: no cover
+
+    assert _explain_with_counts(monkeypatch, stream_text) == {"fb_error_before_token": 1}
+
+
+def test_fallback_reason_error_midstream(monkeypatch):
+    async def stream_text(task, messages):
+        yield "산미가"
+        raise LLMError("broke after output")
+
+    assert _explain_with_counts(monkeypatch, stream_text) == {"fb_error_midstream": 1}
+
+
+def test_fallback_reason_timeouts(monkeypatch):
+    async def silent(task, messages):
+        await asyncio.sleep(1)
+        yield "늦음"
+
+    async def slow_after_first(task, messages):
+        yield "산미가 "
+        await asyncio.sleep(1)
+        yield "좋아요."
+
+    assert _explain_with_counts(monkeypatch, silent, deadline=0.05) == {"fb_timeout_first_token": 1}
+    assert _explain_with_counts(monkeypatch, slow_after_first, deadline=0.05) == {"fb_timeout_midstream": 1}
+
+
+def test_fallback_reason_truncated_empty_and_empty(monkeypatch):
+    async def cut(task, messages):
+        yield "문장이 끝나지 않고"
+        yield llm.TRUNCATED
+
+    async def blank(task, messages):
+        yield "   "
+
+    assert _explain_with_counts(monkeypatch, cut) == {"fb_truncated_empty": 1}
+    assert _explain_with_counts(monkeypatch, blank) == {"fb_empty": 1}
+
+
 class Out(BaseModel):
     acidity: str | None = None
 
@@ -204,6 +258,7 @@ def hedge_env(monkeypatch, fake, hedge_after=0.05, fallback="f"):
     targets(monkeypatch, fallback=fallback)
     monkeypatch.setattr(llm, "_stream_once", fake)
     monkeypatch.setattr(llm.config, "HEDGE_AFTER_S", hedge_after)
+    monkeypatch.setattr(llm.config, "EARLY_RETRY_BACKOFF_S", 0.01)
     counts: dict[str, int] = {}
     monkeypatch.setattr(llm.telemetry, "add", lambda k, v: counts.__setitem__(k, counts.get(k, 0) + v))
     return counts
@@ -269,11 +324,64 @@ def test_one_hedged_attempt_failing_waits_for_the_other(monkeypatch):
     assert counts == {"hedged": 1, "hedge_won": 1}
 
 
-def test_fast_primary_failure_goes_straight_to_fallback(monkeypatch):
+def test_fast_primary_failure_goes_straight_to_fallback_when_retry_disabled(monkeypatch):
     fake = FakeStreams([(0.0, LLMError("500"))], [(0.0, "폴백")])
     counts = hedge_env(monkeypatch, fake, hedge_after=0.5)
+    monkeypatch.setattr(llm.config, "EARLY_RETRY", False)
     toks, _, _ = run_stream()
     assert toks == ["폴백"] and fake.calls == ["p", "f"] and counts == {}
+
+
+# --- early-failure retry (ADR 0004 "폴백 원인 분해") ------------------------------------------------------
+
+def test_fast_primary_error_is_retried_on_the_same_target(monkeypatch):
+    """HTTP 429 before any token → one more request to the primary, not the (local-only) fallback."""
+    fake = FakeStreams([(0.0, LLMError("HTTP 429 from p"))], [(0.05, "재시도 "), (0.0, "답")])
+    counts = hedge_env(monkeypatch, fake, hedge_after=0.5)
+    toks, elapsed, leftover = run_stream()
+    assert toks == ["재시도 ", "답"] and elapsed < 0.4
+    assert fake.calls == ["p", "p"]
+    assert counts == {"retried": 1, "hedge_won": 1} and leftover == []
+
+
+def test_empty_primary_stream_is_retried(monkeypatch):
+    """A 200 stream that ends with no text (seen in production) is an early failure too."""
+    fake = FakeStreams([(0.0, llm.TRUNCATED)], [(0.0, "두 번째")])
+    counts = hedge_env(monkeypatch, fake, hedge_after=0.5)
+    toks, _, leftover = run_stream()
+    assert toks == ["두 번째"] and fake.calls == ["p", "p"]
+    assert counts == {"retried": 1, "hedge_won": 1} and leftover == []
+
+
+def test_completely_empty_primary_stream_is_retried(monkeypatch):
+    fake = FakeStreams([], [(0.0, "두 번째")])
+    counts = hedge_env(monkeypatch, fake, hedge_after=0.5)
+    toks, _, _ = run_stream()
+    assert toks == ["두 번째"] and fake.calls == ["p", "p"] and counts["retried"] == 1
+
+
+def test_retry_failing_too_falls_back_and_never_hedges(monkeypatch):
+    """Retry and hedge share one extra request: after a failed retry there is no hedge, only the fallback."""
+    fake = FakeStreams([(0.0, LLMError("HTTP 429"))], [(0.0, LLMError("HTTP 429"))], [(0.0, "폴백")])
+    counts = hedge_env(monkeypatch, fake, hedge_after=0.05)
+    toks, _, leftover = run_stream()
+    assert toks == ["폴백"] and fake.calls == ["p", "p", "f"]
+    assert counts == {"retried": 1} and leftover == []
+
+
+def test_slow_retry_is_not_hedged_again(monkeypatch):
+    fake = FakeStreams([(0.0, LLMError("HTTP 429"))], [(0.2, "늦은 재시도")])
+    counts = hedge_env(monkeypatch, fake, hedge_after=0.05)
+    toks, _, _ = run_stream()
+    assert toks == ["늦은 재시도"] and fake.calls == ["p", "p"]
+    assert counts == {"retried": 1, "hedge_won": 1}
+
+
+def test_primary_failing_after_hedge_fired_does_not_retry(monkeypatch):
+    fake = FakeStreams([(0.1, LLMError("primary 500"))], [(0.2, "헤지")])
+    counts = hedge_env(monkeypatch, fake, hedge_after=0.05)
+    toks, _, _ = run_stream()
+    assert toks == ["헤지"] and fake.calls == ["p", "p"] and "retried" not in counts
 
 
 def test_hedge_disabled_sends_single_request(monkeypatch):

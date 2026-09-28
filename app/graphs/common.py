@@ -20,6 +20,26 @@ def _last_complete_sentence(text: str) -> str:
     return text[:idx + 1].strip() if idx >= 0 else ""
 
 
+EMPTY_EXPLANATION = "empty explanation"
+FALLBACK_REASONS = ("timeout_first_token", "timeout_midstream", "error_before_token", "error_midstream",
+                    "truncated_empty", "empty")
+
+
+def fallback_reason(exc: BaseException, had_output: bool, truncated: bool) -> str:
+    """Why a card fell back to the template -- one of FALLBACK_REASONS, logged as a `fb_<reason>` telemetry
+    counter so scripts/ops/prod_stats.py can break the fallback rate down (ADR 0004 "폴백 원인 분해"):
+    - timeout_first_token / timeout_midstream: the EXPLAIN_DEADLINE_S deadline hit before / after the first token
+    - error_before_token: every target failed before any text (HTTP 429/5xx, connection error, empty stream)
+    - error_midstream: the stream broke after text had started
+    - truncated_empty: cut off by max_tokens with no complete sentence to keep
+    - empty: the model finished normally but produced no usable text"""
+    if isinstance(exc, TimeoutError):
+        return "timeout_midstream" if had_output else "timeout_first_token"
+    if isinstance(exc, LLMError) and str(exc) == EMPTY_EXPLANATION:
+        return "truncated_empty" if truncated else "empty"
+    return "error_midstream" if had_output else "error_before_token"
+
+
 async def explain_to_stream(deps, item: Item, profile: Profile, score: float, tag_ko: dict[str, str],
                             prediction: Prediction | None = None, violation: str | None = None) -> dict:
     """Stream an LLM explanation token by token; on failure or past the deadline, replace it with the template.
@@ -49,10 +69,11 @@ async def explain_to_stream(deps, item: Item, profile: Profile, score: float, ta
             telemetry.add("truncated", 1)
             text = _last_complete_sentence(text)
         if not text:
-            raise LLMError("empty explanation")
+            raise LLMError(EMPTY_EXPLANATION)
         writer({"type": "explain_done", "key": item.key, "text": text})
         return {"key": item.key, "text": text, "fallback": False}
-    except (LLMError, httpx.HTTPError, TimeoutError):
+    except (LLMError, httpx.HTTPError, TimeoutError) as e:
         telemetry.add("fallback", 1)
+        telemetry.add(f"fb_{fallback_reason(e, bool(parts), truncated)}", 1)
         writer({"type": "explain_fallback", "key": item.key, "text": template})
         return {"key": item.key, "text": template, "fallback": True}

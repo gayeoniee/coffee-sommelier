@@ -162,3 +162,72 @@ class TestRun:
         saved = json.loads(out_path.read_text(encoding="utf-8"))
         assert saved["requests"] == 4
         assert saved["window"]["hours"] == 24
+
+
+class TestFallbackBreakdown:
+    def test_reason_counters_are_summed(self):
+        events = [
+            {"evt": "analyze", "cards": 1, "fallback": 1, "fb_error_before_token": 1, "ms_first_token": []},
+            {"evt": "recommend", "cards": 3, "fallback": 2, "fb_timeout_first_token": 1, "fb_error_midstream": 1,
+             "ms_first_token": [500, 600], "retried": 2},
+            {"evt": "analyze", "cards": 1, "fallback": 0, "ms_first_token": [400]},
+        ]
+        summary = summarize(events)
+        assert summary["fallback_breakdown"] == {"error_before_token": 1, "timeout_first_token": 1,
+                                                 "error_midstream": 1}
+        assert summary["retried"] == 2
+        table = _format_table(summary)
+        assert "| 조기 실패 재시도 | 2 |" in table
+        assert "error_before_token=1" in table
+
+    def test_old_lines_without_reasons_are_inferred(self):
+        # pre-`fb_*` telemetry: no first token + short request = fast error; long = deadline timeout
+        events = [
+            {"evt": "analyze", "cards": 1, "fallback": 1, "ms_first_token": [], "ms_total": 1451},
+            {"evt": "analyze", "cards": 1, "fallback": 1, "ms_first_token": [], "ms_total": 12900},
+            {"evt": "recommend", "cards": 3, "fallback": 1, "ms_first_token": [300, 400, 500], "ms_total": 13000},
+        ]
+        assert summarize(events)["fallback_breakdown"] == {"inferred_before_token_fast_error": 1,
+                                                            "inferred_before_token_timeout": 1,
+                                                            "inferred_after_token": 1}
+
+    def test_no_fallbacks_is_empty_and_not_printed(self):
+        summary = summarize(parse_events(RAW_LINES[2:3]))
+        assert summary["fallback_breakdown"] == {}
+        assert "폴백 원인" not in _format_table(summary)
+
+
+class TestFetchLogsRateLimit:
+    def test_429_is_retried_with_backoff(self):
+        calls = {"logs": 0}
+        slept: list[float] = []
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            if request.url.path.endswith("/services"):
+                return httpx.Response(200, json=[{"service": {"id": "srv", "ownerId": "own"}}])
+            calls["logs"] += 1
+            if calls["logs"] == 1:
+                return httpx.Response(429, json={"message": "rate limited"})
+            if calls["logs"] == 2:
+                return httpx.Response(503, text="unavailable")
+            return httpx.Response(200, json={"hasMore": False, "logs": [{"message": "hello"}]})
+
+        client = httpx.Client(transport=httpx.MockTransport(handler))
+        assert fetch_logs("k", client=client, sleep=slept.append) == ["hello"]
+        assert calls["logs"] == 3 and slept == [5.0, 10.0]
+
+    def test_read_timeout_is_retried(self):
+        calls = {"logs": 0}
+        slept: list[float] = []
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            if request.url.path.endswith("/services"):
+                return httpx.Response(200, json=[{"service": {"id": "srv", "ownerId": "own"}}])
+            calls["logs"] += 1
+            if calls["logs"] == 1:
+                raise httpx.ReadTimeout("slow", request=request)
+            return httpx.Response(200, json={"hasMore": False, "logs": [{"message": "hi"}]})
+
+        client = httpx.Client(transport=httpx.MockTransport(handler))
+        assert fetch_logs("k", client=client, sleep=slept.append) == ["hi"]
+        assert calls["logs"] == 2 and slept == [5.0]
