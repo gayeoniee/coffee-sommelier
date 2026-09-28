@@ -13,6 +13,15 @@ tasks:
     timeout: 180
     max_tokens: 2048
     extra: {reasoning_effort: "none"}
+  # CI(GitHub Actions 자동 갱신)에는 로컬 Ollama가 없다: ENRICH_TASK=enrich_ci로 enrich를 NVIDIA 호스팅 모델로 돌린다.
+  # 로컬 qwen 출력과의 일치도(원두 50개, 태그 F1·속성 ±1)는 data/eval/enrich_ci_agreement.json, ADR 0015.
+  enrich_ci:
+    provider: nvidia
+    model: nvidia/nemotron-3-super-120b-a12b
+    timeout: 120
+    max_tokens: 2048
+    retry_transient: true      # 호스팅 API는 가끔 503(overloaded) — 배치 작업이라 재시도가 실패보다 싸다
+    extra: {chat_template_kwargs: {enable_thinking: false}}
   # Embedding model used everywhere (pipeline embed/load, app queries, eval) = task "embed",
   # or the task named by $EMBED_TASK. Vectors are cached per model under data/embedded/<model>/.
   # Switching models means re-running `pipeline run --only embed --only load` (see docs/adr/0003).

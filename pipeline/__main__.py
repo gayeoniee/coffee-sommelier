@@ -66,8 +66,8 @@ def _run(a) -> int:
                                            exclude_sources=exclude_sources_from(a))
     if "enrich" in stages:
         from pipeline.enrich import run_enrich
-        from pipeline.llm import client_for
-        stats["enrich"] = run_enrich(settings.NORMALIZED_DIR, settings.ENRICHED_DIR, client_for("enrich"),
+        from pipeline.llm import client_for, enrich_task
+        stats["enrich"] = run_enrich(settings.NORMALIZED_DIR, settings.ENRICHED_DIR, client_for(enrich_task()),
                                      limit=a.limit, retry_failed=a.retry_failed)
     if "embed" in stages:
         from pipeline.embed import run_embed

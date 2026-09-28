@@ -1,0 +1,56 @@
+{
+  "reference": {
+    "task": "enrich",
+    "model": "qwen3.5:9b"
+  },
+  "candidate": {
+    "task": "enrich_ci",
+    "model": "nvidia/nemotron-3-super-120b-a12b"
+  },
+  "sources": [
+    "roasters_kr",
+    "shopify",
+    "shopify_gauged"
+  ],
+  "pool": 251,
+  "n": 50,
+  "seed": 42,
+  "scored": 50,
+  "failed": 0,
+  "latency_s": {
+    "p50": 1.7,
+    "max": 5.22
+  },
+  "tags": {
+    "precision": 0.6284,
+    "recall": 0.6886,
+    "f1": 0.6571,
+    "tp": 115,
+    "fp": 68,
+    "fn": 52
+  },
+  "acidity": {
+    "n": 16,
+    "within1": 1.0,
+    "exact": 0.5625,
+    "null_disagree": 15,
+    "reference_null_only": 12,
+    "candidate_null_only": 3
+  },
+  "body": {
+    "n": 23,
+    "within1": 1.0,
+    "exact": 0.6957,
+    "null_disagree": 19,
+    "reference_null_only": 16,
+    "candidate_null_only": 3
+  },
+  "sweetness": {
+    "n": 29,
+    "within1": 1.0,
+    "exact": 0.4483,
+    "null_disagree": 15,
+    "reference_null_only": 13,
+    "candidate_null_only": 2
+  }
+}

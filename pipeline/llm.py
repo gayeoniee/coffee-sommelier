@@ -30,6 +30,7 @@ class Target:
     asymmetric: bool = False        # send input_type "passage" (documents) / "query" (runtime text)
     batch: int = 32                 # inputs per request
     rpm: float | None = None        # client-side request-rate cap
+    retry_transient: bool = False   # chat: also retry 5xx/timeouts (batch jobs such as the CI enrich)
 
 
 def _backoff(r: httpx.Response | None, attempt: int) -> float:
@@ -93,7 +94,8 @@ class LLMClient:
         if target.extra:
             payload.update(target.extra)
         self.calls += 1
-        data = _post(target, "/chat/completions", payload, self._transport, self._sleep)
+        data = _post(target, "/chat/completions", payload, self._transport, self._sleep,
+                     max_retries=5 if target.retry_transient else 3, retry_transient=target.retry_transient)
         try:
             content = ((data.get("choices") or [{}])[0].get("message") or {}).get("content")
         except (KeyError, TypeError, IndexError, AttributeError) as e:
@@ -187,7 +189,7 @@ def load_targets(task: str) -> tuple[Target, Target | None]:
         key = os.getenv(p["api_key_env"]) if p.get("api_key_env") else None
         return Target(s["provider"], p["base_url"], key, s["model"], float(s.get("timeout", 30)),
                       int(s.get("max_tokens", 1024)), s.get("extra"), s.get("dims"), bool(s.get("asymmetric")),
-                      int(s.get("batch", 32)), s.get("rpm"))
+                      int(s.get("batch", 32)), s.get("rpm"), bool(s.get("retry_transient")))
 
     return make(spec), (make(spec["fallback"]) if spec.get("fallback") else None)
 
@@ -195,6 +197,12 @@ def load_targets(task: str) -> tuple[Target, Target | None]:
 def client_for(task: str, **kw) -> LLMClient:
     primary, fallback = load_targets(task)
     return LLMClient(primary, fallback, **kw)
+
+
+def enrich_task() -> str:
+    """The enrich task in config/models.yaml: $ENRICH_TASK or "enrich" (local Ollama). CI has no Ollama, so the
+    automated refresh sets ENRICH_TASK=enrich_ci (NVIDIA-hosted; docs/adr/0015-automated-refresh.md)."""
+    return os.getenv("ENRICH_TASK") or "enrich"
 
 
 def embed_task() -> str:

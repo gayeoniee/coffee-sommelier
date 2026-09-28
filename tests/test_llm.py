@@ -254,3 +254,30 @@ def test_payload_puts_extra_at_top_level():
                extra={"chat_template_kwargs": {"enable_thinking": False}})
     p = _payload(t, [{"role": "user", "content": "hi"}], stream=True)
     assert p["chat_template_kwargs"] == {"enable_thinking": False} and p["stream"] is True
+
+
+def test_chat_retries_5xx_only_when_the_target_asks_for_it():
+    """enrich_ci (CI refresh, ADR 0015): a hosted 503 "overloaded" is retried instead of failing the bean."""
+    calls, sleeps = [], []
+
+    def fn(body, req):
+        calls.append(1)
+        return httpx.Response(503) if len(calls) < 3 else reply("ok")
+
+    t = Target("p", "http://llm.test/v1", "k", "m", 5.0, retry_transient=True)
+    assert LLMClient(t, transport=transport(fn), sleep=sleeps.append).chat([{"role": "user", "content": "x"}]) == "ok"
+    assert sleeps == [1, 2]
+    calls.clear()
+    with pytest.raises(LLMError):                       # default targets still fail over at once
+        LLMClient(target("m"), transport=transport(fn)).chat([{"role": "user", "content": "x"}])
+
+
+def test_enrich_task_switch(monkeypatch):
+    from pipeline.llm import enrich_task
+    monkeypatch.delenv("ENRICH_TASK", raising=False)
+    assert enrich_task() == "enrich"
+    monkeypatch.setenv("ENRICH_TASK", "enrich_ci")
+    assert enrich_task() == "enrich_ci"
+    primary, fallback = load_targets("enrich_ci")
+    assert primary.provider == "nvidia" and fallback is None and primary.retry_transient
+    assert primary.extra == {"chat_template_kwargs": {"enable_thinking": False}}
