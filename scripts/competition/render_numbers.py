@@ -34,6 +34,45 @@ def _fmt(x, digits: int = 4) -> str:
     return str(x)
 
 
+def _load_here_or_parent(eval_dir: Path, name: str) -> dict | None:
+    for candidate in (Path(eval_dir) / name, Path(eval_dir).parent / name):
+        if candidate.exists():
+            return json.loads(candidate.read_text(encoding="utf-8"))
+    return None
+
+
+def render_headline(labels: dict | None, v3: dict | None, zen: dict | None) -> list[str]:
+    """The two accuracy numbers the draft leads with: E1 = leave-one-roaster-out CV on the public roaster gauges
+    (phase4_open_labels.json baselines, phase5_open_v3.json shipped model), E2 = the Zenodo external panel
+    (phase2_zenodo_external.json, evaluation only)."""
+    def pct(x) -> str:
+        return "-" if x is None else f"{x:.1%}"
+
+    lines = ["**핵심 정확도: 산미 예측** (학습에 쓰지 않은 데이터로만 잰 값)", "",
+             "| 검증 | 제출본 모델 ±1 · MAE · 순위상관 | 이웃 평균만 ±1 · MAE | 기준선 ±1 · MAE | n |", "|---|---|---|---|---|"]
+    if labels and v3:
+        m = v3["abstention"]["acidity"]["answer all (shipped)"]["e1"]
+        t = labels["cv"]["acidity"]["table"]
+        nb, gm = t["neighbor_avg_new"], t["global_mean"]
+        lines.append(f"| E1 로스터리 단위 교차검증(공개 게이지, 한 로스터리는 학습·평가 한쪽에만) | {m['within1']:.3f} · "
+                     f"{m['mae']:.3f} · {m['spearman']:.2f} | {nb['within1']:.3f} · {nb['mae']:.3f} | "
+                     f"전체 평균 {gm['within1']:.3f} · {gm['mae']:.3f} | {m['n']} |")
+    if zen:
+        m, nb, c = (zen["variants"]["open"]["acidity"], zen["variants"]["open_neighbours"]["acidity"],
+                    zen["baseline_constant_3"]["acidity"])
+        lines.append(f"| E2 외부 패널(Zenodo, 평가 전용) | {pct(m['within1'])} · {m['mae']:.2f} · {m['spearman']:.2f} | "
+                     f"{pct(nb['within1'])} · {nb['mae']:.2f} (n={nb['n']}) | 항상 3 {pct(c['within1'])} · {c['mae']:.2f} | "
+                     f"{m['n']} |")
+        b, bc = zen["variants"]["open"]["body"], zen["baseline_constant_3"]["body"]
+        sw = v3["abstention"]["sweetness"]["cue or neighbour value"]["e2"] if v3 else None
+        lines += ["", f"- 바디(외부 패널): 제출본 ±1 {pct(b['within1'])}·순위상관 {b['spearman']:.2f} vs 항상 3 "
+                      f"{pct(bc['within1'])} — 패널 바디가 거의 3에 몰려 있어 이기지 못함"]
+        if sw:
+            lines.append(f"- 단맛(외부 패널): 근거 없으면 기권, 답한 비율 {pct(sw['coverage'])}, 답한 것의 ±1 "
+                         f"{pct(sw['within1'])}·순위상관 {sw['spearman']:.2f} — 순위가 옮겨 가지 않음")
+    return lines
+
+
 def render_coverage(cov: dict) -> list[str]:
     lines = ["**커버리지** (`phase2_coverage.json`)", "", "| 항목 | 값 |", "|---|---|"]
     lines.append(f"| 원두 수 | {cov.get('total', '-')} |")
@@ -44,7 +83,8 @@ def render_coverage(cov: dict) -> list[str]:
     lines.append(f"| 디카페인(향미 태그 보유) | {cov.get('decaf_with_flavor_tags', '-')} |")
     by_brand = cov.get("menu_items_by_brand") or {}
     if by_brand:
-        lines += ["", "**브랜드별 메뉴 수**", "", "| 브랜드 | 메뉴 수 |", "|---|---|"]
+        lines += ["", f"**브랜드별 메뉴 수** (메뉴가 있는 브랜드 {len(by_brand)}곳, 합계 {sum(by_brand.values())}종)",
+                  "", "| 브랜드 | 메뉴 수 |", "|---|---|"]
         for key in sorted(by_brand):
             brand = key.split(":", 1)[-1]
             lines.append(f"| {brand} | {by_brand[key]} |")
@@ -57,14 +97,15 @@ def render_violations(v: dict) -> list[str]:
     return [
         "**조건 위반** (`phase2_violations.json`)",
         "",
-        f"- 검사 {checked}건 중 위반 {violations}건 ({rate:.1%})",
+        f"- 검사 {checked}건 중 위반 {violations}건 ({rate:.1%}) — 페르소나 4명 × 브랜드 10곳, 브랜드마다 추천 최대 3개"
+        " (메뉴가 없는 브랜드는 원두 기준 추천이라 1~2개)",
     ]
 
 
 def render_loo(loo: dict) -> list[str]:
     n = loo.get("n", "-")
     seed = loo.get("seed", "-")
-    lines = [f"**LOO 예측 정확도** (n={n}, seed={seed}, `phase2_loo.json`)", "",
+    lines = [f"**부록 — 원두 하나씩 빼고 맞히기(LOO), 정답은 CQI 커핑 품질 점수** (n={n}, seed={seed}, `phase2_loo.json`)", "",
               "| 속성 | 정확히 일치 | ±1 이내 | n |", "|---|---|---|---|"]
     for attr, label in (("acidity", "산미"), ("body", "바디"), ("sweetness", "단맛")):
         a = loo.get(attr) or {}
@@ -122,7 +163,7 @@ def render_bench(bench: dict) -> list[str]:
     return [
         "**설명 생성 지연시간** (`phase2_bench.json`, {})".format(bench.get("model", "-")),
         "",
-        f"- 순차 {_fmt(bench.get('sequential_total_s'))}s → 병렬 {_fmt(bench.get('parallel_total_s'))}s",
+        f"- 순차 {_fmt(bench.get('sequential_total_s'))}s(첫 호출 콜드 스타트 포함) → 병렬 {_fmt(bench.get('parallel_total_s'))}s",
         f"- 첫 토큰: " + " / ".join(_fmt(t) for t in first) + "s" if first else "- 첫 토큰: -",
     ]
 
@@ -135,7 +176,8 @@ def render_explain_quality(eq: dict) -> list[str]:
         "",
         f"- 규칙 통과: {s.get('rule_pass', '-')}/{s.get('n', '-')} ({_fmt(s.get('rule_pass_rate'))})",
         f"- 무모순(두 판정자 모두): {_fmt(s.get('no_contradiction_rate_both'))}",
-        f"- 무환각(두 판정자 모두): {_fmt(s.get('no_hallucination_rate_both'))}",
+        f"- 무환각(두 판정자 모두): {_fmt(s.get('no_hallucination_rate_both'))}"
+        f" (판정자 간 일치율 {_fmt((s.get('judge_agreement') or {}).get('hallucination'))})",
         "- 도움됨 평균: " + ", ".join(f"{k} {v}" for k, v in helpful.items()) if helpful
         else "- 도움됨 평균: -",
     ]
@@ -174,6 +216,11 @@ def render_open_v3(tags: dict | None, v3: dict | None) -> list[str]:
 def main(eval_dir: str | Path) -> str:
     eval_dir = Path(eval_dir)
     parts: list[str] = [NUMBERS_START, "", "### 수치 (자동 생성 — scripts/competition/render_numbers.py, 손으로 고치지 마세요)", ""]
+
+    labels, v3z = _load(eval_dir, "phase4_open_labels.json"), _load(eval_dir, "phase5_open_v3.json")
+    zen = _load_here_or_parent(eval_dir, "phase2_zenodo_external.json")
+    if (labels and v3z) or zen:
+        parts += render_headline(labels, v3z, zen) + [""]
 
     violations = _load(eval_dir, "phase2_violations.json")
     if violations is not None:

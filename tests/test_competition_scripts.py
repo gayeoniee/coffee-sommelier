@@ -295,3 +295,27 @@ class TestCheckDraft:
         assert set(sections) == {"A-2", "A-3", "A-4", "A-5", "A-6"}
         assert "body-A-2" in sections["A-2"]
         assert "body-A-3" not in sections["A-2"]
+
+
+class TestRenderHeadline:
+    def test_leads_with_e1_and_external_panel(self, tmp_path):
+        eval_dir, _ = _write_fake_figure_inputs(tmp_path)
+        z = json.loads((eval_dir / "phase2_zenodo_external.json").read_text(encoding="utf-8"))
+        z["variants"]["open"]["body"] = {"n": 8, "mae": 0.7, "within1": 0.7, "spearman": 0.0}
+        z["baseline_constant_3"]["body"] = {"n": 8, "mae": 0.3, "within1": 1.0, "spearman": None}
+        _write(eval_dir / "phase2_zenodo_external.json", z)
+        m = {"n": 5, "mae": 0.7, "within1": 0.7, "spearman": 0.5, "coverage": 1.0}
+        rule = {"e1": m, "e2": dict(m, coverage=0.9)}
+        _write(eval_dir / "phase5_open_v3.json", {
+            "abstention": {"acidity": {"answer all (shipped)": {"e1": m}},
+                           "sweetness": {"answer all (shipped)": rule, "cue or neighbour value": rule}},
+            "body_e1": {"neighbour_avg": m, "+K": m},
+            "body_e2": {"+K": {"model": m, "neighbour": m}}})
+        _write(eval_dir / "phase4_open_labels.json", {"cv": {"acidity": {"table": {
+            "neighbor_avg_new": {"n": 5, "mae": 1.0, "within1": 0.5},
+            "global_mean": {"n": 5, "mae": 1.0, "within1": 0.5}}}}})
+
+        text = render_numbers.main(eval_dir)
+
+        assert text.index("핵심 정확도") < text.index("조건 위반")
+        assert "0.700 · 0.700 · 0.50" in text and "80.0%" in text and "항상 3 65.0%" in text
