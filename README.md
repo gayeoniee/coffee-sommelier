@@ -23,7 +23,7 @@
 
 | 무엇을 쟀나 | 결과 | 원자료 |
 |---|---|---|
-| 조건 위반율 (페르소나 4 × 브랜드 10, top3) | **0.0% — 0/102건** (메뉴 실측 7개 브랜드) | [phase2_violations.json](data/eval/phase2_violations.json) |
+| 조건 위반율 (페르소나 4 × 브랜드 10, top3) | **0.0% — 0/108건** (메뉴 실측 8개 브랜드) | [phase2_violations.json](data/eval/phase2_violations.json) |
 | 지식베이스 원두 수 | 9,257 (디카페인 180, 향미 태그 7,616) · 오픈 라이선스판 2,063(해외 Shopify 강도 표기 199 포함, [ADR 0013](docs/adr/0013-open-labels-weak-supervision.md)) | [phase2_coverage.json](data/eval/phase2_coverage.json), [open/phase2_coverage.json](data/eval/open/phase2_coverage.json) |
 | 원두 예측 leave-one-out, 산미 ±1 이내 | **0.735 (n=200)** · 오픈 라이선스판 0.5126 (n=199) — 재라벨 전과 같은 대상([ADR 0010](docs/adr/0010-body-heaviness.md)) | [phase2_loo.json](data/eval/phase2_loo.json) |
 | 원두 예측 leave-one-out, 바디 ±1 이내 | 0.6405 (n=153) — 200개 대상 중 텍스트에 무게감 언급이 없는 원두는 결측이라 제외([ADR 0010](docs/adr/0010-body-heaviness.md)) | [phase2_loo.json](data/eval/phase2_loo.json) |
@@ -84,7 +84,7 @@ pipeline/
 - 규칙 태그의 부정 표현 오탐 개선, 원본 점수의 절대 척도 보정. 일반어(초콜릿 등) 오탐은 전역 빈도 대비 lift 게이트로
   완화했다([ADR 0007](docs/adr/0007-tag-lift-gate.md)) — 그래도 (미해결 — LOO 태그 F1 0.3974)
 - 리뷰 코퍼스가 영어라 한국어 질의 검색 품질이 낮다 → 2단계에서 질의 번역 또는 한국어 요약 임베딩. → 다국어 임베딩(nemotron)으로 바꾼 뒤 한국어 질의 top5가 의도에 맞게 나온다([ADR 0003](docs/adr/0003-embedding-model.md)). 번역·요약 임베딩은 하지 않았다.
-- 프랜차이즈 음료 단위 수집은 7개 브랜드(스타벅스·메가·빽다방·할리스·커피빈·폴바셋·컴포즈). 투썸(목록 페이지 봇 차단, robots에 일반 규칙 없음)·이디야(메뉴 데이터가 robots.txt 차단 경로 `/inc/`로만 제공)·블루보틀(카페 음료 메뉴 미공개)은 브랜드 원두 추정 카드만 나온다.
+- 프랜차이즈 음료 단위 수집은 8개 브랜드(스타벅스·메가·빽다방·할리스·커피빈·폴바셋·컴포즈·이디야). 이디야는 "더보기"가 robots.txt 차단 경로(`/inc/`)라 서버가 그리는 첫 카드만 검색어로 모아 41종이다([ADR 0014](docs/adr/0014-public-sources-ediya-twosome-kca-zenodo.md)). 투썸(메뉴 목록 봇 차단 — 원두 게이지만 공식 페이지에서 손으로 옮김)·블루보틀(카페 음료 메뉴 미공개)은 브랜드 원두 카드만 나온다.
 
 ## 빠른 시작
 
@@ -142,14 +142,16 @@ API 이미지는 파이프라인 의존성을 뺀 356 MB, 실행 메모리 약 7
 | Kaggle: [patkle](https://www.kaggle.com/datasets/patkle/coffeereviewcom-over-7000-ratings-and-reviews), [hanifalirsyad](https://www.kaggle.com/datasets/hanifalirsyad/coffee-scrap-coffeereview), [schmoyote](https://www.kaggle.com/datasets/schmoyote/coffee-reviews-dataset) | coffeereview.com 리뷰 스크랩 | 원 저작권은 Coffee Review에 있음. 비상업 포트폴리오 용도로만 사용, 원본 데이터는 레포에 포함하지 않음 |
 | [RoasterDB 샘플](https://github.com/RoasterDB/specialty-coffee-roasterdb) | 로스터리 원두 + SCA 노트 | CC BY-NC 4.0 |
 | [SCA 플레이버 휠 JSON](https://github.com/fschlz/coffee-flavor-api) | 향미 분류 체계 | © SCA/WCR 2016, CC BY-NC-ND 4.0 (원본 수정 없이 별도 한국어 매핑) |
-| 스타벅스·메가MGC·빽다방·할리스·커피빈·폴바셋·컴포즈 공식 메뉴 | 음료, 카페인 mg, 디카페인 | robots.txt 허용 범위(폴바셋은 인증서 오류로 해당 호스트만 검증 해제), 1회 스냅샷 |
+| 스타벅스·메가MGC·빽다방·할리스·커피빈·폴바셋·컴포즈·이디야 공식 메뉴 | 음료, 카페인 mg, 디카페인(이디야는 DECAF 카테고리의 디카페인 SKU) | robots.txt 허용 범위(폴바셋은 인증서 오류로 해당 호스트만 검증 해제, 이디야는 `/inc/` 미호출), 1회 스냅샷 |
 | 블루보틀 코리아 `products.json` | 원두 상품 설명 | Shopify 공개 엔드포인트 |
 | 해외 Shopify 로스터 8곳 `products.json` (Kiss the Hippo·Intelligentsia·Volcanica·Ozone·Café Don Pablo·Café Britt·Fresh Roasted·Coffee Supreme, `shopify_gauged`) | 원두 사실 정보 + **로스터가 직접 붙인 강도 표기**("VIBRANT & BRIGHT"·"Low Acid"·"Body: full" → 한 사전으로 1~5, 원두 199개: 산미 170·바디 46·단맛 2, [ADR 0013](docs/adr/0013-open-labels-weak-supervision.md)) | Shopify 공개 엔드포인트, robots.txt 확인, 설명 문구 미저장 |
 | 국내 로스터리 12곳(프릳츠·나무사이로·커피 리브레·1kg커피·블루보틀 코리아·앤트러사이트·펠트·빈브라더스·모모스·매뉴팩트·G로스팅·내일의커피) 상품 페이지 (`pipeline roasters-kr`) | 원두 사실 정보만(산지·가공·로스팅·디카페인·노트 단어·가격·표기된 고도/품종) + **로스터가 공개한 맛 게이지**(산미·바디·단맛, 4곳 82건 — 오픈판 특징 모델의 사람 라벨, [ADR 0011](docs/adr/0011-roaster-gauges-feature-model.md)) | robots.txt 준수, 설명 문구 미저장, 이미지 게이지는 읽지 않음, 테라로사·헬카페(둘 다 robots.txt 차단) 등 제외 |
 | `data/curated/brands.yaml` | 10개 브랜드 디카페인 정보 + 하우스/디카페인 원두 값(값마다 출처 `label_source`) | 공식 페이지·뉴스 수기 정리(확인 수준 표기) |
-| `data/curated/brand_beans_official.yaml` | 10개 브랜드 공식 원두 설명(이름·로스팅·블렌드·맛 문구 원문, 브랜드별 출처 URL·확인일) | robots.txt 준수 수집, 사실만(20개 원두 중 12개 공식 맛 설명 확보, [ADR 0012](docs/adr/0012-official-brand-beans.md)) |
+| `data/curated/brand_beans_official.yaml` | 10개 브랜드 공식 원두 설명(이름·로스팅·블렌드·맛 문구 원문, 브랜드별 출처 URL·확인일) + 투썸 산미·바디 막대(%) | robots.txt 준수 수집, 사실만(20개 원두 중 14개 공식 맛 설명 확보, 투썸 게이지는 브라우저로 열어 손으로 옮김, [ADR 0012](docs/adr/0012-official-brand-beans.md)) |
+| [한국소비자원 차음료 품질비교](https://www.consumer.go.kr/user/ftc/consumer/cnsmrBBS/79/selectInfoRptDetail.do?infoId=A1081353&cntntsId=00000566) (비교공감 제2026-8호) | 6개 브랜드 말차·녹차라떼·밀크티 12종 실측 카페인·당류(`data/curated/kca_tea_drinks_2026.yaml`) | 공공누리(제1유형 출처표시 조건 준수). 메뉴 카페인 결측 보충·교차검증 |
+| [Zenodo Q그레이더 패널](https://doi.org/10.5281/zenodo.20840464) (Golovinsky 외, v1.1) | 196개 샘플 산미·단맛 강도·바디 서술 — **외부 검증 전용**([phase2_zenodo_external.json](data/eval/phase2_zenodo_external.json)) | CC BY-NC 4.0으로 취급(레코드 표기가 BY/BY-NC로 엇갈려 엄격한 쪽), 학습·적재·재배포 안 함 |
 
-coffeereview.com 원본 사이트, 투썸플레이스(봇 차단)는 직접 수집하지 않았다. 컴포즈커피는 처음엔 캡차로 막혀 제외했지만, 이후 공식 사이트의 영양정보 메뉴 페이지에서 수집해 위 7개 브랜드에 들어갔다.
+coffeereview.com 원본 사이트, 투썸플레이스 메뉴(봇 차단)는 직접 수집하지 않았다. 컴포즈커피는 처음엔 캡차로 막혀 제외했지만, 이후 공식 사이트의 영양정보 메뉴 페이지에서 수집해 위 8개 브랜드에 들어갔다.
 
 라이선스 때문에 두 판을 운영한다. **전체판**(포트폴리오, 위 모든 소스)과 **오픈 라이선스판**(coffeereview 제외 + 국내 로스터리 사실 정보, https://coffee-sommelier-open.vercel.app). 두 판의 수치 차이는 아래 [데이터 출처별 성능](#평가-상세)과 [설계 결정 12번](docs/design-decisions.md#12-데이터-라이선스는-어떻게-정했나-전체판과-오픈판).
 
@@ -187,10 +189,10 @@ coffeereview.com 원본 사이트, 투썸플레이스(봇 차단)는 직접 수�
 | 원두 (`coffees`, 전부 1024차원 임베딩) | **9,257** |
 | └ 디카페인 원두 | 180 |
 | 리뷰 텍스트 (`reviews`, RAG 근거 전용) | 7,401 |
-| 프랜차이즈 메뉴 (`menu_items`, 카페인 mg 포함) | 471 (스타벅스 71 · 메가 119 · 빽다방 114 · 폴바셋 56 · 커피빈 42 · 컴포즈 42 · 할리스 27) |
-| └ 디카페인 메뉴 | 110 (+ 디카페인 샷 변경 가능 146) |
-| 브랜드 (`brands`, 디카페인 가능 여부·추가요금) | 10 (메뉴 실측 7 · 투썸·이디야·블루보틀은 브랜드 원두 카드만) |
-| └ 원두 값 출처 (하우스·디카페인 20개) | 공식 설명 → 모델·문구 12 · 손 추정 8 · 오픈판은 별도 값(공식 문구 단서·특징 모델·손 추정만, 전부 추정 6) ([ADR 0012](docs/adr/0012-official-brand-beans.md#오픈판-브랜드-값)) |
+| 프랜차이즈 메뉴 (`menu_items`, 카페인 mg 포함) | 512 (스타벅스 71 · 메가 119 · 빽다방 114 · 폴바셋 56 · 커피빈 42 · 컴포즈 42 · 이디야 41 · 할리스 27) |
+| └ 디카페인 메뉴 | 129 (+ 디카페인 샷 변경 가능 162) |
+| 브랜드 (`brands`, 디카페인 가능 여부·추가요금) | 10 (메뉴 실측 8 · 투썸·블루보틀은 브랜드 원두 카드만) |
+| └ 원두 값 출처 (하우스·디카페인 20개) | 공식 설명 → 모델·문구 14(투썸은 산미·바디 공식 게이지) · 손 추정 6 · 오픈판은 별도 값(공식 문구 단서·특징 모델·손 추정만, 전부 추정 4) ([ADR 0012](docs/adr/0012-official-brand-beans.md#오픈판-브랜드-값)) |
 | SCA 향미 택소노미 (`flavor_taxonomy`, 1·2단계 한국어) | 121 |
 
 원두 소스별: coffeereview(Kaggle) 7,393 · CQI 1,546 · RoasterDB 100 · 블루보틀 코리아 9 · 국내 로스터리 209 (수집 217건 중 블루보틀 코리아 Shopify 상품과 URL이 같은 8건 제외)
@@ -261,7 +263,7 @@ $ python -m pipeline query "bright citrus floral Ethiopia washed" -k 5 --decaf
 
 | 평가 (`python -m app.eval`) | 결과 |
 |---|---|
-| 조건 위반율 (페르소나 4 × 브랜드 10, top3) | 0.0% — 0/102건 (우유 판정은 메뉴 427종 수기 라벨 기준; 메뉴 실측 7개 브랜드) |
+| 조건 위반율 (페르소나 4 × 브랜드 10, top3) | 0.0% — 0/108건 (우유 판정은 메뉴 453종 수기 라벨 기준; 메뉴 실측 8개 브랜드) |
 | 원두 예측 leave-one-out, 산미 ±1 이내 | 0.735 (n=200) |
 | 원두 예측 leave-one-out, 바디 ±1 이내 | 0.6405 (n=153/200) |
 | 학습 수렴: 모의 사용자 10회 기록 후 프로필 오차 | 0.7792 → 0.7117 |
