@@ -55,3 +55,9 @@ def test_report_markdown_renders_a_failed_run():
                           "gates": [{"name": "size_check", "ok": False, "detail": "menu_items: 30%"}],
                           "stages": {"collect": {"mega": "failed: HTTPError"}, "has_diff": False}})
     assert "(DRY_RUN)" in md and "**실패**" in md and "mega | failed: HTTPError" in md and "오류: `X: y`" in md
+
+
+def test_check_command_drops_pytest_docs_footer():
+    out = "....\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n689 passed, 1 skipped in 24.88s\n"
+    g = check_command("pytest", 0, out)
+    assert g.ok and "Docs" not in g.detail and "689 passed" in g.detail

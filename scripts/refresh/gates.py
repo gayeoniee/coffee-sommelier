@@ -48,7 +48,9 @@ def check_size(fails: list[str]) -> Gate:
 
 
 def check_command(name: str, returncode: int, output: str) -> Gate:
-    tail = " / ".join(line for line in output.strip().splitlines()[-3:] if line.strip())
+    lines = [line for line in output.strip().splitlines()
+             if line.strip() and not line.startswith("-- Docs:") and set(line.strip()) != {"="}]
+    tail = " / ".join(lines[-2:])
     return Gate(name, returncode == 0, tail[:400])
 
 
