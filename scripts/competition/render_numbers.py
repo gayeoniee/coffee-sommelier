@@ -141,6 +141,36 @@ def render_explain_quality(eq: dict) -> list[str]:
     ]
 
 
+def render_open_v3(tags: dict | None, v3: dict | None) -> list[str]:
+    """Open variant v3 (docs/adr/0016-open-variant-v3.md): E1 = grouped leave-one-roaster-out CV on our own labels,
+    E2 = the Zenodo external panel (evaluation only)."""
+    def _f3(x) -> str:
+        return "-" if x is None else f"{x:.3f}"
+
+    lines = ["**오픈판 v3: E1(로스터리 단위 CV) · E2(Zenodo 외부 패널)** (`phase5_open_tags.json`, `phase5_open_v3.json`)",
+             "", "| 항목 | E1 | E2 |", "|---|---|---|"]
+    if tags:
+        t1, t2 = tags["e1"]["table"], tags["e2"]
+        for name, key in (("향미 태그 F1 / 대분류 F1 — 이웃 투표 (노트 없는 입력)", "neighbour_vote"),
+                          ("└ 노트 없는 특징 태그 모델 (탑재)", "feat")):
+            lines.append(f"| {name} | {_f3(t1[key]['f1'])} / {_f3(t1[key]['category_f1'])} (n={t1[key]['n']}) "
+                         f"| {_f3(t2[key]['f1'])} / {_f3(t2[key]['category_f1'])} (n={t2[key]['n']}) |")
+    if v3:
+        for rule, label in (("answer all (shipped)", "단맛 — 항상 답함 (이전)"),
+                            ("cue or neighbour value", "단맛 — 근거 없으면 기권 (탑재)")):
+            r = v3["abstention"]["sweetness"][rule]
+            lines.append(f"| {label}: 답한 비율 · ±1 · MAE | {_f3(r['e1']['coverage'])} · {_f3(r['e1']['within1'])} · "
+                         f"{_f3(r['e1']['mae'])} | {_f3(r['e2']['coverage'])} · {_f3(r['e2']['within1'])} · "
+                         f"{_f3(r['e2']['mae'])} |")
+        b1 = v3["body_e1"]
+        best = max((k for k in b1 if k != "neighbour_avg"), key=lambda k: (b1[k]["within1"], -b1[k]["mae"]))
+        e2 = v3["body_e2"][best]
+        lines.append(f"| 바디 최고 후보 `{best}` vs 이웃 평균: ±1 (미탑재) | {_f3(b1[best]['within1'])} vs "
+                     f"{_f3(b1['neighbour_avg']['within1'])} | {_f3(e2['model']['within1'])} vs "
+                     f"{_f3(e2['neighbour']['within1'])} |")
+    return lines
+
+
 def main(eval_dir: str | Path) -> str:
     eval_dir = Path(eval_dir)
     parts: list[str] = [NUMBERS_START, "", "### 수치 (자동 생성 — scripts/competition/render_numbers.py, 손으로 고치지 마세요)", ""]
@@ -176,6 +206,10 @@ def main(eval_dir: str | Path) -> str:
         parts += render_explain_quality(explain_quality) + [""]
     else:
         parts += ["**설명 품질 판정**: 데이터 없음 (`phase2_explain_quality.json` 미생성)", ""]
+
+    open_tags, open_v3 = _load(eval_dir, "phase5_open_tags.json"), _load(eval_dir, "phase5_open_v3.json")
+    if open_tags is not None or open_v3 is not None:
+        parts += render_open_v3(open_tags, open_v3) + [""]
 
     parts.append(NUMBERS_END)
     return "\n".join(parts) + "\n"
