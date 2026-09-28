@@ -1,8 +1,8 @@
 from dataclasses import replace
 
 from app.eval import LOO_TARGET_SOURCES, NEVER_LOO_TARGETS, OPEN_LICENSE_EXCLUDE, VARIANTS, independent_ok, rank_decaf, tag_prf, violation_rate
-from app.eval import (LOO_TARGET_SOURCES, NEVER_LOO_TARGETS, OPEN_LICENSE_EXCLUDE, PERSONAS, VARIANTS, independent_ok,
-                      rank_decaf, summarize_explain_quality, violation_rate)
+from app.eval import (BODY_TARGET_SOURCES, LOO_TARGET_SOURCES, NEVER_LOO_TARGETS, OPEN_LICENSE_EXCLUDE, PERSONAS,
+                      VARIANTS, independent_ok, rank_decaf, summarize_explain_quality, violation_rate)
 from app.models import Item, Profile
 from tests.app.fakes import FakeRepo
 
@@ -66,6 +66,17 @@ def test_variants_keep_open_comparable_and_targets_out_of_every_exclusion():
     assert VARIANTS["open_plus"] == ("coffeereview_kaggle",)
     assert not any(set(LOO_TARGET_SOURCES) & set(xs) for xs in VARIANTS.values())   # same targets everywhere
     assert "roasters_kr" not in LOO_TARGET_SOURCES and "roasters_kr" in NEVER_LOO_TARGETS
+
+
+def test_body_target_sources_are_open_pool_excluded_and_distinct_from_the_acidity_targets():
+    """docs/adr/0010-body-heaviness.md follow-up: compare3's body-only target set draws from
+    coffeereview_kaggle (never CQI -- CQI's body is always None), and that source is already excluded from
+    the open/open_plus neighbour pools (VARIANTS), so it can't leak into what those variants can serve or
+    learn from; only the LOO_TARGET_SOURCES (CQI) targets are unaffected by that exclusion."""
+    assert BODY_TARGET_SOURCES == ("coffeereview_kaggle",)
+    assert not set(BODY_TARGET_SOURCES) & set(LOO_TARGET_SOURCES)
+    assert set(BODY_TARGET_SOURCES) <= set(VARIANTS["open"])           # excluded from open's neighbour pool too
+    assert set(BODY_TARGET_SOURCES) <= set(VARIANTS["open_plus"])
 
 
 def test_tag_prf():

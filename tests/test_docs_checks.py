@@ -68,9 +68,12 @@ EVAL = {
     "phase2_bench.json": {"sequential_total_s": 4.59, "parallel_total_s": 2.03},
     "phase2_convergence.json": {"mae_by_step": [0.7792, 0.75, 0.7117]},
     "phase2_compare3.json": {"variants": {
-        "full": {"loo": {"acidity": {"within1": 0.495}, "body": {"n": 0, "within1": None}}},
-        "open": {"loo": {"acidity": {"within1": 0.495}, "body": {"n": 0, "within1": None}}},
-        "open_plus": {"loo": {"acidity": {"within1": 0.495}, "body": {"n": 0, "within1": None}}},
+        "full": {"loo": {"acidity": {"within1": 0.495}, "body": {"n": 0, "within1": None}},
+                "body_loo": {"body": {"n": 200, "within1": 0.64, "mae": 0.8814}}},
+        "open": {"loo": {"acidity": {"within1": 0.495}, "body": {"n": 0, "within1": None}},
+                "body_loo": {"body": {"n": 151, "within1": 0.649, "mae": 0.988}}},
+        "open_plus": {"loo": {"acidity": {"within1": 0.495}, "body": {"n": 0, "within1": None}},
+                     "body_loo": {"body": {"n": 169, "within1": 0.6391, "mae": 0.9843}}},
     }},
 }
 
@@ -85,7 +88,8 @@ GOOD_README = """
 | 설명 품질 | 규칙 통과 18/24 |
 | 설명 3개 순차 vs 병렬 (지연) | 4.59초 → 2.03초 |
 | LOO 산미 ±1 이내 (CQI 고정 200개) | 0.495 | 0.495 | 0.495 |
-| LOO 바디 n (CQI 고정 200개) | 0 | 0 | 0 |
+| LOO 바디 ±1 이내 (coffeereview 고정, 채점 전용) | 0.64 (n=200) | 0.649 (n=151) | 0.6391 (n=169) |
+| LOO 바디 MAE (coffeereview 고정, 채점 전용) | 0.8814 | 0.988 | 0.9843 |
 | 학습 수렴 프로필 오차 | 0.7792 → 0.7117 |
 """
 

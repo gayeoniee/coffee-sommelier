@@ -166,12 +166,19 @@ def _noise_for(eval_dir: Path, exclude_sources: list[str]) -> dict[str, float] |
 
 
 def fig_loo_compare(eval_dir: Path, out_path: Path, korean: bool) -> None:
+    """Acidity and body are scored on TWO DIFFERENT fixed target sets (docs/adr/0010-body-heaviness.md):
+    acidity on the CQI-200 set (`loo.acidity`), body on a separate coffeereview-only set with a heaviness
+    label (`body_loo.body`) -- CQI's own body is always None, so `loo.body` would be n=0 for every variant.
+    Both n's are annotated on the bars since they differ per variant (the body pool shrinks a bit once
+    coffeereview_kaggle itself is excluded from the neighbour pool)."""
     cmp = _load_compare3(eval_dir)
     variants = [v for v in VARIANT_ORDER if v in cmp.get("variants", {})]
     labels = VARIANT_LABELS_KO if korean else VARIANT_LABELS_EN
 
     acidity = [cmp["variants"][v]["loo"]["acidity"]["within1"] for v in variants]
-    body = [cmp["variants"][v]["loo"]["body"]["within1"] for v in variants]
+    acidity_n = [cmp["variants"][v]["loo"]["acidity"]["n"] for v in variants]
+    body = [cmp["variants"][v]["body_loo"]["body"]["within1"] for v in variants]
+    body_n = [cmp["variants"][v]["body_loo"]["body"]["n"] for v in variants]
     acidity_err, body_err = [], []
     for v in variants:
         noise = _noise_for(eval_dir, cmp["variants"][v].get("exclude_sources", []))
@@ -181,16 +188,24 @@ def fig_loo_compare(eval_dir: Path, out_path: Path, korean: bool) -> None:
     x = list(range(len(variants)))
     width = 0.35
     fig, ax = plt.subplots(figsize=(max(5.0, len(variants) * 2.2), 4.2))
-    ax.bar([i - width / 2 for i in x], acidity, width, yerr=acidity_err, capsize=4,
-           label=("산미" if korean else "Acidity"), color=BLUE)
-    ax.bar([i + width / 2 for i in x], body, width, yerr=body_err, capsize=4,
-           label=("바디" if korean else "Body"), color=ORANGE)
+    bars_a = ax.bar([i - width / 2 for i in x], acidity, width, yerr=acidity_err, capsize=4,
+                    label=("산미 (CQI n)" if korean else "Acidity (CQI n)"), color=BLUE)
+    bars_b = ax.bar([i + width / 2 for i in x], body, width, yerr=body_err, capsize=4,
+                    label=("바디 (coffeereview n)" if korean else "Body (coffeereview n)"), color=ORANGE)
+    for rect, n in zip(bars_a, acidity_n):
+        ax.text(rect.get_x() + rect.get_width() / 2, rect.get_height(), f"n={n}",
+               ha="center", va="bottom", fontsize=8)
+    for rect, n in zip(bars_b, body_n):
+        ax.text(rect.get_x() + rect.get_width() / 2, rect.get_height(), f"n={n}",
+               ha="center", va="bottom", fontsize=8)
     ax.set_xticks(x)
     ax.set_xticklabels([labels.get(v, v) for v in variants])
-    ax.set_ylim(0, 1)
+    ax.set_ylim(0, 1.08)
     ax.set_ylabel("±1 이내 정확도" if korean else "±1 accuracy")
-    ax.set_title("LOO 산미·바디 ±1 정확도" if korean else "LOO acidity/body within-1 accuracy")
-    ax.legend()
+    title = ("LOO 산미·바디 ±1 정확도 (서로 다른 고정 대상)" if korean
+             else "LOO acidity/body within-1 accuracy (separate fixed target sets)")
+    ax.set_title(title)
+    ax.legend(loc="lower right")
     fig.tight_layout()
     fig.savefig(out_path, dpi=150)
     plt.close(fig)

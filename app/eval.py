@@ -35,6 +35,18 @@ LOO_TARGET_SOURCES = ("cqi",)
 # Never LOO targets in any command: facts-only roaster beans have no human ratings. Keeps the plain `loo` target
 # sample identical to the one drawn before roasters_kr was loaded.
 NEVER_LOO_TARGETS = ("roasters_kr",)
+# Second, SEPARATE fixed target set for compare3's body accuracy (docs/adr/0010-body-heaviness.md): CQI's body
+# is None for all 200 acidity targets above, so compare3 can never score body against them (n=0, structurally,
+# not a bug). coffeereview_kaggle beans are the only open-licence source with a human-written mouthfeel
+# description a body label can be checked against (the LLM heaviness relabel in data/enriched/
+# body_heaviness.jsonl), so this draws 200 of THOSE (seed 42, filtered to ones that got a body label) instead.
+# coffeereview_kaggle is already excluded from the "open"/"open_plus" neighbour pools (VARIANTS above), so for
+# those two variants these targets can never leak into their own neighbours; "full" includes coffeereview as a
+# source but each target is still excluded from being its own neighbour (exclude_id), same as any other LOO
+# target. These labels are an EVALUATION-ONLY reference: coffeereview_kaggle coffees are never served by the
+# open builds and never used to train the attribute model for them (config/attr_model_open.json) -- see
+# scripts/competition/build_open_db.sh. ("coffeereview 라벨은 채점 기준으로만 사용, 앱·학습에는 미사용.")
+BODY_TARGET_SOURCES = ("coffeereview_kaggle",)
 
 PERSONAS = [
     ("디카페인+산미", Profile(caffeine_rule="decaf_only", milk_ok=True, acidity=4.5, body=2.5, sweetness=3,
@@ -121,8 +133,15 @@ def _load_tagfree_query_embeddings() -> dict[int, list[float]]:
 
 
 def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str, ...] = (),
-                 target_sources: tuple[str, ...] = (), tag_model=None, attr_model=None) -> dict:
+                 target_sources: tuple[str, ...] = (), tag_model=None, attr_model=None,
+                 fixed_ids: list[int] | None = None) -> dict:
     """Attribute (acidity/body/sweetness) predictions are unchanged: stored query embedding, k=10 neighbours.
+
+    `fixed_ids`, when given, is used as the target id list verbatim instead of drawing one from
+    `repo.random_coffee_ids_for_loo` -- `n`/`seed`/`target_sources` are then only carried into the output for
+    context. This is how `compare3`'s separate body target set (`BODY_TARGET_SOURCES`, drawn once with
+    `body_target_ids` so it is identical across variants) is scored per variant: the neighbour pool still
+    varies with `exclude_sources`, only the target ids are fixed from outside.
 
     Tag predictions default to LEAK-FREE query embeddings when cached (see `_load_tagfree_query_embeddings`):
     pipeline/embed.py's embedding_text() folds a coffee's own already-known flavor_tags into its stored
@@ -138,7 +157,7 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
     tag_to_cat, _ = repo.taxonomy()
     base_rates = repo.tag_base_rates()
     tagfree = _load_tagfree_query_embeddings()
-    stats = {a: {"n": 0, "exact": 0, "within1": 0} for a in ATTRS}
+    stats = {a: {"n": 0, "exact": 0, "within1": 0, "abs_err": 0.0} for a in ATTRS}
     by_conf: dict[str, dict] = {}
     neighbor_sources: Counter = Counter()
     with_tags = 0
@@ -149,8 +168,11 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
     attrs_model_stats = {a: {"n": 0, "model_abs_err": 0.0, "model_within1": 0, "neighbor_n": 0,
                              "neighbor_abs_err": 0.0, "neighbor_within1": 0} for a in ATTRS}
     leak_free_used = 0
-    not_targets = tuple(dict.fromkeys(exclude_sources + NEVER_LOO_TARGETS))
-    ids = repo.random_coffee_ids_for_loo(n, seed, exclude_sources=not_targets, sources=target_sources)
+    if fixed_ids is not None:
+        ids = fixed_ids
+    else:
+        not_targets = tuple(dict.fromkeys(exclude_sources + NEVER_LOO_TARGETS))
+        ids = repo.random_coffee_ids_for_loo(n, seed, exclude_sources=not_targets, sources=target_sources)
     for cid in ids:
         truth = repo.get_coffee(cid)
         emb = repo.coffee_embedding(cid)
@@ -166,6 +188,7 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
             s["n"] += 1
             s["exact"] += round(v) == t
             s["within1"] += abs(v - t) <= 1
+            s["abs_err"] += abs(v - t)
         if truth.acidity is not None and pred.acidity is not None:
             c = by_conf.setdefault(pred.confidence, {"n": 0, "within1": 0})
             c["n"] += 1
@@ -233,7 +256,8 @@ def loo_accuracy(repo, n: int = 200, seed: int = 42, exclude_sources: tuple[str,
           "neighbor_source_share": {k: round(v / total_nb, 4) for k, v in neighbor_sources.most_common()},
           "predictions_with_tags": round(with_tags / len(ids), 4) if ids else None,
           "embedding_model": embed_model(),
-          **{a: {"n": s["n"], "exact": rate(s, "exact"), "within1": rate(s, "within1")} for a, s in stats.items()},
+          **{a: {"n": s["n"], "exact": rate(s, "exact"), "within1": rate(s, "within1"),
+                "mae": round(s["abs_err"] / s["n"], 4) if s["n"] else None} for a, s in stats.items()},
           "acidity_within1_by_confidence": {k: {"n": v["n"], "within1": rate(v, "within1")} for k, v in by_conf.items()},
           "tags_query_embeddings": {"leak_free": leak_free_used, "stored_fallback": len(ids) - leak_free_used,
                                     "note": "leak-free tag-free query embeddings are the default when cached "
@@ -295,8 +319,19 @@ def decaf_probe(repo, exclude_sources: tuple[str, ...] = (), k: int = 5) -> dict
     return {"persona": label, **rank_decaf(profile, repo.decaf_coffees(exclude_sources=exclude_sources), tag_to_cat, k)}
 
 
+def body_target_ids(repo, n: int = 200, seed: int = 42) -> list[int]:
+    """The fixed body-only target set for compare3 (see BODY_TARGET_SOURCES): coffeereview_kaggle beans that
+    have a heaviness body label, drawn once so the SAME ids are scored against every variant's neighbour pool
+    (mirrors how LOO_TARGET_SOURCES/CQI is drawn once for the acidity/body-by-CQI targets above)."""
+    return repo.random_coffee_ids_for_loo(n, seed, sources=BODY_TARGET_SOURCES, require=("body",))
+
+
 def compare3(repo, n: int = 200, seed: int = 42) -> dict:
-    """full vs open vs open_plus on the same fixed LOO targets, plus coverage and the Korean decaf probe."""
+    """full vs open vs open_plus on the same fixed LOO targets, plus coverage and the Korean decaf probe.
+
+    Body accuracy gets its OWN fixed target set (`body_target_ids`/`BODY_TARGET_SOURCES`) because the CQI
+    targets above never have a body label (docs/adr/0010-body-heaviness.md) -- `loo["body"]` here is always
+    n=0, structurally; the real body comparison is `body_loo["body"]`."""
     out: dict = {
         "variants": {name: {"exclude_sources": list(xs)} for name, xs in VARIANTS.items()},
         "loo_targets": {
@@ -306,14 +341,30 @@ def compare3(repo, n: int = 200, seed: int = 42) -> dict:
                    "flavor note words); only the neighbour pool changes between variants. CQI has no sweetness "
                    "or flavor tags, so only acidity/body accuracy is measured; predictions_with_tags shows how "
                    "often the pool can suggest any flavor tags for these targets (no ground truth)."},
+        "body_targets": {
+            "sources": list(BODY_TARGET_SOURCES), "n": n, "seed": seed,
+            "why": "CQI's body is None for every one of the acidity targets above (ADR 0010), so `loo.body` "
+                   "here is always n=0 -- a structural limit, not a bug. This SEPARATE fixed set of "
+                   "coffeereview_kaggle beans with an LLM-relabelled heaviness value (data/enriched/"
+                   "body_heaviness.jsonl) is held fixed the same way, so `body_loo.body` reports a real "
+                   "within-1/MAE per variant. coffeereview 라벨은 채점 기준으로만 사용, 앱·학습에는 미사용 -- "
+                   "coffeereview_kaggle is already excluded from the open/open_plus neighbour pools "
+                   "(VARIANTS), so these targets never leak into what those two variants can serve or learn "
+                   "from; for `full` each target is still excluded from being its own neighbour, same as any "
+                   "other LOO target."},
     }
-    hashes = set()
+    hashes, body_hashes = set(), set()
+    body_ids = body_target_ids(repo, n, seed)
     for name, xs in VARIANTS.items():
         loo = loo_accuracy(repo, n, seed, exclude_sources=xs, target_sources=LOO_TARGET_SOURCES)
         hashes.add(loo["target_ids_sha1"])
+        body_loo = loo_accuracy(repo, n, seed, exclude_sources=xs, target_sources=BODY_TARGET_SOURCES,
+                                fixed_ids=body_ids)
+        body_hashes.add(body_loo["target_ids_sha1"])
         out["variants"][name].update(coverage=repo.coverage_counts(exclude_sources=xs), loo=loo,
-                                     decaf_probe=decaf_probe(repo, xs))
+                                     body_loo=body_loo, decaf_probe=decaf_probe(repo, xs))
     out["loo_targets"]["identical_across_variants"] = len(hashes) == 1
+    out["body_targets"]["identical_across_variants"] = len(body_hashes) == 1
     return out
 
 

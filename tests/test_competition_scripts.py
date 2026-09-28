@@ -56,14 +56,22 @@ def _write_fake_eval_dir(eval_dir: Path, *, with_explain_quality: bool = False) 
                     "n": 10, "seed": 1, "exclude_sources": [], "target_sources": ["cqi"],
                     "targets": 10, "target_ids_sha1": "abc", "neighbor_source_share": {"cqi": 1.0},
                     "predictions_with_tags": 0.5, "embedding_model": "fake-embed",
-                    "acidity": {"n": 10, "exact": 0.4, "within1": 0.7},
-                    "body": {"n": 10, "exact": 0.3, "within1": 0.6},
-                    "sweetness": {"n": 5, "exact": 0.5, "within1": 0.8},
+                    "acidity": {"n": 10, "exact": 0.4, "within1": 0.7, "mae": 0.9},
+                    "body": {"n": 0, "exact": None, "within1": None, "mae": None},  # CQI: body always None
+                    "sweetness": {"n": 5, "exact": 0.5, "within1": 0.8, "mae": 0.5},
                     "acidity_within1_by_confidence": {
                         "low": {"n": 2, "within1": 0.5},
                         "medium": {"n": 6, "within1": 0.7},
                         "high": {"n": 2, "within1": 0.9},
                     },
+                },
+                "body_loo": {
+                    "n": 10, "seed": 42, "exclude_sources": [], "target_sources": ["coffeereview_kaggle"],
+                    "targets": 10, "target_ids_sha1": "body-abc", "neighbor_source_share": {"coffeereview_kaggle": 1.0},
+                    "predictions_with_tags": 0.9, "embedding_model": "fake-embed",
+                    "acidity": {"n": 8, "exact": 0.4, "within1": 0.75, "mae": 0.7},
+                    "body": {"n": 10, "exact": 0.3, "within1": 0.6, "mae": 0.9},
+                    "sweetness": {"n": 6, "exact": 0.4, "within1": 0.7, "mae": 0.6},
                 },
                 "decaf_probe": {
                     "persona": "디카페인+산미", "candidates": 3, "with_evidence": 3,
@@ -85,14 +93,23 @@ def _write_fake_eval_dir(eval_dir: Path, *, with_explain_quality: bool = False) 
                     "target_sources": ["cqi"], "targets": 10, "target_ids_sha1": "def",
                     "neighbor_source_share": {"cqi": 1.0}, "predictions_with_tags": 0.2,
                     "embedding_model": "fake-embed",
-                    "acidity": {"n": 10, "exact": 0.3, "within1": 0.5},
-                    "body": {"n": 10, "exact": 0.2, "within1": 0.55},
-                    "sweetness": {"n": 0, "exact": None, "within1": None},
+                    "acidity": {"n": 10, "exact": 0.3, "within1": 0.5, "mae": 1.0},
+                    "body": {"n": 0, "exact": None, "within1": None, "mae": None},  # CQI: body always None
+                    "sweetness": {"n": 0, "exact": None, "within1": None, "mae": None},
                     "acidity_within1_by_confidence": {
                         "low": {"n": 3, "within1": 0.3},
                         "medium": {"n": 5, "within1": 0.5},
                         "high": {"n": 2, "within1": 0.7},
                     },
+                },
+                "body_loo": {
+                    "n": 10, "seed": 42, "exclude_sources": ["coffeereview_kaggle"],
+                    "target_sources": ["coffeereview_kaggle"], "targets": 10, "target_ids_sha1": "body-abc",
+                    "neighbor_source_share": {"roasterdb": 1.0}, "predictions_with_tags": 0.4,
+                    "embedding_model": "fake-embed",
+                    "acidity": {"n": 5, "exact": 0.2, "within1": 0.4, "mae": 1.2},
+                    "body": {"n": 9, "exact": 0.2, "within1": 0.5, "mae": 1.1},
+                    "sweetness": {"n": 3, "exact": 0.3, "within1": 0.5, "mae": 0.9},
                 },
                 "decaf_probe": {
                     "persona": "디카페인+산미", "candidates": 1, "with_evidence": 1,

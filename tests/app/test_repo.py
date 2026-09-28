@@ -278,6 +278,54 @@ def test_loo_target_gate_requires_acidity_only_not_body(repo):
     assert result["body"]["n"] == 0
 
 
+def test_random_coffee_ids_require_lets_body_targets_skip_the_acidity_gate(repo):
+    """docs/adr/0010-body-heaviness.md's second, body-only target set (app.eval.BODY_TARGET_SOURCES /
+    body_target_ids) needs the OPPOSITE gate from the default: body present, acidity irrelevant. `require`
+    is how that is expressed without touching the default acidity-only gate every other caller relies on."""
+    with repo.pool.connection() as conn:
+        has_body = conn.execute(
+            "INSERT INTO coffees (key, name, roaster, is_decaf, body, flavor_tags, embedding, source,"
+            " collected_at) VALUES ('cr1','Has Body','R',false,4,%s,%s::vector,'coffeereview_kaggle',"
+            "'2026-09-26') RETURNING id", (["chocolate"], to_vector_literal(vec(6)))).fetchone()["id"]
+        no_body = conn.execute(
+            "INSERT INTO coffees (key, name, roaster, is_decaf, acidity, flavor_tags, embedding, source,"
+            " collected_at) VALUES ('cr2','No Body','R',false,4,%s,%s::vector,'coffeereview_kaggle',"
+            "'2026-09-26') RETURNING id", (["chocolate"], to_vector_literal(vec(7)))).fetchone()["id"]
+    assert repo.get_coffee(has_body).acidity is None                # acidity genuinely absent here
+    assert repo.get_coffee(no_body).body is None                    # body genuinely absent here
+
+    # default gate (acidity only): picks the acidity bean, not the body-only one
+    assert repo.random_coffee_ids_for_loo(10, seed=1, sources=("coffeereview_kaggle",)) == [no_body]
+    # require=("body",): picks the body bean instead, despite its acidity being null
+    assert repo.random_coffee_ids_for_loo(10, seed=1, sources=("coffeereview_kaggle",),
+                                          require=("body",)) == [has_body]
+
+    with pytest.raises(AssertionError):
+        repo.random_coffee_ids_for_loo(10, seed=1, require=("not_a_real_attr",))
+
+
+def test_compare3_scores_body_on_its_own_fixed_target_set(repo):
+    """compare3's CQI-fixed acidity targets never have a body label (ADR 0010) -- `loo.body.n` stays 0 for
+    every variant regardless. The separate `body_loo` block, scored against coffeereview_kaggle beans that DO
+    have a body label, is where a real body accuracy shows up (docs/adr/0010-body-heaviness.md follow-up)."""
+    with repo.pool.connection() as conn:
+        conn.execute(
+            "INSERT INTO coffees (key, name, roaster, is_decaf, body, flavor_tags, embedding, source,"
+            " collected_at) VALUES ('cr1','Body Target','R',false,4,%s,%s::vector,'coffeereview_kaggle',"
+            "'2026-09-26')", (["chocolate"], to_vector_literal(vec(8))))
+    from app.eval import compare3
+    result = compare3(repo, n=10, seed=1)
+    assert result["body_targets"]["sources"] == ["coffeereview_kaggle"]
+    assert result["body_targets"]["identical_across_variants"] is True
+    for name in ("full", "open", "open_plus"):
+        variant = result["variants"][name]
+        assert variant["loo"]["body"]["n"] == 0            # unchanged: the CQI-fixed set still has no body
+        body = variant["body_loo"]["body"]
+        assert body["n"] == 1
+        assert body["within1"] == 1.0
+        assert body["mae"] == 1.0                          # neighbour avg predicts 3.0 vs truth 4
+
+
 def test_dev_db_every_active_flavor_tag_has_a_korean_name():
     """Fix B: no English tag (e.g. "milk chocolate") should reach the UI untranslated. Checks the real dev DB
     (not the throwaway coffee_test fixture) since that's where the actual catalog's tags live."""

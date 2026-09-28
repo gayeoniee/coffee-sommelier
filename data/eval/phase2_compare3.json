@@ -37,17 +37,20 @@
         "acidity": {
           "n": 200,
           "exact": 0.23,
-          "within1": 0.505
+          "within1": 0.505,
+          "mae": 1.1348
         },
         "body": {
           "n": 0,
           "exact": null,
-          "within1": null
+          "within1": null,
+          "mae": null
         },
         "sweetness": {
           "n": 0,
           "exact": null,
-          "within1": null
+          "within1": null,
+          "mae": null
         },
         "acidity_within1_by_confidence": {
           "low": {
@@ -74,6 +77,61 @@
           "recall": 0.0,
           "f1": 0.0,
           "category_f1": 0.0
+        }
+      },
+      "body_loo": {
+        "n": 200,
+        "seed": 42,
+        "exclude_sources": [],
+        "target_sources": [
+          "coffeereview_kaggle"
+        ],
+        "targets": 200,
+        "target_ids_sha1": "58701e82522192d993afee4405b80ffaef33b9bc",
+        "neighbor_source_share": {
+          "coffeereview_kaggle": 1.0
+        },
+        "predictions_with_tags": 0.985,
+        "embedding_model": "nvidia/nemotron-3-embed-1b",
+        "acidity": {
+          "n": 173,
+          "exact": 0.4104,
+          "within1": 0.7861,
+          "mae": 0.6679
+        },
+        "body": {
+          "n": 200,
+          "exact": 0.32,
+          "within1": 0.64,
+          "mae": 0.8814
+        },
+        "sweetness": {
+          "n": 123,
+          "exact": 0.4634,
+          "within1": 0.8049,
+          "mae": 0.6448
+        },
+        "acidity_within1_by_confidence": {
+          "medium": {
+            "n": 98,
+            "within1": 0.7449
+          },
+          "high": {
+            "n": 75,
+            "within1": 0.84
+          }
+        },
+        "tags_query_embeddings": {
+          "leak_free": 5,
+          "stored_fallback": 195,
+          "note": "leak-free tag-free query embeddings are the default when cached (data/eval/loo_tagfree_query_embeddings.jsonl, exactly the n=200/seed=42 targets); other target draws fall back to the stored (tag-including) embedding, as before docs/adr/0008."
+        },
+        "tags": {
+          "n": 200,
+          "precision": 0.3657,
+          "recall": 0.3831,
+          "f1": 0.3742,
+          "category_f1": 0.6221
         }
       },
       "decaf_probe": {
@@ -201,17 +259,20 @@
         "acidity": {
           "n": 200,
           "exact": 0.235,
-          "within1": 0.495
+          "within1": 0.495,
+          "mae": 1.1382
         },
         "body": {
           "n": 0,
           "exact": null,
-          "within1": null
+          "within1": null,
+          "mae": null
         },
         "sweetness": {
           "n": 0,
           "exact": null,
-          "within1": null
+          "within1": null,
+          "mae": null
         },
         "acidity_within1_by_confidence": {
           "low": {
@@ -238,6 +299,70 @@
           "recall": 0.0,
           "f1": 0.0,
           "category_f1": 0.0
+        }
+      },
+      "body_loo": {
+        "n": 200,
+        "seed": 42,
+        "exclude_sources": [
+          "coffeereview_kaggle",
+          "roasters_kr"
+        ],
+        "target_sources": [
+          "coffeereview_kaggle"
+        ],
+        "targets": 200,
+        "target_ids_sha1": "58701e82522192d993afee4405b80ffaef33b9bc",
+        "neighbor_source_share": {
+          "roasterdb": 0.6635,
+          "shopify": 0.199,
+          "cqi": 0.1375
+        },
+        "predictions_with_tags": 0.89,
+        "embedding_model": "nvidia/nemotron-3-embed-1b",
+        "acidity": {
+          "n": 149,
+          "exact": 0.4765,
+          "within1": 0.745,
+          "mae": 0.7864
+        },
+        "body": {
+          "n": 151,
+          "exact": 0.3311,
+          "within1": 0.649,
+          "mae": 0.988
+        },
+        "sweetness": {
+          "n": 111,
+          "exact": 0.5405,
+          "within1": 0.8018,
+          "mae": 0.6206
+        },
+        "acidity_within1_by_confidence": {
+          "high": {
+            "n": 135,
+            "within1": 0.7481
+          },
+          "medium": {
+            "n": 13,
+            "within1": 0.6923
+          },
+          "low": {
+            "n": 1,
+            "within1": 1.0
+          }
+        },
+        "tags_query_embeddings": {
+          "leak_free": 5,
+          "stored_fallback": 195,
+          "note": "leak-free tag-free query embeddings are the default when cached (data/eval/loo_tagfree_query_embeddings.jsonl, exactly the n=200/seed=42 targets); other target draws fall back to the stored (tag-including) embedding, as before docs/adr/0008."
+        },
+        "tags": {
+          "n": 200,
+          "precision": 0.2153,
+          "recall": 0.1864,
+          "f1": 0.1998,
+          "category_f1": 0.5629
         }
       },
       "decaf_probe": {
@@ -361,17 +486,20 @@
         "acidity": {
           "n": 200,
           "exact": 0.235,
-          "within1": 0.495
+          "within1": 0.495,
+          "mae": 1.138
         },
         "body": {
           "n": 0,
           "exact": null,
-          "within1": null
+          "within1": null,
+          "mae": null
         },
         "sweetness": {
           "n": 0,
           "exact": null,
-          "within1": null
+          "within1": null,
+          "mae": null
         },
         "acidity_within1_by_confidence": {
           "low": {
@@ -398,6 +526,66 @@
           "recall": 0.0,
           "f1": 0.0,
           "category_f1": 0.0
+        }
+      },
+      "body_loo": {
+        "n": 200,
+        "seed": 42,
+        "exclude_sources": [
+          "coffeereview_kaggle"
+        ],
+        "target_sources": [
+          "coffeereview_kaggle"
+        ],
+        "targets": 200,
+        "target_ids_sha1": "58701e82522192d993afee4405b80ffaef33b9bc",
+        "neighbor_source_share": {
+          "roasterdb": 0.5355,
+          "roasters_kr": 0.1905,
+          "shopify": 0.1715,
+          "cqi": 0.1025
+        },
+        "predictions_with_tags": 0.905,
+        "embedding_model": "nvidia/nemotron-3-embed-1b",
+        "acidity": {
+          "n": 151,
+          "exact": 0.457,
+          "within1": 0.7417,
+          "mae": 0.7728
+        },
+        "body": {
+          "n": 169,
+          "exact": 0.2899,
+          "within1": 0.6391,
+          "mae": 0.9843
+        },
+        "sweetness": {
+          "n": 115,
+          "exact": 0.5217,
+          "within1": 0.8261,
+          "mae": 0.5935
+        },
+        "acidity_within1_by_confidence": {
+          "high": {
+            "n": 142,
+            "within1": 0.7324
+          },
+          "medium": {
+            "n": 9,
+            "within1": 0.8889
+          }
+        },
+        "tags_query_embeddings": {
+          "leak_free": 5,
+          "stored_fallback": 195,
+          "note": "leak-free tag-free query embeddings are the default when cached (data/eval/loo_tagfree_query_embeddings.jsonl, exactly the n=200/seed=42 targets); other target draws fall back to the stored (tag-including) embedding, as before docs/adr/0008."
+        },
+        "tags": {
+          "n": 200,
+          "precision": 0.2172,
+          "recall": 0.1881,
+          "f1": 0.2016,
+          "category_f1": 0.537
         }
       },
       "decaf_probe": {
@@ -492,6 +680,15 @@
     "n": 200,
     "seed": 42,
     "why": "Held fixed across variants: open-licence beans with human-rated acidity/body (CQI cupping). Roaster beans are never targets (no human ratings; their attributes are LLM estimates from flavor note words); only the neighbour pool changes between variants. CQI has no sweetness or flavor tags, so only acidity/body accuracy is measured; predictions_with_tags shows how often the pool can suggest any flavor tags for these targets (no ground truth).",
+    "identical_across_variants": true
+  },
+  "body_targets": {
+    "sources": [
+      "coffeereview_kaggle"
+    ],
+    "n": 200,
+    "seed": 42,
+    "why": "CQI's body is None for every one of the acidity targets above (ADR 0010), so `loo.body` here is always n=0 -- a structural limit, not a bug. This SEPARATE fixed set of coffeereview_kaggle beans with an LLM-relabelled heaviness value (data/enriched/body_heaviness.jsonl) is held fixed the same way, so `body_loo.body` reports a real within-1/MAE per variant. coffeereview 라벨은 채점 기준으로만 사용, 앱·학습에는 미사용 -- coffeereview_kaggle is already excluded from the open/open_plus neighbour pools (VARIANTS), so these targets never leak into what those two variants can serve or learn from; for `full` each target is still excluded from being its own neighbour, same as any other LOO target.",
     "identical_across_variants": true
   }
 }

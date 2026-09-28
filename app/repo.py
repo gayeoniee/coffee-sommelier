@@ -10,7 +10,7 @@ from psycopg_pool import ConnectionPool
 from app.core.explain import sample_card
 from app.core.flavors import build_tag_to_category, load_tag_ko_extra, merge_tag_ko
 from app.core.scoring import is_milk_drink, needs_decaf_order
-from app.models import Item, Neighbor, Profile
+from app.models import ATTRS, Item, Neighbor, Profile
 from pipeline.query import to_vector_literal
 from pipeline.rules import normalize_country
 
@@ -258,20 +258,28 @@ class Repo:
         return [_coffee_item(r) for r in random.Random(seed).sample(rows, min(n, len(rows)))]
 
     def random_coffee_ids_for_loo(self, n: int, seed: int, exclude_sources: tuple[str, ...] = (),
-                                  sources: tuple[str, ...] = ()) -> list[int]:
+                                  sources: tuple[str, ...] = (), require: tuple[str, ...] = ("acidity",)) -> list[int]:
         """`sources` (when given) limits the targets to those sources; `exclude_sources` drops sources.
+        `require` (attribute names from `app.models.ATTRS`) lists which attributes a target must have --
+        default is acidity only.
 
-        Eligibility requires acidity only, not every attribute (docs/adr/0010-body-heaviness.md): body is now
-        sparse by design (CQI's "Body" was a quality score, not heaviness, so it's None -- see ADR 0010 --
-        and some coffeereview reviews simply don't mention weight). Requiring body too would have shrunk the
-        eligible pool by exactly the coffees ADR 0010 correctly emptied, which also would have silently
-        replaced the fixed acidity target draw with a different, non-comparable one. `app.eval.loo_accuracy`
-        already scores each attribute only over the targets whose OWN truth value is present, so body/
-        sweetness naturally get their own (smaller) n without needing a stricter target gate here."""
-        extra = ((" AND source <> ALL(%(xs)s)" if exclude_sources else "")
+        Eligibility requires acidity only by default, not every attribute (docs/adr/0010-body-heaviness.md):
+        body is now sparse by design (CQI's "Body" was a quality score, not heaviness, so it's None -- see
+        ADR 0010 -- and some coffeereview reviews simply don't mention weight). Requiring body too would have
+        shrunk the eligible pool by exactly the coffees ADR 0010 correctly emptied, which also would have
+        silently replaced the fixed acidity target draw with a different, non-comparable one.
+        `app.eval.loo_accuracy` already scores each attribute only over the targets whose OWN truth value is
+        present, so body/sweetness naturally get their own (smaller) n without needing a stricter target gate
+        here.
+
+        `require=("body",)` is how `app.eval.body_target_ids` draws a SEPARATE fixed target set for body
+        specifically (coffeereview beans with a heaviness label) -- unrelated to this default."""
+        require = tuple(dict.fromkeys(require))
+        assert all(a in ATTRS for a in require), f"require must be a subset of {ATTRS}, got {require}"
+        extra = ("".join(f" AND {a} IS NOT NULL" for a in require)
+                 + (" AND source <> ALL(%(xs)s)" if exclude_sources else "")
                  + (" AND source = ANY(%(only)s)" if sources else ""))
-        rows = self._all("SELECT id FROM coffees WHERE active AND embedding IS NOT NULL AND acidity IS NOT NULL"
-                         f"{extra} ORDER BY id",
+        rows = self._all(f"SELECT id FROM coffees WHERE active AND embedding IS NOT NULL{extra} ORDER BY id",
                          {"xs": list(exclude_sources), "only": list(sources)})
         ids = [r["id"] for r in rows]
         return random.Random(seed).sample(ids, min(n, len(ids)))
