@@ -99,6 +99,6 @@ psql_open -c "SELECT count(*) AS menu_items FROM menu_items"
 
 echo "== eval: violations loo coverage convergence -> ${EVAL_DIR} =="
 mkdir -p "${EVAL_DIR}"
-uv run python -m app.eval violations loo coverage convergence
+DATA_VARIANT=open uv run python -m app.eval violations loo coverage convergence   # open models only (never the full-variant ones)
 
 echo "done."

@@ -249,7 +249,6 @@
 아래는 제출본 DB(`coffee_open`, coffeereview 미포함)에서 실행한 평가 결과다. `scripts/competition/render_numbers.py data/eval/open`의 출력을 그대로 붙였다 — 값을 손으로 고치지 않는다. 데이터 구성 3가지(전체/오픈/오픈+로스터리) 비교는 `phase2_compare3.json` 기반이라 이 표에는 없고 B-6 2~3번에 있다.
 
 <!-- numbers:start -->
-<!-- numbers:start -->
 
 ### 수치 (자동 생성 — scripts/competition/render_numbers.py, 손으로 고치지 마세요)
 
@@ -313,7 +312,6 @@
 - 무환각(두 판정자 모두): 0.5909
 - 도움됨 평균: judge 4.05, judge2 3.08
 
-<!-- numbers:end -->
 <!-- numbers:end -->
 
 ## 3. 데이터 출처·라이선스 (구체성 항목의 핵심)
