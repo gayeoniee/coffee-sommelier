@@ -24,13 +24,14 @@
 | 무엇을 쟀나 | 결과 | 원자료 |
 |---|---|---|
 | 조건 위반율 (페르소나 4 × 브랜드 10, top3) | **0.0% — 0/102건** (메뉴 실측 7개 브랜드) | [phase2_violations.json](data/eval/phase2_violations.json) |
-| 지식베이스 원두 수 | 9,257 (디카페인 180, 향미 태그 7,616) · 오픈 라이선스판 1,864 | [phase2_coverage.json](data/eval/phase2_coverage.json) |
+| 지식베이스 원두 수 | 9,257 (디카페인 180, 향미 태그 7,616) · 오픈 라이선스판 2,063(해외 Shopify 강도 표기 199 포함, [ADR 0013](docs/adr/0013-open-labels-weak-supervision.md)) | [phase2_coverage.json](data/eval/phase2_coverage.json), [open/phase2_coverage.json](data/eval/open/phase2_coverage.json) |
 | 원두 예측 leave-one-out, 산미 ±1 이내 | **0.735 (n=200)** · 오픈 라이선스판 0.5126 (n=199) — 재라벨 전과 같은 대상([ADR 0010](docs/adr/0010-body-heaviness.md)) | [phase2_loo.json](data/eval/phase2_loo.json) |
 | 원두 예측 leave-one-out, 바디 ±1 이내 | 0.6405 (n=153) — 200개 대상 중 텍스트에 무게감 언급이 없는 원두는 결측이라 제외([ADR 0010](docs/adr/0010-body-heaviness.md)) | [phase2_loo.json](data/eval/phase2_loo.json) |
 | 예측 신뢰도별 산미 ±1 (낮음 / 보통 / 높음) | 0.4 (n=10) / 0.7077 (n=130) / 0.85 (n=60) | [phase2_loo.json](data/eval/phase2_loo.json) |
 | LOO 향미 태그 F1 (마이크로) | 0.3683 (n=168) — 이웃 투표, 누수 없는 태그 프리 질의 임베딩 기준(이전 0.3974는 정답 태그가 섞인 저장 임베딩으로 잰 값, [ADR 0008](docs/adr/0008-learned-tag-model.md)) | [phase2_loo.json](data/eval/phase2_loo.json) |
 | LOO 향미 태그 F1 (학습 모델, 같은 임베딩) | **0.7308 (n=168)** — 이웃 투표 대비 +0.363, coffeereview 파생 라벨이라 오픈판엔 안 씀 | [phase2_tag_model.json](data/eval/phase2_tag_model.json), [ADR 0008](docs/adr/0008-learned-tag-model.md) |
-| LOO 산미/바디/단맛 MAE (학습 모델 vs 이웃 평균, 같은 임베딩) | **0.5735/0.7507/0.5382** vs 0.6072/0.8579/0.5547 (전체판) · 오픈판은 이 학습 모델 대신 산미·단맛에 로스터리 게이지 특징 모델([ADR 0011](docs/adr/0011-roaster-gauges-feature-model.md)), 바디는 이웃 평균(바디 학습 표본이 CQI 결측으로 1,379→29건, [ADR 0010](docs/adr/0010-body-heaviness.md)) | [phase2_attr_model.json](data/eval/phase2_attr_model.json), [ADR 0009](docs/adr/0009-learned-attribute-model.md), [ADR 0010](docs/adr/0010-body-heaviness.md) |
+| LOO 산미/바디/단맛 MAE (학습 모델 vs 이웃 평균, 같은 임베딩) | **0.5735/0.7507/0.5382** vs 0.6072/0.8579/0.5547 (전체판) · 오픈판은 이 학습 모델 대신 산미·단맛에 로스터리 게이지 특징 모델([ADR 0011](docs/adr/0011-roaster-gauges-feature-model.md), 산미는 노트 단어 약한 라벨 추가 [ADR 0013](docs/adr/0013-open-labels-weak-supervision.md)), 바디는 이웃 평균(바디 학습 표본이 CQI 결측으로 1,379→29건, [ADR 0010](docs/adr/0010-body-heaviness.md)) | [phase2_attr_model.json](data/eval/phase2_attr_model.json), [ADR 0009](docs/adr/0009-learned-attribute-model.md), [ADR 0010](docs/adr/0010-body-heaviness.md) |
+| 오픈판 특징 모델, 로스터리 단위 CV ±1 이내 (산미/바디/단맛) | **0.695 (n=82)** / 0.797 (n=64, 미탑재 — 이웃 평균) / 0.569 (n=72) vs 오픈 이웃 평균 0.524 / 0.766 / 0.542 · 산미는 게이지 82건 + 노트 단어 약한 라벨 186건으로 0.658→0.695(MAE 0.923→0.771), Shopify 강도 표기·로스터 보정은 이득 없음 | [phase4_open_labels.json](data/eval/open/phase4_open_labels.json), [ADR 0013](docs/adr/0013-open-labels-weak-supervision.md) |
 | 3-way 비교: 전체 / 오픈 / 오픈 + 국내 로스터리 | 산미 ±1(CQI 고정 200개) 0.495 / 0.495 / 0.495(±1%p 이내는 동점 잡음) · 바디 ±1(coffeereview 고정, 채점 전용) 0.64(n=200) / 0.649(n=151) / 0.5737(n=190) — CQI 고정 대상은 바디가 전원 결측이라 별도 대상으로 잰다([ADR 0010](docs/adr/0010-body-heaviness.md)) · 디카페인 원두 180 / 6 / 25 | [phase2_compare3.json](data/eval/phase2_compare3.json) |
 | LOO 재현성 (같은 인자로 2회) | 결과 JSON sha256 동일 (`identical: true`) | [phase2_loo_repro.json](data/eval/phase2_loo_repro.json) |
 | 설명 품질 (24케이스) | 규칙 통과 18/24(2문장 한도 재채점; 재채점 전 21/24) · 모순 없음 판정자 2명 합의 17/22 · 폴백 0/24 | [phase2_explain_quality.json](data/eval/phase2_explain_quality.json) |
@@ -143,6 +144,7 @@ API 이미지는 파이프라인 의존성을 뺀 356 MB, 실행 메모리 약 7
 | [SCA 플레이버 휠 JSON](https://github.com/fschlz/coffee-flavor-api) | 향미 분류 체계 | © SCA/WCR 2016, CC BY-NC-ND 4.0 (원본 수정 없이 별도 한국어 매핑) |
 | 스타벅스·메가MGC·빽다방·할리스·커피빈·폴바셋·컴포즈 공식 메뉴 | 음료, 카페인 mg, 디카페인 | robots.txt 허용 범위(폴바셋은 인증서 오류로 해당 호스트만 검증 해제), 1회 스냅샷 |
 | 블루보틀 코리아 `products.json` | 원두 상품 설명 | Shopify 공개 엔드포인트 |
+| 해외 Shopify 로스터 8곳 `products.json` (Kiss the Hippo·Intelligentsia·Volcanica·Ozone·Café Don Pablo·Café Britt·Fresh Roasted·Coffee Supreme, `shopify_gauged`) | 원두 사실 정보 + **로스터가 직접 붙인 강도 표기**("VIBRANT & BRIGHT"·"Low Acid"·"Body: full" → 한 사전으로 1~5, 원두 199개: 산미 170·바디 46·단맛 2, [ADR 0013](docs/adr/0013-open-labels-weak-supervision.md)) | Shopify 공개 엔드포인트, robots.txt 확인, 설명 문구 미저장 |
 | 국내 로스터리 12곳(프릳츠·나무사이로·커피 리브레·1kg커피·블루보틀 코리아·앤트러사이트·펠트·빈브라더스·모모스·매뉴팩트·G로스팅·내일의커피) 상품 페이지 (`pipeline roasters-kr`) | 원두 사실 정보만(산지·가공·로스팅·디카페인·노트 단어·가격·표기된 고도/품종) + **로스터가 공개한 맛 게이지**(산미·바디·단맛, 4곳 82건 — 오픈판 특징 모델의 사람 라벨, [ADR 0011](docs/adr/0011-roaster-gauges-feature-model.md)) | robots.txt 준수, 설명 문구 미저장, 이미지 게이지는 읽지 않음, 테라로사·헬카페(둘 다 robots.txt 차단) 등 제외 |
 | `data/curated/brands.yaml` | 10개 브랜드 디카페인 정보 + 하우스/디카페인 원두 값(값마다 출처 `label_source`) | 공식 페이지·뉴스 수기 정리(확인 수준 표기) |
 | `data/curated/brand_beans_official.yaml` | 10개 브랜드 공식 원두 설명(이름·로스팅·블렌드·맛 문구 원문, 브랜드별 출처 URL·확인일) | robots.txt 준수 수집, 사실만(20개 원두 중 12개 공식 맛 설명 확보, [ADR 0012](docs/adr/0012-official-brand-beans.md)) |
