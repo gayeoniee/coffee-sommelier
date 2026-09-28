@@ -105,16 +105,73 @@
   공식 문구가 말하지 않는 값은 모델이 사실상 사전값에 가깝게 답한다(메가 산미 2.44 등). 그래서 향미 태그는 모델보다
   공식 단어를 우선했고, 공식 단어가 없을 때 모델 태그(메가 디카페인 "woody" 0.85 등)는 출처가 `official_notes_model`
   로 남는다.
-- **오픈판**: 같은 `brands.yaml`을 쓰므로 오픈판 카드도 이 값을 쓴다. 값 자체는 공식 페이지 사실 + 규칙/모델 출력이며
-  리뷰 원문을 담지 않는다. 다만 모델은 전체판(coffeereview 포함 학습)이다 — 오픈판에서 이 값을 쓰는 게 라이선스상
-  문제인지는 공모전 문서 쪽(ADR 0011 담당)에서 판단할 일로 남긴다.
+- **오픈판**: 처음엔 같은 `brands.yaml` 값을 오픈판 카드도 썼는데, 그 모델은 전체판(coffeereview 라벨로 학습,
+  [ADR 0008](0008-learned-tag-model.md)/[0009](0009-learned-attribute-model.md))이라 제출본에 둘 수 없다 → 아래
+  [오픈판 브랜드 값](#오픈판-브랜드-값)에서 라이선스 제약 없는 출처만으로 따로 만든다.
 - 공식 게이지가 생기면(`gauges`) 스크립트가 그 값을 먼저 쓴다. 투썸(봇 차단)·컴포즈(설명 없음)는 브랜드가 공개하기
   전까지 추정이다.
+
+## 오픈판 브랜드 값
+
+오픈판(`DATA_VARIANT=open`, 공모전 제출본)은 coffeereview에서 나온 것은 아무것도 담으면 안 되는데, 위 값의
+`official_notes_model`은 coffeereview 라벨로 학습한 전체판 속성/태그 모델(`config/attr_model.json`,
+`config/tag_model.json`) 출력이다. 그래서 `brands.yaml`에 오픈판 전용 `bean_open`/`decaf_bean_open`을 따로 두고
+(`BrandRecord`·`brands` 테이블 같은 이름의 컬럼), 앱은 `DATA_VARIANT=open`일 때 그 컬럼만 읽는다
+(`app/repo.py` `brand_bean_columns`). `scripts/competition/build_open_db.sh`는 적재 뒤 `coffee_open`의
+`bean`/`decaf_bean`도 오픈 값으로 덮어써 제출본 DB에는 전체판 값이 아예 남지 않는다.
+
+값마다 우선순위(`scripts/derive_brand_beans.py --variant open` → `data/eval/brand_beans_derived_open.json`):
+
+1. `official_gauge` — 공식 1~5 수치(현재 없음).
+2. `official_cue` — 공식 문구의 명시적 단서(`app/core/textcues.attr_cues`: "묵직한 바디", "상큼한", "달콤").
+   향미는 **브랜드가 직접 쓴 향미 단어만**(`official_word_tags`) — 태그 모델은 쓰지 않는다.
+3. `open_feature_model` — 산미·단맛만(바디는 탑재 안 됨): 로스터리 게이지 특징 모델
+   ([ADR 0011](0011-roaster-gauges-feature-model.md), `config/feature_model_open.json`)에 공식 **사실**만 넣는다 —
+   단일 산지 국가(여러 나라면 블렌드; 커피빈의 "원산지: 미국(로스팅 국가)"는 산지가 아님), 공식 로스팅 단계,
+   디카페인 공정(워터 프로세스 → 물 공정), 공식 향미 단어의 SCA 대분류. 브랜드 원두에는 이웃이 없어 `nbr`
+   특징은 중앙값(0)이다. 공식 설명이 아예 없는 원두(`status: unavailable`)에는 쓰지 않는다.
+4. `estimate` — ADR 0012 이전의 손 추정값(`git show bd0a6f6^:data/curated/brands.yaml`, 뉴스·notes 기반).
+
+"문구"=`official_cue`, "특징"=`open_feature_model`(괄호 안은 반올림 전 예측), "추정"=`estimate`. 마지막 열은
+같은 원두의 전체판 값이다.
+
+| 브랜드 | 원두 | 산미 | 바디 | 단맛 | 향미 | 전체판(산미/바디/단맛) |
+|---|---|---|---|---|---|---|
+| 스타벅스 | 하우스 | **2** (특징 1.88) | **4** (추정) | **4.5** (특징 4.3) | caramelized (문구) | 2/4/2.5 |
+| 스타벅스 | 디카페인 | **2** (특징 2.11) | **3** (추정) | **3** (특징 2.89) | chocolate, caramelized (추정) | 2/3/2 |
+| 투썸플레이스 | 하우스 | **2** (추정) | **4** (추정) | **2** (추정) | dark chocolate, nutty (추정) | 2/4/2 |
+| 투썸플레이스 | 디카페인 | **2** (추정) | **3** (추정) | **3** (추정) | chocolate, nutty (추정) | 2/3/3 |
+| 메가MGC커피 | 하우스 | **2** (특징 2.18) | **4.5** (문구 "묵직한 바디") | **3.5** (특징 3.64) | nutty, dark chocolate (추정) | 2.5/4.5/3.5 |
+| 메가MGC커피 | 디카페인 | **2** (특징 2.16) | **4.5** (문구 "묵직한 바디") | **3.5** (특징 3.42) | nutty, chocolate (추정) | 2/4.5/3.5 |
+| 컴포즈커피 | 하우스 | **1** (추정) | **4** (추정) | **2** (추정) | nutty, dark chocolate (추정) | 1/4/2 |
+| 컴포즈커피 | 디카페인 | **2** (추정) | **4** (추정) | **2** (추정) | nutty, dark chocolate (추정) | 2/4/2 |
+| 빽다방 | 하우스 | **1** (특징 1.0) | **4.5** (문구 "묵직한 바디") | **4** (문구 "단맛") | cinnamon, brown sugar, dark chocolate (문구) | 1.5/4.5/4 |
+| 빽다방 | 디카페인 | **2** (추정) | **3** (추정) | **2** (추정) | chocolate (추정) | 2/3/2 |
+| 이디야커피 | 하우스 | **2** (특징 2.18) | **3** (추정) | **3.5** (특징 3.6) | smoky (문구) | 2/4/3 |
+| 이디야커피 | 디카페인 | **2** (추정) | **3** (추정) | **3** (추정) | chocolate, caramelized (추정) | 2/3/3 |
+| 할리스 | 하우스 | **1.5** (문구 "부드러운 산미") | **3** (추정) | **3.5** (특징 3.64) | chocolate, nutty (추정) | 1.5/3/4 |
+| 할리스 | 디카페인 | **2** (특징 2.16) | **2** (추정) | **4** (문구 "단맛") | brown sugar (추정) | 2.5/2/4 |
+| 폴바셋 | 하우스 | **4.5** (문구 "상큼한") | **3** (추정) | **4** (문구 "Sweet") | chocolate (문구) | 4.5/3.5/4 |
+| 폴바셋 | 디카페인 | **2** (특징 2.16) | **3** (추정) | **3.5** (특징 3.42) | chocolate, citrus fruit (추정) | 3/3/3.5 |
+| 블루보틀 | 하우스 | **2** (특징 1.81) | **3** (추정) | **4** (문구 "달콤") | chocolate (문구) | 2/4/4 |
+| 블루보틀 | 디카페인 | **2** (특징 2.15) | **3** (추정) | **4** (문구 "단맛") | molasses (문구) | 3/2.5/4 |
+| 커피빈 | 하우스 | **2** (특징 1.96) | **4** (추정) | **4** (특징 4.19) | dark chocolate, caramelized (추정) | 2/4/2 |
+| 커피빈 | 디카페인 | **2** (특징 2.02) | **3** (추정) | **4** (문구 "달콤") | caramelized (문구) | 2/2.5/4 |
+
+출처 분포(값 80개): 문구 18 · 특징 모델 20 · 추정 42. 여섯 원두(투썸 2·컴포즈 2·빽다방 디카페인·이디야 디카페인)는
+전부 추정이고, 공식 향미 단어가 없는 원두는 향미가 추정으로 남는다(메가·할리스·폴바셋 디카페인 등).
+
+- **특징 모델은 블렌드에 대해 거의 사전값이다.** 브랜드 원두는 대부분 "블렌드/산지 미상"이라 산미는 절편 근처(1.8~2.2
+  → 전부 2)로 모이고, 단맛은 블렌드(+0.68)·강배전(+0.55) 가중치 때문에 스타벅스 하우스 4.3·커피빈 하우스 4.19처럼
+  높게 나온다(로스터리 게이지 라벨에서 배운 "블렌드·강배전 = 단맛 높음" 관행). 전체판(모델 2.37/추정 2)과 방향이
+  다르다 — 라이선스를 지키는 대가로 받아들이고, 값마다 출처를 남겨 둔다.
+- 조건 위반(오픈판 DB `coffee_open`, `data/eval/open/phase2_violations.json`): **0/102** — 전체판과 같다.
 
 ## 재현
 
 ```bash
 uv run python scripts/derive_brand_beans.py --before <이전 brands.yaml>   # → data/eval/brand_beans_derived.json
+uv run python scripts/derive_brand_beans.py --variant open   # 오픈판 → data/eval/brand_beans_derived_open.json + YAML 줄
 # brands.yaml 반영 후 DB에는 brands.bean/decaf_bean만 갱신(또는 pipeline run --only normalize --only load)
 uv run python -m app.eval violations
 ```

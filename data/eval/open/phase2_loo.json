@@ -67,8 +67,8 @@
     "acidity": {
       "model": {
         "n": 200,
-        "mae": 0.9502,
-        "within1": 0.59
+        "mae": 0.964,
+        "within1": 0.545
       },
       "neighbor": {
         "n": 199,
