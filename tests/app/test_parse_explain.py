@@ -30,6 +30,14 @@ def test_parse_bean_text_rules():
     assert unknown.origin_country is None and needs_llm_parse(unknown) is True
 
 
+def test_parse_bean_text_flavor_notes_do_not_set_roast():
+    # ADR 0014: "dark chocolate" in the notes read as a dark roast on 65 of 196 Zenodo panel cards
+    assert parse_bean_text("Colombia Huila washed. Notes: dark chocolate, dark cherry").roast_level is None
+    assert parse_bean_text("브라질 세하도 내추럴, 다크 초콜릿·다크 체리").roast_level is None
+    assert parse_bean_text("Kenya AA, medium roast, dark fruit").roast_level == "medium"
+    assert parse_bean_text("과테말라 강배전 다크초콜릿").roast_level == "dark"
+
+
 def test_merge_llm_parse_normalizes_and_keeps_rule_values():
     p = parse_bean_text("하우스 블렌드 내추럴")
     merged = merge_llm_parse(p, BeanParse(origin_country="브라질", process="washed", roast_level="Medium-Dark",

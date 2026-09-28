@@ -181,10 +181,24 @@ _ROAST = [
 ]
 
 
+# Words that share a roast word but describe a flavor, the body or a brew method -- "dark chocolate",
+# "다크 초콜릿", "light body", "French press" -- are masked before matching, so a tasting note never sets a roast.
+_ROAST_FALSE_FRIENDS = re.compile(
+    r"\b(?:dark|light)[\s-]+(?:chocolate|choc|cocoa|cacao|cherr(?:y|ies)|fruits?|berr(?:y|ies)|plums?|grapes?|"
+    r"raisins?|sugar|brown sugar|caramel|molasses|toffee|rum|honey|stone fruits?|red fruits?|jam)\b"
+    r"|\b(?:light|medium|full|heavy)[\s-]+(?:body|bodied|acidity|acid|sweetness|mouthfeel)\b"
+    r"|\bfrench[\s-]+(?:press|vanilla|toast)\b"
+    r"|(?:다크|라이트)\s*(?:초콜릿|초콜렛|쵸콜릿|쵸콜렛|초코|카카오|체리|베리|과일|플럼|자두|슈가|설탕|카라멜|캐러멜|럼|포도|건포도|잼)"
+    r"|(?:라이트|미디엄|풀)\s*바디",
+    re.I,
+)
+
+
 def normalize_roast(text) -> str | None:
     t = clean(text)
     if not t:
         return None
+    t = _ROAST_FALSE_FRIENDS.sub(" ", t)
     for name, pat in _ROAST:
         if pat.search(t):
             return name

@@ -84,6 +84,16 @@ def test_process_from_text(text, expected):
     ("Medium", "medium"),
     ("Unknown", None),
     ("블론드 로스트", "light"),
+    # flavor / body / brew phrases that share a roast word never set a roast (ADR 0014)
+    ("Ethiopia washed, notes of dark chocolate and dark cherry", None),
+    ("dark fruit, light body, French press", None),
+    ("에티오피아 워시드, 다크 초콜릿, 다크 체리", None),
+    ("다크초콜릿 향, 라이트 바디", None),
+    ("Medium roast with dark chocolate notes", "medium"),
+    ("다크 초콜릿 노트의 미디엄 로스트", "medium"),
+    ("Dark roast, dark chocolate", "dark"),
+    ("강배전, 다크 초콜릿", "dark"),
+    ("light roast, medium body", "light"),
 ])
 def test_normalize_roast(text, expected):
     assert normalize_roast(text) == expected
