@@ -3,12 +3,12 @@
     "full": {
       "exclude_sources": [],
       "coverage": {
-        "total": 9225,
-        "with_embedding": 9225,
-        "with_flavor_tags": 7589,
-        "with_acidity": 7888,
-        "decaf": 178,
-        "decaf_with_flavor_tags": 171,
+        "total": 9257,
+        "with_embedding": 9257,
+        "with_flavor_tags": 7616,
+        "with_acidity": 7964,
+        "decaf": 180,
+        "decaf_with_flavor_tags": 173,
         "menu_items_by_brand": {
           "brand:coffeebean": 42,
           "brand:compose": 42,
@@ -36,9 +36,9 @@
         "embedding_model": "nvidia/nemotron-3-embed-1b",
         "acidity": {
           "n": 200,
-          "exact": 0.23,
-          "within1": 0.505,
-          "mae": 1.1348
+          "exact": 0.235,
+          "within1": 0.495,
+          "mae": 1.138
         },
         "body": {
           "n": 0,
@@ -54,16 +54,16 @@
         },
         "acidity_within1_by_confidence": {
           "low": {
-            "n": 75,
-            "within1": 0.4133
+            "n": 76,
+            "within1": 0.3684
           },
           "high": {
-            "n": 29,
-            "within1": 0.6552
+            "n": 28,
+            "within1": 0.6429
           },
           "medium": {
             "n": 96,
-            "within1": 0.5312
+            "within1": 0.5521
           }
         },
         "tags_query_embeddings": {
@@ -97,19 +97,19 @@
           "n": 173,
           "exact": 0.4104,
           "within1": 0.7861,
-          "mae": 0.6679
+          "mae": 0.6677
         },
         "body": {
           "n": 200,
           "exact": 0.32,
           "within1": 0.64,
-          "mae": 0.8814
+          "mae": 0.8799
         },
         "sweetness": {
           "n": 123,
           "exact": 0.4634,
           "within1": 0.8049,
-          "mae": 0.6448
+          "mae": 0.6464
         },
         "acidity_within1_by_confidence": {
           "medium": {
@@ -128,19 +128,19 @@
         },
         "tags": {
           "n": 200,
-          "precision": 0.3657,
+          "precision": 0.3687,
           "recall": 0.3831,
-          "f1": 0.3742,
-          "category_f1": 0.6221
+          "f1": 0.3757,
+          "category_f1": 0.622
         }
       },
       "decaf_probe": {
         "persona": "디카페인+산미",
-        "candidates": 178,
-        "with_evidence": 171,
+        "candidates": 180,
+        "with_evidence": 177,
         "by_source": {
           "coffeereview_kaggle": 155,
-          "roasters_kr": 17,
+          "roasters_kr": 19,
           "roasterdb": 5,
           "shopify": 1
         },
@@ -450,12 +450,12 @@
         "coffeereview_kaggle"
       ],
       "coverage": {
-        "total": 1832,
-        "with_embedding": 1832,
-        "with_flavor_tags": 203,
-        "with_acidity": 1623,
-        "decaf": 23,
-        "decaf_with_flavor_tags": 16,
+        "total": 1864,
+        "with_embedding": 1864,
+        "with_flavor_tags": 230,
+        "with_acidity": 1699,
+        "decaf": 25,
+        "decaf_with_flavor_tags": 18,
         "menu_items_by_brand": {
           "brand:coffeebean": 42,
           "brand:compose": 42,
@@ -540,39 +540,43 @@
         "targets": 200,
         "target_ids_sha1": "58701e82522192d993afee4405b80ffaef33b9bc",
         "neighbor_source_share": {
-          "roasterdb": 0.5355,
-          "roasters_kr": 0.1905,
-          "shopify": 0.1715,
-          "cqi": 0.1025
+          "roasterdb": 0.4115,
+          "roasters_kr": 0.381,
+          "shopify": 0.1365,
+          "cqi": 0.071
         },
-        "predictions_with_tags": 0.905,
+        "predictions_with_tags": 0.925,
         "embedding_model": "nvidia/nemotron-3-embed-1b",
         "acidity": {
-          "n": 151,
-          "exact": 0.457,
-          "within1": 0.7417,
-          "mae": 0.7728
+          "n": 168,
+          "exact": 0.3155,
+          "within1": 0.6726,
+          "mae": 0.8938
         },
         "body": {
-          "n": 169,
-          "exact": 0.2899,
-          "within1": 0.6391,
-          "mae": 0.9843
+          "n": 190,
+          "exact": 0.3211,
+          "within1": 0.5737,
+          "mae": 1.0149
         },
         "sweetness": {
-          "n": 115,
-          "exact": 0.5217,
-          "within1": 0.8261,
-          "mae": 0.5935
+          "n": 121,
+          "exact": 0.4959,
+          "within1": 0.7851,
+          "mae": 0.647
         },
         "acidity_within1_by_confidence": {
           "high": {
-            "n": 142,
-            "within1": 0.7324
+            "n": 96,
+            "within1": 0.6875
           },
           "medium": {
-            "n": 9,
-            "within1": 0.8889
+            "n": 71,
+            "within1": 0.6479
+          },
+          "low": {
+            "n": 1,
+            "within1": 1.0
           }
         },
         "tags_query_embeddings": {
@@ -582,18 +586,18 @@
         },
         "tags": {
           "n": 200,
-          "precision": 0.2172,
-          "recall": 0.1881,
-          "f1": 0.2016,
-          "category_f1": 0.537
+          "precision": 0.2209,
+          "recall": 0.1831,
+          "f1": 0.2002,
+          "category_f1": 0.5546
         }
       },
       "decaf_probe": {
         "persona": "디카페인+산미",
-        "candidates": 23,
-        "with_evidence": 16,
+        "candidates": 25,
+        "with_evidence": 22,
         "by_source": {
-          "roasters_kr": 17,
+          "roasters_kr": 19,
           "roasterdb": 5,
           "shopify": 1
         },
