@@ -1,6 +1,6 @@
 # 프랜차이즈 브랜드 수기 정리. 공식 페이지 직접 확인은 [공식], 뉴스·검색 요약은 [뉴스] 로 표시.
 # bean / decaf_bean: 1~5 값. label_source가 값마다 출처를 적는다(docs/adr/0012-official-brand-beans.md):
-#   official_gauge       = 브랜드가 게시한 수치 그대로
+#   official_gauge       = 브랜드가 게시한 수치 그대로(투썸은 0~100% 막대 → 1 + 4·p/100, 소수 한 자리)
 #   official_notes_model = 공식 원두 설명(data/curated/brand_beans_official.yaml)을 학습 모델+문구 규칙에 넣은 값
 #                          (scripts/derive_brand_beans.py → data/eval/brand_beans_derived.json)
 #   estimate             = 공식 맛 설명이 없어(봇 차단·설명 없음) notes/뉴스에서 손으로 추정한 값
@@ -41,25 +41,32 @@
   name: 투썸플레이스
   decaf_available: true
   decaf_surcharge_krw: 200
-  notes: "[뉴스] 원두 3종(블랙그라운드/아로마노트/디카페인). 아로마노트=에티오피아 중심+과테말라, 화사한 산미·플로럴. 공식 사이트는 봇 차단으로 미확인."
-  source_url: https://www.twosome.co.kr
-  verified_at: "2026-09-24"
+  notes: >-
+    [공식] https://www.twosome.co.kr/mn/coffeeStory.do (2026-09-28, 봇 UA는 CloudFront 403이라 브라우저로 열어 사실만 옮김):
+    블렌드 3종 — 블랙그라운드(다크, 콜롬비아·브라질·파푸아뉴기니, 산미 40%·바디 100%), 아로마노트(미디엄, 에티오피아
+    내추럴·과테말라, 산미 80%·바디 60%), 디카페인(다크, 콜롬비아, 산미 40%·바디 80%). 막대 %를 1~5로 환산해
+    산미·바디는 official_gauge(data/curated/brand_beans_official.yaml). [뉴스] 아메리카노 기본 원두는 블랙그라운드,
+    아로마노트는 선택.
+  source_url: https://www.twosome.co.kr/mn/coffeeStory.do
+  verified_at: "2026-09-28"
   bean:
-    acidity: 2
-    body: 4
-    sweetness: 2
-    flavor_tags: [dark chocolate, nutty]
-    label_source: {acidity: estimate, body: estimate, sweetness: estimate, flavor_tags: estimate}
+    acidity: 2.6
+    body: 5.0
+    sweetness: 2.5
+    flavor_tags: [chocolate, smoky, nutty]
+    label_source: {acidity: official_gauge, body: official_gauge, sweetness: official_notes_model, flavor_tags: official_notes_model}
+    official_note: "투썸플레이스 공식: 블랙그라운드(다크) — 다크 초콜릿·꽉 찬 바디감·스모키한 향, 산미 40%·바디 100%"
   decaf_bean:
-    acidity: 2
-    body: 3
-    sweetness: 3
-    flavor_tags: [chocolate, nutty]
-    label_source: {acidity: estimate, body: estimate, sweetness: estimate, flavor_tags: estimate}
-  bean_open: {acidity: 2, body: 4, sweetness: 2, flavor_tags: [dark chocolate, nutty],
-    label_source: {acidity: estimate, body: estimate, sweetness: estimate, flavor_tags: estimate}}
-  decaf_bean_open: {acidity: 2, body: 3, sweetness: 3, flavor_tags: [chocolate, nutty],
-    label_source: {acidity: estimate, body: estimate, sweetness: estimate, flavor_tags: estimate}}
+    acidity: 2.6
+    body: 4.2
+    sweetness: 4.0
+    flavor_tags: [nutty]
+    label_source: {acidity: official_gauge, body: official_gauge, sweetness: official_notes_model, flavor_tags: official_notes_model}
+    official_note: "투썸플레이스 공식: 디카페인(다크, 콜롬비아) — 견과류의 고소함과 은은한 단맛, 산미 40%·바디 80%"
+  bean_open: {acidity: 2.6, body: 5, sweetness: 5, flavor_tags: [chocolate, smoky, nutty],
+    label_source: {acidity: official_gauge, body: official_gauge, sweetness: open_feature_model, flavor_tags: official_cue}, official_note: "투썸플레이스 공식: 블랙그라운드(다크) — 다크 초콜릿·꽉 찬 바디감·스모키한 향, 산미 40%·바디 100%"}
+  decaf_bean_open: {acidity: 2.6, body: 4.2, sweetness: 4, flavor_tags: [nutty],
+    label_source: {acidity: official_gauge, body: official_gauge, sweetness: official_cue, flavor_tags: official_cue}, official_note: "투썸플레이스 공식: 디카페인(다크, 콜롬비아) — 견과류의 고소함과 은은한 단맛, 산미 40%·바디 80%"}
 - key: brand:mega
   name: 메가MGC커피
   decaf_available: true

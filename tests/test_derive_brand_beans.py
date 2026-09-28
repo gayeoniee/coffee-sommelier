@@ -72,3 +72,28 @@ def test_derive_open_without_official_facts_keeps_the_hand_estimate():
 def test_derive_open_with_no_flavor_word_falls_back_to_the_estimate_tags_not_a_model():
     d = derive_open({"status": "official", "notes": ["풍부한 바디감"]}, ESTIMATE, False, FMODEL, TAG_TO_CAT, VOCAB)
     assert (d["values"]["flavor_tags"], d["label_source"]["flavor_tags"]) == (["nutty"], "estimate")
+
+
+def test_percent_gauges_map_onto_the_one_to_five_scale():
+    from scripts.derive_brand_beans import bean_gauges, gauge_from_percent
+    assert [gauge_from_percent(p) for p in (0, 40, 60, 80, 100)] == [1.0, 2.6, 3.4, 4.2, 5.0]
+    assert bean_gauges({"gauges_pct": {"acidity": 40, "body": 100}}) == {"acidity": 2.6, "body": 5.0}
+    assert bean_gauges({"gauges": {"acidity": 3, "body": None}}) == {"acidity": 3.0}
+    assert bean_gauges({"gauges": None}) == {}
+
+
+def test_official_english_flavor_descriptors_map_to_sca_tags_but_not_texture_words():
+    # 투썸 "Dark Roast · Full-Body · Nutty · Chocolaty" / "Medium Roast · Berry-like · Juicy · Floral"
+    assert official_word_tags("Dark Roast · Full-Body · Nutty · Chocolaty", {}) == ["nutty", "chocolate"]
+    assert official_word_tags("Medium Roast · Berry-like · Juicy · Floral", {}) == ["berry", "floral"]
+    assert official_word_tags("Dark Roast · Rich · Sweet · Well-Balanced", {}) == []
+
+
+def test_derive_open_percent_gauges_win_and_ungauged_attributes_fall_through():
+    bean = {"status": "official", "roast_level": "dark", "notes": ["초콜릿 향", "Nutty"],
+            "gauges_pct": {"acidity": 40, "body": 100}}
+    d = derive_open(bean, ESTIMATE, False, FMODEL, TAG_TO_CAT, VOCAB)
+    assert (d["values"]["acidity"], d["values"]["body"]) == (2.6, 5.0)
+    assert d["label_source"] == {"acidity": "official_gauge", "body": "official_gauge",
+                                 "sweetness": "open_feature_model", "flavor_tags": "official_cue"}
+    assert d["values"]["flavor_tags"] == ["chocolate", "nutty"]

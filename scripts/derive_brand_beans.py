@@ -3,7 +3,9 @@ flavor-tag values for data/curated/brands.yaml (docs/adr/0012-official-brand-bea
 
 Per bean (house and decaf of each brand), in priority order (flavor tags: the brand's own flavor words
 first -- official_word_tags -- and the tag model only when the text names none):
-  1. official_gauge        -- the brand publishes 1~5 acidity/body/sweetness numbers: taken as-is.
+  1. official_gauge        -- the brand publishes 1~5 acidity/body/sweetness numbers (`gauges`), or 0~100% bars
+     (`gauges_pct`, 투썸) converted by gauge_from_percent: taken as-is, per attribute; the attributes it does not
+     gauge go down this list.
   2. official_notes_model  -- the brand publishes a taste description: the SAME path an unknown bean takes in
      app/graphs/analyze_bean.py, minus the neighbours: the description is embedded as a tag-free query
      (pipeline.embed.embedding_text(..., include_tags=False), input_type="query"), the full-variant learned
@@ -72,6 +74,24 @@ GENERIC_TAGS = {"sweet aromatics", "overall sweet"}   # SCA umbrella nodes: say 
 BASIC_TASTE_TAGS = {"sour", "bitter"}                  # 신맛/쓴맛: attributes (acidity cue), not flavors
 
 
+# A brand's own English flavor descriptors (투썸 원두 페이지의 "Nutty · Chocolaty", "Berry-like · Floral") → SCA
+# taxonomy tags. Only flavor words; "Juicy", "Rich", "Sweet", "Well-Balanced", "Full-Body" are not flavors (sweetness
+# and body come from the attribute cues / gauges). Matched case-sensitively as written, like the Korean vocabulary.
+OFFICIAL_EN_FLAVOR = {"Nutty": "nutty", "Chocolaty": "chocolate", "Berry-like": "berry", "Floral": "floral"}
+
+
+def gauge_from_percent(pct: float) -> float:
+    """A 0~100% bar (투썸 "산미 40%") on the 1~5 scale: 0% → 1, 100% → 5, one decimal."""
+    return round(1 + 4 * float(pct) / 100, 1)
+
+
+def bean_gauges(bean: dict) -> dict[str, float]:
+    """Published 1~5 gauges (`gauges`), or percent bars (`gauges_pct`) converted with gauge_from_percent."""
+    if bean.get("gauges"):
+        return {a: float(v) for a, v in bean["gauges"].items() if v is not None}
+    return {a: gauge_from_percent(v) for a, v in (bean.get("gauges_pct") or {}).items() if v is not None}
+
+
 def official_word_tags(text: str, vocab: dict[str, str]) -> list[str]:
     """Flavor words the brand itself wrote, mapped to taxonomy tags with the SAME Korean vocabulary the rule
     mapper uses (app/core/textcues.ko_vocab_from_tag_ko). The rule mapper (pipeline.enrich.rule_tags) only fires
@@ -81,7 +101,7 @@ def official_word_tags(text: str, vocab: dict[str, str]) -> list[str]:
     across word boundaries ("크레마와 인상" → "와인"). Basic tastes (신맛/쓴맛 → sour/bitter) are left to the
     attribute cues; they are not flavors a card should list. Order = first appearance in the text."""
     hits: list[tuple[int, int, str]] = []
-    for term, tag in vocab.items():
+    for term, tag in {**vocab, **OFFICIAL_EN_FLAVOR}.items():
         if tag in BASIC_TASTE_TAGS:
             continue
         start = text.find(term)
@@ -120,16 +140,13 @@ def query_text(brand_name: str, bean: dict, is_decaf: bool) -> str:
 
 def derive(bean: dict, current: dict, brand_name: str, is_decaf: bool, embed, attr_model: AttrModel,
            tag_model: TagModel, tag_to_cat: dict, tag_ko: dict) -> dict:
-    gauges = bean.get("gauges")
-    if gauges:
-        vals = {a: float(gauges[a]) if gauges.get(a) is not None else current[a] for a in ATTRS}
-        src = {a: "official_gauge" if gauges.get(a) is not None else "estimate" for a in ATTRS}
-        return {"values": {**vals, "flavor_tags": current["flavor_tags"]},
-                "label_source": {**src, "flavor_tags": "estimate"}, "basis": {}}
+    gauges = bean_gauges(bean)
     text = official_text(bean)
     if bean.get("status") != "official" or not text:
-        return {"values": dict(current), "label_source": {k: "estimate" for k in (*ATTRS, "flavor_tags")},
-                "basis": {"reason": bean.get("reason")}}
+        vals = {a: gauges.get(a, current[a]) for a in ATTRS}
+        src = {a: "official_gauge" if a in gauges else "estimate" for a in ATTRS}
+        return {"values": {**vals, "flavor_tags": current["flavor_tags"]},
+                "label_source": {**src, "flavor_tags": "estimate"}, "basis": {"reason": bean.get("reason")}}
 
     q = query_text(brand_name, bean, is_decaf)
     vec = embed(q)
@@ -155,8 +172,10 @@ def derive(bean: dict, current: dict, brand_name: str, is_decaf: bool, embed, at
                 if p >= MODEL_TAG_MIN_P and t not in GENERIC_TAGS | BASIC_TASTE_TAGS][:MAX_TAGS]
     basis["flavor_tags"] = {"from_text": rule_tags, "model": [(t, round(p, 3)) for t, p in model_tags]}
     values["flavor_tags"] = tags
-    return {"values": values, "label_source": {k: "official_notes_model" for k in (*ATTRS, "flavor_tags")},
-            "basis": basis, "query_text": q, "model_attrs": model_attrs}
+    src = {k: "official_notes_model" for k in (*ATTRS, "flavor_tags")}
+    for a, g in gauges.items():   # a published gauge outranks both the text cue and the model
+        values[a], src[a], basis[a] = g, "official_gauge", f"gauge {g}"
+    return {"values": values, "label_source": src, "basis": basis, "query_text": q, "model_attrs": model_attrs}
 
 
 # ---- open variant ------------------------------------------------------------------------------------------
@@ -198,7 +217,7 @@ def derive_open(bean: dict, estimate: dict, is_decaf: bool, fmodel: FeatureModel
                 vocab: dict[str, str]) -> dict:
     """Licence-clean profile for one bean: gauge > official cue > open feature model > hand estimate. Flavor
     tags: the brand's own flavor words, else the hand estimate -- never a learned tag model."""
-    gauges = bean.get("gauges") or {}
+    gauges = bean_gauges(bean)
     has_facts = bean.get("status") in ("official", "partial")
     text = official_text(bean) if has_facts else ""
     cues = attr_cues(text)
@@ -208,8 +227,8 @@ def derive_open(bean: dict, estimate: dict, is_decaf: bool, fmodel: FeatureModel
 
     values, src, basis = {}, {}, {}
     for a in ATTRS:
-        if gauges.get(a) is not None:
-            values[a], src[a], basis[a] = float(gauges[a]), "official_gauge", f"gauge {gauges[a]}"
+        if a in gauges:
+            values[a], src[a], basis[a] = gauges[a], "official_gauge", f"gauge {gauges[a]}"
         elif a in cues:
             values[a], src[a] = half_step(cues[a][0]), "official_cue"
             basis[a] = f"cue '{cues[a][1]}' → {cues[a][0]}"

@@ -120,8 +120,8 @@
     "brand": "brand:twosome",
     "name": "투썸플레이스",
     "house": {
-      "bean_name": null,
-      "status": "unavailable",
+      "bean_name": "블랙그라운드 (BLACK GROUND)",
+      "status": "official",
       "estimate": {
         "acidity": 2,
         "body": 4,
@@ -132,34 +132,52 @@
         ]
       },
       "values": {
-        "acidity": 2.0,
-        "body": 4.0,
-        "sweetness": 2.0,
+        "acidity": 2.6,
+        "body": 5.0,
+        "sweetness": 5.0,
         "flavor_tags": [
-          "dark chocolate",
+          "chocolate",
+          "smoky",
           "nutty"
         ]
       },
       "label_source": {
-        "acidity": "estimate",
-        "body": "estimate",
-        "sweetness": "estimate",
-        "flavor_tags": "estimate"
+        "acidity": "official_gauge",
+        "body": "official_gauge",
+        "sweetness": "open_feature_model",
+        "flavor_tags": "official_cue"
       },
       "basis": {
-        "acidity": "hand estimate (pre-ADR 0012)",
-        "body": "hand estimate (pre-ADR 0012)",
-        "sweetness": "hand estimate (pre-ADR 0012)",
+        "acidity": "gauge 2.6",
+        "body": "gauge 5.0",
+        "sweetness": {
+          "model": 4.97,
+          "contributions": {
+            "blend_or_unknown_origin": 0.684,
+            "roast_dark": 0.55,
+            "notes_nutty/cocoa": 0.817,
+            "notes_roasted": -0.043
+          }
+        },
         "flavor_tags": {
-          "from_text": []
+          "from_text": [
+            "chocolate",
+            "smoky",
+            "nutty"
+          ]
         }
       },
-      "features": {},
-      "official_note": null
+      "features": {
+        "blend_or_unknown_origin": 1.0,
+        "roast_dark": 1.0,
+        "notes_nutty/cocoa": 2.0,
+        "notes_roasted": 1.0
+      },
+      "official_note": "투썸플레이스 공식: 블랙그라운드(다크) — 다크 초콜릿·꽉 찬 바디감·스모키한 향, 산미 40%·바디 100%"
     },
     "decaf": {
-      "bean_name": null,
-      "status": "unavailable",
+      "bean_name": "디카페인 (DECAF)",
+      "status": "official",
       "estimate": {
         "acidity": 2,
         "body": 3,
@@ -170,30 +188,37 @@
         ]
       },
       "values": {
-        "acidity": 2.0,
-        "body": 3.0,
-        "sweetness": 3.0,
+        "acidity": 2.6,
+        "body": 4.2,
+        "sweetness": 4.0,
         "flavor_tags": [
-          "chocolate",
           "nutty"
         ]
       },
       "label_source": {
-        "acidity": "estimate",
-        "body": "estimate",
-        "sweetness": "estimate",
-        "flavor_tags": "estimate"
+        "acidity": "official_gauge",
+        "body": "official_gauge",
+        "sweetness": "official_cue",
+        "flavor_tags": "official_cue"
       },
       "basis": {
-        "acidity": "hand estimate (pre-ADR 0012)",
-        "body": "hand estimate (pre-ADR 0012)",
-        "sweetness": "hand estimate (pre-ADR 0012)",
+        "acidity": "gauge 2.6",
+        "body": "gauge 4.2",
+        "sweetness": "cue '단맛' → 4.0",
         "flavor_tags": {
-          "from_text": []
+          "from_text": [
+            "nutty"
+          ]
         }
       },
-      "features": {},
-      "official_note": null
+      "features": {
+        "region_south_america": 1.0,
+        "country_Colombia": 1.0,
+        "roast_dark": 1.0,
+        "decaf": 1.0,
+        "notes_nutty/cocoa": 1.0
+      },
+      "official_note": "투썸플레이스 공식: 디카페인(다크, 콜롬비아) — 견과류의 고소함과 은은한 단맛, 산미 40%·바디 80%"
     }
   },
   {

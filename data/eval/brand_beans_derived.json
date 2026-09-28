@@ -101,10 +101,10 @@
     "brand": "brand:twosome",
     "name": "투썸플레이스",
     "house": {
-      "bean_name": null,
-      "source_url": "https://www.twosome.co.kr",
+      "bean_name": "블랙그라운드 (BLACK GROUND)",
+      "source_url": "https://www.twosome.co.kr/mn/coffeeStory.do",
       "verified_at": "2026-09-28",
-      "status": "unavailable",
+      "status": "official",
       "before": {
         "acidity": 2,
         "body": 4,
@@ -115,30 +115,56 @@
         ]
       },
       "values": {
-        "acidity": 2,
-        "body": 4,
-        "sweetness": 2,
+        "acidity": 2.6,
+        "body": 5.0,
+        "sweetness": 2.5,
         "flavor_tags": [
-          "dark chocolate",
+          "chocolate",
+          "smoky",
           "nutty"
         ]
       },
       "label_source": {
-        "acidity": "estimate",
-        "body": "estimate",
-        "sweetness": "estimate",
-        "flavor_tags": "estimate"
+        "acidity": "official_gauge",
+        "body": "official_gauge",
+        "sweetness": "official_notes_model",
+        "flavor_tags": "official_notes_model"
       },
       "basis": {
-        "reason": "공식 사이트가 봇을 403으로 차단(PoliteClient GET https://www.twosome.co.kr/ → 403 Forbidden). 공식 설명 미확인 → 추정 유지."
+        "acidity": "gauge 2.6",
+        "body": "gauge 5.0",
+        "sweetness": "model 2.72",
+        "flavor_tags": {
+          "from_text": [
+            "chocolate",
+            "smoky",
+            "nutty"
+          ],
+          "model": [
+            [
+              "smoky",
+              0.986
+            ],
+            [
+              "dark chocolate",
+              0.926
+            ]
+          ]
+        }
       },
-      "card_note": null
+      "query_text": "투썸플레이스 블랙그라운드 (BLACK GROUND) | dark | 다크 초콜릿과 입안 가득 꽉 찬 바디감, 스모키한 향과 균형 잡힌 맛이 느껴지는 다크 로스팅 블렌드 Dark Roast · Full-Body · Nutty · Chocolaty 콜롬비아, 브라질, 파푸아뉴기니",
+      "model_attrs": {
+        "acidity": 2.15,
+        "body": 4.39,
+        "sweetness": 2.72
+      },
+      "card_note": "투썸플레이스 공식: 블랙그라운드(다크) — 다크 초콜릿·꽉 찬 바디감·스모키한 향, 산미 40%·바디 100%"
     },
     "decaf": {
-      "bean_name": null,
-      "source_url": "https://www.twosome.co.kr",
+      "bean_name": "디카페인 (DECAF)",
+      "source_url": "https://www.twosome.co.kr/mn/coffeeStory.do",
       "verified_at": "2026-09-28",
-      "status": "unavailable",
+      "status": "official",
       "before": {
         "acidity": 2,
         "body": 3,
@@ -149,24 +175,58 @@
         ]
       },
       "values": {
-        "acidity": 2,
-        "body": 3,
-        "sweetness": 3,
+        "acidity": 2.6,
+        "body": 4.2,
+        "sweetness": 4.0,
         "flavor_tags": [
-          "chocolate",
           "nutty"
         ]
       },
       "label_source": {
-        "acidity": "estimate",
-        "body": "estimate",
-        "sweetness": "estimate",
-        "flavor_tags": "estimate"
+        "acidity": "official_gauge",
+        "body": "official_gauge",
+        "sweetness": "official_notes_model",
+        "flavor_tags": "official_notes_model"
       },
       "basis": {
-        "reason": "위와 같음(봇 차단)."
+        "acidity": "gauge 2.6",
+        "body": "gauge 4.2",
+        "sweetness": "cue '단맛' → 4.0",
+        "flavor_tags": {
+          "from_text": [
+            "nutty"
+          ],
+          "model": [
+            [
+              "dark chocolate",
+              0.612
+            ],
+            [
+              "citrus fruit",
+              0.505
+            ],
+            [
+              "caramelized",
+              0.42
+            ],
+            [
+              "sweet aromatics",
+              0.4
+            ],
+            [
+              "winey",
+              0.398
+            ]
+          ]
+        }
       },
-      "card_note": null
+      "query_text": "투썸플레이스 디카페인 (DECAF) | dark | decaf | 견과류의 고소함과 은은한 단맛이 균형을 이루는 디카페인 커피 Dark Roast · Rich · Sweet · Well-Balanced 콜롬비아",
+      "model_attrs": {
+        "acidity": 2.56,
+        "body": 2.99,
+        "sweetness": 3.8
+      },
+      "card_note": "투썸플레이스 공식: 디카페인(다크, 콜롬비아) — 견과류의 고소함과 은은한 단맛, 산미 40%·바디 80%"
     }
   },
   {

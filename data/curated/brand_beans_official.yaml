@@ -12,6 +12,7 @@
 #   origins          공식 산지/블렌드 구성(원문). 없으면 null
 #   notes            공식 맛 설명(원문 인용, 여러 개면 목록)
 #   gauges           공식 산미/바디/단맛 수치(1~5 척도로 게시된 경우만). 없으면 null
+#   gauges_pct       공식 산미/바디 막대(0~100%, 투썸). derive_brand_beans.gauge_from_percent 로 1~5 환산
 #   status           official(맛 설명 있음) | partial(로스팅·공정만 있음) | unavailable(공식 설명 없음/접근 불가)
 #   card_note        추천 카드 근거 줄에 그대로 보여줄 한 줄(공식 문구만 발췌; 설명 LLM에도 들어가므로 영어 단어는 뺀다)
 
@@ -45,24 +46,56 @@
     card_note: "스타벅스 공식: 디카페인은 워터 프로세스(99.9%) 원두"
 
 - brand: brand:twosome
+  # https://www.twosome.co.kr/mn/coffeeStory.do (제품이야기 > 커피이야기): robots.txt에 Disallow 없음. 다만 CloudFront가
+  # 봇 UA(PoliteClient 포함)를 403으로 막아 자동 수집기는 만들지 않고, 공개 페이지를 브라우저로 한 번 열어 사실만 손으로
+  # 옮겼다(2026-09-28). 세 블렌드(블랙그라운드·아로마노트·디카페인)마다 로스팅,
+  # 한국어 설명, 영어 설명어, 산미·바디 막대(%)와 산지를 싣는다. 막대는 gauges_pct 로 옮기고 scripts/derive_brand_beans.py
+  # (gauge_from_percent)가 1~5로 바꾼다(0% → 1, 100% → 5).
   house:
-    bean_name: null
-    source_url: https://www.twosome.co.kr
+    bean_name: 블랙그라운드 (BLACK GROUND)
+    source_url: https://www.twosome.co.kr/mn/coffeeStory.do
     verified_at: "2026-09-28"
-    status: unavailable
-    reason: "공식 사이트가 봇을 403으로 차단(PoliteClient GET https://www.twosome.co.kr/ → 403 Forbidden). 공식 설명 미확인 → 추정 유지."
-    notes: []
+    role_evidence: >-
+      페이지는 "각각 다른 개성의 세가지 블렌드를 제공"이라고만 쓰고 기본 원두를 명시하지 않는다. 아메리카노 기본은
+      블랙그라운드, 아로마노트는 선택이라는 점은 [뉴스] → 하우스 = 블랙그라운드로 둔다.
+    roast: "DARK ROAST — 다크 로스팅 블렌드"
+    roast_level: dark
+    origins: "콜롬비아, 브라질, 파푸아뉴기니"
+    notes:
+      - "다크 초콜릿과 입안 가득 꽉 찬 바디감, 스모키한 향과 균형 잡힌 맛이 느껴지는 다크 로스팅 블렌드"
+      - "Dark Roast · Full-Body · Nutty · Chocolaty"
     gauges: null
-    card_note: null
+    gauges_pct: {acidity: 40, body: 100}
+    status: official
+    card_note: "투썸플레이스 공식: 블랙그라운드(다크) — 다크 초콜릿·꽉 찬 바디감·스모키한 향, 산미 40%·바디 100%"
+  alternatives:
+    - bean_name: 아로마노트 (AROMA NOTE)
+      source_url: https://www.twosome.co.kr/mn/coffeeStory.do
+      verified_at: "2026-09-28"
+      roast: "MEDIUM ROAST — 미디엄 로스팅 블렌드"
+      roast_level: medium
+      origins: "에티오피아(Natural), 과테말라"
+      notes:
+        - "잘 익은 과일향, 플로럴한 아로마에 부드럽고 밀도 있는 단맛과 은은한 산미의 밸런스가 좋은 미디엄 로스팅 블렌드"
+        - "Medium Roast · Berry-like · Juicy · Floral"
+      gauges_pct: {acidity: 80, body: 60}
+      note: "선택 원두라 brands.yaml 값에는 쓰지 않는다(브랜드 프로필은 하우스·디카페인 두 개)."
   decaf:
-    bean_name: null
-    source_url: https://www.twosome.co.kr
+    bean_name: 디카페인 (DECAF)
+    source_url: https://www.twosome.co.kr/mn/coffeeStory.do
     verified_at: "2026-09-28"
-    status: unavailable
-    reason: "위와 같음(봇 차단)."
-    notes: []
+    role_evidence: "커피이야기 페이지의 세 블렌드 중 디카페인 블렌드(매장 디카페인 음료용 원두는 이것 하나)"
+    roast: "DARK ROAST"
+    roast_level: dark
+    origins: "콜롬비아"
+    notes:
+      - "견과류의 고소함과 은은한 단맛이 균형을 이루는 디카페인 커피"
+      - "Dark Roast · Rich · Sweet · Well-Balanced"
+    process: null
     gauges: null
-    card_note: null
+    gauges_pct: {acidity: 40, body: 80}
+    status: official
+    card_note: "투썸플레이스 공식: 디카페인(다크, 콜롬비아) — 견과류의 고소함과 은은한 단맛, 산미 40%·바디 80%"
 
 - brand: brand:mega
   house:
