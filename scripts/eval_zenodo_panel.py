@@ -18,8 +18,9 @@ Per sample:
   predict  the real analyze path's core functions (app/graphs/analyze_bean.py `predict`), rules-only parse (no
            LLM parse), k=10 neighbours with the same origin/process filter:
              full : coffee DB neighbours → learned tag model → learned attribute model → text cues
-             open : coffee_open DB neighbours → roaster-gauge feature model (acidity/sweetness) → text cues
-                    (no attribute/tag model ships for open; body = neighbour average unless a cue)
+             open : coffee_open DB neighbours → roaster-gauge feature model (its shipped heads) → text cues
+                    (no attribute/tag model ships for open; an attribute without a head = neighbour average)
+             open_neighbours : the open variant with the feature model off (neighbour averages + text cues)
   tags     flavor-tag agreement vs the panel's aroma/bouquet/aftertaste words through the SAME rule mapper the
            pipeline uses (pipeline.enrich.rule_tags). Scored on the tags BEFORE text cues: the final tags echo
            the input text's own note words (with_text_cues), which would be circular.
@@ -314,6 +315,9 @@ def main() -> int:
                  "tag_model": TagModel.load(settings.CONFIG_DIR / "tag_model.json"), "feature_model": None},
         "open": {"db": args.open_db, "attr_model": None, "tag_model": None,
                  "feature_model": FeatureModel.load(settings.CONFIG_DIR / "feature_model_open.json")},
+        # the open variant with the feature model off (FEATURE_MODEL=off): neighbour averages + text cues -- the
+        # baseline every feature-model head has to beat on this external panel too
+        "open_neighbours": {"db": args.open_db, "attr_model": None, "tag_model": None, "feature_model": None},
     }
     result = {"source": "https://doi.org/10.5281/zenodo.20840464", "file": "panelists_scores_EN.xlsx",
               "file_md5": RECORD_MD5, "attribution": ATTRIBUTION,
@@ -329,6 +333,7 @@ def main() -> int:
                                    if (settings.CONFIG_DIR / f).exists()},
               "variants": {}}
     pairs_const = {a: [] for a in ATTRS}
+    by_sample: dict[str, dict[tuple[int, str], float]] = {}     # variant -> (sample id, attr) -> prediction
     for name, v in variants.items():
         repo = Repo(v["db"])
         try:
@@ -347,26 +352,40 @@ def main() -> int:
                     t, p = s["truth"][a], getattr(pred, a)
                     if t is not None and p is not None:
                         pairs[a].append((t, p))
+                        by_sample.setdefault(name, {})[(s["id"], a)] = p
                         if name == "full":
                             pairs_const[a].append((t, 3.0))
                 truth_tags = set(rule_tags(s["tag_text"], vocab, limit=12))
                 if truth_tags:
                     tag_rows.append((truth_tags, {t.lower() for t in tags_before}))
             result["variants"][name] = {
-                "predictor": ("coffee DB neighbours → tag model → attribute model → text cues" if name == "full"
-                              else "coffee_open DB neighbours → roaster-gauge feature model → text cues"),
+                "predictor": {"full": "coffee DB neighbours → tag model → attribute model → text cues",
+                              "open": "coffee_open DB neighbours → roaster-gauge feature model → text cues",
+                              "open_neighbours": "coffee_open DB neighbours → text cues (feature model off)"}[name],
                 "parsed_origin": parsed_origin,
                 **{a: attr_metrics(pairs[a]) for a in ATTRS},
                 "tags_before_text_cues": tag_metrics(tag_rows, tag_to_cat)}
         finally:
             repo.close()
     result["baseline_constant_3"] = {a: attr_metrics(p) for a, p in pairs_const.items()}
+    # open feature model vs the open neighbour average vs always-3 on the SAME samples (those the neighbour
+    # average covers) -- the head-to-head a shipped feature-model head must win on this panel too
+    truth = {(s["id"], a): s["truth"][a] for s in samples for a in ATTRS}
+    paired = {}
+    for a in ("acidity", "sweetness"):
+        keys = [k for k in by_sample["open_neighbours"] if k[1] == a and k in by_sample["open"]]
+        paired[a] = {"open_feature_model": attr_metrics([(truth[k], by_sample["open"][k]) for k in keys]),
+                     "open_neighbour_average": attr_metrics([(truth[k], by_sample["open_neighbours"][k]) for k in keys]),
+                     "constant_3": attr_metrics([(truth[k], 3.0) for k in keys])}
+    result["open_paired"] = paired
     result["embedding_requests"] = embed.requests
     OUT.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     for name, r in result["variants"].items():
         print(name, {a: (r[a].get("n"), r[a].get("mae"), r[a].get("within1"), r[a].get("spearman")) for a in ATTRS},
               r["tags_before_text_cues"])
     print("const3", {a: (r.get("mae"), r.get("within1")) for a, r in result["baseline_constant_3"].items()})
+    for a, r in paired.items():
+        print("paired", a, {k: (m["n"], m["mae"], m["within1"], m["spearman"]) for k, m in r.items()})
     print(f"wrote {OUT} ({embed.requests} embedding requests)")
     return 0
 
