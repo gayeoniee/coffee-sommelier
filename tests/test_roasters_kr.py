@@ -764,3 +764,10 @@ def test_parse_naeil_skips_coffee_bags():
 def test_new_gauge_collectors_are_registered():
     names = {c.name for c in ALL_ROASTER_COLLECTORS}
     assert {"groasting", "naeilcoffee"} <= names
+
+
+def test_fact_value_rejects_label_matched_inside_a_sentence():
+    from pipeline.collect.roasters_kr import fact_value
+    assert fact_value("과 품질의 커피로 구성합니다") is None      # "...품종과 품질의..." is not a variety
+    assert fact_value("파라이네마") == "파라이네마"
+    assert fact_value(None) is None

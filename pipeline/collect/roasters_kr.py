@@ -522,6 +522,15 @@ def number_gauges(text: str | None) -> dict[str, float]:
     return out
 
 
+def fact_value(value: str | None, max_len: int = 30) -> str | None:
+    """A labelled fact value, or None when the label matched inside a sentence instead ("...엄선한 품종과
+    품질의 커피로 구성합니다" is not a variety): too long, or ending like a Korean sentence."""
+    value = (value or "").strip(" .,:")
+    if not value or len(value) > max_len or re.search(r"(니다|세요|어요|아요)$", value):
+        return None
+    return value
+
+
 def find_roast_word(text: str | None) -> str | None:
     """First Korean roast-degree word anywhere in the text (G Roasting puts it bare in the title,
     "약배전 산미높은 ..."); ``ROAST_BRACKET_WORDS`` lists 중강/중약 before 강/약 so the longer word wins."""
@@ -563,7 +572,7 @@ def parse_fritz_product(html_text: str, url: str) -> dict | None:
         "flavor_notes": flavor_notes_from_ld_description(desc),
         "price_krw": int(price) if price is not None else None,
         "weight_g": parse_weight_g(name) or parse_weight_g(text),
-        "variety": ko_prefix(fields.get("variety")) or None,
+        "variety": fact_value(ko_prefix(fields.get("variety"))),
         "product_url": url,
     }
 
@@ -702,7 +711,7 @@ def parse_libre_product(html_text: str, url: str) -> dict | None:
         "price_krw": int(price) if price is not None else None,
         "weight_g": parse_weight_g(facts.get("옵션", "")) or parse_weight_g(name),
         "altitude_m": parse_altitude_m(fields.get("altitude_raw")),
-        "variety": ko_prefix(fields.get("variety")) or None,
+        "variety": fact_value(ko_prefix(fields.get("variety"))),
         # "산미 Acidity ●●●◐○ 단맛 Sweetness ●●●○○" (or "신맛 ●●○○○") in the product summary: five dots,
         # half dots allowed; acidity and sweetness only (this site shows no body gauge).
         **gauge_fields(dot_gauges(text), LIBRE_GAUGE_SCALE),
