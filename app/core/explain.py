@@ -1,7 +1,7 @@
 import json
 import re
 
-from app.core.explain_check import (allowed_latin, direction_errors, sentence_spans, sentences,
+from app.core.explain_check import (allowed_latin, consequence_errors, direction_errors, sentence_spans, sentences,
                                     violation_mentioned)
 from app.core.flavors import CATEGORY_KO
 from app.models import ATTRS, Item, Prediction, Profile
@@ -269,7 +269,7 @@ KEY_NAMES = ("맛 비교", "향미 비교", "손님 취향 요약", "디카페�
 LATIN_FIX = {"parcialmente": "부분적으로", "partially": "부분적으로"}
 # Latin runs, also when a Korean particle follows ("Yirgacheffe는" — \b sees no boundary between e and 는)
 _LATIN_WORD = re.compile(r"\s?(?<![A-Za-z])[A-Za-z]{2,}(?![A-Za-z])")
-GUARD_REJECTS = ("placeholder", "bool_copy", "key_copy", "direction")
+GUARD_REJECTS = ("placeholder", "bool_copy", "key_copy", "direction", "consequence")
 
 
 def _strip_foreign(text: str, allowed: set[str], name: str = "") -> str:
@@ -301,7 +301,8 @@ def finalize_explanation(text: str, item: Item, profile: Profile, payload: dict,
 
     Rejected (text '', event one of GUARD_REJECTS — the caller shows the template instead, telemetry `fb_guard`):
     a copied 〔placeholder〕, a copied true/false/null/None, a payload key name, or a 산미/바디/단맛 direction word
-    the numbers contradict ("산미가 손님 선호보다 높아" when it is lower).
+    the numbers contradict ("산미가 손님 선호보다 높아" when it is lower), or a wrong conclusion drawn from them
+    ("산미가 선호보다 조금 강해서 잘 맞아요" — explain_check.consequence_errors).
     Edited (event "edited"): a Latin-script drink name becomes "이 음료", other Latin words that are not the
     drink's flavor tags are dropped (parcialmente → 부분적으로), the text is cut to two sentences, and a violation it never mentions gets the template's
     '주의: … — ' prefix (no extra sentence). Otherwise event None."""
@@ -315,8 +316,11 @@ def finalize_explanation(text: str, item: Item, profile: Profile, payload: dict,
     out = re.sub(r"\s{2,}", " ", re.sub(r"\s+([,.!?])", r"\1", out)).strip()
     out = _trim_sentences(out, violation)
     drink = {a: item.attr(a) for a in ATTRS}
-    if direction_errors(out, drink, {a: getattr(profile, a) for a in ATTRS}):
+    guest = {a: getattr(profile, a) for a in ATTRS}
+    if direction_errors(out, drink, guest):
         return "", "direction"
+    if consequence_errors(out, drink, guest):
+        return "", "consequence"
     if violation and not violation_mentioned(out, violation):
         out = f"주의: {violation} — {out}"
     if not sentences(out):

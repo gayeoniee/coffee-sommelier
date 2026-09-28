@@ -13,7 +13,7 @@ from app.core.explain import (
     taste_comparison,
     violation_lead,
 )
-from app.core.explain_check import direction_errors, sentence_spans, sentences
+from app.core.explain_check import consequence_errors, direction_errors, sentence_spans, sentences
 from app.models import Item, Profile
 
 MOCHA = Item(key="menu:9", name="카페모카 아이스 블렌디드", source="brand_bean", acidity=2, body=4, sweetness=2,
@@ -133,3 +133,23 @@ def test_finalize_edits_foreign_words_length_and_missing_violation():
     text, ev = finalize_explanation(ok, it, Profile(), p, "카페인이 100mg을 넘거나 알 수 없어요")
     assert text == "주의: 카페인이 100mg을 넘거나 알 수 없어요 — " + ok and ev == "edited"
     assert len(sentences(text)) == 2
+
+
+def test_consequence_errors_catch_a_gap_given_as_the_reason_for_a_good_fit():
+    drink, guest = {"acidity": 4.5, "body": 2.9, "sweetness": 3.9}, {"acidity": 3.5, "body": 3, "sweetness": 3}
+    # live open-site analyze card, 2026-09-28: the direction is right, the conclusion is not
+    assert consequence_errors("디카페인이 아니어서 주문 전 확인이 필요하지만, 산미가 손님 선호보다 조금 강해서 "
+                              "취향에 잘 맞아요.", drink, guest)
+    assert not consequence_errors("산미가 손님 선호보다 조금 강해서 취향에 맞지 않아요.", drink, guest)
+    assert not consequence_errors("산미는 강하지만, 바디가 비슷해 잘 맞아요.", drink, guest)   # conclusion is 바디's
+    assert consequence_errors("산미는 손님 선호와 비슷해서 잘 안 맞아요.", {"acidity": 3.5}, guest)
+    far = {"acidity": 2, "body": 4.5, "sweetness": 3.5}
+    text = "이 음료는 산미가 약하고 바디가 강하며 단맛이 강해 손님 선호와 잘 맞아요."
+    assert consequence_errors(text, far, {"acidity": 2, "body": 2, "sweetness": 4})       # 바디 4.5 vs 2
+    assert not consequence_errors(text, far, {"acidity": 2, "body": 4, "sweetness": 4})
+    assert not consequence_errors("손님이 싫어하는 산미가 약해서 잘 맞아요.", {"acidity": 2}, {"acidity": 2})
+
+
+def test_finalize_rejects_a_wrong_conclusion():
+    text = "산미가 손님 선호보다 훨씬 약해서 취향에 잘 맞아요."          # EDIYA 산미 2 < LIVE 4.5: direction right
+    assert finalize_explanation(text, EDIYA, LIVE, _payload(EDIYA, LIVE), None) == ("", "consequence")

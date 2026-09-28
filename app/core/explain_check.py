@@ -130,6 +130,47 @@ def direction_errors(text: str, drink: dict[str, float | None], guest: dict[str,
     return errors
 
 
+_CLAUSE_BREAK = re.compile(r"지만|는데|반면|[,.!?]")
+_CAUSE = r"(?:서|해|며|니까|므로|기\s?때문에)\s(?:[가-힣]+\s){0,3}"
+_FIT_GOOD = re.compile(rf"{_CAUSE}(?:잘|딱|대체로|꽤)?\s?(?:맞아|맞는|맞습|어울려|어울리)")
+_FIT_BAD = re.compile(rf"{_CAUSE}(?:잘\s)?(?:맞지\s?않|안\s?맞|어울리지\s?않|아쉬)")
+_GAP_CLAIM = re.compile(rf"(?:선호|취향)\S{{0,2}}보다\s?{_ADV}{_DIR}")
+_SAME_CLAIM = re.compile(r"(?:선호|취향)\S{0,2}\s?(?:와|과)\s?(?:비슷|같|가깝)")
+GAP_TOO_BIG = 1.5      # "잘 맞아요" because of an attribute this far from the guest is a wrong conclusion
+
+
+def consequence_errors(text: str, drink: dict[str, float | None], guest: dict[str, float]) -> list[str]:
+    """Wrong conclusions drawn from 산미/바디/단맛 within one clause (docs/adr/0005 3차 보완).
+
+    `direction_errors` checks the direction words; this checks what the text concludes from them:
+    - a stated gap given as the reason for a good fit ("산미가 선호보다 조금 강해서 취향에 잘 맞아요");
+    - a good fit caused by an attribute that is GAP_TOO_BIG or more away from the guest
+      ("산미가 약하고 바디가 강해 손님 선호와 잘 맞아요" when the guest wants body 2);
+    - "비슷해서" given as the reason for a bad fit ("산미가 선호와 비슷해 잘 안 맞아요").
+    Only the clause that carries the conclusion is read (split at 지만/는데/반면/commas), so
+    "산미는 강하지만, 바디가 비슷해 잘 맞아요" is not blamed on 산미."""
+    errors = []
+    start = 0
+    for m in _CLAUSE_BREAK.finditer(text + "."):
+        clause, start = text[start:m.start()], m.end()
+        attrs = [a for a in _ATTR_KEY if a in clause]
+        if not attrs:
+            continue
+        good, bad = _FIT_GOOD.search(clause), _FIT_BAD.search(clause)
+        if good and not bad:
+            head = clause[:good.start() + 1]
+            if _GAP_CLAIM.search(head):
+                errors.append(f"gap→fit: '{clause.strip()}'")
+                continue
+            for a in attrs:
+                v, g = drink.get(_ATTR_KEY[a]), guest.get(_ATTR_KEY[a])
+                if v is not None and g is not None and abs(v - g) >= GAP_TOO_BIG:
+                    errors.append(f"{a} {v:g} vs guest {g:g} but '{clause.strip()}'")
+        elif bad and _SAME_CLAIM.search(clause[:bad.start() + 1]) and not _GAP_CLAIM.search(clause):
+            errors.append(f"same→misfit: '{clause.strip()}'")
+    return errors
+
+
 def check_explanation(text: str, payload: dict, score: int, violation: str | None) -> dict[str, bool]:
     allowed = allowed_latin(payload)
     foreign_ok = all(w.lower() in allowed for w in _LATIN.findall(text))
