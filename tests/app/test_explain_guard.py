@@ -162,9 +162,26 @@ def test_fit_points_never_offer_a_gap_as_a_reason_to_fit():
     yirga = Item(key="input", name="예가체프", source="predicted", acidity=4.5, body=2.9, sweetness=3.9,
                  tags=("jasmine", "lemon"))
     good, bad = fit_points(yirga, guest, {"jasmine": "floral", "lemon": "fruity"}, {"lemon": "레몬", "jasmine": "재스민"})
-    assert good == ["바디: 손님 선호와 비슷함", "좋아하는 향미와 겹침: 레몬(lemon)"]
-    assert bad == ["산미: 손님 선호보다 조금 강함", "단맛: 손님 선호보다 조금 강함"]
+    assert good == ["손님 선호와 비슷한 바디", "좋아하는 향미와 겹치는 레몬 향"]
+    assert bad == ["손님 선호보다 조금 강한 산미", "손님 선호보다 조금 강한 단맛"]
     far = Item(key="m", name="모카", source="brand_bean", acidity=1.5, body=4.8, sweetness=4.8, tags=("chocolate",))
     good, bad = fit_points(far, guest, {"chocolate": "cocoa"}, None)
-    assert good == ["없음 — 잘 맞는다고 말하지 마라"] and "좋아하는 향미와 겹치는 향미 없음" in bad
+    assert good == ["없음 — 잘 맞는다고 말하지 마라"] and "좋아하는 향미와 겹치는 향이 없는 점" in bad
     assert "맞는 점" in _payload(yirga, guest) and "아쉬운 점" in _payload(yirga, guest)
+
+
+def test_direction_reads_a_noun_phrase_comparison_as_the_following_attribute():
+    drink, guest = {"acidity": 2, "body": 4.5, "sweetness": 3.5}, {"acidity": 3.5, "body": 3, "sweetness": 3}
+    # 5차 list items are noun phrases ("손님 선호보다 조금 약한 산미"); the comparison belongs to 산미, not 단맛
+    assert not direction_errors("손님 선호와 비슷한 단맛이 맞지만 손님 선호보다 조금 약한 산미와 조금 강한 바디가 있어요.",
+                                drink, guest)
+    assert direction_errors("단맛이 맞지만 손님 선호보다 조금 강한 산미가 있어요.", drink, guest)      # 산미 2 < 3.5
+    assert not consequence_errors("바디와 단맛이 손님 선호와 비슷해서 차이가 조금 있지만 추천해요.",
+                                  {"acidity": 2, "body": 3, "sweetness": 3}, guest)
+
+
+def test_direction_comparison_does_not_cross_into_the_next_attribute():
+    drink, guest = {"acidity": 2, "body": 3, "sweetness": 2}, {"acidity": 3, "body": 3, "sweetness": 3}
+    text = "초콜릿·견과 향에 산미가 선호보다 조금 약하고 바디가 중간 정도이고 단맛이 선호보다 조금 약한 음료예요."
+    assert not direction_errors(text, drink, guest)                   # 5차 eval: 바디 3 = 3 was blamed for 단맛's gap
+    assert direction_errors("바디가 선호보다 조금 약해요.", drink, guest)

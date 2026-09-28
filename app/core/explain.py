@@ -16,8 +16,9 @@ SYSTEM_PROMPT = ("너는 카페에서 손님에게 커피를 추천하는 친절
                  "맞는지(또는 안 맞는지) 한국어로 설명해라. 데이터에 없는 수치나 사실을 지어내지 마라. "
                  "손님 취향 요약과 반대되는 말을 하지 마라. 산미·바디·단맛은 '맛 비교'의 판정(비슷함, 조금 강함, 훨씬 약함 등)을 "
                  "그대로 따르고, 서로 다른 속성을 '모두 보통'처럼 한데 묶지 마라. 향미는 '향미'에 있는 것만 한국어 이름으로 말하고, "
-                 "손님이 좋아하는 향미와 겹치는지는 '향미 비교'만 따르라. 데이터에 없는 맛·향이나 인상 평가('전체적인 맛', 균형, "
-                 "조화, 풍부함, 부드러움, 가볍게 느껴짐, 밋밋함 등)를 덧붙이지 마라. '적합도'의 수준(높음·중간·낮음)과 반대로 "
+                 "손님이 좋아하는 향미와 겹치는지는 '향미 비교'만 따르라. 음료의 맛을 그릴 때는 '맛 한 줄'에 있는 표현만 쓰고, "
+                 "데이터에 없는 인상 평가('전체적인 맛', 균형, 밸런스, 조화, 입감, 기본적인 맛, 편안함, 풍부함, 부드러움, "
+                 "밋밋함 등)는 쓰지 마라. '적합도'의 수준(높음·중간·낮음)과 반대로 "
                  "말하지 말고, '높음이며'처럼 그 라벨을 문장에 옮기지 마라. "
                  "취향에 맞는 이유는 '맞는 점'에 있는 것으로만 대고, '아쉬운 점'에 있는 속성은 아쉬운 점으로만 말하라. "
                  "'디카페인'이 '디카페인 음료'일 때만 디카페인 음료라고 말하라. '디카페인으로 바꿔 주문 가능'이면 원래는 "
@@ -31,11 +32,17 @@ LENGTH_RULE = (" 반드시 지킬 규칙: 설명은 줄바꿈 없는 한 문단,
                "'선호보다 약해요'처럼 말로 써라. 한국어만 써라: 영어·스페인어·포르투갈어 단어(parcialmente, true, false, null, "
                "dislike 등)와 데이터의 항목 이름('맛 비교', '향미 비교' 같은)을 옮기지 마라. 두루뭉술한 말('이 음료의 향미가', "
                "'한 가지 맛') 대신 산미·바디·단맛·향미 이름을 구체적으로 대라.")
-FIRST_SENTENCE = ("첫 문장은 결론과 가장 큰 이유(손님 선호와 가장 잘 맞거나 가장 어긋나는 속성·향미를 이름으로), "
-                  "둘째 문장은 선호와 차이 나는 점 하나('바디는 선호보다 조금 무거워요'처럼)")
-FIRST_SENTENCE_VIOLATION = ("첫 문장은 반드시 '{lead} 주문 전 확인이 필요하지만,'으로 시작하고, 이어서 취향에 맞는(또는 안 맞는) "
-                            "가장 큰 이유 한 가지로 끝낸다(조건 위반('{violation}')을 빠뜨리지 마라). 둘째 문장은 선호와 "
-                            "차이 나는 점이나 보충 한 가지")
+FIRST_SENTENCE = ("첫 문장은 결론과 이유를 한 문장에 담는다: '맞는 점'(없으면 '아쉬운 점')을 이유로 들고 같은 문장 끝을 "
+                  "'{verdict}'로 맺는다(결론만 따로 한 문장으로 쓰지 마라). "
+                  "둘째 문장은 '맛 한 줄'을 그대로 써서 '예요'로 맺는다(아쉬운 점은 그 안에 이미 들어 있으니 따로 덧붙이지 마라). "
+                  "마침표는 두 문장 끝에만 찍는다")
+FIRST_SENTENCE_TOP_PICK = ("첫 문장은 '이 브랜드 메뉴 중에서는 손님 취향에 가장 가까운 선택이에요'라고 쓴다. "
+                           "둘째 문장은 '맛 한 줄'을 그대로 써서 '예요'로 맺는다(아쉬운 점은 그 안에 이미 들어 있으니 따로 덧붙이지 마라). "
+                           "마침표는 두 문장 끝에만 찍는다")
+FIRST_SENTENCE_VIOLATION = ("첫 문장은 반드시 '{lead} 주문 전 확인이 필요하지만,'으로 시작하고, 이어서 '맞는 점'(없으면 '아쉬운 "
+                            "점') 한 가지를 이유로 끝낸다(조건 위반('{violation}')을 빠뜨리지 마라). "
+                            "둘째 문장은 '맛 한 줄'을 그대로 써서 '예요'로 맺는다(아쉬운 점은 그 안에 이미 들어 있으니 따로 덧붙이지 마라). "
+                            "마침표는 두 문장 끝에만 찍는다")
 NO_THINK = " /no_think"      # qwen: skip the reasoning phase
 DECAF_CAFFEINE_RULE = (" 이 음료의 원래 카페인 수치는 데이터에 없고 말하지도 마라. 카페인을 말할 때는 "
                        "'디카페인 주문 시 카페인(mg, 추정)' 값만 '약 N mg(추정)'처럼 쓰고, 그 값이 '추정치 없음'이면 수치 없이 "
@@ -111,10 +118,11 @@ def violation_lead(violation: str) -> str:
     return f"{violation}(조건 위반)이라"
 
 
-def length_rule(violation: str | None = None) -> str:
-    """The hard two-sentence rule, stated last; with a violation its first sentence must open with the violation."""
+def length_rule(violation: str | None = None, verdict: str = "추천해요", top_pick: bool = False) -> str:
+    """The hard two-sentence rule, stated last; with a violation its first sentence must open with the violation,
+    otherwise it ends with the card's own verdict phrase (or the top-pick framing)."""
     first = (FIRST_SENTENCE_VIOLATION.format(lead=violation_lead(violation), violation=violation) if violation
-             else FIRST_SENTENCE)
+             else FIRST_SENTENCE_TOP_PICK if top_pick else FIRST_SENTENCE.format(verdict=verdict))
     return LENGTH_RULE.format(first=first)
 
 
@@ -164,20 +172,68 @@ def fit_points(item: Item, profile: Profile, tag_to_cat: dict[str, str] | None,
         if v is None:
             continue
         gap = attr_gap(v, g)
-        (good if gap == "손님 선호와 비슷함" else bad).append(f"{ATTR_KO[a]}: {gap}")
+        # a noun phrase ("손님 선호와 비슷한 단맛"): "단맛: 손님 선호와 비슷함" was pasted into the text as is
+        (good if gap == "손님 선호와 비슷함" else bad).append(f"{gap[:-1]}한 {ATTR_KO[a]}")
     if tag_to_cat is not None and item.tags:
         liked = {c for c, w in profile.flavor_weights.items() if w > LIKED_FLAVOR_MIN}
         disliked = {c for c, w in profile.flavor_weights.items() if w < -LIKED_FLAVOR_MIN}
-        names = dict(zip(item.tags, flavor_names(item.tags, tag_ko)))
+        names = {t: (tag_ko or {}).get(t.lower(), t) for t in item.tags}      # Korean only: it goes into the text
         hit = [names[t] for t in item.tags if tag_to_cat.get(t.lower()) in liked]
         worse = [names[t] for t in item.tags if tag_to_cat.get(t.lower()) in disliked]
         if hit:
-            good.append(f"좋아하는 향미와 겹침: {', '.join(hit)}")
+            good.append(f"좋아하는 향미와 겹치는 {'·'.join(hit)} 향")
         elif liked:
-            bad.append("좋아하는 향미와 겹치는 향미 없음")
+            bad.append("좋아하는 향미와 겹치는 향이 없는 점")
         if worse:
-            bad.append(f"싫어하는 향미와 겹침: {', '.join(worse)}")
+            bad.append(f"싫어하는 향미와 겹치는 {'·'.join(worse)} 향")
     return good or ["없음 — 잘 맞는다고 말하지 마라"], bad or ["없음"]
+
+
+TASTE_WORDS = {   # attr_band → (connective, adnominal); every phrase is tied to the number, so it is not filler
+    "acidity": {"매우 약함": ("산미가 거의 없고", "산미가 거의 없는"), "약함": ("산미가 적은 편이고", "산미가 적은 편인"),
+                "보통": ("산미가 적당하고", "산미가 적당한"), "강함": ("산미가 또렷하고", "산미가 또렷한"),
+                "매우 강함": ("산미가 아주 강하고", "산미가 아주 강한")},
+    # every body phrase names 바디: a judge did not map "무게감이 중간" to the payload's 바디 and called it invented
+    "body": {"매우 약함": ("바디가 아주 가볍고", "바디가 아주 가벼운"), "약함": ("바디가 가벼운 편이고", "바디가 가벼운 편인"),
+             "보통": ("바디가 중간 정도이고", "바디가 중간 정도인"), "강함": ("바디가 묵직한 편이고", "바디가 묵직한 편인"),
+             "매우 강함": ("바디가 아주 묵직하고", "바디가 아주 묵직한")},
+    "sweetness": {"매우 약함": ("단맛이 거의 없고", "단맛이 거의 없는"), "약함": ("단맛이 적은 편이고", "단맛이 적은 편인"),
+                  "보통": ("단맛이 적당하고", "단맛이 적당한"), "강함": ("단맛이 잘 느껴지고", "단맛이 잘 느껴지는"),
+                  "매우 강함": ("단맛이 아주 진하고", "단맛이 아주 진한")},
+}
+
+
+GAP_WORDS = {"acidity": ("산미가", ("강하고", "강한"), ("약하고", "약한")),
+             "body": ("바디가", ("무겁고", "무거운"), ("가볍고", "가벼운")),
+             "sweetness": ("단맛이", ("진하고", "진한"), ("약하고", "약한"))}
+
+
+def _attr_words(a: str, v: float, g: float) -> tuple[str, str]:
+    """Close to the guest → the drink's own band ('무게감이 중간이고'); otherwise relative to the guest
+    ('산미가 선호보다 조금 강하고'), so a line never says '산미가 적당' next to '선호보다 조금 강한 산미'."""
+    gap = attr_gap(v, g)
+    if gap == "손님 선호와 비슷함":
+        return TASTE_WORDS[a][attr_band(v)]
+    subject, up, down = GAP_WORDS[a]
+    size = "조금" if "조금" in gap else "훨씬"
+    conn, adn = up if v > g else down
+    return f"{subject} 선호보다 {size} {conn}", f"{subject} 선호보다 {size} {adn}"
+
+
+def taste_line(item: Item, profile: Profile, tag_ko: dict[str, str] | None) -> str | None:
+    """'재스민·레몬 향에 산미가 선호보다 조금 강하고 무게감이 중간이고 단맛이 선호보다 조금 진한 음료' — the drink in one
+    phrase the model uses as is (labels like '산미: 강함' were pasted verbatim; absolute and relative words side by side
+    read as a contradiction — docs/adr/0005 5차)."""
+    words = [_attr_words(a, item.attr(a), getattr(profile, a)) for a in ATTRS if item.attr(a) is not None]
+    names = [(tag_ko or {}).get(t.lower(), t) for t in item.tags][:3]
+    if not words:
+        return f"{'·'.join(names)} 향의 음료" if names else None
+    body = " ".join(w[0] for w in words[:-1]) + (" " if len(words) > 1 else "") + words[-1][1]
+    return (f"{'·'.join(names)} 향에 " if names else "") + body + " 음료"
+
+
+def verdict_phrase(pct: int) -> str:
+    return {"높음": "추천해요", "중간": "고려할 점은 있지만 추천해요", "낮음": "다른 메뉴가 더 나을 수 있어요"}[fit_level(pct)]
 
 
 def fit_level(pct: int) -> str:
@@ -258,9 +314,13 @@ def explain_messages(item: Item, profile: Profile, score: float, prediction: Pre
     payload |= {
         "음료": item.name, "브랜드": item.brand,
         "적합도": f"{pct}%({fit_level(pct)})",
+        # the verdict the text must end sentence 1 with, stated as a fact so a judge (and the model) can see it
+        "추천 여부": ("주문 전 조건 확인 필요" if violation else "이 브랜드 메뉴 중 가장 가까운 선택" if top_pick
+                  else verdict_phrase(pct)),
         **({"추천 순위": "이 브랜드 메뉴 중 1순위(가장 가까운 선택)"} if top_pick else {}),
         "맛 비교": taste_comparison(item, profile),
         "향미": flavor_names(item.tags, tag_ko),
+        "맛 한 줄": taste_line(item, profile, tag_ko),
     }
     if tag_to_cat is not None:
         payload["향미 비교"] = flavor_comparison(item, profile, tag_to_cat, tag_ko)
@@ -282,7 +342,8 @@ def explain_messages(item: Item, profile: Profile, score: float, prediction: Pre
         payload["원두 공식 설명"] = item.bean_note
     payload = {k: v for k, v in payload.items() if v is not None}     # a JSON null got copied as "null"
     system = (SYSTEM_PROMPT + (DECAF_CAFFEINE_RULE if item.order_decaf else "") + (VIOLATION_RULE if violation else "")
-              + (TOP_PICK_RULE if top_pick and not violation else "") + length_rule(violation) + NO_THINK)
+              + (TOP_PICK_RULE if top_pick and not violation else "")
+              + length_rule(violation, verdict_phrase(pct), top_pick and not violation) + NO_THINK)
     return [{"role": "system", "content": system},
             {"role": "user", "content": json.dumps(payload, ensure_ascii=False)}]
 
@@ -293,7 +354,7 @@ BOOL_TOKEN = re.compile(r"(?<![A-Za-z])(?:true|false|null|None|True|False)(?![A-
 # payload key names that never occur in natural Korean (plain words like 디카페인·우유·향미 are also keys, so not here);
 # the last three are keys of the pre-3차 payload that the model still reproduced from habit
 KEY_NAMES = ("맛 비교", "향미 비교", "손님 취향 요약", "디카페인 주문 시 카페인(", "디카페인으로 주문 권장",
-             "디카페인 추가요금")
+             "디카페인 추가요금", "맛 한 줄", "추천 여부")
 LATIN_FIX = {"parcialmente": "부분적으로", "partially": "부분적으로"}
 # Latin runs, also when a Korean particle follows ("Yirgacheffe는" — \b sees no boundary between e and 는)
 _LATIN_WORD = re.compile(r"\s?(?<![A-Za-z])[A-Za-z]{2,}(?![A-Za-z])")

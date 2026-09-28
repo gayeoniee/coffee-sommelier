@@ -93,9 +93,13 @@ _UP, _DOWN = ("높", "강", "무거", "진하", "많"), ("낮", "약", "가벼",
 _DIR = r"(높|강|무거|진하|많|낮|약(?!간)|가벼|연하|적)"
 _ADV = r"(?:(?:훨씬|매우|아주|꽤|조금|약간|다소|살짝|비교적|좀|더)\s?)*"
 _SUBJECT = re.compile(rf"((?:{_ATTR})(?:\s?(?:와|과|,|·|및)\s?(?:{_ATTR}))*)\s?(?:이|가|은|는|도)\s")
-_COMPARATIVE = re.compile(rf"^[^,.!?]{{0,14}}?(?:선호|취향|원하시는 것|원하는 것|기대)\S{{0,2}}보다\s?{_ADV}{_DIR}")
+# the gap before "선호보다" may not cross into another attribute ("바디가 중간 정도이고 단맛이 선호보다 약한" is 단맛's)
+_COMPARATIVE = re.compile(rf"^(?:(?!{_ATTR})[^,.!?]){{0,14}}?(?:선호|취향|원하시는 것|원하는 것|기대)\S{{0,2}}보다\s?{_ADV}{_DIR}")
 _ABSOLUTE = re.compile(rf"^{_ADV}{_DIR}")
 _ADNOMINAL = re.compile(r"(?:한|은|운|하게|게)\s(?!편)")    # "강한 커피", "강하게 좋아" — but "강한 편이에요" is a claim
+# "손님 선호보다 조금 약한 산미": the comparison modifies the attribute that FOLLOWS it (noun-phrase form)
+_MODIFIER = re.compile(rf"(?:선호|취향)\S{{0,2}}보다\s?{_ADV}{_DIR}\S{{0,2}}(?:한|은|운|인)\s?({_ATTR})")
+_MODIFIES_NEXT = re.compile(rf"\S{{0,2}}(?:한|은|운|인)\s?(?:{_ATTR})")
 _GUEST_SIDE = ("손님", "좋아", "선호", "원하", "싫어")
 _ATTR_KEY = {"산미": "acidity", "바디": "body", "단맛": "sweetness"}
 
@@ -108,10 +112,17 @@ def direction_errors(text: str, drink: dict[str, float | None], guest: dict[str,
     value — "선호보다 훨씬 약해" for 2 vs 2 included) and absolute "산미가 강하고" (wrong when the drink is <= 2.5 for 강/높, >= 3.5 for 약/낮).
     Absolute claims that describe the guest ("…산미가 강한 걸 좋아하시는") are skipped."""
     errors = []
+    for m in _MODIFIER.finditer(text):
+        a, up = m.group(2), m.group(1).startswith(_UP)
+        v, g = drink.get(_ATTR_KEY[a]), guest.get(_ATTR_KEY[a])
+        if v is not None and ((up and v - g <= 0) or (not up and v - g >= 0)):
+            errors.append(f"{a}: '{m.group()}' but drink {v:g} vs guest {g:g}")
     for m in _SUBJECT.finditer(text):
         attrs = re.findall(_ATTR, m.group(1))
         before, rest = text[max(0, m.start() - 12):m.start()], text[m.end():]
         comp = _COMPARATIVE.search(rest)
+        if comp and _MODIFIES_NEXT.match(rest[comp.end():]):
+            comp = None                      # "…단맛이 맞지만 선호보다 조금 약한 산미" is about 산미 (checked above)
         absolute = None if comp else _ABSOLUTE.search(rest)
         if absolute and (any(w in before for w in _GUEST_SIDE) or _ADNOMINAL.match(rest[absolute.end():])):
             absolute = None      # "손님은 산미가 강한…", "산미가 강한 커피를 좋아하시는": the guest's taste, not the drink

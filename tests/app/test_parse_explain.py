@@ -5,6 +5,7 @@ from app.core.explain import (
     VIOLATION_RULE,
     card,
     explain_messages,
+    verdict_phrase,
     length_rule,
     preference_sentence,
     template_explanation,
@@ -201,9 +202,10 @@ def test_system_prompt_decaf_order_wording():
 
 def test_length_rule_is_last_and_has_no_copyable_example():
     msgs = explain_messages(Item(key="menu:1", name="카페 라떼", source="brand_bean"), Profile(), 0.7)
-    rule = length_rule()
+    rule = length_rule(verdict=verdict_phrase(70))
     assert msgs[0]["content"].endswith(rule + " /no_think")
-    assert "정확히 2문장" in rule and "첫 문장은 결론과 가장 큰 이유" in rule and "true, false, null" in rule
+    assert "'고려할 점은 있지만 추천해요'로 맺는다" in rule           # the card's own verdict, not a label to copy
+    assert "정확히 2문장" in rule and "첫 문장은 결론과 이유" in rule and "true, false, null" in rule
     # a concrete example got copied as fact, a 〔placeholder〕 one verbatim, a generic one as a vague answer
     assert "〔" not in msgs[0]["content"] and "예:" not in rule and "예(" not in rule
 
