@@ -70,6 +70,21 @@ def test_mmr_prefers_diverse_second_pick():
     assert mmr_top_k([], T2C) == []
 
 
+def test_mmr_breaks_shown_score_ties_by_lower_caffeine_then_name():
+    # franchise cards with the same shown score (83% vs 83%) and the same bean: lower caffeine first, then name,
+    # unknown caffeine last -- whatever order the brand's menu came in
+    base = dict(source="brand_bean", acidity=3, body=3, sweetness=3, tags=("chocolate",))
+    hi = item(key="hi", name="아메리카노", caffeine_mg=150, **base)
+    lo = item(key="lo", name="콜드브루", caffeine_mg=90, **base)
+    unk = item(key="unk", name="가나", caffeine_mg=None, **base)
+    same = item(key="same", name="나", caffeine_mg=90, **base)
+    top = mmr_top_k([(hi, 0.8312), (unk, 0.83), (lo, 0.8301), (same, 0.829)], T2C, k=4)
+    assert [i.key for i, _ in top][:2] == ["same", "lo"]        # 90mg tie -> name order ("나" < "콜드브루")
+    assert [i.key for i, _ in top][-1] == "unk"
+    # a real score gap still wins over caffeine
+    assert mmr_top_k([(hi, 0.90), (lo, 0.80)], T2C, k=1)[0][0].key == "hi"
+
+
 @pytest.mark.parametrize("name,expected", [
     ("디카페인 카페 라떼", "latte"), ("Iced Americano", "americano"), ("콜드 브루", "cold_brew"),
     ("블론드 바닐라 더블 샷 마키아또", "other"), ("자바 칩 프라푸치노", "frappuccino"),

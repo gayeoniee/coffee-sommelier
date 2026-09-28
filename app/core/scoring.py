@@ -138,16 +138,27 @@ def _features(item: Item, tag_to_cat: dict[str, str]) -> dict[str, float]:
     return feats
 
 
+def shown_score(score: float) -> int:
+    """The score as the card shows it (app/core/explain.py card: whole percent)."""
+    return round(score * 100)
+
+
 def mmr_top_k(scored: list[tuple[Item, float]], tag_to_cat: dict[str, str], k: int = 3,
               lam: float = 0.7) -> list[tuple[Item, float]]:
-    pool = sorted(scored, key=lambda x: -x[1])
+    """Maximal-marginal-relevance top k. Scores are compared at the resolution the card shows (whole percent), and
+    a tie there goes to the lower caffeine (unknown caffeine last), then the name -- two drinks the guest sees as
+    "83%" and "83%" are ordered by something they can see, not by input order."""
+    def tiebreak(it: Item) -> tuple[float, str]:
+        return (it.caffeine_mg if it.caffeine_mg is not None else float("inf"), it.name)
+
+    pool = sorted(scored, key=lambda x: (-shown_score(x[1]), tiebreak(x[0])))
     feats = {it.key: _features(it, tag_to_cat) for it, _ in pool}
     chosen: list[tuple[Item, float]] = []
     while pool and len(chosen) < k:
         def mmr(candidate: tuple[Item, float]) -> float:
             sim = max((cosine(feats[candidate[0].key], feats[c.key]) or 0.0 for c, _ in chosen), default=0.0)
-            return lam * candidate[1] - (1 - lam) * sim
-        best = max(pool, key=mmr)
+            return round(lam * shown_score(candidate[1]) / 100 - (1 - lam) * sim, 9)
+        best = min(pool, key=lambda c: (-mmr(c), tiebreak(c[0])))
         chosen.append(best)
         pool.remove(best)
     return chosen
