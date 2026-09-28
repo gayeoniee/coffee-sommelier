@@ -94,6 +94,9 @@ def test_process_from_text(text, expected):
     ("Dark roast, dark chocolate", "dark"),
     ("강배전, 다크 초콜릿", "dark"),
     ("light roast, medium body", "light"),
+    ("Brazil | medium roast | notes: light citrus, dark beer, walnut", "medium"),
+    ("Roast: Light", "light"),
+    ("에티오피아 약배전, 다크 베리", "light"),
 ])
 def test_normalize_roast(text, expected):
     assert normalize_roast(text) == expected

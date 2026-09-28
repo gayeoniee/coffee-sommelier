@@ -185,7 +185,8 @@ _ROAST = [
 # "다크 초콜릿", "light body", "French press" -- are masked before matching, so a tasting note never sets a roast.
 _ROAST_FALSE_FRIENDS = re.compile(
     r"\b(?:dark|light)[\s-]+(?:chocolate|choc|cocoa|cacao|cherr(?:y|ies)|fruits?|berr(?:y|ies)|plums?|grapes?|"
-    r"raisins?|sugar|brown sugar|caramel|molasses|toffee|rum|honey|stone fruits?|red fruits?|jam)\b"
+    r"raisins?|sugar|brown sugar|caramel|molasses|toffee|rum|honey|stone fruits?|red fruits?|jam|beer|stout|ale|wine|"
+    r"citrus|lemon|lime|orange|florals?|tea)\b"
     r"|\b(?:light|medium|full|heavy)[\s-]+(?:body|bodied|acidity|acid|sweetness|mouthfeel)\b"
     r"|\bfrench[\s-]+(?:press|vanilla|toast)\b"
     r"|(?:다크|라이트)\s*(?:초콜릿|초콜렛|쵸콜릿|쵸콜렛|초코|카카오|체리|베리|과일|플럼|자두|슈가|설탕|카라멜|캐러멜|럼|포도|건포도|잼)"
@@ -194,15 +195,21 @@ _ROAST_FALSE_FRIENDS = re.compile(
 )
 
 
+# A roast word right before "roast"/"로스트"/"배전" ("medium roast", "Very Dark Roast", "강배전") is an explicit roast
+# statement and wins over a bare word elsewhere in a free-text card ("... medium roast | notes: light citrus").
+_ROAST_PHRASE = re.compile(r"(?:[^\s,|;/:]+[\s-]+){0,2}[^\s,|;/:]*(?:roast(?:ed|ing)?|로스트|로스팅|배전)", re.I)
+
+
+def _match_roast(t: str) -> str | None:
+    return next((name for name, pat in _ROAST if pat.search(t)), None)
+
+
 def normalize_roast(text) -> str | None:
     t = clean(text)
     if not t:
         return None
     t = _ROAST_FALSE_FRIENDS.sub(" ", t)
-    for name, pat in _ROAST:
-        if pat.search(t):
-            return name
-    return None
+    return _match_roast(" ; ".join(m.group(0) for m in _ROAST_PHRASE.finditer(t))) or _match_roast(t)
 
 
 # --- scores --------------------------------------------------------------
