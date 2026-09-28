@@ -34,4 +34,26 @@ describe("ResultCard", () => {
     await userEvent.click(screen.getByRole("button", { name: "마셔봤어요" }));
     expect(onLog).toHaveBeenCalledWith(predicted);
   });
+
+  it("never shows the regular drink's caffeine on an order-decaf card", () => {
+    const est: Card = { ...card, name: "꿀화이트 아메리카노", brand: "이디야커피", decaf_surcharge_krw: null,
+      caffeine_mg: 7, caffeine_mg_note: "디카페인 주문 시 추정" };
+    const { unmount } = render(<ResultCard card={est} onLog={() => {}} />);
+    expect(screen.getByText("카페인 ~7mg (디카페인 주문 시 추정)")).toBeInTheDocument();
+    unmount();
+    render(<ResultCard card={{ ...card, caffeine_mg: null, caffeine_mg_note: "디카페인 주문 시 카페인 ↓" }} onLog={() => {}} />);
+    expect(screen.getByText("디카페인 주문 시 카페인 ↓")).toBeInTheDocument();
+    expect(screen.queryByText(/150mg/)).not.toBeInTheDocument();
+  });
+
+  it("falls back to a no-number label when an older API sends the regular mg without a note", () => {
+    render(<ResultCard card={card} onLog={() => {}} />);          // order_decaf with caffeine_mg 150, no note
+    expect(screen.getByText("디카페인 주문 시 카페인 ↓")).toBeInTheDocument();
+    expect(screen.queryByText("카페인 150mg")).not.toBeInTheDocument();
+  });
+
+  it("shows a real decaf SKU's or a regular drink's own caffeine as measured", () => {
+    render(<ResultCard card={{ ...card, is_decaf: true, order_decaf: false, caffeine_mg: 11.2 }} onLog={() => {}} />);
+    expect(screen.getByText("카페인 11.2mg")).toBeInTheDocument();
+  });
 });

@@ -16,3 +16,12 @@ export function sourceLabel(card: Card): string {
   if (card.source === "brand_bean") return "브랜드 원두 기준(추정)";
   return `유사 원두 ${card.n_neighbors ?? 0}개 기반 예측 · 신뢰도 ${CONFIDENCE_KO[card.confidence]}`;
 }
+
+/** An order-decaf card never shows the regular drink's caffeine: the API sends the decaf estimate plus a note. */
+export function caffeineLabel(card: Card): string | null {
+  if (card.caffeine_mg_note) {
+    return card.caffeine_mg != null ? `카페인 ~${card.caffeine_mg}mg (${card.caffeine_mg_note})` : card.caffeine_mg_note;
+  }
+  if (card.order_decaf) return "디카페인 주문 시 카페인 ↓";
+  return card.caffeine_mg != null ? `카페인 ${card.caffeine_mg}mg` : null;
+}

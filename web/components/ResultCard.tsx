@@ -1,4 +1,4 @@
-import { sourceLabel } from "@/lib/labels";
+import { caffeineLabel, sourceLabel } from "@/lib/labels";
 import type { Explanation } from "@/lib/stream";
 import type { Card, Profile } from "@/lib/types";
 import TasteBars from "./TasteBars";
@@ -8,6 +8,7 @@ type Props = { card: Card; explanation?: Explanation; profile?: Profile | null; 
 export default function ResultCard({ card, explanation, profile, onLog }: Props) {
   const text = explanation?.text ? explanation.text : card.template;
   const writing = explanation?.status === "streaming";
+  const caffeine = caffeineLabel(card);
   return (
     <article className="rounded-2xl bg-white/80 p-4 shadow-sm ring-1 ring-crema">
       {card.violation && (
@@ -27,7 +28,7 @@ export default function ResultCard({ card, explanation, profile, onLog }: Props)
             디카페인으로 변경{card.decaf_surcharge_krw ? ` +${card.decaf_surcharge_krw}원` : ""}
           </span>
         )}
-        {card.caffeine_mg != null && <span className="rounded-full bg-crema px-2 py-0.5">카페인 {card.caffeine_mg}mg</span>}
+        {caffeine && <span className="rounded-full bg-crema px-2 py-0.5">{caffeine}</span>}
         {card.tags_ko.slice(0, 4).map((t, i) => <span key={`${i}:${t}`} className="rounded-full bg-crema px-2 py-0.5">{t}</span>)}
       </div>
       <div className="mt-3"><TasteBars card={card} profile={profile} /></div>

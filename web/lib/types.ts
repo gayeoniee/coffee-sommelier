@@ -26,6 +26,7 @@ export type Card = {
   order_decaf: boolean;
   decaf_surcharge_krw: number | null;
   caffeine_mg: number | null;
+  caffeine_mg_note?: string | null; // set when caffeine_mg is the decaf-order estimate (or null: no estimate)
   is_milk: boolean;
   coffee_id: number | null;
   menu_item_id: number | null;
