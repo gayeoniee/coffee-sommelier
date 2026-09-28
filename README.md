@@ -36,9 +36,9 @@
 | 오픈판 향미 태그, 노트 없는 입력(산지·가공·로스팅만) — 로스터리 단위 CV / Zenodo 외부 패널 | 특징 태그 모델 **F1 0.196 · 대분류 0.604 (n=277)** vs 이웃 투표 0.064 · 0.239 / Zenodo 0.185 · 0.554 vs 0.089 · 0.279 (n=110) — 최빈 태그 2개 상수(0.175 · 0.436)보다도 낫지만 개별 태그 F1은 여전히 낮음, 노트가 있으면 손님 단어가 우선 | [phase5_open_tags.json](data/eval/open/phase5_open_tags.json), [ADR 0016](docs/adr/0016-open-variant-v3.md) |
 | 3-way 비교: 전체 / 오픈 / 오픈 + 국내 로스터리 | 산미 ±1(CQI 고정 200개) 0.5 / 0.49 / 0.49(±1%p 이내는 동점 잡음) · 바디 ±1(coffeereview 고정, 채점 전용) 0.64(n=200) / 0.6595(n=185) / 0.6073(n=191) — CQI 고정 대상은 바디가 전원 결측이라 별도 대상으로 잰다([ADR 0010](docs/adr/0010-body-heaviness.md)) · 디카페인 원두 199 / 25 / 44 (세 판 모두 해외 Shopify 강도 표기 199건 포함) | [phase2_compare3.json](data/eval/phase2_compare3.json) |
 | LOO 재현성 (같은 인자로 2회) | 결과 JSON sha256 동일 (`identical: true`) | [phase2_loo_repro.json](data/eval/phase2_loo_repro.json) |
-| 설명 품질 (24케이스) | 전체판 규칙 통과 22/24(3차: 맛 비교를 말로 풀어 준 페이로드 + 사후 가드; 2차 재채점 18/24) · 모순 없음 판정자 2명 합의 20/22(2차 17/22) · 환각 없음 18/22(2차 14/22) · 폴백 0/24 · 오픈판(공모전 제출본) 23/23 · 모순 없음 20/22 · 환각 없음 20/22, 가드 폴백 1/24 | [phase2_explain_quality.json](data/eval/phase2_explain_quality.json), [open/phase2_explain_quality.json](data/eval/open/phase2_explain_quality.json) |
+| 설명 품질 (24케이스) | 전체판 규칙 통과 23/23(4차: 맞는 점·아쉬운 점을 미리 나눠 준 페이로드 + 결론 검사; 3차 22/24, 2차 재채점 18/24) · 모순 없음 판정자 2명 합의 22/23(3차 20/22, 2차 17/22) · 환각 없음 21/23(3차 18/22, 2차 14/22) · 폴백 1/24(시간 초과) · 오픈판(공모전 제출본) 23/23 · 모순 없음 21/21 · 환각 없음 20/21 | [phase2_explain_quality.json](data/eval/phase2_explain_quality.json), [open/phase2_explain_quality.json](data/eval/open/phase2_explain_quality.json) |
 | 원두 분석: 전체판 vs 공모전(오픈)판 (한국어 원두 문구 10개, 운영) | 향미 태그 제시 10/10 vs 3/10, 근거 2.6 vs 1.4개/원두, 속성 결측 1 vs 8/30 — 프랜차이즈 추천·설명 품질은 동일, 미지 원두 분석만 오픈판이 약함 | [phase2_analyze_compare.json](data/eval/phase2_analyze_compare.json) |
-| 설명 3개 순차 vs 병렬 (지연) | 4.59초 → 2.03초(오픈판 측정 13.13초 → 2.03초는 첫 호출 콜드 스타트 포함) · 설명 첫 토큰 p50 0.93초 / p95 3.70초 (설명 품질 24건, 3차 실행일 NVIDIA 지연 기준; 2차 0.77/1.37초) | [phase2_bench.json](data/eval/phase2_bench.json), [phase2_explain_quality.json](data/eval/phase2_explain_quality.json) |
+| 설명 3개 순차 vs 병렬 (지연) | 4.59초 → 2.03초(오픈판 측정 13.13초 → 2.03초는 첫 호출 콜드 스타트 포함) · 설명 첫 토큰 p50 0.86초 / p95 2.69초 (설명 품질 24건, 4차 실행일 NVIDIA 지연 기준; 2차 0.77/1.37초) | [phase2_bench.json](data/eval/phase2_bench.json), [phase2_explain_quality.json](data/eval/phase2_explain_quality.json) |
 | 학습 수렴: 모의 사용자 200명 × 10회 기록 후 프로필 오차 | 0.7792 → 0.7117 | [phase2_convergence.json](data/eval/phase2_convergence.json) |
 | 운영 통계 (Render 로그 48시간 집계) | 요청 54건, 카드 폴백 5/56(0.089) — 5건 모두 첫 토큰 전 빠른 실패(요청 전체 1.1~1.7초; NVIDIA 429·빈 응답), 첫 토큰 p50 705ms · p95 1,184.5ms. 조기 실패 재시도 추가 후 운영 조건 재현 A/B 폴백 10/140 → 0/140 ([ADR 0004](docs/adr/0004-explain-thinking.md)) | [prod_stats_2026-09-28.json](data/eval/prod_stats_2026-09-28.json), [phase2_fallback_retry.json](data/eval/phase2_fallback_retry.json) |
 
@@ -271,7 +271,7 @@ $ python -m pipeline query "bright citrus floral Ethiopia washed" -k 5 --decaf
 | 원두 예측 leave-one-out, 바디 ±1 이내 | 0.6536 (n=153/200) |
 | 학습 수렴: 모의 사용자 10회 기록 후 프로필 오차 | 0.7792 → 0.7117 |
 | 설명 3개 순차 vs 병렬 (thinking 끔, 최대 2문장, 첫 토큰 0.81~0.99초) | 4.59초 → 2.03초 |
-| 설명 품질(24케이스, `explain_quality`, [ADR 0005](docs/adr/0005-explain-quality-eval.md)) | 규칙 통과 22/24 — 3차: 산미·바디·단맛을 손님 선호와 비교한 판정을 말로 넣은 페이로드, 조건 위반 첫 문장 고정, 사후 가드(외국어 제거·2문장 자르기·빠진 위반 붙이기, 자리표시·true·항목 이름·방향 모순은 템플릿 폴백). 2차는 재채점 18/24(1차 10/22). 모순 없음 판정자 2명 합의 20/22(2차 17/22), 환각 없음 18/22(2차 14/22), 도움 평균 4.00·3.08/5 (judge2 = gpt-oss-20b, 생성 모델과 다른 벤더) |
+| 설명 품질(24케이스, `explain_quality`, [ADR 0005](docs/adr/0005-explain-quality-eval.md)) | 규칙 통과 23/23 — 3차: 산미·바디·단맛을 손님 선호와 비교한 판정을 말로 넣은 페이로드, 조건 위반 첫 문장 고정, 사후 가드(외국어 제거·2문장 자르기·빠진 위반 붙이기, 자리표시·true·항목 이름·방향 모순은 템플릿 폴백). 4차: '맞는 점'·'아쉬운 점' 목록을 코드가 나눠 넣고, 차이를 적합의 이유로 삼은 결론은 가드가 거절. 3차 22/24, 2차 재채점 18/24(1차 10/22). 모순 없음 판정자 2명 합의 22/23(3차 20/22, 2차 17/22), 환각 없음 21/23(3차 18/22, 2차 14/22), 도움 평균 4.13·3.04/5 (judge2 = gpt-oss-20b, 생성 모델과 다른 벤더) |
 
 **데이터 출처별 성능 (포트폴리오판 vs 공개·오픈 라이선스판)** — coffeereview(Kaggle) 데이터는 라이선스상 비상업 포트폴리오 용도로만 쓰므로, 그 데이터를 뺀 공개·오픈 라이선스 소스(CQI·RoasterDB·블루보틀)만으로도 같은 평가를 다시 돌렸다.
 

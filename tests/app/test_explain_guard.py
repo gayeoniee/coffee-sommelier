@@ -153,3 +153,18 @@ def test_consequence_errors_catch_a_gap_given_as_the_reason_for_a_good_fit():
 def test_finalize_rejects_a_wrong_conclusion():
     text = "산미가 손님 선호보다 훨씬 약해서 취향에 잘 맞아요."          # EDIYA 산미 2 < LIVE 4.5: direction right
     assert finalize_explanation(text, EDIYA, LIVE, _payload(EDIYA, LIVE), None) == ("", "consequence")
+
+
+def test_fit_points_never_offer_a_gap_as_a_reason_to_fit():
+    from app.core.explain import fit_points
+    guest = Profile(caffeine_rule="decaf_only", milk_ok=True, acidity=3.5, body=3, sweetness=3,
+                    flavor_weights={"fruity": 0.5})
+    yirga = Item(key="input", name="예가체프", source="predicted", acidity=4.5, body=2.9, sweetness=3.9,
+                 tags=("jasmine", "lemon"))
+    good, bad = fit_points(yirga, guest, {"jasmine": "floral", "lemon": "fruity"}, {"lemon": "레몬", "jasmine": "재스민"})
+    assert good == ["바디: 손님 선호와 비슷함", "좋아하는 향미와 겹침: 레몬(lemon)"]
+    assert bad == ["산미: 손님 선호보다 조금 강함", "단맛: 손님 선호보다 조금 강함"]
+    far = Item(key="m", name="모카", source="brand_bean", acidity=1.5, body=4.8, sweetness=4.8, tags=("chocolate",))
+    good, bad = fit_points(far, guest, {"chocolate": "cocoa"}, None)
+    assert good == ["없음 — 잘 맞는다고 말하지 마라"] and "좋아하는 향미와 겹치는 향미 없음" in bad
+    assert "맞는 점" in _payload(yirga, guest) and "아쉬운 점" in _payload(yirga, guest)

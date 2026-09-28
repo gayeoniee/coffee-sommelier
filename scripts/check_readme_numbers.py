@@ -92,7 +92,9 @@ def _checks() -> list[Check]:
               c3, lambda d: tuple(v3body(d, "mae"))),
         Check("explain_rule_pass", (r"규칙 통과 (\d+)/(\d+)",), ("phase2_explain_quality.json",),
               lambda d: (d["phase2_explain_quality.json"]["summary"]["rule_pass"],
-                         d["phase2_explain_quality.json"]["summary"]["n"])),
+                         # scored over LLM-generated texts; template fallbacks are counted, not scored
+                         d["phase2_explain_quality.json"]["summary"].get(
+                             "generated", d["phase2_explain_quality.json"]["summary"]["n"]))),
         Check("explain_agreement", (r"판정자 2명 합의 (\d+)/(\d+)",), ("phase2_explain_quality.json",),
               lambda d: (d["phase2_explain_quality.json"]["summary"]["no_contradiction_both"],
                          d["phase2_explain_quality.json"]["summary"]["judged_both"])),

@@ -19,6 +19,7 @@ SYSTEM_PROMPT = ("너는 카페에서 손님에게 커피를 추천하는 친절
                  "손님이 좋아하는 향미와 겹치는지는 '향미 비교'만 따르라. 데이터에 없는 맛·향이나 인상 평가('전체적인 맛', 균형, "
                  "조화, 풍부함, 부드러움, 가볍게 느껴짐, 밋밋함 등)를 덧붙이지 마라. '적합도'의 수준(높음·중간·낮음)과 반대로 "
                  "말하지 말고, '높음이며'처럼 그 라벨을 문장에 옮기지 마라. "
+                 "취향에 맞는 이유는 '맞는 점'에 있는 것으로만 대고, '아쉬운 점'에 있는 속성은 아쉬운 점으로만 말하라. "
                  "'디카페인'이 '디카페인 음료'일 때만 디카페인 음료라고 말하라. '디카페인으로 바꿔 주문 가능'이면 원래는 "
                  "디카페인이 아니니 '디카페인으로 바꿔 주문하면 (+N원)'처럼 안내하고(N은 거기 적힌 금액; 금액이 없으면 "
                  "'디카페인으로 바꿔 주문하면'만), 이미 디카페인이라고 말하지 마라. 디카페인 주문과 추가요금은 카드에 따로 "
@@ -153,6 +154,32 @@ def taste_comparison(item: Item, profile: Profile) -> dict[str, str]:
     return out
 
 
+def fit_points(item: Item, profile: Profile, tag_to_cat: dict[str, str] | None,
+               tag_ko: dict[str, str] | None) -> tuple[list[str], list[str]]:
+    """(맞는 점, 아쉬운 점) sorted for the model, so a gap is never offered as the reason for a good fit
+    ("산미가 선호보다 조금 강해서 잘 맞아요" — docs/adr/0005 3차 보완)."""
+    good, bad = [], []
+    for a in ATTRS:
+        v, g = item.attr(a), getattr(profile, a)
+        if v is None:
+            continue
+        gap = attr_gap(v, g)
+        (good if gap == "손님 선호와 비슷함" else bad).append(f"{ATTR_KO[a]}: {gap}")
+    if tag_to_cat is not None and item.tags:
+        liked = {c for c, w in profile.flavor_weights.items() if w > LIKED_FLAVOR_MIN}
+        disliked = {c for c, w in profile.flavor_weights.items() if w < -LIKED_FLAVOR_MIN}
+        names = dict(zip(item.tags, flavor_names(item.tags, tag_ko)))
+        hit = [names[t] for t in item.tags if tag_to_cat.get(t.lower()) in liked]
+        worse = [names[t] for t in item.tags if tag_to_cat.get(t.lower()) in disliked]
+        if hit:
+            good.append(f"좋아하는 향미와 겹침: {', '.join(hit)}")
+        elif liked:
+            bad.append("좋아하는 향미와 겹치는 향미 없음")
+        if worse:
+            bad.append(f"싫어하는 향미와 겹침: {', '.join(worse)}")
+    return good or ["없음 — 잘 맞는다고 말하지 마라"], bad or ["없음"]
+
+
 def fit_level(pct: int) -> str:
     return "높음" if pct >= 80 else "중간" if pct >= 50 else "낮음"
 
@@ -237,6 +264,7 @@ def explain_messages(item: Item, profile: Profile, score: float, prediction: Pre
     }
     if tag_to_cat is not None:
         payload["향미 비교"] = flavor_comparison(item, profile, tag_to_cat, tag_ko)
+    payload["맞는 점"], payload["아쉬운 점"] = fit_points(item, profile, tag_to_cat, tag_ko)
     payload["디카페인"] = decaf_state(item)
     if item.order_decaf:    # only the decaf-order estimate, never the regular drink's caffeine
         payload["디카페인 주문 시 카페인(mg, 추정)"] = (item.caffeine_mg if item.caffeine_mg is not None
