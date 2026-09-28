@@ -245,7 +245,7 @@ def _format_table(summary: dict) -> str:
     lines.append(f"| 첫 토큰 p95 (ms) | {_fmt(summary['first_token_ms_p95'], '.1f')} |")
     lines.append(f"| 에러율 | {_fmt(summary['error_rate'], '.3f')} |")
     if "hedged" in summary:
-        lines.append(f"| 헤지 발사 / 헤지 승 | {summary['hedged']} / {summary['hedge_won']} |")
+        lines.append(f"| 헤지 발사 / 두 번째 요청 승(헤지·조기 재시도 합산) | {summary['hedged']} / {summary['hedge_won']} |")
     if "retried" in summary:
         lines.append(f"| 조기 실패 재시도 | {summary['retried']} |")
     if summary.get("fallback_breakdown"):

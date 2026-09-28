@@ -76,7 +76,7 @@ class TestSummarize:
         summary = summarize(events)
         assert summary["hedged"] == 3 and summary["hedge_won"] == 1
         table = _format_table(summary)
-        assert "| 헤지 발사 / 헤지 승 | 3 / 1 |" in table
+        assert "| 헤지 발사 / 두 번째 요청 승(헤지·조기 재시도 합산) | 3 / 1 |" in table
         assert "헤지" not in _format_table(summarize([]))
 
     def test_empty_events_are_none_not_zero(self):
