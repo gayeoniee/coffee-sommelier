@@ -167,3 +167,38 @@ class PaulbassettCollector:
                 dp.write_text(detail, encoding="utf-8")
                 files.append(dp)
         return files
+
+
+EDIYA_URL = "https://ediya.com/contents/drink.html"
+# 이디야 음료 페이지(서버 렌더링)는 카테고리 체크(chked_val)와 검색어(skeyword)를 함께 받아 첫 8개 카드만 그린다.
+# "더보기"는 /inc/ajax_brand.php 인데 robots.txt가 /inc/ 를 막으므로 절대 부르지 않는다 — 대신 대표 커피 음료
+# 검색어를 고정해 카테고리마다 한 번씩 조회한다. 12=COFFEE, 155=DECAF(같은 음료의 디카페인 SKU, 카페인 7~18mg).
+EDIYA_CATEGORIES = {12: "COFFEE", 155: "DECAF"}
+# 검색은 메뉴 이름의 띄어쓰기 그대로 맞춰야 한다("카페라떼" 0건, "카페 라떼" 8건; 2026-09-28 확인). 돌체·토피넛 라떼는
+# 현재 메뉴에 없음. 8개 제한 때문에 넓은 단어(라떼·커피·카페·모카)와 개별 이름을 함께 둔다.
+EDIYA_KEYWORDS = ("아메리카노", "카페 라떼", "바닐라 라떼", "카푸치노", "카페 모카", "카라멜 마끼아또", "콜드브루",
+                  "디카페인", "에스프레소", "연유", "헤이즐넛", "모카", "라떼", "커피", "카페", "아포가토", "코코넛",
+                  "시그니처", "흑당", "샷", "꿀", "아이스크림")
+
+
+@dataclass
+class EdiyaCollector:
+    """이디야커피 공식 음료 페이지: 카테고리(COFFEE/DECAF) × (검색어 없음 + 고정 검색어) 조회 결과를 그대로 저장.
+    카드마다 이름·(L)/(EX) 사이즈·HOT/ICED·카페인 mg·컵용량이 서버 HTML에 들어 있다. 파일명 cat<id>_q<nn>.html 의
+    <id>가 카테고리(정규화 단계가 읽는다)."""
+
+    name: str = "ediya"
+    categories: tuple[int, ...] = tuple(EDIYA_CATEGORIES)
+    keywords: tuple[str, ...] = EDIYA_KEYWORDS
+
+    def collect(self, out_dir: Path, http) -> list[Path]:
+        files = []
+        for cid in self.categories:
+            for i, kw in enumerate(("", *self.keywords)):
+                html = http.get(EDIYA_URL, params={"chked_val": f"{cid},", "skeyword": kw}).text
+                if "pro_detail" not in html:
+                    continue  # no card for this keyword in this category
+                p = out_dir / f"cat{cid}_q{i:02d}.html"
+                p.write_text(html, encoding="utf-8")
+                files.append(p)
+        return files

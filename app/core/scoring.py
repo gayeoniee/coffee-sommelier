@@ -15,6 +15,8 @@ MILK_WORDS = (
     "마끼아토", "마키아토",       # spelling variants (커피빈 마끼아토네, 폴바셋 카라멜 마키아토)
     "블렌디드", "오트",           # 커피빈 아이스 블렌디드 (milk base), oat-milk drinks
     "딜라이트", "에어리",         # 할리스 딜라이트 (milk drink), 컴포즈 에어리 폼 (cream foam, low confidence)
+    "연유", "달달커피",           # condensed milk (이디야 연유 콜드브루), 이디야 달달커피 (coffee-mix style, milk)
+    "꿀화이트", "흑당콜드브루", "에스프레소코코넛",   # 이디야: honey + signature milk, black sugar + milk, coconut-milk latte
     "latte", "milk", "cream", "cappuccino", "flatwhite", "mocha", "frappuccino", "frappe", "macchiato",
     "cortado", "breve", "bianco", "affogato", "conpanna", "einspanner", "shake", "choco", "yogurt", "yoghurt",
 )

@@ -144,9 +144,15 @@
   name: 이디야커피
   decaf_available: true
   decaf_surcharge_krw: null
-  notes: "[뉴스] 모든 커피 메뉴 디카페인 변경 가능. 콜롬비아 싱글오리진 워터 프로세스. [공식] 디카페인 샷 변경 카테고리: 에스프레소 (조사 기준 초안)."
-  source_url: https://www.ediya.com/contents/drink.html
-  verified_at: "2026-09-24"
+  notes: >-
+    [공식] https://ediya.com/contents/drink.html (2026-09-28 확인, 수집기 EdiyaCollector): 음료 페이지에 COFFEE(12)와
+    DECAF(155) 카테고리가 따로 있고, DECAF 카테고리는 COFFEE 음료와 같은 이름의 디카페인 SKU(카페 아메리카노·카페
+    라떼·카푸치노·바닐라 라떼·카라멜 마끼아또·콜드브루 계열 등, 카드마다 카페인 3~50mg 실측)를 싣는다 — 대표 커피
+    음료 대부분을 디카페인으로 주문할 수 있다는 공식 근거라 decaf_option_categories를 COFFEE로 둔다(콜드브루처럼
+    샷이 없는 음료는 NO_SHOT_WORDS로 제외, 대신 디카페인 SKU가 별도 메뉴 항목). "더보기"(/inc/)는 robots.txt 차단이라
+    검색어 조회로 보이는 카드만 수집. [뉴스] 콜롬비아 싱글오리진 워터 프로세스.
+  source_url: https://ediya.com/contents/drink.html
+  verified_at: "2026-09-28"
   bean:
     acidity: 2
     body: 4
@@ -160,7 +166,7 @@
     sweetness: 3
     flavor_tags: [chocolate, caramelized]
     label_source: {acidity: estimate, body: estimate, sweetness: estimate, flavor_tags: estimate}
-  decaf_option_categories: [에스프레소]
+  decaf_option_categories: [COFFEE]
   bean_open: {acidity: 2, body: 3, sweetness: 3.5, flavor_tags: [smoky],
     label_source: {acidity: open_feature_model, body: estimate, sweetness: open_feature_model, flavor_tags: official_cue}, official_note: "이디야 공식: 블렌드 원두 — 고소한 단맛·구수한 쓴맛, 스모키하고 풍부한 바디감"}
   decaf_bean_open: {acidity: 2, body: 3, sweetness: 3, flavor_tags: [chocolate, caramelized],

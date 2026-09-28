@@ -165,7 +165,7 @@ def test_coffeebean_paginates_each_category_and_stops_at_empty_page(tmp_path):
 def test_registry_lists_all_sources():
     from pipeline.collect.registry import ALL_COLLECTORS
     assert [c.name for c in ALL_COLLECTORS] == [
-        "cqi", "roasterdb", "sca_wheel", "coffeereview_kaggle", "starbucks", "mega", "paik", "shopify", "coffeebean", "compose", "hollys", "paulbassett"]
+        "cqi", "roasterdb", "sca_wheel", "coffeereview_kaggle", "starbucks", "mega", "paik", "shopify", "coffeebean", "compose", "hollys", "paulbassett", "ediya"]
 
 
 def test_hollys_saves_espresso_page(tmp_path):
@@ -228,3 +228,21 @@ def test_paulbassett_saves_list_and_detail_pages(tmp_path, monkeypatch):
     files = PaulbassettCollector().collect(tmp_path, PoliteClient(delay=1.0, sleep=lambda s: None))
     assert sorted(f.name for f in files) == ["PB1.html", "PB2.html", "list.html"]
     assert (tmp_path / "PB1.html").read_text(encoding="utf-8") == "<div>PB1</div>"
+
+
+def test_ediya_queries_coffee_and_decaf_categories_never_inc(tmp_path):
+    from pipeline.collect.web import EdiyaCollector
+
+    seen = []
+
+    def handler(request):
+        assert not request.url.path.startswith("/inc/")   # robots.txt disallows /inc/ (the "더보기" ajax)
+        seen.append((request.url.params["chked_val"], request.url.params["skeyword"]))
+        if request.url.params["skeyword"] == "없음":
+            return httpx.Response(200, text="<ul id='menu_ul'></ul>")
+        return httpx.Response(200, text="<ul id='menu_ul'><li><div class='pro_detail'></div></li></ul>")
+
+    files = EdiyaCollector(keywords=("아메리카노", "없음")).collect(tmp_path, mock_http(handler))
+    assert seen == [("12,", ""), ("12,", "아메리카노"), ("12,", "없음"),
+                    ("155,", ""), ("155,", "아메리카노"), ("155,", "없음")]
+    assert [f.name for f in files] == ["cat12_q00.html", "cat12_q01.html", "cat155_q00.html", "cat155_q01.html"]

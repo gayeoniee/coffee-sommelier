@@ -435,3 +435,34 @@ def test_coffeebean_parses_names_caffeine_and_decaf_option(tmp_path):
     assert menu_decaf_option(brand, by["콜드브루"].category, by["콜드브루"].is_decaf) is False  # brewed coffee, no shot to swap
     assert all(i.brand_key == "brand:coffeebean" and i.key.startswith("menu:coffeebean:") for i in items)
     assert sum(i.caffeine_mg is not None for i in items) / len(items) >= 0.9
+
+
+def test_ediya_parses_cards_size_temp_caffeine_cup():
+    from pipeline.normalize.menus import parse_ediya_cards
+    rows = parse_ediya_cards((FIXTURES / "menus/ediya/cat155_q00.html").read_text(encoding="utf-8"))
+    first = rows[0]
+    assert (first["size"], first["temp"], first["name"], first["caffeine_mg"], first["cup_ml"]) == (
+        "L", "HOT", "카페 아메리카노", 7.0, 520)
+    assert rows[1]["size"] == "EX" and rows[1]["cup_ml"] == 650
+    assert {(r["size"], r["temp"], r["name"]) for r in rows} >= {("L", None, "콜드브루"), (None, "HOT", "에스프레소")}
+
+
+def test_ediya_merges_cards_keeps_coffee_and_decaf_skus(tmp_path):
+    from pipeline.normalize.menus import normalize_ediya
+    items = normalize_ediya(_copy_fixture("menus/ediya", tmp_path), "2026-09-28").menu_items
+    by = {i.key: i for i in items}
+    am = by["menu:ediya:카페 아메리카노"]
+    # one item per drink: the standard (L) cup's caffeine, not the EX cup (303 mg)
+    assert (am.category, am.caffeine_mg, am.is_decaf, am.decaf_option) == ("COFFEE", 202.0, False, True)
+    dam = by["menu:ediya:decaf:카페 아메리카노"]
+    assert (dam.name, dam.category, dam.caffeine_mg, dam.is_decaf, dam.decaf_option) == (
+        "디카페인 카페 아메리카노", "DECAF", 7.0, True, False)
+    assert by["menu:ediya:decaf:에스프레소"].is_decaf
+    # cold brew: no shot to swap, the decaf cold brew is its own SKU
+    assert by["menu:ediya:콜드브루"].decaf_option is False and by["menu:ediya:decaf:콜드브루"].is_decaf
+    # the DECAF tab's tea-with-a-decaf-shot drink is not a coffee drink
+    assert not any("아샷추" in i.name for i in items)
+    # a "decaf bean" card that still measures 163 mg is never served to a decaf-only guest, nor is its regular twin
+    for k in ("menu:ediya:얼박샷추(디카페인 원두)", "menu:ediya:얼박샷추"):
+        assert (by[k].is_decaf, by[k].decaf_option) == (False, False)
+    assert all(i.brand_key == "brand:ediya" and i.caffeine_mg is not None for i in items)

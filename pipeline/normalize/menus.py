@@ -337,3 +337,88 @@ def normalize_paulbassett(snap: Path, collected_at: str) -> Normalized:
             source_url=f"https://www.baristapaulbassett.co.kr/menu/View.pb?dpid={dpid}", collected_at=collected_at,
         )
     return Normalized(menu_items=list(items.values()))
+
+
+EDIYA_SOURCE_URL = "https://ediya.com/contents/drink.html"
+EDIYA_CATEGORY_NAMES = {"12": "COFFEE", "155": "DECAF"}   # the site's own checkbox labels (chked_val ids)
+_EDIYA_TITLE = re.compile(r"^(?:\((L|EX|R|S)\)\s*)?(?:(HOT|ICED)\s+)?(.+)$")
+_EDIYA_SIZE_ORDER = {"L": 0, "R": 1, "S": 2, None: 3, "EX": 4}   # L = the standard cup; EX = extra-large
+_EDIYA_NOT_COFFEE = re.compile(r"아샷추|\btea\b", re.I)   # DECAF tab: 아샷추 복숭아 = "Peach Iced Tea with Espresso"
+EDIYA_DECAF_MAX_MG = 100   # a "decaf" card above the app's own low-caffeine line (100 mg) is not served as decaf
+
+
+def _one_space(s: str | None) -> str | None:
+    return clean(re.sub(r"\s+", " ", s)) if s else None   # "Caramel  Macchiato" → one space
+
+
+def parse_ediya_cards(html: str) -> list[dict]:
+    """One dict per server-rendered drink card (#menu_ul .pro_detail): size ((L)/(EX), None if unmarked), temp
+    (HOT/ICED, None for cold-only drinks written without it), base name, English name, caffeine mg, cup ml."""
+    rows = []
+    for d in BeautifulSoup(html, "lxml").select("#menu_ul .pro_detail"):
+        h2 = d.select_one("h2")
+        if not h2:
+            continue
+        span = h2.find("span")
+        en = clean(span.get_text(" ", strip=True)) if span else None
+        if span:
+            span.extract()
+        title = clean(h2.get_text(" ", strip=True))
+        m = _EDIYA_TITLE.match(title or "")
+        if not m:
+            continue
+        caffeine = None
+        for dl in d.select(".pro_nutri dl"):
+            dt, dd = dl.find("dt"), dl.find("dd")
+            if dt and dd and dt.get_text(strip=True) == "카페인":
+                mm = re.search(r"([\d.]+)\s*mg", dd.get_text())
+                caffeine = float(mm.group(1)) if mm else None
+        size_el = d.select_one(".pro_size")
+        cup = re.search(r"(\d+)\s*ml", size_el.get_text()) if size_el else None
+        en_base = _EDIYA_TITLE.match(en).group(3) if en else None
+        rows.append({"id": d.get("id"), "size": m.group(1), "temp": m.group(2), "name": _one_space(m.group(3)),
+                     "name_en": _one_space(en_base), "caffeine_mg": caffeine, "cup_ml": int(cup.group(1)) if cup else None})
+    return rows
+
+
+def normalize_ediya(snap: Path, collected_at: str) -> Normalized:
+    """이디야커피 공식 음료 페이지(EdiyaCollector). Every card of one drink (sizes × HOT/ICED) becomes one item: the
+    standard (L) cup's caffeine, the larger of HOT/ICED (same rule as 컴포즈/할리스). The DECAF category lists the
+    decaf SKU of the SAME drink names (3~50 mg): kept as its own item "디카페인 <이름>" (key menu:ediya:decaf:...),
+    except tea-with-a-decaf-shot drinks the DECAF tab also carries (아샷추 복숭아 — not coffee drinks). Cup volume is parsed (parse_ediya_cards) to pick the cup
+    size; MenuItemRecord has no volume column."""
+    brand = brands_by_key(settings.CURATED_DIR)["brand:ediya"]
+    best: dict[tuple[str, str], dict] = {}
+    for p in sorted(snap.glob("cat*_q*.html")):
+        cat = EDIYA_CATEGORY_NAMES.get(re.match(r"cat(\d+)_", p.name).group(1))
+        if cat is None:
+            continue
+        for r in parse_ediya_cards(p.read_text(encoding="utf-8")):
+            k = (cat, r["name"])
+            rank = (_EDIYA_SIZE_ORDER.get(r["size"], 3), -(r["caffeine_mg"] or 0))
+            if k not in best or rank < best[k]["_rank"]:
+                best[k] = {**r, "_rank": rank}
+    # drinks whose decaf-bean version (a COFFEE card named "<name>(디카페인 원두)") still measures above the line
+    too_strong_twins = {n.split("(")[0].strip() for c, n in best if c == "COFFEE" and detect_decaf(n)[0]
+                        and (best[(c, n)]["caffeine_mg"] or 0) > EDIYA_DECAF_MAX_MG}
+    items: dict[str, MenuItemRecord] = {}
+    for (cat, name), r in sorted(best.items()):
+        if cat == "DECAF":
+            if _EDIYA_NOT_COFFEE.search(f"{name} {r['name_en'] or ''}") or detect_decaf(name)[0]:
+                continue   # tea with a decaf shot, or a COFFEE item that is already a decaf-bean variant
+            key, shown, en = f"menu:ediya:decaf:{name}", f"디카페인 {name}", r["name_en"]
+            en = f"Decaf {en}" if en else None
+        else:
+            key, shown, en = f"menu:ediya:{name}", name, r["name_en"]
+        is_decaf = cat == "DECAF" or menu_is_decaf(shown, r["caffeine_mg"])
+        decaf_option = menu_decaf_option(brand, cat, is_decaf, shown)
+        if (is_decaf and (r["caffeine_mg"] or 0) > EDIYA_DECAF_MAX_MG) or name in too_strong_twins:
+            # 얼박샷추(디카페인 원두) 163 mg: decaf bean, but the energy drink keeps its caffeine -- neither it nor
+            # the regular 얼박샷추 may be served to a decaf-only guest
+            is_decaf, decaf_option = False, False
+        items[key] = MenuItemRecord(
+            key=key, brand_key="brand:ediya", name=shown, name_en=en, category=cat, is_decaf=is_decaf,
+            decaf_option=decaf_option, caffeine_mg=r["caffeine_mg"],
+            source_url=f"{EDIYA_SOURCE_URL}?chked_val={'12' if cat == 'COFFEE' else '155'},", collected_at=collected_at,
+        )
+    return Normalized(menu_items=list(items.values()))
