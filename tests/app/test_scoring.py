@@ -123,3 +123,17 @@ def test_decaf_order_caffeine_prefers_the_twin_then_the_brand_median():
     assert decaf_order_caffeine("카페 라떼", twins) == (7.0, DECAF_ESTIMATE_NOTE)
     assert decaf_order_caffeine("달달커피", twins) == (12.0, DECAF_ESTIMATE_NOTE)     # median of 7/12/50
     assert decaf_order_caffeine("카페 아메리카노", {}) == (None, DECAF_UNKNOWN_NOTE)   # brand sells no decaf SKU
+
+
+def test_decaf_only_rejects_high_caffeine_decaf_sku():
+    from app.core.scoring import passes
+    from app.models import Item, Profile
+    p = Profile(caffeine_rule="decaf_only")
+    mocha = Item(key="menu:1", name="디카페인 카페모카", source="brand_bean", is_decaf=True, caffeine_mg=136.7)
+    ok, why = passes(p, mocha)
+    assert not ok and "136.7mg" in why
+    assert passes(p, Item(key="menu:2", name="디카페인 아메리카노", source="brand_bean", is_decaf=True, caffeine_mg=7))[0]
+    assert passes(p, Item(key="menu:3", name="디카페인 라떼", source="brand_bean", is_decaf=True, caffeine_mg=None))[0]
+    # low-caffeine guests (≤100 mg): a 136.7 mg "decaf" mocha fails too; a 50 mg one is fine
+    assert not passes(Profile(caffeine_rule="low"), mocha)[0]
+    assert passes(Profile(caffeine_rule="low"), Item(key="menu:4", name="디카페인 카페 모카", source="brand_bean", is_decaf=True, caffeine_mg=50))[0]

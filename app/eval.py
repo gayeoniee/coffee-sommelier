@@ -79,6 +79,10 @@ def independent_ok(profile: Profile, item: Item, raw: dict | None, brand_decaf_a
     caffeine = raw["caffeine_mg"] if raw else None
     if profile.caffeine_rule == "decaf_only" and not served_decaf:
         return False
+    # an official "디카페인" SKU with real caffeine (chocolate, tea shots) is not decaf for these guests
+    if raw and raw["is_decaf"] and caffeine is not None and (
+            (profile.caffeine_rule == "decaf_only" and caffeine > 30) or (profile.caffeine_rule == "low" and caffeine > 100)):
+        return False
     if profile.caffeine_rule == "low" and not (decaf_capable or (caffeine is not None and caffeine <= 100)):
         return False
     return profile.milk_ok or not has_milk(name)

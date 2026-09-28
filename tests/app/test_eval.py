@@ -54,7 +54,9 @@ def test_decaf_only_needs_decaf_or_order_decaf_flag():
     unflagged = Item(key="menu:1", name="카페 라떼", source="brand_bean", menu_item_id=1, decaf_option=True)
     assert independent_ok(decaf, flagged, raw, True)
     assert not independent_ok(decaf, unflagged, raw, True)             # would be served caffeinated
-    assert independent_ok(decaf, unflagged, raw | {"is_decaf": True, "decaf_option": False}, True)
+    assert independent_ok(decaf, unflagged, raw | {"is_decaf": True, "decaf_option": False, "caffeine_mg": 5}, True)
+    # an official decaf SKU that still carries 75 mg is not decaf for a decaf-only guest
+    assert not independent_ok(decaf, unflagged, raw | {"is_decaf": True, "decaf_option": False}, True)
     synthetic = Item(key="brand:x:아메리카노", name="아메리카노", source="brand_bean", decaf_option=True)
     assert not independent_ok(decaf, synthetic, None, True)
     assert independent_ok(decaf, replace(synthetic, order_decaf=True), None, True)

@@ -5,6 +5,7 @@ from app.core.flavors import category_vector, cosine
 from app.models import ATTRS, Item, Profile
 
 LOW_CAFFEINE_MG = 100
+DECAF_MAX_MG = 30   # a "디카페인" drink above this still carries real caffeine (chocolate, tea shots) — not decaf for a decaf-only guest
 ATTR_WEIGHT, FLAVOR_WEIGHT = 0.6, 0.4
 # Matched against the lowercased name with all whitespace removed. Golden-tested against the hand labels in
 # data/curated/menu_milk_labels.yaml (tests/app/test_milk_labels.py).
@@ -88,9 +89,15 @@ def passes(profile: Profile, item: Item) -> tuple[bool, str | None]:
     decaf_ok = item.is_decaf or item.decaf_option
     if profile.caffeine_rule == "decaf_only" and not decaf_ok:
         return False, "디카페인이 아니에요"
+    if (profile.caffeine_rule == "decaf_only" and item.is_decaf and item.caffeine_mg is not None
+            and item.caffeine_mg > DECAF_MAX_MG):
+        return False, f"디카페인 메뉴지만 카페인이 {item.caffeine_mg:g}mg이에요(초콜릿·차 등)"
     if profile.caffeine_rule == "low" and not (
             decaf_ok or (item.caffeine_mg is not None and item.caffeine_mg <= LOW_CAFFEINE_MG)):
         return False, "카페인이 100mg을 넘거나 알 수 없어요"
+    if (profile.caffeine_rule == "low" and item.is_decaf and item.caffeine_mg is not None
+            and item.caffeine_mg > LOW_CAFFEINE_MG):
+        return False, f"디카페인 메뉴지만 카페인이 {item.caffeine_mg:g}mg이에요(초콜릿·차 등)"
     if not profile.milk_ok and item.is_milk:
         return False, "우유가 들어가요"
     return True, None
