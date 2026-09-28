@@ -1,0 +1,807 @@
+{
+  "generated_at": "2026-09-28T09:17:43.354306+00:00",
+  "w_k": 0.5,
+  "k_body_labels": 10,
+  "a_body_labels": 46,
+  "body_e1": {
+    "neighbour_avg": {
+      "n": 64,
+      "mae": 0.753,
+      "within1": 0.7656,
+      "spearman": 0.0354
+    },
+    "gauges": {
+      "n": 64,
+      "mae": 0.6986,
+      "within1": 0.7969,
+      "spearman": 0.2102
+    },
+    "+A": {
+      "n": 64,
+      "mae": 0.7123,
+      "within1": 0.75,
+      "spearman": 0.2352
+    },
+    "+A wA=1": {
+      "n": 64,
+      "mae": 0.7069,
+      "within1": 0.7656,
+      "spearman": 0.269
+    },
+    "+K": {
+      "n": 64,
+      "mae": 0.697,
+      "within1": 0.7969,
+      "spearman": 0.4255
+    },
+    "+A+K": {
+      "n": 64,
+      "mae": 0.6587,
+      "within1": 0.7812,
+      "spearman": 0.3943
+    }
+  },
+  "body_e2": {
+    "gauges": {
+      "model": {
+        "n": 160,
+        "mae": 0.8715,
+        "within1": 0.6062,
+        "spearman": -0.0153,
+        "mean_truth": 2.94,
+        "mean_pred": 3.602
+      },
+      "neighbour": {
+        "n": 160,
+        "mae": 0.6505,
+        "within1": 0.7875,
+        "spearman": -0.033,
+        "mean_truth": 2.94,
+        "mean_pred": 3.434
+      },
+      "constant_3": {
+        "n": 160,
+        "mae": 0.363,
+        "within1": 0.9812,
+        "spearman": null,
+        "mean_truth": 2.94,
+        "mean_pred": 3.0
+      }
+    },
+    "+A": {
+      "model": {
+        "n": 160,
+        "mae": 0.7265,
+        "within1": 0.7438,
+        "spearman": -0.0122,
+        "mean_truth": 2.94,
+        "mean_pred": 3.496
+      },
+      "neighbour": {
+        "n": 160,
+        "mae": 0.6505,
+        "within1": 0.7875,
+        "spearman": -0.033,
+        "mean_truth": 2.94,
+        "mean_pred": 3.434
+      },
+      "constant_3": {
+        "n": 160,
+        "mae": 0.363,
+        "within1": 0.9812,
+        "spearman": null,
+        "mean_truth": 2.94,
+        "mean_pred": 3.0
+      }
+    },
+    "+A wA=1": {
+      "model": {
+        "n": 160,
+        "mae": 0.6756,
+        "within1": 0.8,
+        "spearman": 0.0263,
+        "mean_truth": 2.94,
+        "mean_pred": 3.469
+      },
+      "neighbour": {
+        "n": 160,
+        "mae": 0.6505,
+        "within1": 0.7875,
+        "spearman": -0.033,
+        "mean_truth": 2.94,
+        "mean_pred": 3.434
+      },
+      "constant_3": {
+        "n": 160,
+        "mae": 0.363,
+        "within1": 0.9812,
+        "spearman": null,
+        "mean_truth": 2.94,
+        "mean_pred": 3.0
+      }
+    },
+    "+K": {
+      "model": {
+        "n": 160,
+        "mae": 0.8997,
+        "within1": 0.6,
+        "spearman": 0.0175,
+        "mean_truth": 2.94,
+        "mean_pred": 3.593
+      },
+      "neighbour": {
+        "n": 160,
+        "mae": 0.6505,
+        "within1": 0.7875,
+        "spearman": -0.033,
+        "mean_truth": 2.94,
+        "mean_pred": 3.434
+      },
+      "constant_3": {
+        "n": 160,
+        "mae": 0.363,
+        "within1": 0.9812,
+        "spearman": null,
+        "mean_truth": 2.94,
+        "mean_pred": 3.0
+      }
+    },
+    "+A+K": {
+      "model": {
+        "n": 160,
+        "mae": 0.7267,
+        "within1": 0.7188,
+        "spearman": -0.0057,
+        "mean_truth": 2.94,
+        "mean_pred": 3.429
+      },
+      "neighbour": {
+        "n": 160,
+        "mae": 0.6505,
+        "within1": 0.7875,
+        "spearman": -0.033,
+        "mean_truth": 2.94,
+        "mean_pred": 3.434
+      },
+      "constant_3": {
+        "n": 160,
+        "mae": 0.363,
+        "within1": 0.9812,
+        "spearman": null,
+        "mean_truth": 2.94,
+        "mean_pred": 3.0
+      }
+    }
+  },
+  "body_specs": {
+    "gauges": {
+      "type": "ridge",
+      "alpha": 1.0,
+      "intercept": 3.6016,
+      "weights": {
+        "region_east_africa": 0.076,
+        "region_central_america": -0.175,
+        "region_south_america": -0.2323,
+        "region_asia_pacific": 0.0446,
+        "region_yemen": 0.0254,
+        "blend_or_unknown_origin": 0.2613,
+        "country_Ethiopia": -0.628,
+        "country_Kenya": 0.2926,
+        "country_Colombia": -0.2466,
+        "country_Brazil": 0.0144,
+        "country_Guatemala": 0.0833,
+        "alt_lt1200": -0.0877,
+        "alt_1600_2000": -0.203,
+        "alt_ge2000": 0.2673,
+        "process_washed": 0.179,
+        "process_natural": 0.015,
+        "process_honey": 0.4839,
+        "roast_light": -0.6836,
+        "roast_medium": -0.4651,
+        "roast_medium-dark": 0.0848,
+        "roast_dark": 0.898,
+        "decaf": -0.2768,
+        "decaf_water": -0.3437,
+        "decaf_sugarcane": -0.0347,
+        "notes_fruity": -0.1726,
+        "notes_floral": 0.0775,
+        "notes_sweet": 0.0438,
+        "notes_nutty/cocoa": 0.3475,
+        "notes_roasted": 0.057,
+        "notes_spices": -0.2251,
+        "notes_green/vegetative": 0.0075,
+        "nbr": -0.0447
+      },
+      "n_train": 64,
+      "n_gauge": 64,
+      "uses_nbr": true
+    },
+    "+A": {
+      "type": "ridge",
+      "alpha": 3.0,
+      "intercept": 3.5449,
+      "weights": {
+        "region_east_africa": -0.0826,
+        "region_central_america": 0.0029,
+        "region_south_america": -0.1578,
+        "region_asia_pacific": 0.0858,
+        "region_yemen": 0.0666,
+        "blend_or_unknown_origin": 0.0852,
+        "country_Ethiopia": -0.4191,
+        "country_Kenya": 0.3614,
+        "country_Colombia": -0.1854,
+        "country_Brazil": 0.0276,
+        "country_Guatemala": 0.086,
+        "alt_lt1200": -0.0317,
+        "alt_1600_2000": -0.0631,
+        "alt_ge2000": 0.1827,
+        "process_washed": 0.0014,
+        "process_natural": 0.0544,
+        "process_honey": 0.1208,
+        "roast_light": -0.4038,
+        "roast_medium": -0.3631,
+        "roast_medium-dark": 0.0456,
+        "roast_dark": 0.4886,
+        "decaf": -0.2279,
+        "decaf_water": -0.3386,
+        "decaf_sugarcane": -0.1007,
+        "notes_fruity": -0.168,
+        "notes_floral": 0.1124,
+        "notes_sweet": -0.1543,
+        "notes_nutty/cocoa": 0.3763,
+        "notes_roasted": 0.0464,
+        "notes_spices": -0.2187,
+        "notes_green/vegetative": 0.0496,
+        "nbr": -0.1499
+      },
+      "n_train": 110,
+      "n_gauge": 64,
+      "uses_nbr": true
+    },
+    "+A wA=1": {
+      "type": "ridge",
+      "alpha": 10.0,
+      "intercept": 3.4825,
+      "weights": {
+        "region_east_africa": -0.1339,
+        "region_central_america": 0.0584,
+        "region_south_america": -0.0896,
+        "region_asia_pacific": 0.0467,
+        "region_yemen": 0.0342,
+        "blend_or_unknown_origin": 0.0841,
+        "country_Ethiopia": -0.2813,
+        "country_Kenya": 0.2237,
+        "country_Colombia": -0.1262,
+        "country_Brazil": 0.0366,
+        "country_Guatemala": 0.0316,
+        "alt_lt1200": -0.0186,
+        "alt_1600_2000": -0.0112,
+        "alt_ge2000": 0.0787,
+        "process_washed": -0.0057,
+        "process_natural": 0.047,
+        "process_honey": 0.0243,
+        "roast_light": -0.2171,
+        "roast_medium": -0.2532,
+        "roast_medium-dark": 0.0195,
+        "roast_dark": 0.3645,
+        "decaf": -0.1903,
+        "decaf_water": -0.2275,
+        "decaf_sugarcane": -0.0726,
+        "notes_fruity": -0.16,
+        "notes_floral": 0.0392,
+        "notes_sweet": -0.1409,
+        "notes_nutty/cocoa": 0.3181,
+        "notes_roasted": 0.0312,
+        "notes_spices": -0.1171,
+        "notes_green/vegetative": 0.0343,
+        "nbr": -0.0814
+      },
+      "n_train": 110,
+      "n_gauge": 64,
+      "uses_nbr": true
+    },
+    "+K": {
+      "type": "ridge",
+      "alpha": 1.0,
+      "intercept": 3.57,
+      "weights": {
+        "region_east_africa": 0.0331,
+        "region_central_america": -0.2169,
+        "region_south_america": -0.2657,
+        "region_asia_pacific": 0.1259,
+        "region_yemen": -0.0616,
+        "blend_or_unknown_origin": 0.3852,
+        "country_Ethiopia": -0.6792,
+        "country_Kenya": 0.2421,
+        "country_Colombia": -0.2936,
+        "country_Brazil": 0.0279,
+        "country_Guatemala": 0.078,
+        "alt_lt1200": -0.0668,
+        "alt_1600_2000": -0.2037,
+        "alt_ge2000": 0.2807,
+        "process_washed": 0.402,
+        "process_natural": 0.0484,
+        "process_honey": 0.5265,
+        "roast_light": -0.7758,
+        "roast_medium": -0.3985,
+        "roast_medium-dark": 0.1347,
+        "roast_dark": 0.9073,
+        "decaf": -0.4651,
+        "decaf_water": -0.0086,
+        "decaf_sugarcane": 0.1214,
+        "notes_fruity": -0.1357,
+        "notes_floral": -0.0046,
+        "notes_sweet": 0.1688,
+        "notes_nutty/cocoa": 0.298,
+        "notes_roasted": 0.104,
+        "notes_spices": -0.2778,
+        "notes_green/vegetative": -0.0798,
+        "nbr": -0.0789
+      },
+      "n_train": 74,
+      "n_gauge": 64,
+      "uses_nbr": true
+    },
+    "+A+K": {
+      "type": "ridge",
+      "alpha": 1.0,
+      "intercept": 3.4789,
+      "weights": {
+        "region_east_africa": -0.1484,
+        "region_central_america": -0.0541,
+        "region_south_america": -0.2264,
+        "region_asia_pacific": 0.1528,
+        "region_yemen": 0.0682,
+        "blend_or_unknown_origin": 0.208,
+        "country_Ethiopia": -0.5451,
+        "country_Kenya": 0.4176,
+        "country_Colombia": -0.2818,
+        "country_Brazil": 0.0554,
+        "country_Guatemala": 0.1866,
+        "alt_lt1200": 0.0004,
+        "alt_1600_2000": -0.0763,
+        "alt_ge2000": 0.3677,
+        "process_washed": 0.1786,
+        "process_natural": 0.1942,
+        "process_honey": 0.2604,
+        "roast_light": -0.6864,
+        "roast_medium": -0.2369,
+        "roast_medium-dark": 0.1573,
+        "roast_dark": 0.6275,
+        "decaf": -0.3418,
+        "decaf_water": -0.2499,
+        "decaf_sugarcane": -0.0615,
+        "notes_fruity": -0.1163,
+        "notes_floral": 0.0699,
+        "notes_sweet": 0.0039,
+        "notes_nutty/cocoa": 0.3562,
+        "notes_roasted": 0.0672,
+        "notes_spices": -0.4434,
+        "notes_green/vegetative": -0.0518,
+        "nbr": -0.2403
+      },
+      "n_train": 120,
+      "n_gauge": 64,
+      "uses_nbr": true
+    }
+  },
+  "abstention": {
+    "sweetness": {
+      "answer all (shipped)": {
+        "e1": {
+          "coverage": 1.0,
+          "n": 72,
+          "mae": 1.0499,
+          "within1": 0.5694,
+          "spearman": -0.1664,
+          "mean_truth": 3.062,
+          "mean_pred": 3.659
+        },
+        "e2": {
+          "coverage": 1.0,
+          "n": 196,
+          "mae": 1.375,
+          "within1": 0.4184,
+          "spearman": -0.2255,
+          "mean_truth": 2.507,
+          "mean_pred": 3.771
+        }
+      },
+      "cue or neighbour value": {
+        "e1": {
+          "coverage": 0.5139,
+          "n": 37,
+          "mae": 0.9681,
+          "within1": 0.5946,
+          "spearman": -0.2875,
+          "mean_truth": 3.257,
+          "mean_pred": 3.676
+        },
+        "e2": {
+          "coverage": 0.8878,
+          "n": 174,
+          "mae": 1.3226,
+          "within1": 0.4425,
+          "spearman": -0.2583,
+          "mean_truth": 2.546,
+          "mean_pred": 3.754
+        }
+      },
+      "cue or note words": {
+        "e1": {
+          "coverage": 0.2361,
+          "n": 17,
+          "mae": 0.9329,
+          "within1": 0.5294,
+          "spearman": -0.1886,
+          "mean_truth": 3.735,
+          "mean_pred": 3.428
+        },
+        "e2": {
+          "coverage": 0.9745,
+          "n": 191,
+          "mae": 1.3851,
+          "within1": 0.4084,
+          "spearman": -0.227,
+          "mean_truth": 2.505,
+          "mean_pred": 3.78
+        }
+      },
+      "cue or |model - neighbour| <= 1": {
+        "e1": {
+          "coverage": 0.4583,
+          "n": 33,
+          "mae": 0.9799,
+          "within1": 0.6061,
+          "spearman": -0.3155,
+          "mean_truth": 3.227,
+          "mean_pred": 3.693
+        },
+        "e2": {
+          "coverage": 0.7806,
+          "n": 153,
+          "mae": 1.3708,
+          "within1": 0.4118,
+          "spearman": -0.1612,
+          "mean_truth": 2.519,
+          "mean_pred": 3.825
+        }
+      }
+    },
+    "acidity": {
+      "answer all (shipped)": {
+        "e1": {
+          "coverage": 1.0,
+          "n": 82,
+          "mae": 0.7712,
+          "within1": 0.6951,
+          "spearman": 0.5465,
+          "mean_truth": 2.323,
+          "mean_pred": 2.399
+        },
+        "e2": {
+          "coverage": 1.0,
+          "n": 196,
+          "mae": 0.6324,
+          "within1": 0.8163,
+          "spearman": 0.6168,
+          "mean_truth": 2.329,
+          "mean_pred": 2.299
+        }
+      },
+      "cue or neighbour value": {
+        "e1": {
+          "coverage": 0.9878,
+          "n": 81,
+          "mae": 0.7767,
+          "within1": 0.6914,
+          "spearman": 0.5474,
+          "mean_truth": 2.327,
+          "mean_pred": 2.4
+        },
+        "e2": {
+          "coverage": 0.9388,
+          "n": 184,
+          "mae": 0.6248,
+          "within1": 0.8207,
+          "spearman": 0.6241,
+          "mean_truth": 2.333,
+          "mean_pred": 2.312
+        }
+      },
+      "cue or note words": {
+        "e1": {
+          "coverage": 0.3049,
+          "n": 25,
+          "mae": 0.7732,
+          "within1": 0.72,
+          "spearman": 0.735,
+          "mean_truth": 3.16,
+          "mean_pred": 2.686
+        },
+        "e2": {
+          "coverage": 0.9745,
+          "n": 191,
+          "mae": 0.6241,
+          "within1": 0.822,
+          "spearman": 0.6255,
+          "mean_truth": 2.322,
+          "mean_pred": 2.299
+        }
+      },
+      "cue or |model - neighbour| <= 1": {
+        "e1": {
+          "coverage": 0.6707,
+          "n": 55,
+          "mae": 0.7668,
+          "within1": 0.6909,
+          "spearman": 0.5332,
+          "mean_truth": 2.255,
+          "mean_pred": 2.387
+        },
+        "e2": {
+          "coverage": 0.6224,
+          "n": 122,
+          "mae": 0.5492,
+          "within1": 0.8607,
+          "spearman": 0.6926,
+          "mean_truth": 2.396,
+          "mean_pred": 2.489
+        }
+      }
+    }
+  },
+  "calibration": {
+    "rule": "high: within+-1 >= 0.75 and Spearman >= 0.3; medium: within+-1 >= 0.55 and Spearman > 0; else low. Buckets with n < 10 use the pooled '*' level; 'cue' is always high.",
+    "e1": {
+      "acidity": {
+        "*": {
+          "n": 82,
+          "mae": 0.7712,
+          "within1": 0.6951,
+          "spearman": 0.5465,
+          "mean_truth": 2.323,
+          "mean_pred": 2.399
+        },
+        "cue": {
+          "n": 5,
+          "mae": 0.5887,
+          "within1": 0.8,
+          "spearman": 0.7379,
+          "mean_truth": 3.6,
+          "mean_pred": 3.015
+        },
+        "facts": {
+          "n": 44,
+          "mae": 0.7108,
+          "within1": 0.6818,
+          "spearman": 0.434,
+          "mean_truth": 1.875,
+          "mean_pred": 2.353
+        },
+        "notes": {
+          "n": 20,
+          "mae": 0.8194,
+          "within1": 0.7,
+          "spearman": 0.7019,
+          "mean_truth": 3.05,
+          "mean_pred": 2.604
+        },
+        "sparse": {
+          "n": 13,
+          "mae": 0.9717,
+          "within1": 0.6923,
+          "spearman": 0.439,
+          "mean_truth": 2.231,
+          "mean_pred": 2.002
+        }
+      },
+      "sweetness": {
+        "*": {
+          "n": 37,
+          "mae": 0.9681,
+          "within1": 0.5946,
+          "spearman": -0.2875,
+          "mean_truth": 3.257,
+          "mean_pred": 3.676
+        },
+        "cue": {
+          "n": 5,
+          "mae": 0.6525,
+          "within1": 0.6,
+          "spearman": -0.3536,
+          "mean_truth": 4.1,
+          "mean_pred": 3.604
+        },
+        "facts": {
+          "n": 17,
+          "mae": 1.2928,
+          "within1": 0.4118,
+          "spearman": -0.5126,
+          "mean_truth": 2.824,
+          "mean_pred": 3.754
+        },
+        "notes": {
+          "n": 8,
+          "mae": 0.8956,
+          "within1": 0.625,
+          "spearman": -0.2048,
+          "mean_truth": 3.375,
+          "mean_pred": 3.513
+        },
+        "sparse": {
+          "n": 7,
+          "mae": 0.4882,
+          "within1": 1.0,
+          "spearman": -0.3536,
+          "mean_truth": 3.571,
+          "mean_pred": 3.725
+        }
+      },
+      "body": {
+        "*": {
+          "n": 29,
+          "mae": 0.8497,
+          "within1": 0.7241,
+          "spearman": 0.2249,
+          "mean_truth": 3.431,
+          "mean_pred": 3.423
+        },
+        "facts": {
+          "n": 19,
+          "mae": 0.9516,
+          "within1": 0.6316,
+          "spearman": 0.2361,
+          "mean_truth": 3.447,
+          "mean_pred": 3.405
+        },
+        "notes": {
+          "n": 9,
+          "mae": 0.6522,
+          "within1": 0.8889,
+          "spearman": 0.2308,
+          "mean_truth": 3.278,
+          "mean_pred": 3.419
+        },
+        "sparse": {
+          "n": 1,
+          "mae": 0.69,
+          "within1": 1.0,
+          "spearman": null,
+          "mean_truth": 4.5,
+          "mean_pred": 3.81
+        }
+      }
+    },
+    "levels": {
+      "acidity": {
+        "*": "medium",
+        "facts": "medium",
+        "notes": "medium",
+        "sparse": "medium"
+      },
+      "sweetness": {
+        "*": "low",
+        "facts": "low"
+      },
+      "body": {
+        "*": "medium",
+        "facts": "medium"
+      }
+    },
+    "e2_check": {
+      "acidity": {
+        "facts": {
+          "n": 1,
+          "mae": 1.45,
+          "within1": 0.0,
+          "spearman": null,
+          "mean_truth": 1.0,
+          "mean_pred": 2.45
+        },
+        "notes": {
+          "n": 191,
+          "mae": 0.6241,
+          "within1": 0.822,
+          "spearman": 0.6255,
+          "mean_truth": 2.322,
+          "mean_pred": 2.299
+        },
+        "sparse": {
+          "n": 4,
+          "mae": 0.8225,
+          "within1": 0.75,
+          "spearman": 0.3333,
+          "mean_truth": 3.0,
+          "mean_pred": 2.237
+        }
+      },
+      "body": {
+        "facts": {
+          "n": 1,
+          "mae": 1.12,
+          "within1": 0.0,
+          "spearman": null,
+          "mean_truth": 2.0,
+          "mean_pred": 3.12
+        },
+        "notes": {
+          "n": 156,
+          "mae": 0.6464,
+          "within1": 0.7949,
+          "spearman": -0.0356,
+          "mean_truth": 2.946,
+          "mean_pred": 3.44
+        },
+        "sparse": {
+          "n": 3,
+          "mae": 0.71,
+          "within1": 0.6667,
+          "spearman": -1.0,
+          "mean_truth": 2.917,
+          "mean_pred": 3.233
+        }
+      },
+      "sweetness": {
+        "cue": {
+          "n": 8,
+          "mae": 0.8541,
+          "within1": 0.75,
+          "spearman": 0.3897,
+          "mean_truth": 2.896,
+          "mean_pred": 3.5
+        },
+        "facts": {
+          "n": 1,
+          "mae": 0.38,
+          "within1": 1.0,
+          "spearman": null,
+          "mean_truth": 3.0,
+          "mean_pred": 2.62
+        },
+        "notes": {
+          "n": 183,
+          "mae": 1.4083,
+          "within1": 0.3934,
+          "spearman": -0.239,
+          "mean_truth": 2.488,
+          "mean_pred": 3.792
+        },
+        "sparse": {
+          "n": 4,
+          "mae": 1.14,
+          "within1": 0.75,
+          "spearman": null,
+          "mean_truth": 2.5,
+          "mean_pred": 3.64
+        }
+      }
+    }
+  },
+  "e2_shipped": {
+    "acidity": {
+      "n": 196,
+      "mae": 0.6324,
+      "within1": 0.8163,
+      "spearman": 0.6168,
+      "mean_truth": 2.329,
+      "mean_pred": 2.299
+    },
+    "body": {
+      "n": 160,
+      "mae": 0.6505,
+      "within1": 0.7875,
+      "spearman": -0.033,
+      "mean_truth": 2.94,
+      "mean_pred": 3.434
+    },
+    "sweetness": {
+      "n": 196,
+      "mae": 1.375,
+      "within1": 0.4184,
+      "spearman": -0.2255,
+      "mean_truth": 2.507,
+      "mean_pred": 3.771
+    }
+  }
+}

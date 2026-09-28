@@ -1,0 +1,394 @@
+{
+  "generated_at": "2026-09-28T09:22:22.416276+00:00",
+  "sources": [
+    "roasters_kr",
+    "shopify",
+    "shopify_gauged"
+  ],
+  "min_pos": 5,
+  "input": "note-free text (name | origin | process | roast | decaf)",
+  "e1": {
+    "n": 277,
+    "roasters": {
+      "앤트러사이트": 16,
+      "빈브라더스": 4,
+      "커피 리브레": 7,
+      "펠트": 13,
+      "프릳츠": 5,
+      "G로스팅": 17,
+      "매뉴팩트": 8,
+      "모모스커피": 14,
+      "내일의커피": 10,
+      "나무사이로": 27,
+      "Café Britt": 2,
+      "Café Don Pablo": 17,
+      "Coffee Supreme": 5,
+      "Fresh Roasted Coffee": 12,
+      "Kiss the Hippo": 61,
+      "Ozone Coffee": 23,
+      "Volcanica Coffee": 27,
+      "Blue Bottle Coffee": 9
+    },
+    "table": {
+      "neighbour_vote": {
+        "n": 277,
+        "precision": 0.1866,
+        "recall": 0.0387,
+        "f1": 0.0641,
+        "category_f1": 0.239
+      },
+      "prior_top2": {
+        "n": 277,
+        "precision": 0.1895,
+        "recall": 0.1625,
+        "f1": 0.175,
+        "category_f1": 0.4364
+      },
+      "feat": {
+        "n": 277,
+        "precision": 0.1609,
+        "recall": 0.2508,
+        "f1": 0.196,
+        "category_f1": 0.6039
+      },
+      "emb": {
+        "n": 277,
+        "precision": 0.154,
+        "recall": 0.3019,
+        "f1": 0.204,
+        "category_f1": 0.5966
+      },
+      "both": {
+        "n": 277,
+        "precision": 0.1599,
+        "recall": 0.2817,
+        "f1": 0.204,
+        "category_f1": 0.5944
+      }
+    },
+    "thresholds": {
+      "feat": [
+        0.1,
+        0.05,
+        0.1,
+        0.1,
+        0.1,
+        0.05,
+        0.15,
+        0.1,
+        0.15,
+        0.15,
+        0.2,
+        0.15,
+        0.15,
+        0.15,
+        0.15,
+        0.15,
+        0.15,
+        0.05
+      ],
+      "emb": [
+        0.1,
+        0.1,
+        0.05,
+        0.1,
+        0.1,
+        0.05,
+        0.1,
+        0.05,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.05,
+        0.1,
+        0.1,
+        0.1
+      ],
+      "both": [
+        0.1,
+        0.15,
+        0.1,
+        0.1,
+        0.15,
+        0.1,
+        0.1,
+        0.05,
+        0.15,
+        0.15,
+        0.1,
+        0.1,
+        0.1,
+        0.15,
+        0.15,
+        0.15,
+        0.15,
+        0.1
+      ]
+    },
+    "per_roaster_f1": {
+      "Blue Bottle Coffee": {
+        "neighbour_vote": 0.0444,
+        "prior_top2": 0.3793,
+        "feat": 0.2222,
+        "emb": 0.3,
+        "both": 0.2716
+      },
+      "Café Britt": {
+        "neighbour_vote": 0.0,
+        "prior_top2": 0.3333,
+        "feat": 0.1667,
+        "emb": 0.2222,
+        "both": 0.2857
+      },
+      "Café Don Pablo": {
+        "neighbour_vote": 0.3548,
+        "prior_top2": 0.3077,
+        "feat": 0.368,
+        "emb": 0.4186,
+        "both": 0.45
+      },
+      "Coffee Supreme": {
+        "neighbour_vote": 0.1,
+        "prior_top2": 0.4138,
+        "feat": 0.3333,
+        "emb": 0.45,
+        "both": 0.3902
+      },
+      "Fresh Roasted Coffee": {
+        "neighbour_vote": 0.0,
+        "prior_top2": 0.2381,
+        "feat": 0.1316,
+        "emb": 0.1639,
+        "both": 0.1923
+      },
+      "G로스팅": {
+        "neighbour_vote": 0.0625,
+        "prior_top2": 0.1778,
+        "feat": 0.1986,
+        "emb": 0.2128,
+        "both": 0.2137
+      },
+      "Kiss the Hippo": {
+        "neighbour_vote": 0.0,
+        "prior_top2": 0.1356,
+        "feat": 0.1677,
+        "emb": 0.1353,
+        "both": 0.1304
+      },
+      "Ozone Coffee": {
+        "neighbour_vote": 0.0364,
+        "prior_top2": 0.1684,
+        "feat": 0.1447,
+        "emb": 0.1463,
+        "both": 0.1707
+      },
+      "Volcanica Coffee": {
+        "neighbour_vote": 0.0548,
+        "prior_top2": 0.1622,
+        "feat": 0.163,
+        "emb": 0.1818,
+        "both": 0.1951
+      },
+      "나무사이로": {
+        "neighbour_vote": 0.0759,
+        "prior_top2": 0.129,
+        "feat": 0.2151,
+        "emb": 0.2437,
+        "both": 0.1889
+      },
+      "내일의커피": {
+        "neighbour_vote": 0.0,
+        "prior_top2": 0.0556,
+        "feat": 0.2069,
+        "emb": 0.1481,
+        "both": 0.1875
+      },
+      "매뉴팩트": {
+        "neighbour_vote": 0.0,
+        "prior_top2": 0.2162,
+        "feat": 0.1754,
+        "emb": 0.2333,
+        "both": 0.1639
+      },
+      "모모스커피": {
+        "neighbour_vote": 0.0571,
+        "prior_top2": 0.1379,
+        "feat": 0.0968,
+        "emb": 0.125,
+        "both": 0.2105
+      },
+      "빈브라더스": {
+        "neighbour_vote": 0.0,
+        "prior_top2": 0.0,
+        "feat": 0.0952,
+        "emb": 0.0714,
+        "both": 0.1739
+      },
+      "앤트러사이트": {
+        "neighbour_vote": 0.0,
+        "prior_top2": 0.1176,
+        "feat": 0.225,
+        "emb": 0.1897,
+        "both": 0.2195
+      },
+      "커피 리브레": {
+        "neighbour_vote": 0.0,
+        "prior_top2": 0.1579,
+        "feat": 0.2439,
+        "emb": 0.1852,
+        "both": 0.2381
+      },
+      "펠트": {
+        "neighbour_vote": 0.0976,
+        "prior_top2": 0.1091,
+        "feat": 0.1846,
+        "emb": 0.2532,
+        "both": 0.1791
+      },
+      "프릳츠": {
+        "neighbour_vote": 0.1176,
+        "prior_top2": 0.1739,
+        "feat": 0.1579,
+        "emb": 0.2222,
+        "both": 0.1622
+      }
+    }
+  },
+  "e2": {
+    "n": 110,
+    "samples_without_input": 82,
+    "example_input": "Tasty coffee Brazil Эдуардо Косте | light roast",
+    "neighbour_vote": {
+      "n": 110,
+      "precision": 0.2828,
+      "recall": 0.053,
+      "f1": 0.0893,
+      "category_f1": 0.2793
+    },
+    "prior_top2": {
+      "n": 110,
+      "precision": 0.2,
+      "recall": 0.0833,
+      "f1": 0.1176,
+      "category_f1": 0.4125
+    },
+    "feat": {
+      "n": 110,
+      "precision": 0.2641,
+      "recall": 0.142,
+      "f1": 0.1847,
+      "category_f1": 0.554,
+      "threshold": 0.15,
+      "top_predicted": [
+        [
+          "chocolate",
+          93
+        ],
+        [
+          "peach",
+          44
+        ],
+        [
+          "caramelized",
+          23
+        ],
+        [
+          "nutty",
+          22
+        ],
+        [
+          "citrus fruit",
+          21
+        ]
+      ]
+    },
+    "emb": {
+      "n": 110,
+      "precision": 0.2137,
+      "recall": 0.1591,
+      "f1": 0.1824,
+      "category_f1": 0.5894,
+      "threshold": 0.1,
+      "top_predicted": [
+        [
+          "chocolate",
+          110
+        ],
+        [
+          "caramelized",
+          75
+        ],
+        [
+          "peach",
+          69
+        ],
+        [
+          "brown sugar",
+          31
+        ],
+        [
+          "nutty",
+          27
+        ]
+      ]
+    },
+    "both": {
+      "n": 110,
+      "precision": 0.2706,
+      "recall": 0.1307,
+      "f1": 0.1762,
+      "category_f1": 0.5549,
+      "threshold": 0.15,
+      "top_predicted": [
+        [
+          "chocolate",
+          93
+        ],
+        [
+          "peach",
+          40
+        ],
+        [
+          "caramelized",
+          20
+        ],
+        [
+          "nutty",
+          17
+        ],
+        [
+          "orange",
+          15
+        ]
+      ]
+    }
+  },
+  "ship": {
+    "feat": {
+      "e1_gain_f1": 0.1319,
+      "e1_gain_category_f1": 0.3649,
+      "e2_gain_f1": 0.0954,
+      "e2_gain_category_f1": 0.2747,
+      "passes": true
+    },
+    "emb": {
+      "e1_gain_f1": 0.1399,
+      "e1_gain_category_f1": 0.3576,
+      "e2_gain_f1": 0.0931,
+      "e2_gain_category_f1": 0.3101,
+      "passes": true
+    },
+    "both": {
+      "e1_gain_f1": 0.1399,
+      "e1_gain_category_f1": 0.3554,
+      "e2_gain_f1": 0.0869,
+      "e2_gain_category_f1": 0.2756,
+      "passes": true
+    }
+  },
+  "embedding_requests": 0,
+  "cache_sha1": "96d52b60caac"
+}

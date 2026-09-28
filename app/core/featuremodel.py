@@ -169,14 +169,54 @@ class _Linear:
 
 
 @dataclass
+class TagLogit:
+    """Note-free flavor-tag model (docs/adr/0016-open-variant-v3.md): one logistic regression per SCA tag over the
+    interpretable features WITHOUT note categories or neighbour value -- for a guest who typed only origin/process/
+    roast. Trained by scripts/eval_open_tags.py shipped_tag_spec (licence-clean tagged beans)."""
+    features: tuple[str, ...]
+    tags: dict[str, _Linear]
+    threshold: float
+    max_tags: int
+
+    def probs(self, feats: dict[str, float]) -> list[tuple[str, float]]:
+        from math import exp
+        out = []
+        for t, m in self.tags.items():
+            z = m.predict({k: v for k, v in feats.items() if k in self.features})
+            out.append((t, 1 / (1 + exp(-z))))
+        return sorted(out, key=lambda kv: (-kv[1], kv[0]))
+
+    def predict(self, feats: dict[str, float]) -> list[tuple[str, float]]:
+        return [(t, p) for t, p in self.probs(feats) if p >= self.threshold][:self.max_tags]
+
+
+ABSTAIN_NOTE = "{attr}: 근거 부족"
+
+
+@dataclass
 class FeatureModel:
     models: dict[str, _Linear]        # attribute -> ridge; an attribute missing here isn't shipped
+    tag_model: TagLogit | None = None
+    # attributes answered only with support (ADR 0016): no cue in the text and no neighbour value -> None
+    abstain: tuple[str, ...] = ()
+    # attr -> support bucket -> "high" | "medium" | "low", from grouped-CV residuals (ADR 0016); "*" = pooled
+    calibration: dict[str, dict[str, str]] | None = None
 
     @classmethod
     def from_doc(cls, doc: dict) -> "FeatureModel":
+        tags = doc.get("tags")
+        tag_model = None
+        if tags:
+            tag_model = TagLogit(features=tuple(tags["features"]), threshold=float(tags["threshold"]),
+                                 max_tags=int(tags["max_tags"]),
+                                 tags={t: _Linear(intercept=float(s["intercept"]), weights=dict(s["weights"]),
+                                                  uses_nbr=False) for t, s in tags["tags"].items()})
         return cls(models={a: _Linear(intercept=float(s["intercept"]), weights=dict(s["weights"]),
                                       uses_nbr="nbr" in s["weights"])
-                           for a, s in doc["attrs"].items()})
+                           for a, s in doc["attrs"].items()}, tag_model=tag_model,
+                   abstain=tuple(doc.get("abstain", {}).get("attrs", ())),
+                   calibration={a: dict(v) for a, v in doc["calibration"]["levels"].items()}
+                   if doc.get("calibration") else None)
 
     @classmethod
     def load(cls, path: str | Path | None = None) -> "FeatureModel | None":
@@ -240,7 +280,8 @@ def drop_attr_evidence(evidence: list[str], attrs) -> list[str]:
     """Evidence without the lines that state a value for `attrs` (the neighbour average "유사 원두 산미 평균 ..." and
     the feature model's "특징 모델 산미 ...") -- used when a later layer replaces that value, so the card never shows a
     number next to a line that argues for a different one."""
-    drop = tuple(p for a in attrs for p in (f"유사 원두 {ATTR_KO[a]} 평균", f"특징 모델 {ATTR_KO[a]} "))
+    drop = tuple(p for a in attrs for p in (f"유사 원두 {ATTR_KO[a]} 평균", f"특징 모델 {ATTR_KO[a]} ",
+                                            ABSTAIN_NOTE.format(attr=ATTR_KO[a])))
     return [e for e in evidence if not e.startswith(drop)]
 
 
@@ -262,10 +303,74 @@ def with_feature_model(pred, model: "FeatureModel", parsed, tag_to_cat: dict[str
                               decaf_process=parsed.decaf_process, altitude_m=altitude, text=parsed.text,
                               note_categories=cats, neighbor_value=getattr(pred, a))
              for a in model.models}
+    # abstention (ADR 0016): an attribute in model.abstain with no neighbour value (fewer than 3 of the neighbours
+    # carry it) has no support beyond the roasters' gauge conventions -- say so instead of a number. A text cue,
+    # applied after this, still answers it.
+    abstained = [a for a in model.abstain if getattr(pred, a) is None and a in feats]
+    for a in abstained:
+        feats.pop(a)
     out = model.predict(feats)
-    if not out:
+    if not out and model.tag_model is None and not abstained:
         return pred
-    evidence = drop_attr_evidence(pred.evidence, out)
+    evidence = drop_attr_evidence(pred.evidence, [*out, *abstained])
+    evidence += [ABSTAIN_NOTE.format(attr=ATTR_KO[a]) for a in abstained]
     for a, (value, contrib) in out.items():
         evidence.append(evidence_line(a, contrib, altitude_m=altitude, value=value, base=model.models[a].intercept))
-    return replace(pred, evidence=evidence, **{a: v for a, (v, _) in out.items()})
+    update = {a: v for a, (v, _) in out.items()}
+    if model.tag_model is not None and not tags:
+        # no note words in the input: the note-free tag model replaces the neighbour vote's tags (ADR 0016) --
+        # with note words the guest's own words lead (with_text_cues) and the vote over note-aware neighbours stays
+        base = bean_features(origin_country=parsed.origin_country, process=parsed.process,
+                             roast_level=parsed.roast_level, is_decaf=parsed.is_decaf,
+                             decaf_process=parsed.decaf_process, altitude_m=altitude, text=parsed.text)
+        hits = model.tag_model.predict(base)
+        if hits:
+            ko = tag_ko or {}
+            evidence = [e for e in evidence if not (e.startswith("유사 원두") and "언급" in e)]
+            evidence.insert(0, "향미 모델(산지·가공·로스팅): " + ", ".join(f"{ko.get(t, t)} {p:.2f}" for t, p in hits))
+            update["tags"] = [t for t, _ in hits]
+    return replace(pred, evidence=evidence, **update)
+
+
+SUPPORT_BUCKETS = ("cue", "notes", "facts", "sparse")
+
+
+def support_bucket(attr: str, parsed, tag_to_cat: dict[str, str], tag_ko: dict[str, str] | None = None) -> str:
+    """How much the input itself says about `attr` (docs/adr/0016-open-variant-v3.md):
+    "cue"    the text states the attribute outright (app.core.textcues.attr_cues) -- the value is the guest's own;
+    "notes"  no cue, but the text has flavor note words the model reads (note-category features);
+    "facts"  no notes, but origin or roast is known;
+    "sparse" none of these (a bare blend/house name)."""
+    from app.core.textcues import attr_cues, text_tags
+    if attr in attr_cues(parsed.text):
+        return "cue"
+    if text_tags(parsed.text, tag_to_cat, tag_ko or {}, free_text=True):
+        return "notes"
+    if parsed.origin_country or parsed.roast_level:
+        return "facts"
+    return "sparse"
+
+
+CONFIDENCE_ORDER = ("low", "medium", "high")
+
+
+def calibrated_confidence(model: "FeatureModel", pred, parsed, tag_to_cat: dict[str, str],
+                          tag_ko: dict[str, str] | None = None):
+    """Open variant (ADR 0016): per-attribute confidence from the grouped-CV residuals of the value's own support
+    bucket (model.calibration; "cue" = the guest's own statement is always "high"), and the card's overall
+    confidence = the lowest of the shown attributes'. An abstained/missing attribute gets no entry (the card's
+    confidence is then capped by app.models.cap_confidence). Without calibration the prediction is unchanged."""
+    from dataclasses import replace
+    if not model.calibration:
+        return pred
+    levels = {}
+    for a in ATTRS:
+        if getattr(pred, a) is None:
+            continue
+        bucket = support_bucket(a, parsed, tag_to_cat, tag_ko)
+        table = model.calibration.get(a, {})
+        levels[a] = "high" if bucket == "cue" else table.get(bucket, table.get("*", "low"))
+    if not levels:
+        return replace(pred, attr_confidence={}, confidence="low")
+    overall = min(levels.values(), key=CONFIDENCE_ORDER.index)
+    return replace(pred, attr_confidence=levels, confidence=overall)

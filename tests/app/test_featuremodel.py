@@ -84,3 +84,39 @@ def test_shipped_config_loads_and_only_uses_known_features():
     assert fm is not None and set(fm.models) <= {"acidity", "body", "sweetness"}
     for spec in doc["attrs"].values():
         assert set(spec["weights"]) <= set(FEATURES)
+
+
+def test_tag_logit_matches_sklearn_logistic_regression():
+    from sklearn.linear_model import LogisticRegression
+    rng = np.random.default_rng(0)
+    names = ["region_east_africa", "process_washed", "roast_dark"]
+    X = rng.integers(0, 2, size=(60, 3)).astype(float)
+    y = (X[:, 0] + rng.normal(0, 0.5, 60) > 0.5).astype(int)
+    m = LogisticRegression().fit(X, y)
+    fm = FeatureModel.from_doc({"attrs": {}, "tags": {
+        "features": names, "threshold": 0.0, "max_tags": 5,
+        "tags": {"lemon": {"intercept": float(m.intercept_[0]), "weights": dict(zip(names, m.coef_[0].tolist()))}}}})
+    for row in X[:10]:
+        feats = {n: v for n, v in zip(names, row) if v}
+        assert abs(fm.tag_model.probs(feats)[0][1] - m.predict_proba(row[None])[0, 1]) < 1e-9
+
+
+def test_support_bucket_from_the_input_itself():
+    from app.core.featuremodel import support_bucket
+    from app.models import ParsedBean
+    t2c, ko = {"lemon": "fruity"}, {"lemon": "레몬"}
+    assert support_bucket("sweetness", ParsedBean(text="달콤한 에티오피아"), t2c, ko) == "cue"
+    assert support_bucket("sweetness", ParsedBean(text="Ethiopia, lemon", origin_country="Ethiopia"), t2c, ko) == "notes"
+    assert support_bucket("acidity", ParsedBean(text="에티오피아 워시드", origin_country="Ethiopia"), t2c, ko) == "facts"
+    assert support_bucket("body", ParsedBean(text="하우스 블렌드"), t2c, ko) == "sparse"
+
+
+def test_shipped_config_v3_blocks_load():
+    doc = json.loads((settings.CONFIG_DIR / "feature_model_open.json").read_text(encoding="utf-8"))
+    fm = FeatureModel.from_doc(doc)
+    if "tags" in doc:
+        assert fm.tag_model is not None and fm.tag_model.tags and 0 < fm.tag_model.threshold < 1
+    if "abstain" in doc:
+        assert set(fm.abstain) <= {"acidity", "body", "sweetness"}
+    if "calibration" in doc:
+        assert all(set(v.values()) <= {"high", "medium", "low"} for v in fm.calibration.values())
