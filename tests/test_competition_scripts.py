@@ -152,57 +152,55 @@ def _write_fake_eval_dir(eval_dir: Path, *, with_explain_quality: bool = False) 
 # figures.py
 # ---------------------------------------------------------------------------
 
+def _write_fake_figure_inputs(tmp_path: Path) -> tuple[Path, Path]:
+    eval_dir = tmp_path / "eval"
+    _write_fake_eval_dir(eval_dir, with_explain_quality=True)
+    cmp = json.loads((eval_dir / "phase2_compare3.json").read_text(encoding="utf-8"))
+    cmp["variants"]["open_plus"] = json.loads(json.dumps(cmp["variants"]["open"]))
+    cmp["variants"]["open_plus"]["decaf_probe"].update(
+        {"candidates": 3, "by_source": {"roasters_kr": 2, "shopify_gauged": 1}})
+    cmp["variants"]["open_plus"]["decaf_probe"]["top"][0]["source"] = "roasters_kr"
+    _write(eval_dir / "phase2_compare3.json", cmp)
+    metric = {"n": 10, "mae": 0.6, "within1": 0.8, "spearman": 0.6}
+    _write(eval_dir / "phase2_zenodo_external.json", {
+        "samples": 10,
+        "variants": {"open": {"acidity": metric}, "open_neighbours": {"acidity": dict(metric, within1=0.6)}},
+        "baseline_constant_3": {"acidity": dict(metric, within1=0.65, spearman=None)},
+    })
+    csv_dir = tmp_path / "csv"
+    csv_dir.mkdir()
+    (csv_dir / "04_데이터셋_menu_items.csv").write_text(
+        "brand_key,name,is_decaf,caffeine_mg,source_url\n"
+        "brand:a,아메리카노,false,150,u\nbrand:a,디카페인 카페모카,true,136.7,u\n"
+        "brand:b,빅 라떼,false,495,u\nbrand:b,디카페인 아메리카노,true,9,u\nbrand:b,모름,false,,u\n",
+        encoding="utf-8-sig")
+    (csv_dir / "05_데이터셋_brands.csv").write_text(
+        "key,name,decaf_available,decaf_surcharge_krw,source_url,verified_at\n"
+        "brand:a,에이,true,,u,2026-01-01\nbrand:b,비,true,300,u,2026-01-01\n", encoding="utf-8-sig")
+    return eval_dir, csv_dir
+
+
 class TestFigures:
-    def test_main_writes_five_pngs(self, tmp_path):
-        eval_dir = tmp_path / "eval"
-        out_dir = tmp_path / "images"
-        _write_fake_eval_dir(eval_dir, with_explain_quality=True)
-
-        paths = figures.main(eval_dir, out_dir)
-
-        assert len(paths) == 5
-        for p in paths:
-            assert p.exists(), p
-            assert p.stat().st_size > 0
-        names = sorted(p.name for p in paths)
-        assert names == [
-            "01_violations.png", "02_loo_compare.png", "03_decaf_coverage.png",
-            "04_convergence.png", "05_latency_quality.png",
+    def test_main_writes_four_pngs(self, tmp_path):
+        eval_dir, csv_dir = _write_fake_figure_inputs(tmp_path)
+        paths = figures.main(eval_dir, tmp_path / "images", csv_dir)
+        assert sorted(p.name for p in paths) == [
+            "01_caffeine_strip.png", "02_filter_before_after.png", "03_decaf_coverage.png",
+            "04_external_validation.png",
         ]
-
-    def test_main_without_explain_quality_still_renders(self, tmp_path):
-        # explain_quality is produced by a separate, possibly-not-yet-run eval; figures.py
-        # must degrade gracefully instead of crashing.
-        eval_dir = tmp_path / "eval"
-        out_dir = tmp_path / "images"
-        _write_fake_eval_dir(eval_dir, with_explain_quality=False)
-
-        paths = figures.main(eval_dir, out_dir)
-
-        assert len(paths) == 5
         for p in paths:
             assert p.exists() and p.stat().st_size > 0
 
     def test_english_fallback_when_korean_font_missing(self, tmp_path, monkeypatch):
-        eval_dir = tmp_path / "eval"
-        out_dir = tmp_path / "images"
-        _write_fake_eval_dir(eval_dir, with_explain_quality=True)
+        eval_dir, csv_dir = _write_fake_figure_inputs(tmp_path)
         monkeypatch.setattr(figures, "_korean_font_available", lambda: False)
+        paths = figures.main(eval_dir, tmp_path / "images", csv_dir)
+        assert all(p.exists() and p.stat().st_size > 0 for p in paths)
 
-        paths = figures.main(eval_dir, out_dir)
-
-        assert len(paths) == 5
-        for p in paths:
-            assert p.exists() and p.stat().st_size > 0
-
-    def test_violations_heatmap_uses_details_when_present(self, tmp_path):
-        eval_dir = tmp_path / "eval"
-        _write_fake_eval_dir(eval_dir, with_explain_quality=False)
-        out_path = tmp_path / "01_violations.png"
-
-        figures.fig_violations(eval_dir, out_path, korean=True)
-
-        assert out_path.exists() and out_path.stat().st_size > 0
+    def test_caffeine_strip_counts_problem_drinks(self, tmp_path):
+        _, csv_dir = _write_fake_figure_inputs(tmp_path)
+        stats = figures.fig_caffeine_strip(csv_dir, tmp_path / "01.png", korean=True)
+        assert stats == {"drinks": 4, "over_300": 1, "decaf_over_30": 1}
 
 
 # ---------------------------------------------------------------------------

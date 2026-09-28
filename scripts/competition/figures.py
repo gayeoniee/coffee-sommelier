@@ -1,22 +1,28 @@
-"""Render the 5 result figures for the competition submission (spec doc section 5) from
-eval JSON files.
+"""Render the result figures for the competition submission (docs/competition/data-recipe-draft.md B-6).
 
-Usage: uv run python scripts/competition/figures.py <eval_dir> <out_dir>
+Usage: uv run python scripts/competition/figures.py <eval_dir> <out_dir> [<csv_dir>]
 
-Reads (all under <eval_dir>):
-  phase2_violations.json, phase2_coverage.json, phase2_compare3.json,
-  phase2_convergence.json, phase2_bench.json, phase2_explain_quality.json (optional).
+  <eval_dir>  e.g. data/eval/open   (phase2_violations.json, phase2_loo.json; phase2_compare3.json and
+              phase2_zenodo_external.json are read from <eval_dir> or its parent)
+  <csv_dir>   the portal CSVs (default data/competition: 04_데이터셋_menu_items.csv, 05_데이터셋_brands.csv)
 
-Writes 5 PNGs into <out_dir>:
-  01_violations.png, 02_loo_compare.png, 03_decaf_coverage.png,
-  04_convergence.png, 05_latency_quality.png.
+Writes 4 PNGs into <out_dir>:
+  01_caffeine_strip.png   caffeine per menu, by brand, with the 300 mg (pregnancy daily) and 30 mg (decaf) lines
+  02_filter_before_after.png  score-mixed conditions (earlier logic) vs filter-first (now)
+  03_decaf_coverage.png   decaf beans purchasable in Korea: open vs open + Korean roasteries, and the top 5
+  04_external_validation.png  Zenodo external panel (acidity) vs baselines, and confidence calibration
 
-Korean labels use the system "Malgun Gothic" font when available; otherwise labels fall
-back to English so text never renders as tofu boxes.
+The 5th image (05_product_card.png) is a screenshot of the live submission site
+(web/scripts/card-shot.mjs), not a chart.
+
+Korean labels use "Malgun Gothic" when available; otherwise labels fall back to English so text never
+renders as tofu boxes.
 """
 from __future__ import annotations
 
+import csv
 import json
+import random
 import sys
 from pathlib import Path
 
@@ -26,30 +32,22 @@ matplotlib.use("Agg")
 from matplotlib import font_manager  # noqa: E402
 from matplotlib import pyplot as plt  # noqa: E402
 
-BLUE = "#2f6fed"
-ORANGE = "#e07a3f"
-GRAY = "#9aa5b1"
+BLUE = "#2f6fed"      # our method
+ORANGE = "#e07a3f"    # highlighted problem cases
+GRAY = "#9aa5b1"      # context / baselines
+INK = "#1f2933"
+MUTED = "#52606d"
 
-PERSONA_LABELS_KO = ["디카페인+산미", "저카페인+우유X", "제한없음", "디카페인+우유X+단맛"]
-PERSONA_LABELS_EN = {
-    "디카페인+산미": "Decaf+Acidity",
-    "저카페인+우유X": "LowCaf+NoMilk",
-    "제한없음": "NoConstraint",
-    "디카페인+우유X+단맛": "Decaf+NoMilk+Sweet",
-}
-BRAND_LABELS_EN = {
-    "coffeebean": "CoffeeBean", "compose": "Compose", "hollys": "Hollys",
-    "mega": "MegaMGC", "paik": "PaikDabang", "paulbassett": "PaulBassett",
-    "starbucks": "Starbucks",
-}
-VARIANT_ORDER = ["full", "open", "open_plus"]
-VARIANT_LABELS_KO = {"full": "전체", "open": "오픈", "open_plus": "오픈+로스터리"}
-VARIANT_LABELS_EN = {"full": "Full", "open": "Open", "open_plus": "Open+KR"}
+DECAF_MAX_MG = 30         # app/core/scoring.py
+PREGNANCY_DAILY_MG = 300  # MFDS daily maximum for pregnant women
 
-NOISE_FILE_CANDIDATES = (
-    "phase2_loo.json", "phase2_loo_bge-m3.json",
-    "phase2_loo_open.json", "phase2_loo_open_bge-m3.json",
-)
+# Documented measurement of the earlier score-mixed logic (commit 333c522, README "조건 위반" paragraph):
+# 3 of 78 picks broke the no-milk condition. Kept as a constant because that logic no longer exists in code.
+BEFORE = {"violations": 3, "checked": 78, "examples": "마키아또 · 콘 파나 · 플랫 화이트 (우유 불가 손님에게)",
+          "examples_en": "macchiato, con panna, flat white (to a no-milk guest)"}
+
+DOMESTIC_SOURCES = {"roasters_kr", "shopify"}  # DB names: shopify = Blue Bottle Korea (bluebottle_kr in the CSV)
+KCA_CREDIT = "메뉴 카페인: 각 브랜드 공식 공시값(2026-09 수집)"
 
 
 def _korean_font_available() -> bool:
@@ -64,295 +62,267 @@ def _configure_font(korean: bool) -> None:
     if korean:
         plt.rcParams["font.family"] = "Malgun Gothic"
     plt.rcParams["axes.unicode_minus"] = False
+    for side in ("top", "right"):
+        plt.rcParams[f"axes.spines.{side}"] = False
+    plt.rcParams["axes.edgecolor"] = GRAY
+    plt.rcParams["axes.titleweight"] = "bold"
 
 
-def _label(name: str, korean: bool, en_table: dict) -> str:
-    return name if korean else en_table.get(name, name)
+def _load(path_dir: Path, name: str) -> dict:
+    return json.loads((Path(path_dir) / name).read_text(encoding="utf-8"))
 
 
-def _load(eval_dir: Path, name: str) -> dict:
-    return json.loads((Path(eval_dir) / name).read_text(encoding="utf-8"))
-
-
-def _load_optional(eval_dir: Path, name: str) -> dict | None:
-    path = Path(eval_dir) / name
-    if not path.exists():
-        return None
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def _load_compare3(eval_dir: Path) -> dict:
-    """phase2_compare3.json compares the full/open/open_plus variants side by side, so a
-    single copy is generated once (in the parent eval dir shared across variant runs) rather
-    than duplicated into every variant's own eval dir. Prefer a copy inside eval_dir itself
-    (tests write one there) and fall back to the parent directory (real per-variant runs,
-    e.g. data/eval/open, read the shared data/eval/phase2_compare3.json)."""
-    eval_dir = Path(eval_dir)
-    for candidate in (eval_dir / "phase2_compare3.json", eval_dir.parent / "phase2_compare3.json"):
+def _load_here_or_parent(eval_dir: Path, name: str) -> dict:
+    """Cross-variant files (compare3, zenodo) live once in data/eval/, shared by data/eval/open/ runs."""
+    for candidate in (Path(eval_dir) / name, Path(eval_dir).parent / name):
         if candidate.exists():
             return json.loads(candidate.read_text(encoding="utf-8"))
-    raise FileNotFoundError(
-        f"phase2_compare3.json not found in {eval_dir} or {eval_dir.parent}")
+    raise FileNotFoundError(f"{name} not found in {eval_dir} or its parent")
 
 
-def _fallback_brands(eval_dir: Path) -> list[str]:
-    cov = _load_optional(eval_dir, "phase2_coverage.json")
-    if cov and cov.get("menu_items_by_brand"):
-        return sorted(k.split(":", 1)[-1] for k in cov["menu_items_by_brand"])
-    return ["brand"]
+def _read_csv(path: Path) -> list[dict]:
+    with path.open(encoding="utf-8-sig", newline="") as f:
+        return list(csv.DictReader(f))
 
-
-# ---------------------------------------------------------------------------
-# 01_violations.png
-# ---------------------------------------------------------------------------
-
-def fig_violations(eval_dir: Path, out_path: Path, korean: bool) -> None:
-    data = _load(eval_dir, "phase2_violations.json")
-    details = data.get("details", [])
-    personas = sorted({d["persona"] for d in details}) or list(PERSONA_LABELS_KO)
-    brands = sorted({d["brand"] for d in details}) or _fallback_brands(eval_dir)
-
-    matrix = [[0] * len(brands) for _ in personas]
-    for d in details:
-        try:
-            i, j = personas.index(d["persona"]), brands.index(d["brand"])
-        except ValueError:
-            continue
-        matrix[i][j] += 1
-
-    fig, ax = plt.subplots(figsize=(max(6.0, len(brands) * 1.1), max(3.0, len(personas) * 0.9)))
-    vmax = max(1, max((max(row) for row in matrix), default=1))
-    im = ax.imshow(matrix, cmap="Blues", vmin=0, vmax=vmax, aspect="auto")
-    ax.set_xticks(range(len(brands)))
-    ax.set_xticklabels([_label(b, korean, BRAND_LABELS_EN) for b in brands], rotation=30, ha="right")
-    ax.set_yticks(range(len(personas)))
-    ax.set_yticklabels([_label(p, korean, PERSONA_LABELS_EN) for p in personas])
-    for i, row in enumerate(matrix):
-        for j, v in enumerate(row):
-            ax.text(j, i, str(v), ha="center", va="center", color="white" if v else "#1f2933")
-
-    checked, violations, rate = data.get("checked", 0), data.get("violations", 0), data.get("rate", 0.0)
-    title = (f"조건 위반: {violations}/{checked}건 ({rate:.1%})" if korean
-             else f"Violations: {violations}/{checked} ({rate:.1%})")
-    ax.set_title(title)
-    fig.colorbar(im, ax=ax, shrink=0.8, label=("위반 건수" if korean else "violations"))
-    fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
-    plt.close(fig)
-
-
-# ---------------------------------------------------------------------------
-# 02_loo_compare.png
-# ---------------------------------------------------------------------------
-
-def _noise_for(eval_dir: Path, exclude_sources: list[str]) -> dict[str, float] | None:
-    """Half-range of within1 accuracy across alternate-embedding reruns of the SAME LOO
-    configuration (same exclude_sources) — an approximate measurement-noise band."""
-    target = sorted(exclude_sources or [])
-    candidates = []
-    for name in NOISE_FILE_CANDIDATES:
-        d = _load_optional(eval_dir, name)
-        if d is not None and sorted(d.get("exclude_sources", []) or []) == target:
-            candidates.append(d)
-    if len(candidates) < 2:
-        return None
-    noise: dict[str, float] = {}
-    for attr in ("acidity", "body"):
-        values = [c[attr]["within1"] for c in candidates
-                  if c.get(attr, {}).get("within1") is not None]
-        if len(values) >= 2:
-            noise[attr] = (max(values) - min(values)) / 2
-    return noise or None
-
-
-def fig_loo_compare(eval_dir: Path, out_path: Path, korean: bool) -> None:
-    """Acidity and body are scored on TWO DIFFERENT fixed target sets (docs/adr/0010-body-heaviness.md):
-    acidity on the CQI-200 set (`loo.acidity`), body on a separate coffeereview-only set with a heaviness
-    label (`body_loo.body`) -- CQI's own body is always None, so `loo.body` would be n=0 for every variant.
-    Both n's are annotated on the bars since they differ per variant (the body pool shrinks a bit once
-    coffeereview_kaggle itself is excluded from the neighbour pool)."""
-    cmp = _load_compare3(eval_dir)
-    variants = [v for v in VARIANT_ORDER if v in cmp.get("variants", {})]
-    labels = VARIANT_LABELS_KO if korean else VARIANT_LABELS_EN
-
-    acidity = [cmp["variants"][v]["loo"]["acidity"]["within1"] for v in variants]
-    acidity_n = [cmp["variants"][v]["loo"]["acidity"]["n"] for v in variants]
-    body = [cmp["variants"][v]["body_loo"]["body"]["within1"] for v in variants]
-    body_n = [cmp["variants"][v]["body_loo"]["body"]["n"] for v in variants]
-    acidity_err, body_err = [], []
-    for v in variants:
-        noise = _noise_for(eval_dir, cmp["variants"][v].get("exclude_sources", []))
-        acidity_err.append((noise or {}).get("acidity", 0.0))
-        body_err.append((noise or {}).get("body", 0.0))
-
-    x = list(range(len(variants)))
-    width = 0.35
-    fig, ax = plt.subplots(figsize=(max(5.0, len(variants) * 2.2), 4.2))
-    bars_a = ax.bar([i - width / 2 for i in x], acidity, width, yerr=acidity_err, capsize=4,
-                    label=("산미 (CQI n)" if korean else "Acidity (CQI n)"), color=BLUE)
-    bars_b = ax.bar([i + width / 2 for i in x], body, width, yerr=body_err, capsize=4,
-                    label=("바디 (coffeereview n)" if korean else "Body (coffeereview n)"), color=ORANGE)
-    for rect, n in zip(bars_a, acidity_n):
-        ax.text(rect.get_x() + rect.get_width() / 2, rect.get_height(), f"n={n}",
-               ha="center", va="bottom", fontsize=8)
-    for rect, n in zip(bars_b, body_n):
-        ax.text(rect.get_x() + rect.get_width() / 2, rect.get_height(), f"n={n}",
-               ha="center", va="bottom", fontsize=8)
-    ax.set_xticks(x)
-    ax.set_xticklabels([labels.get(v, v) for v in variants])
-    ax.set_ylim(0, 1.08)
-    ax.set_ylabel("±1 이내 정확도" if korean else "±1 accuracy")
-    title = ("LOO 산미·바디 ±1 정확도 (서로 다른 고정 대상)" if korean
-             else "LOO acidity/body within-1 accuracy (separate fixed target sets)")
-    ax.set_title(title)
-    ax.legend(loc="lower right")
-    fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
-    plt.close(fig)
-
-
-# ---------------------------------------------------------------------------
-# 03_decaf_coverage.png
-# ---------------------------------------------------------------------------
 
 def _shorten(text: str, max_len: int) -> str:
-    """Shorten a table label to at most max_len characters so matplotlib's table cell
-    never clips it mid-word against the cell border. Cuts on a trailing space when one
-    falls near the limit so words are not chopped in half."""
-    text = text or ""
     if len(text) <= max_len:
         return text
-    cut = text[: max_len - 1].rstrip()
-    space = cut.rfind(" ")
-    if space >= max_len // 2:
-        cut = cut[:space]
-    return cut + "…"
+    return text[: max_len - 1].rstrip() + "…"
 
+
+def _save(fig, out_path: Path) -> None:
+    fig.savefig(out_path, dpi=150, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+
+
+# ---------------------------------------------------------------------------
+# 01 caffeine strip plot
+# ---------------------------------------------------------------------------
+
+def fig_caffeine_strip(csv_dir: Path, out_path: Path, korean: bool) -> dict:
+    menu = _read_csv(Path(csv_dir) / "04_데이터셋_menu_items.csv")
+    brand_names = {b["key"]: b["name"] for b in _read_csv(Path(csv_dir) / "05_데이터셋_brands.csv")}
+    rows = [r for r in menu if r["caffeine_mg"]]
+    by_brand: dict[str, list[dict]] = {}
+    for r in rows:
+        by_brand.setdefault(r["brand_key"], []).append(r)
+    brands = sorted(by_brand, key=lambda b: -max(float(r["caffeine_mg"]) for r in by_brand[b]))
+
+    rng = random.Random(0)
+    fig, ax = plt.subplots(figsize=(11, 5.6))
+    over_300 = decaf_over = 0
+    decaf_worst = None
+    for x, b in enumerate(brands):
+        for r in by_brand[b]:
+            mg = float(r["caffeine_mg"])
+            decaf_named = r["is_decaf"] == "true" or "디카페인" in r["name"]
+            bad_decaf = decaf_named and mg > DECAF_MAX_MG
+            over_300 += mg > PREGNANCY_DAILY_MG
+            decaf_over += bad_decaf
+            jitter = rng.uniform(-0.28, 0.28)
+            r["_x"] = x + jitter
+            if bad_decaf and (decaf_worst is None or mg > float(decaf_worst["caffeine_mg"])):
+                decaf_worst = r
+            if bad_decaf:
+                ax.scatter(x + jitter, mg, s=46, color=ORANGE, edgecolor="white", linewidth=0.8, zorder=3)
+            elif decaf_named:
+                ax.scatter(x + jitter, mg, s=18, color=BLUE, alpha=0.8, linewidth=0, zorder=2)
+            else:
+                ax.scatter(x + jitter, mg, s=18, color=GRAY, alpha=0.55, linewidth=0, zorder=2)
+
+    ax.axhline(PREGNANCY_DAILY_MG, color=INK, lw=1, ls="--", zorder=1)
+    ax.axhline(DECAF_MAX_MG, color=ORANGE, lw=1, ls="--", zorder=1)
+    right = len(brands) - 0.35
+    ax.text(right, PREGNANCY_DAILY_MG,
+            ("300mg 임산부 하루 권고 상한\n한 잔으로 넘는 메뉴 %d종" % over_300) if korean
+            else "300 mg pregnancy daily max\n%d drinks exceed it in one cup" % over_300,
+            ha="left", va="center", fontsize=9, color=INK)
+    ax.text(right, DECAF_MAX_MG + 8,
+            ("30mg 디카페인 상한(앱 규칙)\n'디카페인'인데 넘는 메뉴 %d종" % decaf_over) if korean
+            else "30 mg decaf cap (app rule)\n%d 'decaf' drinks exceed it" % decaf_over,
+            ha="left", va="bottom", fontsize=9, color=ORANGE)
+    if decaf_worst is not None:
+        mg = float(decaf_worst["caffeine_mg"])
+        ax.annotate(f"{decaf_worst['name']} {mg:g}mg", (decaf_worst["_x"], mg),
+                    xytext=(decaf_worst["_x"] - 0.2, mg + 75), fontsize=9, color=INK, ha="right",
+                    arrowprops={"arrowstyle": "-", "color": MUTED, "lw": 0.8})
+    ax.set_xticks(range(len(brands)))
+    ax.set_xticklabels([brand_names.get(b, b) if korean else b.split(":")[-1] for b in brands])
+    ax.set_ylabel("1잔 카페인 (mg)" if korean else "caffeine per cup (mg)")
+    ax.set_ylim(0, None)
+    ax.grid(axis="y", color="#e4e7eb", lw=0.6)
+    ax.set_axisbelow(True)
+    handles = [
+        plt.Line2D([], [], marker="o", ls="", color=GRAY, label="일반 메뉴" if korean else "regular"),
+        plt.Line2D([], [], marker="o", ls="", color=BLUE, label="디카페인 ≤30mg" if korean else "decaf <= 30 mg"),
+        plt.Line2D([], [], marker="o", ls="", color=ORANGE,
+                   label="'디카페인'인데 30mg 초과" if korean else "'decaf' but > 30 mg"),
+    ]
+    ax.legend(handles=handles, loc="upper right", frameon=False, fontsize=9)
+    ax.set_title(("같은 커피도 한 잔 카페인이 브랜드·메뉴마다 크게 다르다 (메뉴 %d종)" % len(rows)) if korean
+                 else "Caffeine per cup varies widely (%d drinks)" % len(rows), loc="left")
+    fig.text(0.01, -0.02, KCA_CREDIT if korean else "Caffeine: each brand's published values (collected 2026-09)",
+             fontsize=8, color=MUTED)
+    _save(fig, out_path)
+    return {"drinks": len(rows), "over_300": over_300, "decaf_over_30": decaf_over}
+
+
+# ---------------------------------------------------------------------------
+# 02 filter vs score, before/after
+# ---------------------------------------------------------------------------
+
+def fig_filter_before_after(eval_dir: Path, out_path: Path, korean: bool) -> None:
+    now = _load(eval_dir, "phase2_violations.json")
+    rows = [
+        ("조건을 점수에 섞은 이전 로직" if korean else "earlier: conditions mixed into the score",
+         BEFORE["violations"], BEFORE["checked"], ORANGE,
+         BEFORE["examples"] if korean else BEFORE["examples_en"]),
+        ("조건을 먼저 거르는 지금 (필터 → 점수)" if korean else "now: filter first, then score",
+         now["violations"], now["checked"], BLUE, "LLM 없이 규칙·SQL로 판정" if korean else "judged by rules/SQL, no LLM"),
+    ]
+    fig, ax = plt.subplots(figsize=(10, 3.4))
+    for y, (label, v, n, color, note) in enumerate(reversed(rows)):
+        rate = v / n if n else 0
+        ax.barh(y, rate * 100, color=color, height=0.5)
+        ax.text(max(rate * 100, 0) + 0.1, y, f"  {v}/{n}건 ({rate:.1%})  ·  {note}" if korean
+                else f"  {v}/{n} ({rate:.1%})  ·  {note}", va="center", fontsize=10, color=INK)
+    ax.set_yticks(range(len(rows)))
+    ax.set_yticklabels([r[0] for r in reversed(rows)])
+    ax.set_xlim(0, 12)
+    ax.set_xlabel("조건 위반 비율 (%)" if korean else "violation rate (%)")
+    ax.set_title("같은 독립 판정(사람이 붙인 우유 라벨·원본 디카페인 필드)으로 잰 조건 위반" if korean
+                 else "Condition violations, same independent check", loc="left")
+    fig.text(0.01, -0.06, ("지금: 페르소나 4 × 브랜드 10, 추천 최대 3개씩 = %d건" % now["checked"]) if korean
+             else "now: 4 personas x 10 brands, up to 3 picks = %d" % now["checked"], fontsize=8, color=MUTED)
+    _save(fig, out_path)
+
+
+# ---------------------------------------------------------------------------
+# 03 decaf coverage split by purchasable-in-Korea
+# ---------------------------------------------------------------------------
 
 def fig_decaf_coverage(eval_dir: Path, out_path: Path, korean: bool) -> None:
-    cmp = _load_compare3(eval_dir)
-    variants = [v for v in VARIANT_ORDER if v in cmp.get("variants", {})]
-    labels = VARIANT_LABELS_KO if korean else VARIANT_LABELS_EN
-    candidates = [cmp["variants"][v]["decaf_probe"]["candidates"] for v in variants]
+    cmp = _load_here_or_parent(eval_dir, "phase2_compare3.json")["variants"]
+    variants = [v for v in ("open", "open_plus") if v in cmp]
+    labels = {"open": "오픈 데이터만", "open_plus": "+ 국내 로스터리 (제출본)"} if korean else \
+        {"open": "open only", "open_plus": "+ Korean roasteries (submitted)"}
+    fig, (ax, ax_t) = plt.subplots(1, 2, figsize=(13, 4.2), gridspec_kw={"width_ratios": [1, 1.9]})
+    for x, v in enumerate(variants):
+        by = cmp[v]["decaf_probe"]["by_source"]
+        dom = sum(n for s, n in by.items() if s in DOMESTIC_SOURCES)
+        total = cmp[v]["decaf_probe"]["candidates"]
+        ax.bar(x, dom, color=BLUE, width=0.55)
+        ax.bar(x, total - dom, bottom=dom, color=GRAY, width=0.55, edgecolor="white", linewidth=2)
+        ax.text(x, total + 0.8, (f"{total}개 (국내 {dom})" if korean else f"{total} (KR {dom})"),
+                ha="center", fontsize=10, color=INK)
+    ax.set_xticks(range(len(variants)))
+    ax.set_xticklabels([labels[v] for v in variants])
+    ax.set_ylim(0, max(cmp[v]["decaf_probe"]["candidates"] for v in variants) * 1.2)
+    ax.set_ylabel("디카페인 원두 후보" if korean else "decaf bean candidates")
+    ax.legend(handles=[plt.Rectangle((0, 0), 1, 1, color=BLUE), plt.Rectangle((0, 0), 1, 1, color=GRAY)],
+              labels=["국내에서 구매 가능", "해외 로스터"] if korean else ["buyable in Korea", "overseas"],
+              frameon=False, fontsize=9, loc="upper left")
+    ax.set_title("국내에서 살 수 있는 디카페인 원두" if korean else "Decaf beans buyable in Korea", loc="left")
 
-    fig, (ax_bar, ax_table) = plt.subplots(1, 2, figsize=(12.5, 4), gridspec_kw={"width_ratios": [1, 1.9]})
-    bars = ax_bar.bar([labels.get(v, v) for v in variants], candidates, color=BLUE)
-    for rect, val in zip(bars, candidates):
-        ax_bar.text(rect.get_x() + rect.get_width() / 2, val, str(val), ha="center", va="bottom")
-    ax_bar.set_title("디카페인 후보 수" if korean else "Decaf candidates")
-    ax_bar.set_ylabel("원두 수" if korean else "coffees")
-
-    last_variant = variants[-1]
-    top = (cmp["variants"][last_variant]["decaf_probe"].get("top") or [])[:5]
-    ax_table.axis("off")
-    col_labels = ["원두", "로스터리", "점수"] if korean else ["Coffee", "Roaster", "Score"]
-    rows = [[_shorten(t.get("name", ""), 26), _shorten(t.get("roaster", ""), 18),
-             f"{t.get('score', 0):.4f}"] for t in top]
-    if rows:
-        tbl = ax_table.table(cellText=rows, colLabels=col_labels, loc="center", cellLoc="left",
-                              colWidths=[0.6, 0.28, 0.12])
+    top = (cmp[variants[-1]]["decaf_probe"].get("top") or [])[:5]
+    ax_t.axis("off")
+    cols = ["#", "원두", "로스터리", "구매", "점수"] if korean else ["#", "Coffee", "Roaster", "Where", "Score"]
+    cells = [[str(i + 1), _shorten(t["name"], 24), _shorten(t["roaster"], 16),
+              ("국내" if korean else "KR") if t["source"] in DOMESTIC_SOURCES else ("해외" if korean else "abroad"),
+              f"{t['score']:.2f}"] for i, t in enumerate(top)]
+    if cells:
+        tbl = ax_t.table(cellText=cells, colLabels=cols, loc="center", cellLoc="left",
+                         colWidths=[0.05, 0.53, 0.24, 0.08, 0.1])
         tbl.auto_set_font_size(False)
         tbl.set_fontsize(9)
-        tbl.scale(1, 1.5)
-    else:
-        ax_table.text(0.5, 0.5, "no data", ha="center", va="center")
-    ax_table.set_title(
-        f"디카페인+산미 top5 ({last_variant})" if korean else f"Decaf+Acidity top5 ({last_variant})")
-
-    fig.suptitle("디카페인 커버리지" if korean else "Decaf coverage")
-    fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
-    plt.close(fig)
-
-
-# ---------------------------------------------------------------------------
-# 04_convergence.png
-# ---------------------------------------------------------------------------
-
-def fig_convergence(eval_dir: Path, out_path: Path, korean: bool) -> None:
-    data = _load(eval_dir, "phase2_convergence.json")
-    mae = data.get("mae_by_step") or []
-    steps = list(range(len(mae)))
-
-    fig, ax = plt.subplots(figsize=(6, 4))
-    ax.plot(steps, mae, marker="o", color=BLUE)
-    ax.set_xlabel("기록 횟수" if korean else "records")
-    ax.set_ylabel("MAE")
-    title = (f"모의 사용자 {data.get('users', '-')}명 수렴 (개선 {data.get('improvement', 0):.4f})" if korean
-             else f"Convergence, {data.get('users', '-')} users (improved {data.get('improvement', 0):.4f})")
-    ax.set_title(title)
-    fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
-    plt.close(fig)
+        tbl.scale(1, 1.6)
+        for (r, c), cell in tbl.get_celld().items():
+            cell.set_edgecolor("#e4e7eb")
+            if r == 0:
+                cell.set_text_props(weight="bold")
+            elif cells[r - 1][3] in ("국내", "KR"):
+                cell.set_facecolor("#eaf1fd")
+    ax_t.set_title("'디카페인 + 산미' 손님 추천 상위 5 (제출본)" if korean else "Top 5 for a decaf + acidity guest",
+                   loc="left")
+    _save(fig, out_path)
 
 
 # ---------------------------------------------------------------------------
-# 05_latency_quality.png
+# 04 external validation + confidence calibration
 # ---------------------------------------------------------------------------
 
-def fig_latency_quality(eval_dir: Path, out_path: Path, korean: bool) -> None:
-    bench = _load(eval_dir, "phase2_bench.json")
-    eq = _load_optional(eval_dir, "phase2_explain_quality.json")
+def fig_external_validation(eval_dir: Path, out_path: Path, korean: bool) -> None:
+    z = _load_here_or_parent(eval_dir, "phase2_zenodo_external.json")
+    loo = _load(eval_dir, "phase2_loo.json")
+    model = z["variants"]["open"]["acidity"]
+    nbr = z["variants"]["open_neighbours"]["acidity"]
+    const = z["baseline_constant_3"]["acidity"]
+    fig, (ax, ax_c) = plt.subplots(1, 2, figsize=(12.5, 4.4), gridspec_kw={"width_ratios": [1.5, 1]})
+    bars = [
+        ("제출본 (특징 모델)" if korean else "submitted (feature model)", model, BLUE),
+        ("이웃 평균만" if korean else "neighbour average", nbr, GRAY),
+        ("항상 3 (기준선)" if korean else "always 3 (baseline)", const, GRAY),
+    ]
+    for x, (label, m, color) in enumerate(bars):
+        ax.bar(x, m["within1"] * 100, color=color, width=0.55)
+        sp = "-" if m.get("spearman") is None else f"{m['spearman']:.2f}"
+        ax.text(x, m["within1"] * 100 + 1.5, f"{m['within1']:.1%}\nMAE {m['mae']:.2f} · ρ {sp}\n(n={m['n']})",
+                ha="center", va="bottom", fontsize=9, color=INK)
+    ax.set_xticks(range(len(bars)))
+    ax.set_xticklabels([b[0] for b in bars])
+    ax.set_ylim(0, 118)
+    ax.set_ylabel("패널 점수와 ±1 이내 (%)" if korean else "within ±1 of panel (%)")
+    ax.set_title("외부 검증: 러시아 Q그레이더 패널 %d샘플의 산미 (학습에 안 씀)" % z["samples"] if korean
+                 else "External check: acidity vs a Q-grader panel (%d samples, never trained on)" % z["samples"],
+                 loc="left")
 
-    fig, (ax_lat, ax_qual) = plt.subplots(1, 2, figsize=(11, 4))
-
-    lat_labels = ["순차", "병렬"] if korean else ["Sequential", "Parallel"]
-    totals = [bench.get("sequential_total_s", 0.0), bench.get("parallel_total_s", 0.0)]
-    bars = ax_lat.bar(lat_labels, totals, color=[GRAY, BLUE])
-    for rect, val in zip(bars, totals):
-        ax_lat.text(rect.get_x() + rect.get_width() / 2, val, f"{val:.2f}s", ha="center", va="bottom")
-    ax_lat.set_ylabel("초" if korean else "seconds")
-    ax_lat.set_title(f"설명 생성 지연 ({bench.get('model', '-')})" if korean
-                      else f"Explain latency ({bench.get('model', '-')})")
-
-    if eq is not None:
-        summary = eq.get("summary", {})
-        metrics = ["rule_pass_rate", "no_contradiction_rate_both", "no_hallucination_rate_both"]
-        qual_labels = ["규칙 통과", "무모순", "무환각"] if korean else \
-            ["Rule pass", "No contradiction", "No hallucination"]
-        values = [summary.get(m) or 0.0 for m in metrics]
-        bars2 = ax_qual.bar(qual_labels, values, color=BLUE)
-        for rect, val in zip(bars2, values):
-            ax_qual.text(rect.get_x() + rect.get_width() / 2, val, f"{val:.0%}", ha="center", va="bottom")
-        ax_qual.set_ylim(0, 1)
-        ax_qual.set_title("설명 품질 판정" if korean else "Explain quality")
-    else:
-        ax_qual.axis("off")
-        ax_qual.text(0.5, 0.5, "설명 품질 데이터 없음" if korean else "no explain-quality data",
-                     ha="center", va="center")
-
-    fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
-    plt.close(fig)
+    conf = loo.get("acidity_within1_by_confidence") or {}
+    levels = [lv for lv in ("low", "medium", "high") if lv in conf]
+    names = {"low": "낮음", "medium": "보통", "high": "높음"} if korean else {lv: lv for lv in levels}
+    for x, lv in enumerate(levels):
+        c = conf[lv]
+        ax_c.bar(x, c["within1"] * 100, color=BLUE, alpha=0.45 + 0.25 * x, width=0.55)
+        ax_c.text(x, c["within1"] * 100 + 1.5, f"{c['within1']:.0%}\n(n={c['n']})", ha="center", fontsize=9,
+                  color=INK)
+    ax_c.set_xticks(range(len(levels)))
+    ax_c.set_xticklabels([names[lv] for lv in levels])
+    ax_c.set_ylim(0, 100)
+    ax_c.set_xlabel("카드에 보이는 신뢰도" if korean else "confidence shown on the card")
+    ax_c.set_title("신뢰도가 높을수록 실제로 더 맞다" if korean else "Higher confidence, more often right", loc="left")
+    fig.text(0.01, -0.05, ("외부 패널: Golovinsky 외(2026), Zenodo doi:10.5281/zenodo.20840464, CC BY-NC 4.0 — 평가 전용·집계 "
+                           "수치만. 오른쪽: 원두 200개를 하나씩 빼고 나머지로 맞혀 본 산미(CQI 커핑 데이터)." if korean else
+                           "Panel: Golovinsky et al. (2026), Zenodo doi:10.5281/zenodo.20840464, CC BY-NC 4.0 - "
+                           "evaluation only, aggregates only. Right: 200-bean leave-one-out (acidity)."),
+             fontsize=8, color=MUTED)
+    _save(fig, out_path)
 
 
 # ---------------------------------------------------------------------------
 
-FIGURES = [
-    ("01_violations.png", fig_violations),
-    ("02_loo_compare.png", fig_loo_compare),
-    ("03_decaf_coverage.png", fig_decaf_coverage),
-    ("04_convergence.png", fig_convergence),
-    ("05_latency_quality.png", fig_latency_quality),
-]
-
-
-def main(eval_dir: Path, out_dir: Path) -> list[Path]:
+def main(eval_dir: Path, out_dir: Path, csv_dir: Path | None = None) -> list[Path]:
     eval_dir, out_dir = Path(eval_dir), Path(out_dir)
+    csv_dir = Path(csv_dir) if csv_dir else Path(__file__).resolve().parent.parent.parent / "data" / "competition"
     out_dir.mkdir(parents=True, exist_ok=True)
     korean = _korean_font_available()
     _configure_font(korean)
+    jobs = [
+        ("01_caffeine_strip.png", lambda p: fig_caffeine_strip(csv_dir, p, korean)),
+        ("02_filter_before_after.png", lambda p: fig_filter_before_after(eval_dir, p, korean)),
+        ("03_decaf_coverage.png", lambda p: fig_decaf_coverage(eval_dir, p, korean)),
+        ("04_external_validation.png", lambda p: fig_external_validation(eval_dir, p, korean)),
+    ]
     paths = []
-    for filename, render in FIGURES:
+    for filename, render in jobs:
         out_path = out_dir / filename
-        render(eval_dir, out_path, korean)
+        render(out_path)
         paths.append(out_path)
     return paths
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("usage: figures.py <eval_dir> <out_dir>", file=sys.stderr)
+    if len(sys.argv) not in (3, 4):
+        print("usage: figures.py <eval_dir> <out_dir> [<csv_dir>]", file=sys.stderr)
         sys.exit(2)
-    for p in main(Path(sys.argv[1]), Path(sys.argv[2])):
+    for p in main(Path(sys.argv[1]), Path(sys.argv[2]), Path(sys.argv[3]) if len(sys.argv) == 4 else None):
         print(p)
