@@ -30,11 +30,11 @@
       },
       "basis": {
         "acidity": {
-          "model": 1.88,
+          "model": 1.78,
           "contributions": {
-            "blend_or_unknown_origin": -0.005,
-            "roast_dark": -0.218,
-            "notes_sweet": -0.089
+            "blend_or_unknown_origin": -0.006,
+            "roast_dark": -0.244,
+            "notes_sweet": -0.18
           }
         },
         "body": "hand estimate (pre-ADR 0012)",
@@ -88,11 +88,11 @@
       },
       "basis": {
         "acidity": {
-          "model": 2.11,
+          "model": 2.09,
           "contributions": {
-            "blend_or_unknown_origin": -0.005,
-            "decaf": -0.021,
-            "decaf_water": -0.051
+            "blend_or_unknown_origin": -0.006,
+            "decaf": -0.103,
+            "decaf_water": -0.014
           }
         },
         "body": "hand estimate (pre-ADR 0012)",
@@ -253,9 +253,9 @@
       },
       "basis": {
         "acidity": {
-          "model": 2.18,
+          "model": 2.21,
           "contributions": {
-            "blend_or_unknown_origin": -0.005
+            "blend_or_unknown_origin": -0.006
           }
         },
         "body": "cue '묵직한 바디' → 4.5",
@@ -303,10 +303,10 @@
       },
       "basis": {
         "acidity": {
-          "model": 2.16,
+          "model": 2.1,
           "contributions": {
-            "blend_or_unknown_origin": -0.005,
-            "decaf": -0.021
+            "blend_or_unknown_origin": -0.006,
+            "decaf": -0.103
           }
         },
         "body": "cue '묵직한 바디' → 4.5",
@@ -443,12 +443,12 @@
         "acidity": {
           "model": 1.0,
           "contributions": {
-            "region_south_america": -0.046,
-            "country_Brazil": -0.077,
-            "roast_medium-dark": -0.366,
-            "notes_spices": -0.008,
-            "notes_sweet": -0.089,
-            "notes_nutty/cocoa": -0.742
+            "region_south_america": -0.084,
+            "country_Brazil": 0.011,
+            "roast_medium-dark": -0.516,
+            "notes_spices": -0.091,
+            "notes_sweet": -0.18,
+            "notes_nutty/cocoa": -0.869
           }
         },
         "body": "cue '묵직한 바디' → 4.5",
@@ -540,10 +540,10 @@
       },
       "basis": {
         "acidity": {
-          "model": 2.18,
+          "model": 1.95,
           "contributions": {
-            "blend_or_unknown_origin": -0.005,
-            "notes_roasted": -0.006
+            "blend_or_unknown_origin": -0.006,
+            "notes_roasted": -0.254
           }
         },
         "body": "hand estimate (pre-ADR 0012)",
@@ -680,10 +680,10 @@
       },
       "basis": {
         "acidity": {
-          "model": 2.16,
+          "model": 2.1,
           "contributions": {
-            "blend_or_unknown_origin": -0.005,
-            "decaf": -0.021
+            "blend_or_unknown_origin": -0.006,
+            "decaf": -0.103
           }
         },
         "body": "hand estimate (pre-ADR 0012)",
@@ -773,10 +773,10 @@
       },
       "basis": {
         "acidity": {
-          "model": 2.16,
+          "model": 2.1,
           "contributions": {
-            "blend_or_unknown_origin": -0.005,
-            "decaf": -0.021
+            "blend_or_unknown_origin": -0.006,
+            "decaf": -0.103
           }
         },
         "body": "hand estimate (pre-ADR 0012)",
@@ -829,10 +829,10 @@
       },
       "basis": {
         "acidity": {
-          "model": 1.81,
+          "model": 1.77,
           "contributions": {
-            "blend_or_unknown_origin": -0.005,
-            "notes_nutty/cocoa": -0.371
+            "blend_or_unknown_origin": -0.006,
+            "notes_nutty/cocoa": -0.435
           }
         },
         "body": "hand estimate (pre-ADR 0012)",
@@ -878,12 +878,12 @@
       },
       "basis": {
         "acidity": {
-          "model": 2.15,
+          "model": 1.97,
           "contributions": {
-            "blend_or_unknown_origin": -0.005,
-            "roast_medium": 0.073,
-            "decaf": -0.021,
-            "notes_sweet": -0.089
+            "blend_or_unknown_origin": -0.006,
+            "roast_medium": 0.048,
+            "decaf": -0.103,
+            "notes_sweet": -0.18
           }
         },
         "body": "hand estimate (pre-ADR 0012)",
@@ -937,8 +937,8 @@
         "acidity": {
           "model": 1.96,
           "contributions": {
-            "blend_or_unknown_origin": -0.005,
-            "roast_dark": -0.218
+            "blend_or_unknown_origin": -0.006,
+            "roast_dark": -0.244
           }
         },
         "body": "hand estimate (pre-ADR 0012)",
@@ -986,12 +986,12 @@
       },
       "basis": {
         "acidity": {
-          "model": 2.02,
+          "model": 1.91,
           "contributions": {
-            "blend_or_unknown_origin": -0.005,
-            "decaf": -0.021,
-            "decaf_water": -0.051,
-            "notes_sweet": -0.089
+            "blend_or_unknown_origin": -0.006,
+            "decaf": -0.103,
+            "decaf_water": -0.014,
+            "notes_sweet": -0.18
           }
         },
         "body": "hand estimate (pre-ADR 0012)",
