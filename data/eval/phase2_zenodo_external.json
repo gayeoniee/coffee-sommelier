@@ -1,0 +1,160 @@
+{
+  "source": "https://doi.org/10.5281/zenodo.20840464",
+  "file": "panelists_scores_EN.xlsx",
+  "file_md5": "a0fddda083c2726511f7dc3a29e3bef0",
+  "attribution": "Golovinsky R., Ivanov I., Aglikov A., Aliev T., Timofeenko I., Novikov A., Zayats M., Ashikhmina M., Orlova O., Masalovich M., Skorb E. (2026). Electrochemical profiles of coffee drink samples (v1.1) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.20840464 — licence CC BY-NC 4.0 (stricter of the record's two statements); used unmodified, evaluation only.",
+  "use": "external evaluation only -- never training, never loaded into a DB, not redistributed",
+  "samples": 196,
+  "rows": 526,
+  "decaf_samples": 2,
+  "mapping": {
+    "intensity": {
+      "low": 1,
+      "below middle": 2,
+      "middle": 3,
+      "above middle": 4,
+      "high": 5
+    },
+    "body_phrases": {
+      "below average": 2,
+      "above average": 4,
+      "below medium": 2,
+      "above medium": 4
+    },
+    "body_words": {
+      "watery": 1,
+      "empty": 1,
+      "thin": 1.5,
+      "light": 2,
+      "tea": 2,
+      "tea-like": 2,
+      "delicate": 2,
+      "low": 2,
+      "medium": 3,
+      "average": 3,
+      "round": 3,
+      "rounded": 3,
+      "dense": 4,
+      "density": 4,
+      "enveloping": 4,
+      "oily": 4,
+      "creamy": 4,
+      "high": 4,
+      "syrupy": 4.5,
+      "thick": 4.5,
+      "full": 4.5,
+      "heavy": 5
+    },
+    "roast_field": {
+      "filter": "light",
+      "espresso": "medium",
+      "filter/espresso": "medium",
+      "milk drinks": "dark"
+    }
+  },
+  "embedding_model": "nvidia/nemotron-3-embed-1b",
+  "model_files_sha1": {
+    "attr_model.json": "fa15cf7ad595",
+    "tag_model.json": "57fd105ee18b",
+    "feature_model_open.json": "9f3d4566e6cb"
+  },
+  "variants": {
+    "full": {
+      "predictor": "coffee DB neighbours → tag model → attribute model → text cues",
+      "parsed_origin": 72,
+      "acidity": {
+        "n": 196,
+        "mae": 0.5697,
+        "within1": 0.8367,
+        "spearman": 0.7007,
+        "mean_truth": 2.329,
+        "mean_pred": 2.104
+      },
+      "body": {
+        "n": 195,
+        "mae": 0.5216,
+        "within1": 0.8872,
+        "spearman": 0.1817,
+        "mean_truth": 2.948,
+        "mean_pred": 2.939
+      },
+      "sweetness": {
+        "n": 196,
+        "mae": 1.1794,
+        "within1": 0.4184,
+        "spearman": 0.6266,
+        "mean_truth": 2.507,
+        "mean_pred": 3.666
+      },
+      "tags_before_text_cues": {
+        "n": 192,
+        "precision": 0.4517,
+        "recall": 0.4291,
+        "f1": 0.4401,
+        "category_f1": 0.6824
+      }
+    },
+    "open": {
+      "predictor": "coffee_open DB neighbours → roaster-gauge feature model → text cues",
+      "parsed_origin": 72,
+      "acidity": {
+        "n": 196,
+        "mae": 0.6381,
+        "within1": 0.801,
+        "spearman": 0.6085,
+        "mean_truth": 2.329,
+        "mean_pred": 2.219
+      },
+      "body": {
+        "n": 160,
+        "mae": 0.6505,
+        "within1": 0.7875,
+        "spearman": -0.033,
+        "mean_truth": 2.94,
+        "mean_pred": 3.434
+      },
+      "sweetness": {
+        "n": 196,
+        "mae": 1.5759,
+        "within1": 0.3469,
+        "spearman": -0.2267,
+        "mean_truth": 2.507,
+        "mean_pred": 3.979
+      },
+      "tags_before_text_cues": {
+        "n": 192,
+        "precision": 0.3686,
+        "recall": 0.2632,
+        "f1": 0.3071,
+        "category_f1": 0.5416
+      }
+    }
+  },
+  "baseline_constant_3": {
+    "acidity": {
+      "n": 196,
+      "mae": 0.9277,
+      "within1": 0.6531,
+      "spearman": null,
+      "mean_truth": 2.329,
+      "mean_pred": 3.0
+    },
+    "body": {
+      "n": 195,
+      "mae": 0.3623,
+      "within1": 0.9846,
+      "spearman": null,
+      "mean_truth": 2.948,
+      "mean_pred": 3.0
+    },
+    "sweetness": {
+      "n": 196,
+      "mae": 0.6509,
+      "within1": 0.7704,
+      "spearman": null,
+      "mean_truth": 2.507,
+      "mean_pred": 3.0
+    }
+  },
+  "embedding_requests": 0
+}
