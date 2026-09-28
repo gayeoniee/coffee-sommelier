@@ -120,6 +120,11 @@ def test_finalize_edits_foreign_words_length_and_missing_violation():
     text, ev = finalize_explanation("초콜릿(chocolate) 향이 선호와 parcialmente 맞아요. 바디는 비슷해요 okay.", it,
                                     Profile(), p, None)
     assert (text, ev) == ("초콜릿(chocolate) 향이 선호와 부분적으로 맞아요. 바디는 비슷해요.", "edited")
+    # 3차 run, yirgacheffe: the English bean name was copied; \b missed "Yirgacheffe는" (particle right after it)
+    named = Item(key="c", name="Decaf Ethiopia Yirgacheffe", source="db", acidity=3, body=3, sweetness=3)
+    text, ev = finalize_explanation("Decaf Ethiopia Yirgacheffe는 산미가 비슷해 잘 맞아요. Kenya 원두와는 달라요.", named,
+                                    Profile(), _payload(named, Profile()), None)
+    assert (text, ev) == ("이 음료는 산미가 비슷해 잘 맞아요. 원두와는 달라요.", "edited")
     three = "산미가 비슷해 잘 맞아요. 바디도 비슷해요. 디카페인으로 바꿔 주문하면 돼요."
     assert finalize_explanation(three, it, Profile(), p, None)[0] == "산미가 비슷해 잘 맞아요. 바디도 비슷해요."
     short_first = "디카페인이 아니에요. 산미는 비슷해 잘 맞아요. 바디는 비슷해요."

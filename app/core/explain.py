@@ -267,11 +267,15 @@ BOOL_TOKEN = re.compile(r"(?<![A-Za-z])(?:true|false|null|None|True|False)(?![A-
 KEY_NAMES = ("맛 비교", "향미 비교", "손님 취향 요약", "디카페인 주문 시 카페인(", "디카페인으로 주문 권장",
              "디카페인 추가요금")
 LATIN_FIX = {"parcialmente": "부분적으로", "partially": "부분적으로"}
-_LATIN_WORD = re.compile(r"\s?\b[A-Za-z]{2,}\b")
+# Latin runs, also when a Korean particle follows ("Yirgacheffe는" — \b sees no boundary between e and 는)
+_LATIN_WORD = re.compile(r"\s?(?<![A-Za-z])[A-Za-z]{2,}(?![A-Za-z])")
 GUARD_REJECTS = ("placeholder", "bool_copy", "key_copy", "direction")
 
 
-def _strip_foreign(text: str, allowed: set[str]) -> str:
+def _strip_foreign(text: str, allowed: set[str], name: str = "") -> str:
+    if re.search(r"[A-Za-z]{2,}", name) and name in text:
+        text = text.replace(name, "이 음료")     # "Decaf Ethiopia Yirgacheffe는" → "이 음료는", not a stranded "는"
+
     def fix(m: re.Match) -> str:
         w = m.group().strip()
         if w.lower() in allowed:
@@ -298,8 +302,8 @@ def finalize_explanation(text: str, item: Item, profile: Profile, payload: dict,
     Rejected (text '', event one of GUARD_REJECTS — the caller shows the template instead, telemetry `fb_guard`):
     a copied 〔placeholder〕, a copied true/false/null/None, a payload key name, or a 산미/바디/단맛 direction word
     the numbers contradict ("산미가 손님 선호보다 높아" when it is lower).
-    Edited (event "edited"): Latin words that are not the drink's flavor tags are dropped (parcialmente →
-    부분적으로), the text is cut to two sentences, and a violation it never mentions gets the template's
+    Edited (event "edited"): a Latin-script drink name becomes "이 음료", other Latin words that are not the
+    drink's flavor tags are dropped (parcialmente → 부분적으로), the text is cut to two sentences, and a violation it never mentions gets the template's
     '주의: … — ' prefix (no extra sentence). Otherwise event None."""
     if PLACEHOLDER.search(text):
         return "", "placeholder"
@@ -307,7 +311,7 @@ def finalize_explanation(text: str, item: Item, profile: Profile, payload: dict,
         return "", "bool_copy"
     if any(k in text for k in KEY_NAMES):
         return "", "key_copy"
-    out = _strip_foreign(text, allowed_latin(payload))
+    out = _strip_foreign(text, allowed_latin(payload), item.name)
     out = re.sub(r"\s{2,}", " ", re.sub(r"\s+([,.!?])", r"\1", out)).strip()
     out = _trim_sentences(out, violation)
     drink = {a: item.attr(a) for a in ATTRS}
