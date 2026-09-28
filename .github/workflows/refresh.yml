@@ -1,0 +1,195 @@
+# Weekly data refresh (scripts/refresh/refresh.py, docs/adr/0015-automated-refresh.md): re-collect menus and
+# roastery beans, diff them against production, enrich/embed only what changed, run the quality gates on a staging
+# copy of both variants, then publish to Neon (catalog tables only) and open a PR with the regenerated numbers.
+# A failed gate writes nothing to a database and opens the issue "데이터 갱신 실패 <date>".
+#
+# First run / any manual check:  gh workflow run refresh.yml -f dry_run=true     (no Neon writes, no PR)
+# Monthly (first Monday KST) the retrain job trains candidate models and opens a PR only if they are better
+# (never auto-merged).
+#
+# Secrets: NVIDIA_API_KEY (CI enrich + embeddings), NEON_DATABASE_URL (full), NEON_OPEN_DATABASE_URL (open data).
+# GitHub masks secret values in logs; the scripts only ever print "local:<db>"/"remote:<db>".
+name: data-refresh
+
+on:
+  schedule:
+    - cron: "0 18 * * 0"          # Mon 03:00 KST (Sun 18:00 UTC). GitHub may start scheduled runs a little late.
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "DRY_RUN: 게이트·리포트만, Neon 쓰기와 PR 없음"
+        type: boolean
+        default: true
+      retrain:
+        description: "월간 재학습 후보도 지금 돌리기"
+        type: boolean
+        default: false
+
+concurrency:
+  group: data-refresh
+  cancel-in-progress: false         # never cut a publish short
+
+permissions:
+  contents: write                   # push the refresh/<date> and retrain/<date> branches
+  pull-requests: write
+  issues: write
+
+env:
+  DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && '1' || '0' }}
+  DATABASE_URL: postgresql://coffee:coffee@localhost:5432/coffee          # the job's own Postgres (staging DBs)
+  DATABASE_URL_TEST: postgresql://coffee:coffee@localhost:5432/coffee_test
+  PYTHONIOENCODING: utf-8
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    services:
+      db:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_USER: coffee
+          POSTGRES_PASSWORD: coffee
+          POSTGRES_DB: coffee
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U coffee"
+          --health-interval 5s
+          --health-retries 10
+    env:
+      ENRICH_TASK: enrich_ci                              # no Ollama in CI: NVIDIA-hosted enrich
+      NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+      REFRESH_SOURCE_URL: ${{ secrets.NEON_DATABASE_URL }}  # current production catalog (read) = publish target
+      PUBLISH_OPEN_URL: ${{ secrets.NEON_OPEN_DATABASE_URL }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.3"
+          enable-cache: true
+      - run: uv sync --frozen
+      - name: Check secrets
+        run: |
+          for v in NVIDIA_API_KEY REFRESH_SOURCE_URL PUBLISH_OPEN_URL; do
+            [ -n "${!v}" ] || { echo "::error::secret for $v is missing"; exit 1; }
+          done
+      - name: ISO week
+        id: week
+        run: echo "key=$(date -u +%G-W%V)" >> "$GITHUB_OUTPUT"
+      # Raw snapshots are cached per ISO week: a re-run in the same week (or the retrain job) reuses them instead of
+      # crawling the sites again; a new week starts from an empty cache, so product pages are re-fetched weekly.
+      - uses: actions/cache@v4
+        with:
+          path: data/raw
+          key: raw-${{ steps.week.outputs.key }}
+      - name: Git identity
+        run: |
+          git config user.name "coffee-refresh[bot]"
+          git config user.email "coffee-refresh-bot@users.noreply.github.com"
+      - name: Refresh
+        run: uv run python -m scripts.refresh.refresh
+      - name: Job summary
+        if: always()
+        run: cat data/refresh/*/report.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: refresh-report-${{ github.run_id }}
+          path: |
+            data/refresh/*/report.json
+            data/refresh/*/report.md
+            data/refresh/*/*.log
+            data/refresh/*/traceback.txt
+          if-no-files-found: warn
+          retention-days: 90
+
+  retrain:
+    needs: refresh
+    if: ${{ always() && (github.event_name == 'schedule' || inputs.retrain) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    services:
+      db:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_USER: coffee
+          POSTGRES_PASSWORD: coffee
+          POSTGRES_DB: coffee
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U coffee"
+          --health-interval 5s
+          --health-retries 10
+    env:
+      NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+      NEON_DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: First Monday (KST)?
+        id: when
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$(TZ=Asia/Seoul date +%-d)" -le 7 ]; then
+            echo "run=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=0" >> "$GITHUB_OUTPUT"; echo "not the first Monday of the month: skipping"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.when.outputs.run == '1'
+      - uses: astral-sh/setup-uv@v6
+        if: steps.when.outputs.run == '1'
+        with:
+          version: "0.12.3"
+          enable-cache: true
+      - if: steps.when.outputs.run == '1'
+        run: uv sync --frozen
+      - name: ISO week / month
+        id: keys
+        if: steps.when.outputs.run == '1'
+        run: |
+          echo "week=$(date -u +%G-W%V)" >> "$GITHUB_OUTPUT"
+          echo "month=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache/restore@v4                    # roasters_kr gauges for the feature model
+        if: steps.when.outputs.run == '1'
+        with:
+          path: data/raw
+          key: raw-${{ steps.keys.outputs.week }}
+      - uses: actions/cache@v4                            # tag-free training embeddings (NVIDIA calls saved)
+        if: steps.when.outputs.run == '1'
+        with:
+          path: data/embedded
+          key: embedded-${{ steps.keys.outputs.month }}
+          restore-keys: embedded-
+      - name: Copy the production catalog into the job's Postgres (full + open)
+        if: steps.when.outputs.run == '1'
+        run: |
+          uv run python -c "import psycopg; c = psycopg.connect('postgresql://coffee:coffee@localhost:5432/coffee', autocommit=True); c.execute('CREATE DATABASE coffee_open')"
+          SYNC_SRC_URL="$NEON_DATABASE_URL" SYNC_DST_URL="$DATABASE_URL" \
+            uv run python -m scripts.refresh.catalog_sync --apply-schema > /dev/null
+          SYNC_SRC_URL="$DATABASE_URL" SYNC_DST_URL="postgresql://coffee:coffee@localhost:5432/coffee_open" \
+            uv run python -m scripts.refresh.catalog_sync --apply-schema --variant open > /dev/null
+      - name: Git identity
+        if: steps.when.outputs.run == '1'
+        run: |
+          git config user.name "coffee-refresh[bot]"
+          git config user.email "coffee-refresh-bot@users.noreply.github.com"
+      - name: Retrain candidates and compare
+        if: steps.when.outputs.run == '1'
+        run: |
+          if [ "$DRY_RUN" = "1" ]; then uv run python -m scripts.refresh.retrain --dry-run
+          else uv run python -m scripts.refresh.retrain; fi
+      - name: Job summary
+        if: always() && steps.when.outputs.run == '1'
+        run: cat data/refresh/retrain-*/retrain.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.when.outputs.run == '1'
+        with:
+          name: retrain-report-${{ github.run_id }}
+          path: |
+            data/refresh/retrain-*/retrain.json
+            data/refresh/retrain-*/retrain.md
+            data/refresh/retrain-*/*.log
+          if-no-files-found: warn
+          retention-days: 90

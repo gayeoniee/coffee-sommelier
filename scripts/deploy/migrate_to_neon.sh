@@ -18,12 +18,26 @@
 #                     VARIANT=open sets both automatically.
 #   INCLUDE_REVIEWS=1  also copy reviews + enrich_log data
 #   RESET=1         target already has tables: DROP and recreate them. Destroys production user data!
+#   MODE=catalog    target already in production: upsert ONLY the catalog tables by key (scripts/refresh/
+#                   catalog_sync.py -- changed rows only; rows gone from the source are deleted or, when a
+#                   tasting points at them, kept with active=false). users/taste_profiles/tastings/profile_history
+#                   are never touched, and no docker is needed. DRY_RUN=1 prints the plan only. This is what the
+#                   automated refresh uses (docs/adr/0015-automated-refresh.md); RESET=1 is for a first migration.
 set -euo pipefail
 export MSYS_NO_PATHCONV=1 MSYS2_ARG_CONV_EXCL='*'   # Git Bash on Windows: don't rewrite /tmp paths
 
 : "${NEON_DATABASE_URL:?NEON_DATABASE_URL을 설정하세요 (Neon의 direct 연결 문자열)}"
 SRC_DB=${SRC_DB:-coffee}
 SRC_USER=${SRC_USER:-coffee}
+
+if [ "${MODE:-}" = "catalog" ]; then
+  cd "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+  args=(--apply-schema)
+  [ "${DRY_RUN:-0}" = "1" ] && args=(--dry-run)
+  echo "카탈로그만 동기화: 로컬 $SRC_DB → 대상 (사용자 테이블 불변${DRY_RUN:+, DRY_RUN})"
+  SYNC_SRC_URL="${SRC_URL:-postgresql://${SRC_USER}:coffee@localhost:5432/${SRC_DB}}" SYNC_DST_URL="$NEON_DATABASE_URL" \
+    exec uv run python -m scripts.refresh.catalog_sync "${args[@]}"
+fi
 DUMP=/tmp/coffee_neon.dump
 LIST=/tmp/coffee_neon.list
 
@@ -51,7 +65,7 @@ if [ "$existing" != "0" ]; then
     CLEAN=(--clean --if-exists)
   else
     echo "대상 DB에 이미 테이블이 $existing개 있어요. 처음부터 다시 옮기려면 RESET=1 (사용자 데이터 삭제)," >&2
-    echo "카탈로그만 갱신하려면: DATABASE_URL=<neon> uv run python -m pipeline run --only load (upsert)" >&2
+    echo "카탈로그만 갱신하려면: MODE=catalog (키 기준 upsert, 사용자 테이블 불변)" >&2
     exit 1
   fi
 fi

@@ -473,8 +473,11 @@ def git_pr(cfg: Config, rep: Report, numbers_dir: Path, report_md: Path) -> dict
     body_file.write_text(body, encoding="utf-8")
     url = sh("gh", "pr", "create", "--title", f"데이터 자동 갱신 {cfg.date}", "--body-file", str(body_file),
              "--base", "main", "--head", branch).strip().splitlines()[-1]
-    sh("gh", "pr", "merge", "--auto", "--squash", branch)
-    return {"branch": branch, "pr": url, "steps": steps}
+    # The gates above already ran the checks CI would run; auto-merge waits for any required ones. Non-fatal: the DBs
+    # are published either way, and an unmerged PR only leaves the committed numbers a week behind.
+    code, log = gates.run(["gh", "pr", "merge", "--auto", "--squash", branch])
+    steps.append({"cmd": "gh pr merge", "code": code})
+    return {"branch": branch, "pr": url, "auto_merge": "ok" if code == 0 else log.strip()[-300:], "steps": steps}
 
 
 def failure_issue(cfg: Config, report_md: Path) -> dict:
