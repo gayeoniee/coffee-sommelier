@@ -466,3 +466,16 @@ def test_ediya_merges_cards_keeps_coffee_and_decaf_skus(tmp_path):
     for k in ("menu:ediya:얼박샷추(디카페인 원두)", "menu:ediya:얼박샷추"):
         assert (by[k].is_decaf, by[k].decaf_option) == (False, False)
     assert all(i.brand_key == "brand:ediya" and i.caffeine_mg is not None for i in items)
+
+
+def test_kca_tea_caffeine_fills_only_missing_values_and_reports_matches():
+    from pipeline import settings
+    from pipeline.normalize.menus import apply_kca_caffeine, kca_tea_drinks
+    drinks = kca_tea_drinks(settings.CURATED_DIR)
+    assert len(drinks) == 12 and {d["caffeine_mg"] for d in drinks} >= {45, 172}
+    items = [MenuItemRecord(key="a", brand_key="brand:mega", name="녹차 라떼", caffeine_mg=None, collected_at="x"),
+             MenuItemRecord(key="b", brand_key="brand:mega", name="로얄밀크티라떼", caffeine_mg=118.1, collected_at="x"),
+             MenuItemRecord(key="c", brand_key="brand:paik", name="녹차라떼", caffeine_mg=None, collected_at="x")]
+    out, rep = apply_kca_caffeine(items, drinks)
+    assert [m.caffeine_mg for m in out] == [45.0, 118.1, None]   # brand value kept; other brand's drink not matched
+    assert rep["filled"] == 1 and [m["kca_mg"] for m in rep["matched"]] == [45, 57]

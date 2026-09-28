@@ -1,0 +1,29 @@
+# 한국소비자원 「프랜차이즈 카페 차음료 품질비교」(비교공감 제2026-8호, 2026-05-28) 종합결과표(붙임 4)를 옮겨 적은 것.
+# 국내 매장 수 상위 6개 프랜차이즈의 말차/녹차라떼 6개·밀크티 6개, 한국소비자원이 직접 시험한 1잔 기준 실측값.
+#
+# 출처(원문):
+#   보도자료  https://www.kca.go.kr/home/sub.do?menukey=4002&mode=view&no=1004470468
+#            (게시판 표기: "공공누리 제0유형(공공저작물의 자유이용)")
+#   종합결과표 https://www.consumer.go.kr/user/ftc/consumer/cnsmrBBS/79/selectInfoRptDetail.do?infoId=A1081353&cntntsId=00000566
+#            (소비자24 비교공감, 붙임4 종합결과표.pdf)
+#   브리핑    https://www.korea.kr/briefing/policyBriefingView.do?newsId=156764008 (공공누리 제1유형 출처표시)
+# 라이선스: 공공누리 — 이 프로젝트는 가장 엄격한 표기인 제1유형(출처표시) 조건을 따른다.
+attribution: "이 자료는 한국소비자원이 2026년 작성하여 공공누리 제1유형으로 개방한 '프랜차이즈 카페 차음료 품질비교 결과(비교공감 제2026-8호)'를 이용하였으며, 해당 저작물은 한국소비자원 누리집(www.kca.go.kr)과 소비자24(www.consumer.go.kr)에서 무료로 내려받을 수 있습니다."
+tested_at: "2026-05-28"
+source_url: https://www.consumer.go.kr/user/ftc/consumer/cnsmrBBS/79/selectInfoRptDetail.do?infoId=A1081353&cntntsId=00000566
+verified_at: "2026-09-28"
+# 필드: brand_key(brands.yaml 키), brand, type(말차/녹차라떼|밀크티), drink(제품명 원문), size(시험 사이즈 원문), volume_ml(1잔
+# 내용량 실측, 티백 제거·스팀 빠진 상태), caffeine_mg·sugar_g·saturated_fat_g·kcal(1잔 기준), price_krw(1잔 가격)
+drinks:
+  - {brand_key: "brand:mega", brand: 메가MGC커피, type: 말차/녹차라떼, drink: 녹차라떼, size: 구분없음, volume_ml: 410, caffeine_mg: 45, sugar_g: 46, saturated_fat_g: 7.1, kcal: 342, price_krw: 3500}
+  - {brand_key: "brand:paik", brand: 빽다방, type: 말차/녹차라떼, drink: 말차라떼, size: 구분없음, volume_ml: 350, caffeine_mg: 93, sugar_g: 53, saturated_fat_g: 8.2, kcal: 407, price_krw: 3800}
+  - {brand_key: "brand:starbucks", brand: 스타벅스, type: 말차/녹차라떼, drink: 제주 말차 라떼, size: 톨(tall), volume_ml: 285, caffeine_mg: 81, sugar_g: 26, saturated_fat_g: 5.0, kcal: 213, price_krw: 6100}
+  - {brand_key: "brand:ediya", brand: 이디야커피, type: 말차/녹차라떼, drink: 말차라떼, size: 라지(large), volume_ml: 338, caffeine_mg: 70, sugar_g: 55, saturated_fat_g: 6.5, kcal: 355, price_krw: 4500}
+  - {brand_key: "brand:compose", brand: 컴포즈커피, type: 말차/녹차라떼, drink: 그린티라떼, size: 구분없음, volume_ml: 349, caffeine_mg: 68, sugar_g: 50, saturated_fat_g: 8.0, kcal: 357, price_krw: 3500}
+  - {brand_key: "brand:twosome", brand: 투썸플레이스, type: 말차/녹차라떼, drink: 그린티 라떼, size: 레귤러(regular), volume_ml: 303, caffeine_mg: 65, sugar_g: 44, saturated_fat_g: 6.0, kcal: 309, price_krw: 5200}
+  - {brand_key: "brand:mega", brand: 메가MGC커피, type: 밀크티, drink: 로얄밀크티라떼, size: 구분없음, volume_ml: 397, caffeine_mg: 57, sugar_g: 46, saturated_fat_g: 7.4, kcal: 356, price_krw: 3700}
+  - {brand_key: "brand:paik", brand: 빽다방, type: 밀크티, drink: 밀크티, size: 구분없음, volume_ml: 359, caffeine_mg: 113, sugar_g: 42, saturated_fat_g: 6.8, kcal: 323, price_krw: 3500}
+  - {brand_key: "brand:starbucks", brand: 스타벅스, type: 밀크티, drink: 클래식 밀크 티, size: 톨(tall), volume_ml: 311, caffeine_mg: 172, sugar_g: 37, saturated_fat_g: 11.9, kcal: 302, price_krw: 6100}
+  - {brand_key: "brand:ediya", brand: 이디야커피, type: 밀크티, drink: 로열밀크티, size: 라지(large), volume_ml: 325, caffeine_mg: 73, sugar_g: 36, saturated_fat_g: 5.9, kcal: 262, price_krw: 4900}
+  - {brand_key: "brand:compose", brand: 컴포즈커피, type: 밀크티, drink: 밀크티, size: 구분없음, volume_ml: 336, caffeine_mg: 88, sugar_g: 43, saturated_fat_g: 5.8, kcal: 302, price_krw: 3800}
+  - {brand_key: "brand:twosome", brand: 투썸플레이스, type: 밀크티, drink: 로얄 밀크티, size: 레귤러(regular), volume_ml: 276, caffeine_mg: 148, sugar_g: 27, saturated_fat_g: 5.5, kcal: 226, price_krw: 5700}

@@ -79,7 +79,7 @@ def drop_cross_source_url_duplicates(coffees):
 
 def run_normalize(raw_root: Path, out_dir: Path, curated_dir: Path,
                   exclude_sources: tuple[str, ...] = ()) -> dict[str, int | str]:
-    from pipeline.normalize.menus import normalize_brands
+    from pipeline.normalize.menus import apply_kca_caffeine, kca_tea_drinks, normalize_brands
 
     total, per_source = Normalized(), {}
     for name, fn in _normalizers().items():
@@ -96,8 +96,10 @@ def run_normalize(raw_root: Path, out_dir: Path, curated_dir: Path,
     total.brands = normalize_brands(curated_dir)
     brand_keys = {b.key for b in total.brands}
     total.menu_items = [m for m in total.menu_items if m.brand_key in brand_keys]
+    total.menu_items, kca = apply_kca_caffeine(total.menu_items, kca_tea_drinks(curated_dir))
     total.coffees, dropped = drop_cross_source_url_duplicates(total.coffees)
-    counts = {"dropped_url_duplicates": dropped}
+    counts = {"dropped_url_duplicates": dropped, "kca_caffeine_filled": kca["filled"],
+              "kca_caffeine_matched": len(kca["matched"])}
     for field_name in ("coffees", "reviews", "brands", "menu_items", "taxonomy"):
         records = _dedupe(getattr(total, field_name))
         counts[field_name] = write_jsonl(out_dir / f"{field_name}.jsonl", records)

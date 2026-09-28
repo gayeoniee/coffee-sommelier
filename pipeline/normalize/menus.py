@@ -422,3 +422,28 @@ def normalize_ediya(snap: Path, collected_at: str) -> Normalized:
             source_url=f"{EDIYA_SOURCE_URL}?chked_val={'12' if cat == 'COFFEE' else '155'},", collected_at=collected_at,
         )
     return Normalized(menu_items=list(items.values()))
+
+
+KCA_TEA_FILE = "kca_tea_drinks_2026.yaml"   # 한국소비자원 차음료 품질비교(2026-05-28) 종합결과표, 공공누리
+
+
+def kca_tea_drinks(curated_dir: Path) -> list[dict]:
+    p = curated_dir / KCA_TEA_FILE
+    return yaml.safe_load(p.read_text(encoding="utf-8"))["drinks"] if p.exists() else []
+
+
+def apply_kca_caffeine(items: list[MenuItemRecord], drinks: list[dict]) -> tuple[list[MenuItemRecord], dict]:
+    """Fill a menu item's MISSING caffeine from the KCA lab measurement of the same brand's same drink (name compared
+    without spaces). A brand-published value is never overwritten; matched pairs are returned for cross-checking
+    (brand value vs KCA measurement) so the report can show both."""
+    by = {(d["brand_key"], "".join(d["drink"].split())): d for d in drinks}
+    out, filled, matched = [], 0, []
+    for m in items:
+        d = by.get((m.brand_key, "".join(m.name.split())))
+        if d is not None:
+            matched.append({"brand": m.brand_key, "name": m.name, "brand_mg": m.caffeine_mg, "kca_mg": d["caffeine_mg"]})
+            if m.caffeine_mg is None:
+                m = m.model_copy(update={"caffeine_mg": float(d["caffeine_mg"])})
+                filled += 1
+        out.append(m)
+    return out, {"filled": filled, "matched": matched}
