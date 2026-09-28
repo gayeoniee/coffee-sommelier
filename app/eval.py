@@ -9,7 +9,7 @@ from collections import Counter
 
 import yaml
 
-from app.core.explain import explain_messages
+from app.core.explain import GUARD_REJECTS, explain_messages
 from app.core.predict import predict_from_neighbors
 from app.core.scoring import mmr_top_k, passes, score_item
 from app.core.simulate import simulate_convergence
@@ -481,8 +481,13 @@ def summarize_explain_quality(rows: list[dict]) -> dict:
     def mean(xs: list[float]) -> float | None:
         return round(sum(xs) / len(xs), 2) if xs else None
 
+    raw = [r for r in rows if r.get("raw_rules") is not None]
+    guard = [r.get("guard") for r in rows if r.get("guard")]
     return {
         "n": len(rows), "generated": len(gen), "fallbacks": len(rows) - len(gen),
+        "guard_fallbacks": sum(1 for r in rows if r["fallback"] and r.get("guard") in GUARD_REJECTS),
+        "guard_events": {e: guard.count(e) for e in sorted(set(guard))},
+        "raw_rule_pass": sum(all(r["raw_rules"].values()) for r in raw), "raw_n": len(raw),
         "rule_pass": sum(all(r["rules"].values()) for r in gen),
         "rule_pass_rate": rate(sum(all(r["rules"].values()) for r in gen), len(gen)),
         "rule_failures": {c: sum(not r["rules"][c] for r in gen) for c in RULE_CHECKS},
@@ -542,12 +547,12 @@ def explain_quality(repo) -> dict:
     import httpx
 
     from app import config, llm
-    from app.core.explain import template_explanation
+    from app.core.explain import finalize_explanation, template_explanation
     from app.core.explain_check import check_explanation
     from app.core.judge import Verdict, judge_messages
     from pipeline.llm import LLMError
 
-    _, tag_ko = repo.taxonomy()
+    tag_to_cat, tag_ko = repo.taxonomy()
     tasks = settings.load_config("models.yaml")["tasks"]
 
     async def generate(msgs):
@@ -573,15 +578,23 @@ def explain_quality(repo) -> dict:
     async def run():
         rows = []
         for c in load_explain_cases():
-            msgs = explain_messages(c["item"], c["profile"], c["score"], c["prediction"], c["violation"])
+            msgs = explain_messages(c["item"], c["profile"], c["score"], c["prediction"], c["violation"],
+                                    tag_to_cat=tag_to_cat, tag_ko=tag_ko)
             payload = json.loads(msgs[1]["content"])
+            raw, guard = None, None
             try:
-                text, first, total = await generate(msgs)
+                raw, first, total = await generate(msgs)
+                text, guard = finalize_explanation(raw, c["item"], c["profile"], payload, c["violation"])
+                if not text:                          # same as the app: a rejected text shows the template
+                    raise LLMError(f"guard: {guard}")
                 fallback, error = False, None
             except (LLMError, httpx.HTTPError, TimeoutError) as e:    # same failures the app turns into its template
                 text = template_explanation(c["item"], c["profile"], c["score"], tag_ko, c["violation"])
-                first, total, fallback, error = None, None, True, f"{type(e).__name__}: {e}"
+                if not raw:
+                    first = total = None
+                fallback, error = True, f"{type(e).__name__}: {e}"
             rules = check_explanation(text, payload, round(c["score"] * 100), c["violation"])
+            raw_rules = check_explanation(raw, payload, round(c["score"] * 100), c["violation"]) if raw else None
             judges, judge_errors = {}, {}
             for j in JUDGES:
                 judges[j], err = await judge(EXPLAIN_JUDGE_TASKS[j], payload, text)
@@ -589,11 +602,13 @@ def explain_quality(repo) -> dict:
                     judge_errors[j] = err
             rows.append({"id": c["id"], "persona": c["persona"], "source": c["item"].source,
                          "score": round(c["score"] * 100), "violation": c["violation"], "fallback": fallback,
-                         "error": error, "first_token_s": first, "total_s": total, "text": text, "rules": rules,
+                         "error": error, "first_token_s": first, "total_s": total, "text": text, "raw_text": raw,
+                         "guard": guard, "raw_rules": raw_rules, "rules": rules,
                          "rule_pass": all(rules.values()), "judges": judges, "judge_errors": judge_errors or None})
             brief = [None if v is None else (v["contradiction"], v["hallucination"], v["helpful"])
                      for v in judges.values()]
-            print(f"  {c['id']}: fallback={fallback} rules={all(rules.values())} judges={brief}", flush=True)
+            print(f"  {c['id']}: fallback={fallback} guard={guard} rules={all(rules.values())} judges={brief}",
+                  flush=True)
         return rows
 
     rows = asyncio.run(run())

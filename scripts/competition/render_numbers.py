@@ -174,7 +174,8 @@ def render_explain_quality(eq: dict) -> list[str]:
     return [
         "**설명 품질 판정** (`phase2_explain_quality.json`, n={})".format(s.get("n", "-")),
         "",
-        f"- 규칙 통과: {s.get('rule_pass', '-')}/{s.get('n', '-')} ({_fmt(s.get('rule_pass_rate'))})",
+        f"- 규칙 통과: {s.get('rule_pass', '-')}/{s.get('generated', s.get('n', '-'))} ({_fmt(s.get('rule_pass_rate'))})"
+        + (f" · 가드가 틀로 바꾼 문장 {s['guard_fallbacks']}/{s['n']}" if s.get("guard_fallbacks") else ""),
         f"- 무모순(두 판정자 모두): {_fmt(s.get('no_contradiction_rate_both'))}",
         f"- 무환각(두 판정자 모두): {_fmt(s.get('no_hallucination_rate_both'))}"
         f" (판정자 간 일치율 {_fmt((s.get('judge_agreement') or {}).get('hallucination'))})",

@@ -161,14 +161,14 @@ def test_explain_payload_carries_rules_and_violation():
     ok = explain_messages(item, Profile(caffeine_rule="low", milk_ok=True), 0.7)
     payload = json.loads(ok[1]["content"])
     assert payload["손님 선호"]["카페인 조건"] == "저카페인" and payload["손님 선호"]["우유"] == "가능"
-    assert payload["조건 위반"] is None and VIOLATION_RULE not in ok[0]["content"]
+    assert "조건 위반" not in payload and VIOLATION_RULE not in ok[0]["content"]
     bad = explain_messages(item, Profile(caffeine_rule="decaf_only", milk_ok=False), 0.7, violation="우유가 들어가요")
     payload = json.loads(bad[1]["content"])
-    assert payload["조건 위반"] == "우유가 들어가요"
+    assert payload["조건 위반"] == "우유가 들어가요" and next(iter(payload)) == "조건 위반"    # stated first
     assert payload["손님 선호"]["카페인 조건"] == "디카페인만" and payload["손님 선호"]["우유"] == "불가"
     assert VIOLATION_RULE in bad[0]["content"] and "첫 문장에서 그 위반" in VIOLATION_RULE
     assert bad[0]["content"].endswith(length_rule("우유가 들어가요") + " /no_think")   # the hard length rule comes last
-    assert "첫 문장 하나에 조건 위반('우유가 들어가요')" in length_rule("우유가 들어가요")
+    assert "'우유가 들어가서 주문 전 확인이 필요하지만,'으로 시작" in length_rule("우유가 들어가요")
     assert json.loads(explain_messages(item, Profile(), 0.7)[1]["content"])["손님 선호"]["카페인 조건"] == "제한 없음"
 
 
@@ -181,28 +181,31 @@ def test_card_has_korean_tags():
 def test_explain_payload_separates_decaf_states_and_surcharge():
     order = Item(key="menu:1", name="카페 아메리카노", source="brand_bean", decaf_option=True, order_decaf=True,
                  decaf_surcharge_krw=300)
-    p = json.loads(explain_messages(order, Profile(caffeine_rule="decaf_only"), 0.8)[1]["content"])
-    assert "디카페인" not in p
-    assert p["디카페인 음료"] is False and p["디카페인으로 주문 권장"] is True and p["디카페인 추가요금(원)"] == 300
+    raw = explain_messages(order, Profile(caffeine_rule="decaf_only"), 0.8)[1]["content"]
+    p = json.loads(raw)
+    # words, not booleans: the model copied "디카페인으로 주문 권장이 true이므로" into live explanations
+    assert p["디카페인"] == "원래는 디카페인이 아님 — 디카페인으로 바꿔 주문 가능 (+300원)"
+    assert p["조건 확인"]["카페인(손님: 디카페인만)"] == "디카페인으로 바꿔 주문하면 충족 (+300원)"
+    assert "true" not in raw and "false" not in raw and "null" not in raw
     decaf = Item(key="coffee:1", name="콜롬비아 디카페인", source="db", is_decaf=True)
     p = json.loads(explain_messages(decaf, Profile(), 0.8)[1]["content"])
-    assert p["디카페인 음료"] is True and p["디카페인으로 주문 권장"] is False and p["디카페인 추가요금(원)"] is None
+    assert p["디카페인"] == "디카페인 음료" and "원" not in p["디카페인"]
+    plain = json.loads(explain_messages(Item(key="coffee:2", name="케냐", source="db"), Profile(), 0.8)[1]["content"])
+    assert plain["디카페인"] == "디카페인 아님"
 
 
 def test_system_prompt_decaf_order_wording():
     assert "디카페인으로 바꿔 주문하면" in SYSTEM_PROMPT
-    assert "디카페인 음료" in SYSTEM_PROMPT and "디카페인으로 주문 권장" in SYSTEM_PROMPT
+    assert "'디카페인 음료'일 때만" in SYSTEM_PROMPT and "'디카페인으로 바꿔 주문 가능'이면" in SYSTEM_PROMPT
 
 
-def test_length_rule_is_last_with_example():
+def test_length_rule_is_last_and_has_no_copyable_example():
     msgs = explain_messages(Item(key="menu:1", name="카페 라떼", source="brand_bean"), Profile(), 0.7)
     rule = length_rule()
     assert msgs[0]["content"].endswith(rule + " /no_think")
-    assert "최대 2문장" in rule and "첫 문장은 결론과 가장 큰 이유" in rule and "true/false" in rule
-    example = rule.split("예:")[1]
-    assert example.count(".") == 2 and not any(ch.isdigit() for ch in example)   # no numbers to copy
-    # placeholders only: a concrete example ("강한 산미와 과일 향") got copied into explanations as if it were fact
-    assert example.count("〔") >= 3 and "산미" not in example and "과일" not in example
+    assert "정확히 2문장" in rule and "첫 문장은 결론과 가장 큰 이유" in rule and "true, false, null" in rule
+    # a concrete example got copied as fact, a 〔placeholder〕 one verbatim, a generic one as a vague answer
+    assert "〔" not in msgs[0]["content"] and "예:" not in rule and "예(" not in rule
 
 
 
@@ -222,7 +225,7 @@ def test_order_decaf_card_never_carries_the_regular_caffeine():
     unknown = Item(key="menu:2", name="카페 아메리카노", source="brand_bean", decaf_option=True, order_decaf=True,
                    decaf_surcharge_krw=300, caffeine_mg=None, caffeine_mg_note="디카페인 주문 시 카페인 ↓")
     assert "디카페인으로 바꿔 주문하세요 (+300원)." in template_explanation(unknown, Profile(), 0.7, {})
-    assert json.loads(explain_messages(unknown, Profile(), 0.7)[1]["content"])["디카페인 주문 시 카페인(mg, 추정)"] is None
+    assert json.loads(explain_messages(unknown, Profile(), 0.7)[1]["content"])["디카페인 주문 시 카페인(mg, 추정)"] == "추정치 없음"
     plain = Item(key="menu:3", name="카페 아메리카노", source="brand_bean", caffeine_mg=150)
     msgs = explain_messages(plain, Profile(), 0.7)
     assert "디카페인 주문 시 카페인(mg, 추정)" not in json.loads(msgs[1]["content"])

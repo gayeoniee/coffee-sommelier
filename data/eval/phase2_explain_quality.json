@@ -10,34 +10,40 @@
     "n": 24,
     "generated": 24,
     "fallbacks": 0,
-    "rule_pass": 18,
-    "rule_pass_rate": 0.75,
+    "guard_fallbacks": 0,
+    "guard_events": {
+      "edited": 7
+    },
+    "raw_rule_pass": 17,
+    "raw_n": 24,
+    "rule_pass": 22,
+    "rule_pass_rate": 0.9167,
     "rule_failures": {
-      "foreign_words": 2,
-      "length": 3,
+      "foreign_words": 1,
+      "length": 0,
       "numbers_grounded": 0,
-      "condition_mentioned": 1,
+      "condition_mentioned": 0,
       "polarity": 1
     },
     "judged_both": 22,
-    "no_contradiction_both": 17,
-    "no_contradiction_rate_both": 0.7727,
-    "no_hallucination_both": 14,
-    "no_hallucination_rate_both": 0.6364,
+    "no_contradiction_both": 20,
+    "no_contradiction_rate_both": 0.9091,
+    "no_hallucination_both": 18,
+    "no_hallucination_rate_both": 0.8182,
     "helpful_mean": {
       "judge": 4.0,
-      "judge2": 3.21
+      "judge2": 3.08
     },
     "judge_agreement": {
-      "contradiction": 0.8182,
-      "hallucination": 0.7727
+      "contradiction": 0.9091,
+      "hallucination": 0.8182
     },
     "judge_failures": {
       "judge": 2,
       "judge2": 0
     },
-    "first_token_p50": 0.77,
-    "first_token_p95": 1.37
+    "first_token_p50": 0.93,
+    "first_token_p95": 3.7
   },
   "cases": [
     {
@@ -48,9 +54,18 @@
       "violation": null,
       "fallback": false,
       "error": null,
-      "first_token_s": 0.92,
-      "total_s": 1.28,
-      "text": "산미와 바디가 손님 선호보다 낮아 취향에 맞지 않아요. 디카페인으로 바꿔 주문하면 조건에 맞게 즐기실 수 있어요.",
+      "first_token_s": 1.04,
+      "total_s": 1.53,
+      "text": "산미가 손님 선호보다 훨씬 약해서 맞지 않아요. 바디는 선호와 비슷하지만 향미에 과일이나 꽃 향이 없어서 취향과 어긋나요.",
+      "raw_text": "산미가 손님 선호보다 훨씬 약해서 맞지 않아요. 바디는 선호와 비슷하지만 향미에 과일이나 꽃 향이 없어서 취향과 어긋나요. 디카페인으로 바꾸면 카페인 조건을 충족하고 우유 제한도 없어요.",
+      "guard": "edited",
+      "raw_rules": {
+        "foreign_words": true,
+        "length": false,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
       "rules": {
         "foreign_words": true,
         "length": true,
@@ -72,7 +87,7 @@
           "contradiction_why": "",
           "hallucination": false,
           "hallucination_why": "",
-          "helpful": 4
+          "helpful": 3
         }
       },
       "judge_errors": null
@@ -85,30 +100,39 @@
       "violation": null,
       "fallback": false,
       "error": null,
-      "first_token_s": 3.19,
-      "total_s": 4.25,
-      "text": "산미와 단맛이 손님 취향에 가까워 향미도 과일과 꽃 향을 떠올리게 해 잘 맞아요. 바디는 조금 더 무거운 편이라 가벼운 맛을 선호하신다면 약간 아쉬울 수 있어요. 디카페인으로 바꿔 주문하면 손님의 카페인 조건에 정확히 맞춰 드릴 수 있어요.",
-      "rules": {
+      "first_token_s": 0.96,
+      "total_s": 1.33,
+      "text": "이 음료는 산미가 손님 선호보다 조금 약해서 맞지 않아요. 바디는 선호와 비슷해요.",
+      "raw_text": "이 음료는 산미가 손님 선호보다 조금 약해서 맞지 않아요. 바디는 선호와 비슷해요.",
+      "guard": null,
+      "raw_rules": {
         "foreign_words": true,
-        "length": false,
+        "length": true,
         "numbers_grounded": true,
         "condition_mentioned": true,
         "polarity": true
       },
-      "rule_pass": false,
+      "rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": true,
       "judges": {
         "judge": {
-          "contradiction": false,
-          "contradiction_why": "",
-          "hallucination": true,
-          "hallucination_why": "사실의 향미는 vanilla, caramelized, lime뿐이며 꽃 향은 포함되어 있지 않다. 설명이 과일과 꽃 향을 떠올리게 한다고 단정한 부분은 사실에 없는 내용이다.",
-          "helpful": 3
+          "contradiction": true,
+          "contradiction_why": "사실에서는 적합도가 72%(중간)라고 되어 있는데, 설명은 '맞지 않아요'라고 단정해 중간 적합도와 모순됩니다.",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 2
         },
         "judge2": {
-          "contradiction": true,
-          "contradiction_why": "The explanation states that the beverage’s acidity, sweetness, and flavor profile match the customer’s preferences for strong acidity, moderate sweetness, and fruit/flower aromas. However, the facts show the drink has an acidity of 3 (not 4.5), sweetness of 4 (not 3), and flavor notes of vanilla, caramelized, and lime (not fruit or flower). Additionally, the explanation claims the drink is suitable for a decaf order, but the facts indicate the drink is not decaf and no decaf option is recommended.",
-          "hallucination": true,
-          "hallucination_why": "The explanation introduces flavor descriptors (fruit, flower) and a suggestion about a lighter taste that are not present in the provided facts. It also implies a decaf option exists, which contradicts the fact that the drink is not decaf and no decaf surcharge is specified.",
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
           "helpful": 2
         }
       },
@@ -122,24 +146,33 @@
       "violation": null,
       "fallback": false,
       "error": null,
-      "first_token_s": 0.71,
-      "total_s": 1.02,
-      "text": "산미가 강하고 바디가 약한 디카페인 음료로 손님의 취향에 잘 맞아요. 향미에 레몬과 자스민이 있어 과일과 꽃 향을 좋아하는 손님에게 적합해요.",
-      "rules": {
-        "foreign_words": true,
+      "first_token_s": 0.72,
+      "total_s": 1.38,
+      "text": "Yirgacheffe는 산미와 바디가 손님 선호와 비슷하고, 향미에서 꽃향과 레몬, 재스민이 과일과 꽃 향미와 겹쳐 잘 맞아요. 단맛은 손님 선호보다 조금 강해요.",
+      "raw_text": "Decaf Ethiopia Yirgacheffe는 산미와 바디가 손님 선호와 비슷하고, 향미에서 꽃향과 레몬, 재스민이 과일과 꽃 향미와 겹쳐 잘 맞아요. 단맛은 손님 선호보다 조금 강해요.",
+      "guard": "edited",
+      "raw_rules": {
+        "foreign_words": false,
         "length": true,
         "numbers_grounded": true,
         "condition_mentioned": true,
         "polarity": true
       },
-      "rule_pass": true,
+      "rules": {
+        "foreign_words": false,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": false,
       "judges": {
         "judge": {
           "contradiction": false,
           "contradiction_why": "",
           "hallucination": false,
           "hallucination_why": "",
-          "helpful": 5
+          "helpful": 4
         },
         "judge2": {
           "contradiction": false,
@@ -159,9 +192,18 @@
       "violation": null,
       "fallback": false,
       "error": null,
-      "first_token_s": 0.72,
-      "total_s": 2.01,
-      "text": "산미가 강하고 바디가 가벼우며 블루베리와 꽃 향미가 있어 손님 취향에 잘 맞아요. 디카페인 음료로 카페인 조건도 충족해요.",
+      "first_token_s": 0.69,
+      "total_s": 1.22,
+      "text": "산미와 바디, 단맛이 모두 손님 선호와 비슷하고 블루베리와 꽃향 향미가 과일과 꽃 선호에 맞아 적합합니다. 와인 향미는 손님이 좋아하는 향미와 겹치지 않아요.",
+      "raw_text": "산미와 바디, 단맛이 모두 손님 선호와 비슷하고 블루베리와 꽃향 향미가 과일과 꽃 선호에 맞아 적합합니다. 와인 향미는 손님이 좋아하는 향미와 겹치지 않아요.",
+      "guard": null,
+      "raw_rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
       "rules": {
         "foreign_words": true,
         "length": true,
@@ -196,23 +238,32 @@
       "violation": "디카페인이 아니에요",
       "fallback": false,
       "error": null,
-      "first_token_s": 0.82,
-      "total_s": 1.72,
-      "text": "디카페인이 아니에요. 손님이 디카페인만 원하시는데 이 음료는 카페인이 있어요. 산미와 향미(floral, chocolate)는 과일과 꽃 향을 좋아하시는 취향과 잘 맞지만, 바디가 5로 너무 무겁고 단맛도 5로 평소보다 강해서 선호하시는 약한 바디와 보통 단맛과는 차이가 있어요.",
-      "rules": {
+      "first_token_s": 0.78,
+      "total_s": 1.21,
+      "text": "디카페인이 아니어서 주문 전 확인이 필요하지만, 바디가 손님 선호보다 훨씬 강해서 취향과 맞지 않아요. 단맛도 손님 선호보다 훨씬 강하고, 향미 중 꽃향은 손님이 좋아하는 향미와 겹치지만 초콜릿은 겹치지 않아요.",
+      "raw_text": "디카페인이 아니어서 주문 전 확인이 필요하지만, 바디가 손님 선호보다 훨씬 강해서 취향과 맞지 않아요. 단맛도 손님 선호보다 훨씬 강하고, 향미 중 꽃향은 손님이 좋아하는 향미와 겹치지만 초콜릿은 겹치지 않아요.",
+      "guard": null,
+      "raw_rules": {
         "foreign_words": true,
-        "length": false,
+        "length": true,
         "numbers_grounded": true,
         "condition_mentioned": true,
         "polarity": true
       },
-      "rule_pass": false,
+      "rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": true,
       "judges": {
         "judge": {
           "contradiction": false,
-          "contradiction_why": "설명의 디카페인 여부, 바디, 단맛에 대한 내용은 사실과 모순되지 않습니다.",
-          "hallucination": true,
-          "hallucination_why": "사실에는 손님이 좋아하는 향미가 과일과 꽃뿐인데, 설명은 chocolate 향미도 취향과 잘 맞는다고 단정했습니다.",
+          "contradiction_why": "설명의 내용은 사실과 모순되지 않습니다. 디카페인 아님, 바디와 단맛이 손님 선호보다 훨씬 강함, 꽃향은 겹치고 초콜릿은 겹치지 않음이 모두 사실과 일치합니다.",
+          "hallucination": false,
+          "hallucination_why": "사실에 없는 내용을 단정하지 않았습니다. '주문 전 확인이 필요'는 권고 표현으로 볼 수 있습니다.",
           "helpful": 4
         },
         "judge2": {
@@ -233,9 +284,18 @@
       "violation": null,
       "fallback": false,
       "error": null,
-      "first_token_s": 0.97,
-      "total_s": 4.47,
-      "text": "디카페인 음료로 손님의 카페인 조건을 맞췄지만 산미와 바디, 단맛이 모두 취향과 반대여서 적합도가 낮아요. 향미가 없어 과일과 꽃 향을 좋아하는 손님 입장에서는 아쉬울 수 있어요.",
+      "first_token_s": 0.95,
+      "total_s": 1.69,
+      "text": "산미와 단맛이 손님 선호보다 훨씬 약하고 바디가 훨씬 강해 전체적인 맛 프로필이 맞지 않아요. 바디는 선호보다 훨씬 무거워요.",
+      "raw_text": "산미와 단맛이 손님 선호보다 훨씬 약하고 바디가 훨씬 강해 전체적인 맛 프로필이 맞지 않아요. 바디는 선호보다 훨씬 무거워요.",
+      "guard": null,
+      "raw_rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
       "rules": {
         "foreign_words": true,
         "length": true,
@@ -245,18 +305,22 @@
       },
       "rule_pass": true,
       "judges": {
-        "judge": null,
-        "judge2": {
+        "judge": {
           "contradiction": false,
           "contradiction_why": "",
           "hallucination": false,
           "hallucination_why": "",
           "helpful": 4
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 3
         }
       },
-      "judge_errors": {
-        "judge": "achat_json failed for judge: ReadTimeout from deepseek-ai/deepseek-v4.1-flash: "
-      }
+      "judge_errors": null
     },
     {
       "id": "paulbassett_menu_lungo_decaforder_high",
@@ -266,11 +330,20 @@
       "violation": null,
       "fallback": false,
       "error": null,
-      "first_token_s": 0.82,
-      "total_s": 2.46,
-      "text": "산미가 3으로 보통 수준이라 손님이 싫어하는 산미를 피하기엔 부족하고, 바디가 3으로 보통이라 강하게 선호하는 바디보다 약해 취향과 맞지 않아요. 단맛과 향미(chocolate)는 손님 선호와 parcialmente 일치하지만 전체적으로 적합도가 84점으로 낮아 아쉬울 수 있어요.",
+      "first_token_s": 0.7,
+      "total_s": 1.25,
+      "text": "산미가 손님 선호보다 조금 강하고 바디가 손님 선호보다 조금 약해 전체적인 맛 균형이 맞지 않아요. 향미 중 초콜릿은 손님이 좋아하는 견과/코코아와 겹치지만 시트러스는 선호와 맞지 않아요.",
+      "raw_text": "산미가 손님 선호보다 조금 강하고 바디가 손님 선호보다 조금 약해 전체적인 맛 균형이 맞지 않아요. 향미 중 초콜릿은 손님이 좋아하는 견과/코코아와 겹치지만 시트러스는 선호와 맞지 않아요. 바디는 손님 선호보다 조금 약해요. 디카페인으로 바꿔 주문하면 카페인이 줄어요.",
+      "guard": "edited",
+      "raw_rules": {
+        "foreign_words": true,
+        "length": false,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": false
+      },
       "rules": {
-        "foreign_words": false,
+        "foreign_words": true,
         "length": true,
         "numbers_grounded": true,
         "condition_mentioned": true,
@@ -280,16 +353,16 @@
       "judges": {
         "judge": {
           "contradiction": false,
-          "contradiction_why": "설명의 산미·바디·단맛·향미 관련 서술은 제공된 사실과 직접 모순되지 않습니다.",
+          "contradiction_why": "사실과 모순되는 내용은 없습니다.",
           "hallucination": true,
-          "hallucination_why": "적합도 84점을 '낮다'고 단정한 것은 사실에 없는 평가이며, 84점이 낮다는 근거가 제공되지 않았습니다.",
-          "helpful": 3
+          "hallucination_why": "사실에 없는 '전체적인 맛 균형이 맞지 않는다'는 평가를 단정했습니다.",
+          "helpful": 4
         },
         "judge2": {
           "contradiction": false,
           "contradiction_why": "",
-          "hallucination": true,
-          "hallucination_why": "The description claims that the flavor \"chocolate\" partially matches the customer's preference, but the customer's preferred flavor is \"견과/코코아\" (nuts/cocoa), not chocolate.",
+          "hallucination": false,
+          "hallucination_why": "",
           "helpful": 3
         }
       },
@@ -303,31 +376,40 @@
       "violation": null,
       "fallback": false,
       "error": null,
-      "first_token_s": 1.04,
-      "total_s": 1.55,
-      "text": "산미가 낮고 바디가 중간이며 단맛이 보통인 아메리카노는 손님이 싫어하는 산미를 피하고 좋아하는 견과·코코아 향미를 갖춰 취향에 잘 맞아요. 디카페인으로 주문 권장이 true이므로 디카페인으로 바꿔 주문하면 (+200원) 저카페인 조건도 충족할 수 있어요.",
+      "first_token_s": 0.96,
+      "total_s": 1.83,
+      "text": "산미와 단맛이 손님 선호와 비슷하고 향미에 견과가 있어 취향에 잘 맞아요. 바디는 손님이 강하게 좋아하는 것보다 조금 약해요.",
+      "raw_text": "산미와 단맛이 손님 선호와 비슷하고 향미에 견과가 있어 취향에 잘 맞아요. 바디는 손님이 강하게 좋아하는 것보다 조금 약해요. 디카페인으로 주문하면 카페인이 줄어요. (+200원)",
+      "guard": "edited",
+      "raw_rules": {
+        "foreign_words": true,
+        "length": false,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
       "rules": {
-        "foreign_words": false,
+        "foreign_words": true,
         "length": true,
         "numbers_grounded": true,
         "condition_mentioned": true,
         "polarity": true
       },
-      "rule_pass": false,
+      "rule_pass": true,
       "judges": {
         "judge": {
           "contradiction": false,
           "contradiction_why": "",
           "hallucination": false,
           "hallucination_why": "",
-          "helpful": 5
+          "helpful": 4
         },
         "judge2": {
           "contradiction": false,
           "contradiction_why": "",
           "hallucination": false,
           "hallucination_why": "",
-          "helpful": 4
+          "helpful": 3
         }
       },
       "judge_errors": null
@@ -340,9 +422,18 @@
       "violation": null,
       "fallback": false,
       "error": null,
-      "first_token_s": 0.72,
-      "total_s": 1.01,
-      "text": "산미가 낮고 바디가 강해 손님 취향에 잘 맞아요. 단맛은 보통 수준이고 향미에 초콜릿이 있어 좋아하는 견과/코코아와 어울려요.",
+      "first_token_s": 3.71,
+      "total_s": 6.26,
+      "text": "산미와 단맛이 손님 선호와 비슷하고 초콜릿 향미가 손님이 좋아하는 견과/코코아와 겹쳐 적합합니다. 바디는 손님 선호보다 조금 강해요.",
+      "raw_text": "산미와 단맛이 손님 선호와 비슷하고 초콜릿 향미가 손님이 좋아하는 견과/코코아와 겹쳐 적합합니다. 바디는 손님 선호보다 조금 강해요.",
+      "guard": null,
+      "raw_rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
       "rules": {
         "foreign_words": true,
         "length": true,
@@ -377,9 +468,18 @@
       "violation": null,
       "fallback": false,
       "error": null,
-      "first_token_s": 0.71,
-      "total_s": 1.29,
-      "text": "산미가 낮고 바디가 강해 손님 취향에 잘 맞아요. 향미에 견과와 초콜릿이 있어 선호하는 맛과 일치합니다.",
+      "first_token_s": 0.72,
+      "total_s": 1.4,
+      "text": "이 음료는 산미가 약하고 바디가 강하며 단맛이 보통이라 손님 선호와 가장 잘 맞는 맛 특성을 보여요. 향미에서는 견과와 초콜릿이 손님이 좋아하는 향미와 겹치지만 캐러멜은 겹치지 않아요.",
+      "raw_text": "이 음료는 산미가 약하고 바디가 강하며 단맛이 보통이라 손님 선호와 가장 잘 맞는 맛 특성을 보여요. 향미에서는 견과와 초콜릿이 손님이 좋아하는 향미와 겹치지만 캐러멜은 겹치지 않아요. 디카페인으로 바꿔 주문하면 추가 요금은 없습니다.",
+      "guard": "edited",
+      "raw_rules": {
+        "foreign_words": true,
+        "length": false,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
       "rules": {
         "foreign_words": true,
         "length": true,
@@ -392,46 +492,9 @@
         "judge": {
           "contradiction": false,
           "contradiction_why": "",
-          "hallucination": false,
-          "hallucination_why": "",
-          "helpful": 5
-        },
-        "judge2": {
-          "contradiction": false,
-          "contradiction_why": "",
-          "hallucination": false,
-          "hallucination_why": "",
-          "helpful": 3
-        }
-      },
-      "judge_errors": null
-    },
-    {
-      "id": "predicted_antigua_caffeine_violation",
-      "persona": "저카페인+우유X",
-      "source": "predicted",
-      "score": 86,
-      "violation": "카페인이 100mg을 넘거나 알 수 없어요",
-      "fallback": false,
-      "error": null,
-      "first_token_s": 0.76,
-      "total_s": 1.85,
-      "text": "산미를 싫어하고 바디를 강하게 좋아하시는 취향과 달리 이 음료의 산미는 3.08로 보통 수준이지만 바디는 3.92로 선호도에 가까워 전반적으로 적합도는 86점으로 높습니다. 좋아하는 향미인 코코아가 포함되어 있어 취향에 잘 맞으며, 단맛은 보통 수준으로 선호와 일치합니다.",
-      "rules": {
-        "foreign_words": true,
-        "length": true,
-        "numbers_grounded": true,
-        "condition_mentioned": false,
-        "polarity": true
-      },
-      "rule_pass": false,
-      "judges": {
-        "judge": {
-          "contradiction": false,
-          "contradiction_why": "",
-          "hallucination": false,
-          "hallucination_why": "",
-          "helpful": 3
+          "hallucination": true,
+          "hallucination_why": "사실에는 적합도가 95%(높음)라고만 되어 있을 뿐, 다른 음료와 비교해 '가장 잘 맞는' 맛 특성이라는 정보는 없습니다.",
+          "helpful": 4
         },
         "judge2": {
           "contradiction": false,
@@ -444,16 +507,25 @@
       "judge_errors": null
     },
     {
-      "id": "predicted_decaf_gedeb_low",
+      "id": "predicted_antigua_caffeine_violation",
       "persona": "저카페인+우유X",
       "source": "predicted",
-      "score": 33,
-      "violation": null,
+      "score": 86,
+      "violation": "카페인이 100mg을 넘거나 알 수 없어요",
       "fallback": false,
       "error": null,
-      "first_token_s": 0.84,
-      "total_s": 1.77,
-      "text": "산미가 매우 강하고 바디가 가벼워 손님이 싫어하는 산미와 선호하는 강한 바디 조건에 모두 맞지 않아요. 향미에 견과/코코아가 없어 취향과도 일치하지 않습니다.",
+      "first_token_s": 1.49,
+      "total_s": 2.01,
+      "text": "카페인이 100mg을 넘거나 알 수 없어서 주문 전 확인이 필요하지만, 바디가 손님 선호와 비슷해서 적합합니다. 산미가 손님 선호보다 조금 강해서 취향과 차이가 납니다.",
+      "raw_text": "카페인이 100mg을 넘거나 알 수 없어서 주문 전 확인이 필요하지만, 바디가 손님 선호와 비슷해서 적합합니다. 산미가 손님 선호보다 조금 강해서 취향과 차이가 납니다.",
+      "guard": null,
+      "raw_rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
       "rules": {
         "foreign_words": true,
         "length": true,
@@ -468,6 +540,52 @@
           "contradiction_why": "",
           "hallucination": false,
           "hallucination_why": "",
+          "helpful": 4
+        },
+        "judge2": {
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 3
+        }
+      },
+      "judge_errors": null
+    },
+    {
+      "id": "predicted_decaf_gedeb_low",
+      "persona": "저카페인+우유X",
+      "source": "predicted",
+      "score": 33,
+      "violation": null,
+      "fallback": false,
+      "error": null,
+      "first_token_s": 0.98,
+      "total_s": 2.28,
+      "text": "에티오피아 게뎁 워시드 디카페인은 산미가 손님 선호보다 훨씬 강하고 바디가 손님 선호보다 훨씬 약해 맞지 않아요. 향미 정보가 없어 손님이 좋아하는 견과/코코아 향미와 비교할 수 없어요.",
+      "raw_text": "에티오피아 게뎁 워시드 디카페인은 산미가 손님 선호보다 훨씬 강하고 바디가 손님 선호보다 훨씬 약해 맞지 않아요. 향미 정보가 없어 손님이 좋아하는 견과/코코아 향미와 비교할 수 없어요.",
+      "guard": null,
+      "raw_rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": true,
+      "judges": {
+        "judge": {
+          "contradiction": false,
+          "contradiction_why": "사실의 산미·바디 비교와 적합도(낮음)에 부합하며 모순되는 내용이 없습니다.",
+          "hallucination": false,
+          "hallucination_why": "향미 정보가 없어 비교할 수 없다는 내용은 사실의 '향미 정보 없음'과 일치하며, 사실에 없는 내용을 단정하지 않았습니다.",
           "helpful": 4
         },
         "judge2": {
@@ -488,9 +606,18 @@
       "violation": null,
       "fallback": false,
       "error": null,
-      "first_token_s": 0.66,
-      "total_s": 1.14,
-      "text": "산미, 바디, 단맛이 모두 보통 수준이라 손님 취향과 전반적으로 맞아떨어져 적합도가 높아요. 다만 선호하는 향미가 지정되지 않아 초콜릿과 캐러멜 향이 특별히 매력적으로 느껴지지는 않을 수 있어요.",
+      "first_token_s": 1.01,
+      "total_s": 2.84,
+      "text": "산미와 단맛이 손님 선호보다 조금 약하고 바디는 조금 강해 전체적인 맛 균형이 보통 취향과 약간 차이가 나요. 향미는 다크 초콜릿과 캐러멜이지만 손님이 좋아하는 향미가 없어 특별히 맞지 않거나 안 맞는다고 말할 수 없어요.",
+      "raw_text": "산미와 단맛이 손님 선호보다 조금 약하고 바디는 조금 강해 전체적인 맛 균형이 보통 취향과 약간 차이가 나요. 향미는 다크 초콜릿과 캐러멜이지만 손님이 좋아하는 향미가 없어 특별히 맞지 않거나 안 맞는다고 말할 수 없어요.",
+      "guard": null,
+      "raw_rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
       "rules": {
         "foreign_words": true,
         "length": true,
@@ -501,17 +628,17 @@
       "rule_pass": true,
       "judges": {
         "judge": {
-          "contradiction": true,
-          "contradiction_why": "사실에서 음료의 산미는 2, 바디는 4, 단맛은 2로 제시되어 있어 세 항목이 모두 보통 수준이라는 설명과 모순됩니다.",
+          "contradiction": false,
+          "contradiction_why": "",
           "hallucination": false,
-          "hallucination_why": "선호 향미가 지정되지 않았다는 점과 초콜릿/캐러멜 계열 향미는 사실에 근거하며, 매력적으로 느껴지지 않을 수 있다는 표현은 단정이 아닙니다.",
-          "helpful": 3
+          "hallucination_why": "",
+          "helpful": 4
         },
         "judge2": {
-          "contradiction": true,
-          "contradiction_why": "The facts list 산미=2, 바디=4, 단맛=2, which correspond to low to medium levels, whereas the description states that all three are '보통 수준' (medium). This directly contradicts the provided facts.",
+          "contradiction": false,
+          "contradiction_why": "",
           "hallucination": false,
-          "hallucination_why": "The description does not introduce any new factual claims that are not present in the facts.",
+          "hallucination_why": "",
           "helpful": 3
         }
       },
@@ -525,9 +652,18 @@
       "violation": null,
       "fallback": false,
       "error": null,
-      "first_token_s": 0.73,
-      "total_s": 1.85,
-      "text": "산미·바디·단맛이 모두 보통 수준으로 손님 선호와 맞아떨어져 전체 적합도가 85점으로 높아요. 초콜릿과 너티 향미가 있어 무난하게 즐기기 좋으며 우유가 들어 있어 부드러운 맛을 선호하시는 분께 잘 맞아요.",
+      "first_token_s": 0.83,
+      "total_s": 1.79,
+      "text": "산미와 단맛이 손님 선호보다 조금 약하고 바디는 비슷해 전체적인 맛 균형이 잘 맞아요. 향미는 초콜릿과 견과 향이 있지만 손님이 선호하는 향미가 없어 특별히 맞거나 안 맞다고 말하지 않아요.",
+      "raw_text": "산미와 단맛이 손님 선호보다 조금 약하고 바디는 비슷해 전체적인 맛 균형이 잘 맞아요. 향미는 초콜릿과 견과 향이 있지만 손님이 선호하는 향미가 없어 특별히 맞거나 안 맞다고 말하지 않아요.",
+      "guard": null,
+      "raw_rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
       "rules": {
         "foreign_words": true,
         "length": true,
@@ -541,12 +677,12 @@
           "contradiction": false,
           "contradiction_why": "",
           "hallucination": true,
-          "hallucination_why": "사실에 없는 '부드러운 맛을 선호하시는 분'이라는 취향을 단정했다.",
+          "hallucination_why": "사실에 없는 '전체적인 맛 균형이 잘 맞는다'는 평가를 단정했습니다.",
           "helpful": 4
         },
         "judge2": {
-          "contradiction": true,
-          "contradiction_why": "The facts state that 산미 is 2, 바디 is 3, and 단맛 is 2, which correspond to low or medium levels, whereas the explanation claims that all three are '보통' (medium). This is a direct conflict with the provided factual values.",
+          "contradiction": false,
+          "contradiction_why": "",
           "hallucination": false,
           "hallucination_why": "",
           "helpful": 3
@@ -562,9 +698,18 @@
       "violation": null,
       "fallback": false,
       "error": null,
-      "first_token_s": 0.72,
-      "total_s": 1.16,
-      "text": "산미와 바디가 손님 선호보다 높아 취향에 잘 맞아요. 단맛은 비슷하고 향미가 풍부해 전체적인 균형이 좋아요.",
+      "first_token_s": 0.81,
+      "total_s": 1.93,
+      "text": "산미는 손님 선호보다 조금 강하고 바디는 손님 선호보다 훨씬 강해 전체적인 맛 균형이 손님 취향과 어긋납니다. 단맛은 손님 선호와 비슷하지만 바디가 무겁게 느껴져 선호와 차이가 있습니다.",
+      "raw_text": "산미는 손님 선호보다 조금 강하고 바디는 손님 선호보다 훨씬 강해 전체적인 맛 균형이 손님 취향과 어긋납니다. 단맛은 손님 선호와 비슷하지만 바디가 무겁게 느껴져 선호와 차이가 있습니다.",
+      "guard": null,
+      "raw_rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
       "rules": {
         "foreign_words": true,
         "length": true,
@@ -576,9 +721,9 @@
       "judges": {
         "judge": {
           "contradiction": false,
-          "contradiction_why": "",
-          "hallucination": true,
-          "hallucination_why": "사실에 없는 '전체적인 균형이 좋다'는 평가를 단정함",
+          "contradiction_why": "사실의 산미·바디·단맛 비교와 일치하며 모순되는 내용이 없음",
+          "hallucination": false,
+          "hallucination_why": "사실에 없는 향미나 조건을 추가하지 않았고, 주어진 비교를 요약한 수준임",
           "helpful": 4
         },
         "judge2": {
@@ -599,9 +744,18 @@
       "violation": null,
       "fallback": false,
       "error": null,
-      "first_token_s": 0.77,
-      "total_s": 1.25,
-      "text": "산미와 바디, 단맛이 모두 보통인 손님 취향에 비해 산미가 높고 바디가 약간 낮아 전체적인 균형은 다소 다를 수 있어요. 다만 블랙티와 자몽, 베리 향미가 복합적으로 느껴져 향미 측면에서는 흥미로운 경험을 줄 수 있어요.",
+      "first_token_s": 3.93,
+      "total_s": 4.1,
+      "text": "산미는 손님 선호보다 조금 강해요. 바디는 선호와 비슷해요.",
+      "raw_text": "산미는 손님 선호보다 조금 강해요. 바디는 선호와 비슷해요.",
+      "guard": null,
+      "raw_rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
       "rules": {
         "foreign_words": true,
         "length": true,
@@ -612,18 +766,18 @@
       "rule_pass": true,
       "judges": {
         "judge": {
-          "contradiction": true,
-          "contradiction_why": "사실에서 바디는 3.2이고 손님 선호 바디는 3.0이므로 선호보다 약간 높습니다. 설명은 바디가 약간 낮다고 했으므로 사실과 모순됩니다.",
+          "contradiction": false,
+          "contradiction_why": "",
           "hallucination": false,
-          "hallucination_why": "설명에 언급된 블랙티, 자몽, 베리 향미는 사실의 향미 목록과 일치하며, 사실에 없는 내용을 단정하지 않았습니다.",
-          "helpful": 3
+          "hallucination_why": "",
+          "helpful": 4
         },
         "judge2": {
           "contradiction": false,
           "contradiction_why": "",
           "hallucination": false,
           "hallucination_why": "",
-          "helpful": 3
+          "helpful": 2
         }
       },
       "judge_errors": null
@@ -636,9 +790,18 @@
       "violation": null,
       "fallback": false,
       "error": null,
-      "first_token_s": 0.77,
-      "total_s": 1.53,
-      "text": "산미, 바디, 단맛이 모두 보통 수준으로 손님의 선호와 정확히 일치해 취향에 잘 맞아요. 초콜릿과 베리 향미가 조화롭게 느껴져 무난하면서도 풍미 있는 맛을 즐기실 수 있어요.",
+      "first_token_s": 0.69,
+      "total_s": 1.2,
+      "text": "아메리카노는 산미, 바디, 단맛이 모두 손님 선호와 비슷해서 잘 맞아요. 향미는 초콜릿과 베리가 있지만 손님이 좋아하는 향미가 없어서 향미에 대한 판단은 하지 않아요.",
+      "raw_text": "아메리카노는 산미, 바디, 단맛이 모두 손님 선호와 비슷해서 잘 맞아요. 향미는 초콜릿과 베리가 있지만 손님이 좋아하는 향미가 없어서 향미에 대한 판단은 하지 않아요.",
+      "guard": null,
+      "raw_rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
       "rules": {
         "foreign_words": true,
         "length": true,
@@ -650,9 +813,9 @@
       "judges": {
         "judge": {
           "contradiction": false,
-          "contradiction_why": "",
-          "hallucination": true,
-          "hallucination_why": "사실에는 초콜릿과 베리 향미가 있다고만 되어 있을 뿐, 두 향미가 '조화롭게 느껴진다'거나 '무난하면서도 풍미 있는 맛'이라는 내용은 없습니다.",
+          "contradiction_why": "없음",
+          "hallucination": false,
+          "hallucination_why": "없음",
           "helpful": 4
         },
         "judge2": {
@@ -660,7 +823,7 @@
           "contradiction_why": "",
           "hallucination": false,
           "hallucination_why": "",
-          "helpful": 4
+          "helpful": 3
         }
       },
       "judge_errors": null
@@ -673,9 +836,18 @@
       "violation": null,
       "fallback": false,
       "error": null,
-      "first_token_s": 0.7,
-      "total_s": 1.31,
-      "text": "산미가 거의 없고 단맛이 약해 손님 취향과 맞지 않아요. 바디는 보통 수준이지만 단맛 선호도가 높아 아쉬울 수 있어요.",
+      "first_token_s": 0.91,
+      "total_s": 2.47,
+      "text": "산미를 싫어하는 손님에게 산미가 선호보다 조금 약한 점이 잘 맞아요. 단맛을 강하게 좋아하는 손님에게 단맛이 선호보다 훨씬 약하고, 좋아하는 향미인 단맛과 겹치는 향미가 없어 아쉬워요.",
+      "raw_text": "산미를 싫어하는 손님에게 산미가 선호보다 조금 약한 점이 잘 맞아요. 단맛을 강하게 좋아하는 손님에게 단맛이 선호보다 훨씬 약하고, 좋아하는 향미인 단맛과 겹치는 향미가 없어 아쉬워요.",
+      "guard": null,
+      "raw_rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
       "rules": {
         "foreign_words": true,
         "length": true,
@@ -690,7 +862,7 @@
           "contradiction_why": "",
           "hallucination": false,
           "hallucination_why": "",
-          "helpful": 3
+          "helpful": 4
         },
         "judge2": {
           "contradiction": false,
@@ -710,9 +882,18 @@
       "violation": null,
       "fallback": false,
       "error": null,
-      "first_token_s": 0.78,
-      "total_s": 1.51,
-      "text": "산미가 낮고 단맛이 강해 손님 취향에 잘 맞아요. 디카페인으로 바꿔 주문하면 카페인 조건도 충족됩니다.",
+      "first_token_s": 2.37,
+      "total_s": 2.9,
+      "text": "아메리카노는 산미와 바디가 손님 선호와 비슷해 기본적인 맛 구조에서 잘 맞아요. 단맛은 손님 선호보다 조금 약하지만, 캐러멜 향미가 단맛과 겹쳐서 보완해 줍니다.",
+      "raw_text": "아메리카노는 산미와 바디가 손님 선호와 비슷해 기본적인 맛 구조에서 잘 맞아요. 단맛은 손님 선호보다 조금 약하지만, 캐러멜 향미가 단맛과 겹쳐서 보완해 줍니다. 디카페인으로 바꿔 주문하면 카페인이 줄어요.",
+      "guard": "edited",
+      "raw_rules": {
+        "foreign_words": true,
+        "length": false,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
       "rules": {
         "foreign_words": true,
         "length": true,
@@ -724,17 +905,17 @@
       "judges": {
         "judge": {
           "contradiction": false,
-          "contradiction_why": "",
-          "hallucination": true,
-          "hallucination_why": "사실에는 단맛이 3으로 제시되어 있을 뿐 '단맛이 강하다'는 내용은 없습니다.",
-          "helpful": 3
+          "contradiction_why": "설명은 사실의 산미·바디·단맛 비교 및 캐러멜 향미와 단맛의 겹침 내용과 모순되지 않습니다.",
+          "hallucination": false,
+          "hallucination_why": "사실에 없는 내용을 단정하지 않았습니다.",
+          "helpful": 4
         },
         "judge2": {
-          "contradiction": true,
-          "contradiction_why": "The facts state that the beverage is not decaf (\"디카페인 음료\": false), yet the explanation recommends ordering it decaf to satisfy the customer’s caffeine condition.",
-          "hallucination": true,
-          "hallucination_why": "The facts list the flavor notes as \"chocolate\" and \"caramelized\", but the explanation claims the customer likes the flavor \"단맛\" (sweetness), which is not present in the provided facts.",
-          "helpful": 3
+          "contradiction": false,
+          "contradiction_why": "",
+          "hallucination": false,
+          "hallucination_why": "",
+          "helpful": 4
         }
       },
       "judge_errors": null
@@ -747,9 +928,18 @@
       "violation": null,
       "fallback": false,
       "error": null,
-      "first_token_s": 1.43,
-      "total_s": 1.81,
-      "text": "산미가 강한 편이라 손님이 싫어하는 산미와 맞지 않아 취향에 잘 안 맞아요. 단맛은 강하고 디카페인이라 조건에 맞지만, 바디는 보통 수준이라 특별히 만족스럽진 않을 수 있어요.",
+      "first_token_s": 0.85,
+      "total_s": 1.3,
+      "text": "산미가 손님 선호보다 훨씬 강해 맞지 않아요. 향미에는 손님이 좋아하는 단맛과 겹치는 향미가 없습니다.",
+      "raw_text": "산미가 손님 선호보다 훨씬 강해 맞지 않아요. 향미에는 손님이 좋아하는 단맛과 겹치는 향미가 없습니다.",
+      "guard": null,
+      "raw_rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
       "rules": {
         "foreign_words": true,
         "length": true,
@@ -784,9 +974,18 @@
       "violation": null,
       "fallback": false,
       "error": null,
-      "first_token_s": 0.72,
-      "total_s": 1.38,
-      "text": "산미가 낮아 손님이 싫어하는 산미를 거의 느끼지 못해 취향에 잘 맞아요. 단맛이 강하고 브라운슈거, 캐러멜 향미가 있어 단맛을 좋아하는 손님 선호와 일치해요.",
+      "first_token_s": 0.77,
+      "total_s": 1.32,
+      "text": "이 음료는 산미가 약하고 단맛이 강하며 바디가 보통이라 손님 취향과 잘 맞아요. 향미 중 흑설탕과 캐러멜은 손님이 좋아하는 단맛과 겹치지만 견과는 선호와 다릅니다.",
+      "raw_text": "이 음료는 산미가 약하고 단맛이 강하며 바디가 보통이라 손님 취향과 잘 맞아요. 향미 중 흑설탕과 캐러멜은 손님이 좋아하는 단맛과 겹치지만 견과는 선호와 다릅니다. 디카페인으로 바꿔 주문하면 추가 요금은 없습니다.",
+      "guard": "edited",
+      "raw_rules": {
+        "foreign_words": true,
+        "length": false,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
       "rules": {
         "foreign_words": true,
         "length": true,
@@ -821,25 +1020,28 @@
       "violation": "디카페인이 아니에요",
       "fallback": false,
       "error": null,
-      "first_token_s": 0.85,
-      "total_s": 2.52,
-      "text": "디카페인이 아니에요. 손님이 디카페인만 원하시므로 이 음료는 취향에 맞지 않아요. 산미가 4.2로 강해 손님이 싫어하시는 산미 조건과도 맞지 않아요.",
-      "rules": {
+      "first_token_s": 3.67,
+      "total_s": 4.45,
+      "text": "디카페인이 아니어서 주문 전 확인이 필요하지만, 산미가 손님 선호보다 훨씬 강해서 취향에 맞지 않아요. 단맛을 강하게 좋아하는데 음료의 단맛은 손님 선호보다 조금 약하고, 좋아하는 향미인 단맛과 겹치는 향미가 없어서 전반적으로 맞지 않아요.",
+      "raw_text": "디카페인이 아니어서 주문 전 확인이 필요하지만, 산미가 손님 선호보다 훨씬 강해서 취향에 맞지 않아요. 단맛을 강하게 좋아하는데 음료의 단맛은 손님 선호보다 조금 약하고, 좋아하는 향미인 단맛과 겹치는 향미가 없어서 전반적으로 맞지 않아요.",
+      "guard": null,
+      "raw_rules": {
         "foreign_words": true,
-        "length": false,
+        "length": true,
         "numbers_grounded": true,
         "condition_mentioned": true,
         "polarity": true
       },
-      "rule_pass": false,
+      "rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
+      "rule_pass": true,
       "judges": {
-        "judge": {
-          "contradiction": false,
-          "contradiction_why": "",
-          "hallucination": false,
-          "hallucination_why": "",
-          "helpful": 5
-        },
+        "judge": null,
         "judge2": {
           "contradiction": false,
           "contradiction_why": "",
@@ -848,7 +1050,9 @@
           "helpful": 3
         }
       },
-      "judge_errors": null
+      "judge_errors": {
+        "judge": "achat_json failed for judge: ReadTimeout from deepseek-ai/deepseek-v4.1-flash: "
+      }
     },
     {
       "id": "db_not_decaf_brazil_violation",
@@ -858,9 +1062,18 @@
       "violation": "디카페인이 아니에요",
       "fallback": false,
       "error": null,
-      "first_token_s": 0.61,
-      "total_s": 1.07,
-      "text": "산미를 싫어하시는데 이 음료의 산미는 2로 낮아 취향에 맞지만, 디카페인만 드셔야 하는데 일반 커피라서 주문 전 확인이 필요해요. 단맛은 5로 강하고 좋아하는 향미인 단맛 계열(brown sugar, nutty, cocoa)이 있어 전반적으로 잘 맞아요.",
+      "first_token_s": 2.14,
+      "total_s": 2.93,
+      "text": "디카페인이 아니어서 주문 전 확인이 필요하지만, 단맛이 손님 선호와 비슷해서 적합합니다. 바디가 손님 선호보다 조금 강해서 보완이 필요할 수 있어요.",
+      "raw_text": "디카페인이 아니어서 주문 전 확인이 필요하지만, 단맛이 손님 선호와 비슷해서 적합합니다. 바디가 손님 선호보다 조금 강해서 보완이 필요할 수 있어요.",
+      "guard": null,
+      "raw_rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
       "rules": {
         "foreign_words": true,
         "length": true,
@@ -891,9 +1104,18 @@
       "violation": null,
       "fallback": false,
       "error": null,
-      "first_token_s": 0.77,
-      "total_s": 1.21,
-      "text": "산미가 낮고 단맛이 강해 손님 취향에 잘 맞아요. 디카페인 음료로 카페인 조건도 충족하고, 좋아하는 단맛 향미인 브라운 슈거, 캐러멜라이즈드, 허니가 풍부해요.",
+      "first_token_s": 0.79,
+      "total_s": 1.24,
+      "text": "이 음료는 단맛이 손님 선호와 비슷하고 좋아하는 향미인 단맛과 완전히 일치해 매우 잘 맞아요. 산미는 손님 선호보다 훨씬 약해서 싫어하는 산미가 거의 느껴지지 않아요.",
+      "raw_text": "이 음료는 단맛이 손님 선호와 비슷하고 좋아하는 향미인 단맛과 완전히 일치해 매우 잘 맞아요. 산미는 손님 선호보다 훨씬 약해서 싫어하는 산미가 거의 느껴지지 않아요.",
+      "guard": null,
+      "raw_rules": {
+        "foreign_words": true,
+        "length": true,
+        "numbers_grounded": true,
+        "condition_mentioned": true,
+        "polarity": true
+      },
       "rules": {
         "foreign_words": true,
         "length": true,
@@ -904,35 +1126,21 @@
       "rule_pass": true,
       "judges": {
         "judge": {
-          "contradiction": false,
-          "contradiction_why": "",
+          "contradiction": true,
+          "contradiction_why": "사실에서는 산미가 음료 2(약함)와 손님 2(산미를 싫어함)로 '손님 선호와 비슷함'이라고 되어 있는데, 설명은 '손님 선호보다 훨씬 약하다'고 단정해 모순됩니다.",
           "hallucination": true,
-          "hallucination_why": "사실에는 손님이 좋아하는 향미가 '단맛'으로만 명시되어 있는데, 설명은 브라운 슈거, 캐러멜라이즈드, 허니를 손님이 좋아하는 향미인 것처럼 단정했다.",
-          "helpful": 4
+          "hallucination_why": "'산미가 거의 느껴지지 않는다'는 사실에 없는 단정이며, '완전히 일치'도 사실의 '겹침/비슷함'보다 강한 표현입니다.",
+          "helpful": 3
         },
         "judge2": {
           "contradiction": false,
           "contradiction_why": "",
           "hallucination": false,
           "hallucination_why": "",
-          "helpful": 3
+          "helpful": 4
         }
       },
       "judge_errors": null
     }
-  ],
-  "rules_rescored": {
-    "note": "rule checks re-run offline over the saved texts with the current app/core/explain_check.py (`python -m app.eval explain_recheck`); generation and judge fields are from the original run",
-    "before": {
-      "rule_pass": 21,
-      "rule_pass_rate": 0.875,
-      "rule_failures": {
-        "foreign_words": 2,
-        "length": 0,
-        "numbers_grounded": 0,
-        "condition_mentioned": 1,
-        "polarity": 1
-      }
-    }
-  }
+  ]
 }

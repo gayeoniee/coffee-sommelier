@@ -206,6 +206,36 @@ def test_fallback_reason_truncated_empty_and_empty(monkeypatch):
     assert _explain_with_counts(monkeypatch, blank) == {"fb_empty": 1}
 
 
+def test_guard_rejected_text_falls_back_with_reason_guard(monkeypatch):
+    """docs/adr/0005 3차: a complete text that copies a payload boolean shows the template instead."""
+    from app.graphs import common as graphs_common
+    counts: dict[str, int] = {}
+    monkeypatch.setattr(graphs_common.telemetry, "add",
+                        lambda k, v: counts.__setitem__(k, counts.get(k, 0) + (v if isinstance(v, int) else 0)))
+
+    async def copies_bool(task, messages):
+        yield "디카페인 음료가 false이고 "
+        yield "주문 권장이 true이므로 바꿔 주문하세요."
+
+    result, events = run_explain(monkeypatch, copies_bool)
+    assert result["fallback"] is True
+    assert [e["type"] for e in events if e["type"] != "explain_delta"] == ["explain_fallback"]
+    assert counts["fb_guard"] == 1 and counts["guard_bool_copy"] == 1
+
+
+def test_guard_edited_text_is_what_explain_done_carries(monkeypatch):
+    async def three_sentences(task, messages):
+        yield "산미가 손님 선호와 비슷해 잘 맞아요. 바디도 비슷해요. "
+        yield "디카페인으로 바꿔 주문하면 돼요."
+
+    result, events = run_explain(monkeypatch, three_sentences)
+    final = "산미가 손님 선호와 비슷해 잘 맞아요. 바디도 비슷해요."
+    assert result == {"key": "coffee:1", "text": final, "fallback": False}
+    streamed = "".join(e["delta"] for e in events if e["type"] == "explain_delta")
+    assert streamed.endswith("바꿔 주문하면 돼요.")           # deltas go out as generated...
+    assert [e["text"] for e in events if e["type"] == "explain_done"] == [final]   # ...explain_done replaces them
+
+
 class Out(BaseModel):
     acidity: str | None = None
 
