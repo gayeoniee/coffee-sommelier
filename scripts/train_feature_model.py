@@ -17,22 +17,28 @@ on gauged beans only. Every candidate is compared, on the same folds and targets
 Models: ridge (alpha chosen by an inner leave-one-roaster-out over the training roasters) and a small
 gradient-boosted tree, each with and without the neighbour average as one extra feature.
 
-Ship rule (per attribute): the ridge variant ships only if its grouped-CV within+-1 beats the open neighbour
-baseline by >= 0.05 (GBT is reported for reference; only the linear model ships, since the evidence line
-explains a prediction by per-feature contributions). The shipped model is refit on every gauged bean.
+Ship rule (ADR 0011, per attribute): the ridge variant ships only if its grouped-CV within+-1 beats the open
+neighbour baseline by >= 0.05 (GBT is reported for reference; only the linear model ships, since the evidence line
+explains a prediction by per-feature contributions). The shipped model is refit on every labelled bean.
+
+This script is the ONLY writer of config/feature_model_open.json, and it writes the canonical shipped config:
+SHIPPED_RECIPES below fixes, per attribute, the recipe the ADRs decided (ADR 0011 gauges-only ridge; ADR 0013 the
+acidity "+B" weak-label recipe, refit through scripts/ablate_open_labels.py's own final_spec so the two scripts share
+one code path; ADR 0014 external check). The CV here and in ablate_open_labels.py only report -- a changed decision
+is made by editing SHIPPED_RECIPES (and an ADR), never as a side effect of re-running a script. The config carries
+no timestamp, so re-running on the same DB reproduces it byte-for-byte.
 
 A sanity reference (evaluation-only, never trained on): the final ridge applied to coffeereview beans in the
 FULL `coffee` DB, compared with their acidity (review sub-score quintile) and body (LLM heaviness, ADR 0010)
 labels -- different label semantics, so Spearman correlation matters more than MAE there.
 
 Follow-up (docs/adr/0013-open-labels-weak-supervision.md): scripts/ablate_open_labels.py re-runs this CV with
-extra open labels and replaces an attribute's spec in the config when it wins -- run it AFTER this script, which
-writes the gauges-only specs. Since shopify_gauged is loaded into coffee_open, the neighbour pool here includes it
-(ADR 0013 reports the pool-without numbers as "base").
+extra open labels and reports (data/eval/open/phase4_open_labels.json only). Since shopify_gauged is loaded into
+coffee_open, the neighbour pool here includes it (ADR 0013 reports the pool-without numbers as "base").
 
 Usage:
-    uv run python scripts/train_feature_model.py            # CV + reference + write eval/config
-    uv run python scripts/train_feature_model.py --no-ship  # CV + reference only
+    uv run python scripts/train_feature_model.py            # CV + reference + eval + canonical config
+    uv run python scripts/train_feature_model.py --no-ship  # CV + reference + eval only
 """
 import argparse
 import json
@@ -67,6 +73,12 @@ SHIP_MARGIN = 0.05
 CQI_WEIGHT = 0.2          # auxiliary CQI rows count 1/5 of a gauge row
 GBT = dict(n_estimators=150, max_depth=2, learning_rate=0.05, subsample=0.8, random_state=0)
 R = 4
+# The shipped recipe per attribute (body ships none). ("gauges", _) = final_fit below, gauges only, ridge with
+# the neighbour feature iff uses_nbr; ("ablation", name) = scripts/ablate_open_labels.py CONFIGS[name] via its
+# final_spec. Decisions: ADR 0011 (acidity/sweetness), ADR 0013 (acidity -> "+B"), ADR 0014 (sweetness kept after
+# the Zenodo panel check).
+SHIPPED_RECIPES = {"acidity": ("ablation", "+B"), "sweetness": ("gauges", False)}
+CONFIG_PATH = settings.CONFIG_DIR / "feature_model_open.json"
 
 
 def taxonomy(conn) -> tuple[dict[str, str], dict[str, str]]:
@@ -286,33 +298,54 @@ def main() -> int:
               "cqi_aux_weight": CQI_WEIGHT, "gauged_beans": len(rows),
               "labels_per_attr": {a: sum(r["labels"].get(a) is not None for r in rows) for a in ATTRS},
               "cv": cv, "ship": {}, "final": {}, "gbt_importance": {}}
-    specs = {}
     for a in ATTRS:
         t = cv[a]["table"]
         base = t["neighbor_avg"]["within1"]
         cands = [k for k in ("ridge", "ridge+nbr") if k in t]
         best = max(cands, key=lambda k: (t[k]["within1"], -t[k]["mae"]))
         gain = round(t[best]["within1"] - base, R)
-        ship = gain >= SHIP_MARGIN
         spec, imp = final_fit(rows, a, use_nbr=best.endswith("+nbr"))
         report["final"][a] = spec
         report["gbt_importance"][a] = imp
-        report["ship"][a] = {"candidate": best, "within1_gain_vs_neighbor": gain, "shipped": ship}
-        if ship:
-            specs[a] = spec
+        # informational: the gauges-only ADR 0011 rule on today's pool; what ships is SHIPPED_RECIPES
+        report["ship"][a] = {"candidate": best, "within1_gain_vs_neighbor": gain,
+                             "passes_gauges_only_rule": gain >= SHIP_MARGIN,
+                             "shipped_recipe": list(SHIPPED_RECIPES[a]) if a in SHIPPED_RECIPES else None}
     nonbr = {a: final_fit(rows, a, use_nbr=False)[0] for a in ATTRS}
     report["coffeereview_reference"] = coffeereview_reference(nonbr, tag_to_cat, tag_ko)
     out = settings.DATA_DIR / "eval" / "open" / "phase3_feature_model.json"
     out.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     print(json.dumps({a: {"n": cv[a]["n"], **{k: v for k, v in cv[a]["table"].items()}} for a in ATTRS}, indent=1))
     print(json.dumps(report["ship"], indent=1), json.dumps(report["coffeereview_reference"], indent=1))
-    if specs and not args.no_ship:
-        doc = {"trained_at": report["generated_at"], "labels": "roaster-published intensity gauges (roasters_kr)",
-               "eval": "data/eval/open/phase3_feature_model.json", "attrs": specs}
-        (settings.CONFIG_DIR / "feature_model_open.json").write_text(json.dumps(doc, indent=1, ensure_ascii=False),
-                                                                      encoding="utf-8")
-        print("shipped:", ", ".join(specs))
+    if not args.no_ship:
+        CONFIG_PATH.write_text(shipped_config(rows), encoding="utf-8")
+        print(f"wrote {CONFIG_PATH}:", ", ".join(f"{a}={k}:{v}" for a, (k, v) in SHIPPED_RECIPES.items()))
     return 0
+
+
+def shipped_config(rows: list[dict]) -> str:
+    """The canonical config/feature_model_open.json text for SHIPPED_RECIPES (deterministic: no timestamp)."""
+    specs, weak = {}, []
+    ablation_rows = None
+    for a, (kind, arg) in SHIPPED_RECIPES.items():
+        if kind == "gauges":
+            specs[a] = final_fit(rows, a, use_nbr=arg)[0]
+            continue
+        from scripts.ablate_open_labels import W_B, final_spec, load_rows   # same code path as the ablation
+        if ablation_rows is None:
+            with psycopg.connect(OPEN_URL, row_factory=dict_row) as conn:
+                ablation_rows = load_rows(conn)
+        specs[a] = final_spec(ablation_rows, a, arg)
+        if "B" in arg:
+            weak.append(a)
+    labels = "roaster-published intensity gauges (roasters_kr)"
+    if weak:
+        labels += (f"; {', '.join(sorted(weak))} also trained on note-word weak labels (weight {W_B}, re-centred;"
+                   " app/core/weaklabels.py, ADR 0013)")
+    doc = {"labels": labels, "recipes": "scripts/train_feature_model.py SHIPPED_RECIPES (ADR 0011, 0013, 0014)",
+           "eval": "data/eval/open/phase3_feature_model.json + data/eval/open/phase4_open_labels.json",
+           "attrs": {a: specs[a] for a in ATTRS if a in specs}}
+    return json.dumps(doc, indent=1, ensure_ascii=False) + "\n"
 
 
 if __name__ == "__main__":

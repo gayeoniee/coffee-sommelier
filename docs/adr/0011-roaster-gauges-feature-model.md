@@ -99,10 +99,16 @@ Zenodo Q그레이더 패널(196샘플, 평가 전용)에서 같은 표본끼리 
 규칙에 걸리지 않아 **유지**하지만, 두 예측기 모두 상수 3(MAE 0.62)에 크게 지고 순위 정보가 없다. 외부 증거가 CV 이득보다
 우선한다는 원칙은 그대로이며, 단맛 머리는 "로스터리 게이지 관행의 재현"으로만 읽는다.
 
+`shopify_gauged` 적재 뒤 풀에서 다시 잰 게이지만 CV(`phase3_feature_model.json`, 2026-09-28): 이웃 평균이 좋아져(산미
+0.524, 단맛 0.542, 바디 0.766) 게이지만 규칙(+0.05)으로는 산미(리지 +0.098)만 통과하고 단맛은 +0.028이다. 단맛 사양은
+ADR 0013의 "유지" 결정과 ADR 0014의 외부 점검 규칙에 따라 그대로 싣는다 — 탑재 여부는 스크립트 재실행이 아니라
+`SHIPPED_RECIPES`로 정한다.
+
 ## 재현
 ```
 uv run python -m pipeline roasters-kr                      # 게이지 포함 재수집(캐시 사용)
 uv run python -m pipeline run --only normalize --only enrich --only embed --only load
 RESET=1 bash scripts/competition/build_open_db.sh
 uv run python scripts/train_feature_model.py               # → data/eval/open/phase3_feature_model.json, config/feature_model_open.json
+                                                           #   (탑재 사양은 SHIPPED_RECIPES — ADR 0013의 산미 +B 포함, 시각 없음)
 ```

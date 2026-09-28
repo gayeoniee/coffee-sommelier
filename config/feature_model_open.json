@@ -1,6 +1,6 @@
 {
- "trained_at": "2026-09-28T07:02:52.074999+00:00",
  "labels": "roaster-published intensity gauges (roasters_kr); acidity also trained on note-word weak labels (weight 0.3, re-centred; app/core/weaklabels.py, ADR 0013)",
+ "recipes": "scripts/train_feature_model.py SHIPPED_RECIPES (ADR 0011, 0013, 0014)",
  "eval": "data/eval/open/phase3_feature_model.json + data/eval/open/phase4_open_labels.json",
  "attrs": {
   "acidity": {

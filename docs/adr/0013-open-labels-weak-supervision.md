@@ -144,14 +144,17 @@ Zenodo Q그레이더 패널(평가 전용, [ADR 0014](0014-public-sources-ediya-
 - 약한 라벨 사전은 사람이 정한 규칙이다. 게이지에 맞추지 않았지만, 재중심·가중치·게이트는 이 실험 중에 정했고 재중심은
   원값 결과를 본 뒤 추가한 처리다(원값 행을 표에 그대로 남겼다).
 - 게이지 원두 중 노트가 있는 것은 산미 32/82뿐이라 일치도 표본이 작다.
-- 이 저장소의 `scripts/train_feature_model.py`를 다시 돌리면 게이지만의 사양으로 설정 파일을 덮어쓴다 — 그 뒤에
-  `scripts/ablate_open_labels.py`를 돌려야 이 결정이 재현된다.
+- (해결, 2026-09-28) 예전에는 `scripts/train_feature_model.py`를 다시 돌리면 게이지만의 사양으로 설정 파일을 덮어써서
+  `scripts/ablate_open_labels.py`를 그 뒤에 돌려야 이 결정이 재현됐다. 이제 설정 파일을 쓰는 것은 `train_feature_model.py`
+  하나뿐이고, 탑재 사양은 그 안의 `SHIPPED_RECIPES`(산미 = 이 ADR의 `+B`, 절제 스크립트의 `final_spec`을 그대로 호출;
+  단맛 = 게이지만 리지)로 고정한다. 절제 스크립트는 `data/eval/open/phase4_open_labels.json`만 쓰고, 이긴 구성은
+  `would_replace`로만 보고한다. 설정 파일에는 시각이 없어 같은 DB에서 다시 돌리면 바이트 단위로 같다(두 번 실행해 확인).
 
 ## 재현
 ```
 uv run python -m pipeline run --only collect --source shopify_gauged   # robots.txt 확인, products.json 캐시
 uv run python -m pipeline run --only normalize --only enrich --only embed --only load   # 새 원두만 LLM·임베딩
 RESET=1 bash scripts/competition/build_open_db.sh
-uv run python scripts/train_feature_model.py            # ADR 0011 (게이지만)
-uv run python scripts/ablate_open_labels.py             # → data/eval/open/phase4_open_labels.json, 산미 사양 교체
+uv run python scripts/ablate_open_labels.py             # → data/eval/open/phase4_open_labels.json (보고만)
+uv run python scripts/train_feature_model.py            # → phase3_feature_model.json + config/feature_model_open.json (SHIPPED_RECIPES)
 ```

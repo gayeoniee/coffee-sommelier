@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T07:02:52.074999+00:00",
+  "generated_at": "2026-09-28T07:44:06.176561+00:00",
   "k": 10,
   "w_a": 0.5,
   "w_b": 0.3,
@@ -1724,21 +1724,30 @@
       "vs": "shipped (base)",
       "within1_gain": 0.0366,
       "margin": 0.03,
-      "shipped": true
+      "would_replace": true,
+      "shipped_recipe": [
+        "ablation",
+        "+B"
+      ]
     },
     "body": {
       "best": "+C",
       "vs": "neighbour average",
       "within1_gain": 0.0156,
       "margin": 0.05,
-      "shipped": false
+      "would_replace": false,
+      "shipped_recipe": null
     },
     "sweetness": {
       "best": "+A+C",
       "vs": "shipped (base)",
       "within1_gain": 0.0,
       "margin": 0.03,
-      "shipped": false
+      "would_replace": false,
+      "shipped_recipe": [
+        "gauges",
+        false
+      ]
     }
   }
 }

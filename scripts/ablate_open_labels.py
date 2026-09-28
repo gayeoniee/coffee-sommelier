@@ -26,11 +26,13 @@ against the per-origin-mean baseline on the same beans: B is only a candidate fo
 training uses them (re-centred), beat that baseline on +-1. Restricting the evaluation to roasters that are not
 A sources changes nothing: no A store is one of the four gauge roasters (all 82 beans qualify).
 
-Ship rule (per attribute): a config replaces the shipped spec in config/feature_model_open.json only if its
-within+-1 beats the shipped model (base) by >= 0.03; body (not shipped) needs >= 0.05 over the neighbour
-baseline. `--no-ship` reports only.
+Ship rule (per attribute), REPORTED only: a config would replace the shipped spec if its within+-1 beats the
+shipped model (base) by >= 0.03; body (not shipped) needs >= 0.05 over the neighbour baseline. This script writes
+only data/eval/open/phase4_open_labels.json -- never config/. The shipped config is written by
+scripts/train_feature_model.py from its SHIPPED_RECIPES (which refits a winning config here through final_spec);
+adopting a new winner means editing SHIPPED_RECIPES and re-running that script.
 
-    uv run python scripts/ablate_open_labels.py [--no-ship]
+    uv run python scripts/ablate_open_labels.py
 """
 import argparse
 import json
@@ -56,7 +58,9 @@ from app.repo import MIN_FILTERED_NEIGHBORS  # noqa: E402
 from pipeline import settings  # noqa: E402
 from pipeline.collect import latest_snapshot  # noqa: E402
 from pipeline.normalize.shopify_gauged import iter_products  # noqa: E402
-from scripts.train_feature_model import BEANS, K, OPEN_URL, R, score, spearman, taxonomy  # noqa: E402
+from scripts.train_feature_model import (  # noqa: E402
+    BEANS, K, OPEN_URL, R, SHIPPED_RECIPES, score, spearman, taxonomy,
+)
 
 ALPHAS = (0.3, 1.0, 3.0, 10.0, 30.0)
 W_A = 0.5            # a Shopify profile label counts half a gauge label (coarser, different convention)
@@ -361,9 +365,7 @@ def final_spec(rows, attr, name) -> dict:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--no-ship", action="store_true")
-    args = ap.parse_args()
+    argparse.ArgumentParser(description="ADR 0013 open-label ablation; writes data/eval only").parse_args()
     with psycopg.connect(OPEN_URL, row_factory=dict_row) as conn:
         rows = load_rows(conn)
     counts = defaultdict(int)
@@ -384,39 +386,26 @@ def main() -> int:
               "a_labels_per_attr": {a: sum(1 for r in rows if r["kind"] == "A" and a in r["labels"]) for a in ATTRS},
               "b_labels_per_attr": b_counts, "weak_agreement": agree, "transfer_gauge_model_to_A": transfer(rows),
               "cv": cv, "ship": {}}
-    shipped = json.loads((settings.CONFIG_DIR / "feature_model_open.json").read_text(encoding="utf-8"))
-    new_specs = {}
     for a in ATTRS:
         t = cv[a]["table"]
         # neighbour baseline as production will have it: the pool WITH the new source (it is loaded)
         base, nbr = t["base"]["within1"], t["neighbor_avg_new"]["within1"]
         cands = [c for c in CONFIGS if c.startswith("+") and ("B" not in c or agree[a].get("beats_origin_mean"))]
         best = max(cands, key=lambda c: (t[c]["within1"], -t[c]["mae"]))
-        if a in shipped["attrs"]:
+        if a in SHIPPED_RECIPES:
             gain, margin, ref = round(t[best]["within1"] - base, R), SHIP_MARGIN_SHIPPED, "shipped (base)"
         else:
             gain, margin, ref = round(t[best]["within1"] - nbr, R), SHIP_MARGIN_NEIGHBOR, "neighbour average"
-        ship = gain >= margin
-        report["ship"][a] = {"best": best, "vs": ref, "within1_gain": gain, "margin": margin, "shipped": ship}
-        if ship:
-            new_specs[a] = final_spec(rows, a, best)
+        report["ship"][a] = {"best": best, "vs": ref, "within1_gain": gain, "margin": margin,
+                             "would_replace": gain >= margin,
+                             "shipped_recipe": list(SHIPPED_RECIPES[a]) if a in SHIPPED_RECIPES else None}
     OUT.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     print(json.dumps({k: report[k] for k in ("rows", "a_labels_by_store", "b_labels_per_attr", "weak_agreement",
                                              "transfer_gauge_model_to_A")}, indent=1, ensure_ascii=False))
     for a in ATTRS:
         print(a, cv[a]["n"], {k: (v["within1"], v["mae"]) for k, v in cv[a]["table"].items()})
     print(json.dumps(report["ship"], indent=1))
-    if new_specs and not args.no_ship:
-        shipped["attrs"].update(new_specs)
-        weak = sorted(a for a, sp in shipped["attrs"].items() if "B" in (sp.get("config") or ""))
-        shipped["labels"] = ("roaster-published intensity gauges (roasters_kr)" +
-                             (f"; {', '.join(weak)} also trained on note-word weak labels (weight {W_B}, re-centred;"
-                              " app/core/weaklabels.py, ADR 0013)" if weak else ""))
-        shipped.update(trained_at=report["generated_at"],
-                       eval="data/eval/open/phase3_feature_model.json + data/eval/open/phase4_open_labels.json")
-        (settings.CONFIG_DIR / "feature_model_open.json").write_text(
-            json.dumps(shipped, indent=1, ensure_ascii=False), encoding="utf-8")
-        print("shipped:", ", ".join(new_specs))
+    print(f"wrote {OUT} (config/ untouched: scripts/train_feature_model.py writes the shipped config)")
     return 0
 
 
