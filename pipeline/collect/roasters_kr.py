@@ -48,6 +48,17 @@ Site notes / scope decisions:
     <span>value</span></p>`` rows (parsed by ``bean_brothers_fact_sheet``);
     blends only carry a "블렌드 구성"/"로스팅" pair, so ``origin_country`` is
     left ``None`` for them, same as elsewhere in this module.
+  * Taste-intensity gauges (``gauge_*`` fields, docs/adr/0011-roaster-gauges-feature-model.md): a
+    roaster's own published 산미/바디/단맛(/쓴맛) gauge is a human label, so it is kept as a fact when the
+    page shows it as markup or text (never read from an image). Surveyed 2026-09: Coffee Libre (5 dots,
+    half dots, acidity+sweetness), 1kg Coffee ("SENSORY CHART" 5-segment bars in markup: acidity,
+    sweetness, bitterness, body), G Roasting (groasting.com, Cafe24; "산미 4.5│바디감 2│단맛 3" numbers in
+    og:description) and Naeil Coffee (naeilcoffee.co.kr, imweb; "Acidity ●●●◐○ / Body ●●●○○") carry
+    one. Fritz, Namusairo, Blue Bottle, Anthracite, Felt, Bean Brothers, Momos and Manufact show none
+    (prose or images only). Every gauge seen is a 0-5 scale in half steps and is mapped onto our 1-5
+    scale by ``normalize_gauge`` (``gauge_scale`` names the site's scale on each record). Also sampled
+    for gauges and skipped (no text/markup gauge on their product pages): Brown Cherry, Coffeelec,
+    Roasting Tiger, Wondoo Banjeom, Wannabean, Pourr, Coffee Gdero.
   * Deca Coffee Lab, Center Coffee, Hell Cafe, Leesar, Lowkey Coffee, Coffee
     Montage and three guessed domains (Mesh Coffee, Pastel Coffee Works,
     Coffee Graffiti) were evaluated and skipped -- see the collector
@@ -89,6 +100,18 @@ class BeanFactRecord(BaseModel):
     flavor_notes: list[str] = Field(default_factory=list)
     price_krw: int | None = None
     weight_g: int | None = None
+    # Optional structured facts some shops label explicitly (never parsed out of prose).
+    altitude_m: int | None = None          # midpoint of a labelled "재배고도" range, metres
+    variety: str | None = None             # labelled "품종" value, as written by the shop
+    # Roaster-published taste-intensity gauges (dots / bars / "산미 4.5" numbers on the product page),
+    # normalised to our 1-5 scale by ``normalize_gauge``; ``gauge_scale`` records the site's own scale so
+    # the mapping stays auditable. None = the page shows no HTML/text gauge for that attribute (image-only
+    # gauges are never read).
+    gauge_acidity: float | None = None
+    gauge_body: float | None = None
+    gauge_sweetness: float | None = None
+    gauge_bitterness: float | None = None
+    gauge_scale: str | None = None
     product_url: str
     collected_at: str
 
@@ -441,6 +464,83 @@ def fetch_cached(http, url: str, cache_dir: Path, key: str) -> str | None:
 
 
 # --------------------------------------------------------------------------- #
+# Taste-intensity gauges and labelled altitude
+# --------------------------------------------------------------------------- #
+
+GAUGE_ATTRS = ("acidity", "body", "sweetness", "bitterness")
+GAUGE_LABELS: dict[str, str] = {
+    "산미": "acidity", "신맛": "acidity", "acidity": "acidity",
+    "바디감": "body", "바디": "body", "body": "body",
+    "단맛": "sweetness", "sweetness": "sweetness",
+    "쓴맛": "bitterness", "bitterness": "bitterness",
+}
+_GAUGE_WORD = r"산미|신맛|바디감|바디|단맛|쓴맛|acidity|body|sweetness|bitterness"
+# "산미 Acidity ●●●◐○" / "신맛 ●●○○○" / "Acidity ●●●●○ / Body ●●○○○" -- exactly five dots; a run of any
+# other length (seen once: a six-dot typo on a drip-bag page) is rejected rather than guessed.
+_DOT_GAUGE = re.compile(
+    rf"({_GAUGE_WORD})\s*(?:acidity|body|sweetness|bitterness)?\s*:?\s*(?<![●◐○])([●◐○]{{5}})(?![●◐○])",
+    re.IGNORECASE)
+# "산미 4.5│향미 5│균형 2│바디감 2│단맛 3" (G Roasting's og:description) -- a 0-5 number after the word.
+_NUM_GAUGE = re.compile(rf"({_GAUGE_WORD})\s*:?\s*([0-5](?:\.\d)?)(?![\d.])", re.IGNORECASE)
+
+
+def normalize_gauge(value: float, scale_max: float = 5.0) -> float:
+    """Map a site's 0..scale_max gauge reading onto our 1-5 scale: rescale to fifths, then clamp to
+    [1, 5]. Every site collected so far is a five-step gauge where one filled step already means
+    "low", so 1 step -> 1, 3 -> 3, 5 -> 5 and only a lone half step (0.5) is lifted to the floor of 1."""
+    v = value * 5.0 / scale_max
+    return round(min(5.0, max(1.0, v)), 2)
+
+
+def gauge_fields(raw: dict[str, float], scale: str, scale_max: float = 5.0) -> dict[str, Any]:
+    """{attr: site value} -> BeanFactRecord gauge_* kwargs (normalised) plus gauge_scale; {} when empty."""
+    if not raw:
+        return {}
+    out: dict[str, Any] = {f"gauge_{a}": normalize_gauge(v, scale_max) for a, v in raw.items() if a in GAUGE_ATTRS}
+    out["gauge_scale"] = scale
+    return out
+
+
+def dot_gauges(text: str | None) -> dict[str, float]:
+    """Five-dot gauges (● full = 1, ◐ half = 0.5, ○ empty = 0) keyed by attribute; first hit per attribute."""
+    out: dict[str, float] = {}
+    for m in _DOT_GAUGE.finditer(_nfc(text or "")):
+        attr = GAUGE_LABELS[m.group(1).lower()]
+        if attr not in out:
+            out[attr] = m.group(2).count("●") + 0.5 * m.group(2).count("◐")
+    return out
+
+
+def number_gauges(text: str | None) -> dict[str, float]:
+    """"산미 4.5│바디감 2│단맛 3"-style numeric 0-5 gauges keyed by attribute; first hit per attribute."""
+    out: dict[str, float] = {}
+    for m in _NUM_GAUGE.finditer(_nfc(text or "")):
+        attr = GAUGE_LABELS[m.group(1).lower()]
+        if attr not in out:
+            out[attr] = float(m.group(2))
+    return out
+
+
+def parse_altitude_m(text: str | None) -> int | None:
+    """Midpoint of a labelled altitude ("1,950-2,050m", "1,066m", "1600~2000 masl") in metres; implausible
+    values (outside 200-3000 m) are dropped."""
+    if not text:
+        return None
+    nums = [int(n.replace(",", "")) for n in re.findall(r"\d{1,2},\d{3}|\d{3,4}", text)[:2]]
+    if not nums:
+        return None
+    alt = round(sum(nums) / len(nums))
+    return alt if 200 <= alt <= 3000 else None
+
+
+def find_roast_word(text: str | None) -> str | None:
+    """First Korean roast-degree word anywhere in the text (G Roasting puts it bare in the title,
+    "약배전 산미높은 ..."); ``ROAST_BRACKET_WORDS`` lists 중강/중약 before 강/약 so the longer word wins."""
+    text = _nfc(text or "")
+    return next((w for w in ROAST_BRACKET_WORDS if w in text), None)
+
+
+# --------------------------------------------------------------------------- #
 # Fritz (fritz.co.kr) -- Cafe24
 # --------------------------------------------------------------------------- #
 
@@ -474,6 +574,7 @@ def parse_fritz_product(html_text: str, url: str) -> dict | None:
         "flavor_notes": flavor_notes_from_ld_description(desc),
         "price_krw": int(price) if price is not None else None,
         "weight_g": parse_weight_g(name) or parse_weight_g(text),
+        "variety": ko_prefix(fields.get("variety")) or None,
         "product_url": url,
     }
 
@@ -575,7 +676,9 @@ class NamusairoCollector:
 # Coffee Libre (coffeelibre.kr) -- Cafe24
 # --------------------------------------------------------------------------- #
 
-LIBRE_LABELS = (("농장명", "farm"), ("지역", "region"), ("가공방식", "process_raw"))
+LIBRE_LABELS = (("농장명", "farm"), ("지역", "region"), ("가공방식", "process_raw"),
+                ("재배고도", "altitude_raw"), ("품종", "variety"))
+LIBRE_GAUGE_SCALE = "coffeelibre: 5 dots, half-step (●=1, ◐=0.5)"
 
 
 def parse_libre_product(html_text: str, url: str) -> dict | None:
@@ -587,7 +690,7 @@ def parse_libre_product(html_text: str, url: str) -> dict | None:
         return None
     soup = BeautifulSoup(html_text, "lxml")
     text = normalize_ws(soup.get_text(" "))
-    fields = extract_labeled_fields(text, LIBRE_LABELS, extra_markers=("생산자", "재배고도", "품종"))
+    fields = extract_labeled_fields(text, LIBRE_LABELS, extra_markers=("생산자", "산미", "신맛", "단맛"))
     facts = label_value_map(soup)
     process_raw = fields.get("process_raw", "")
     decaf = is_decaf(name)
@@ -609,6 +712,11 @@ def parse_libre_product(html_text: str, url: str) -> dict | None:
         "flavor_notes": flavor_notes_from_ld_description(desc),
         "price_krw": int(price) if price is not None else None,
         "weight_g": parse_weight_g(facts.get("옵션", "")) or parse_weight_g(name),
+        "altitude_m": parse_altitude_m(fields.get("altitude_raw")),
+        "variety": ko_prefix(fields.get("variety")) or None,
+        # "산미 Acidity ●●●◐○ 단맛 Sweetness ●●●○○" (or "신맛 ●●○○○") in the product summary: five dots,
+        # half dots allowed; acidity and sweetness only (this site shows no body gauge).
+        **gauge_fields(dot_gauges(text), LIBRE_GAUGE_SCALE),
         "product_url": url,
     }
 
@@ -647,6 +755,27 @@ class CoffeeLibreCollector:
 # --------------------------------------------------------------------------- #
 
 
+ONEKG_SENSORY_SCALE = "onekgcoffee: SENSORY CHART 5-segment bar, half-step (fill=1, half=0.5)"
+
+
+def onekg_sensory_gauges(soup: BeautifulSoup) -> dict[str, float]:
+    """The "감각 표현 차트 / SENSORY CHART" block: one ``kg-sensory-row`` per attribute (신맛/단맛/쓴맛/
+    바디감) whose bar is five ``<span>`` segments classed ``kg-sensory-fill`` / ``-half`` / ``-empty``. The
+    value is read from the markup classes, not from rendered colours; a bar that isn't five segments is
+    skipped."""
+    out: dict[str, float] = {}
+    for row in soup.select("div.kg-sensory-row"):
+        label_el = row.select_one(".kg-sensory-label")
+        attr = GAUGE_LABELS.get(_nfc(label_el.get_text(strip=True)).lower()) if label_el else None
+        spans = row.select(".kg-sensory-bar > span")
+        if attr is None or attr in out or len(spans) != 5:
+            continue
+        classes = [" ".join(sp.get("class") or []) for sp in spans]
+        out[attr] = sum(1.0 if "kg-sensory-fill" in c else 0.5 if "kg-sensory-half" in c else 0.0
+                        for c in classes)
+    return out
+
+
 def parse_onekg_product(html_text: str, url: str) -> dict | None:
     m = re.search(r"<title>(.*?)</title>", html_text, re.S)
     title = clean_name(m.group(1).split(" | ")[0]) if m else None
@@ -680,6 +809,7 @@ def parse_onekg_product(html_text: str, url: str) -> dict | None:
         "weight_g": (parse_weight_g(facts.get("용량(중량),수량"))
                      or parse_weight_g(facts.get("용량"))
                      or parse_weight_g(title)),
+        **gauge_fields(onekg_sensory_gauges(soup), ONEKG_SENSORY_SCALE),
         "product_url": url,
     }
 
@@ -1209,6 +1339,171 @@ class ManufactCollector:
 
 
 # --------------------------------------------------------------------------- #
+# G Roasting (groasting.com) -- Cafe24
+# --------------------------------------------------------------------------- #
+
+GROASTING_GAUGE_SCALE = "groasting: numeric 0-5, half-step (og:description '산미 4.5│바디감 2│단맛 3')"
+GROASTING_LABELS = (("아로마/플레이버", "notes_raw"),)
+GROASTING_EXTRA_MARKERS = ("산미/기타", "G 로스팅 포인트")
+
+
+def parse_groasting_product(html_text: str, url: str) -> dict | None:
+    """G Roasting publishes its taste gauge as a one-line text summary in each product's
+    og:description / JSON-LD description ("싱그러운 ... 후미\\r\\n산미 4.5│향미 5│균형 2│바디감 2│단맛 3").
+    An older five-row bar-chart table with the same numbers is still in the page source but inside an HTML
+    comment (not displayed, and sometimes stale -- e.g. 바디감 2.5 there vs 2 in the live summary), so only
+    the displayed summary line is read. 향미/균형 (aroma/balance) are not intensity scales we model and are
+    dropped. Roast degree is a bare word in the title ("약배전 산미높은 ..."); country and process are read
+    from the title too. Flavor notes are the "커핑노트 아로마/플레이버 : ..." word list."""
+    ld = first_product_ld(html_text)
+    if ld is None:
+        return None
+    name, desc, price = ld_name_desc_price(ld)
+    if is_excluded(name):
+        return None
+    m = re.search(r'<meta property="og:description" content="([^"]*)"', html_text)
+    summary = html.unescape(m.group(1)) if m else (ld.get("description") or "")
+    soup = BeautifulSoup(html_text, "lxml")
+    facts = label_value_map(soup)
+    text = normalize_ws(soup.get_text(" "))
+    fields = extract_labeled_fields(text, GROASTING_LABELS, extra_markers=GROASTING_EXTRA_MARKERS)
+    decaf = is_decaf(name)
+    offers = ld.get("offers") or {}
+    price = price if price is not None else offers.get("lowPrice") or offers.get("price")
+    return {
+        "name": name,
+        "origin_country": find_country(name),
+        "origin_region": None,
+        "origin_farm": None,
+        "process": find_process(name),
+        "roast_level": find_roast_word(name),
+        "is_decaf": decaf,
+        "decaf_process": find_decaf_method(text) if decaf else None,
+        "flavor_notes": split_note_list((fields.get("notes_raw") or "").replace("｜", " ").replace("|", " ")),
+        "price_krw": int(float(price)) if price is not None else parse_price_krw(facts.get("판매가")),
+        "weight_g": parse_weight_g(facts.get("용량선택", "")) or parse_weight_g(name),
+        **gauge_fields(number_gauges(summary), GROASTING_GAUGE_SCALE),
+        "product_url": url,
+    }
+
+
+@dataclass
+class GRoastingCollector:
+    name: str = "groasting"
+    base_url: str = "https://groasting.com"
+    roaster: str = "G로스팅"
+    categories: tuple[str, ...] = ("26", "91", "93")  # 원두전체, 스페셜티, 디카페인
+
+    def collect(self, http, cache_dir: Path, collected_at: str) -> list[BeanFactRecord]:
+        ids: dict[str, None] = {}
+        for cate in self.categories:
+            listing = fetch_cached(http, f"{self.base_url}/product/list.html?cate_no={cate}",
+                                    cache_dir, f"list_{cate}.html")
+            if not listing:
+                continue
+            for pid in re.findall(r"product_no=(\d+)", listing):
+                ids.setdefault(pid, None)
+        records = []
+        for pid in ids:
+            url = f"{self.base_url}/product/detail.html?product_no={pid}"
+            page = fetch_cached(http, url, cache_dir, f"product_{pid}.html")
+            if not page:
+                continue
+            facts = parse_groasting_product(page, url)
+            if facts is None:
+                continue
+            records.append(BeanFactRecord(
+                key=f"{self.name}:{pid}", site=self.name, roaster=self.roaster,
+                collected_at=collected_at, **facts,
+            ))
+        return records
+
+
+# --------------------------------------------------------------------------- #
+# Naeil Coffee (naeilcoffee.co.kr) -- imweb
+# --------------------------------------------------------------------------- #
+
+NAEIL_GAUGE_SCALE = "naeilcoffee: 5 dots, half-step (●=1, ◐=0.5), acidity/body only"
+# Site-local exclusions on top of EXCLUDE_KEYWORDS: steeped coffee bags, B2B payment pages and green beans.
+NAEIL_EXCLUDE = ("커피백", "사업자", "결제창", "생두")
+_NAEIL_PROCESS = re.compile(r"\b(washed|natural|honey|anaerobic)\b", re.IGNORECASE)
+
+
+def parse_naeil_product(html_text: str, url: str) -> dict | None:
+    """Naeil Coffee (imweb) shows "Tasting Notes A / B / C  Acidity ●●●◐○ / Body ●●●○○" under each bean's
+    title (acidity and body only). Single origins also carry a labelled fact line in the JSON-LD description
+    -- "Ethiopia Hunkute Sidamo G1 Washed 재배지역 : ... 재배고도 : 1,950-2,050m / 재배품종 : Heirloom / ..."
+    -- from which country (first words), process, altitude and variety are read; blends (Dusk, Balance, ...)
+    have none of it. Only whole-bean products are kept: the name must say 원두 or the description must carry
+    the 재배지역 fact line (single origins are titled just "HUNKUTE 200g")."""
+    ld = first_product_ld(html_text)
+    if ld is None:
+        return None
+    name, desc, price = ld_name_desc_price(ld)
+    if is_excluded(name) or any(k in (name or "") for k in NAEIL_EXCLUDE):
+        return None
+    if "원두" not in name and "재배지역" not in desc:
+        return None
+    soup = BeautifulSoup(html_text, "lxml")
+    # the product's own summary block only -- never a "related products" widget elsewhere on the page
+    summary = soup.find("div", class_="goods_summary")
+    text = normalize_ws((summary or soup).get_text(" "))
+    header = desc.split("재배지역")[0] if "재배지역" in desc else ""
+    fields = extract_labeled_fields(normalize_ws(desc), (("재배지역", "region"), ("재배고도", "altitude_raw"),
+                                                         ("재배품종", "variety")), extra_markers=("인증", "/"))
+    notes_m = re.search(r"Tasting Notes\s*(.+?)\s*Acidity", text)
+    from pipeline.rules import normalize_country  # local import: rules is a normalize-stage helper
+    decaf = is_decaf(name, desc)
+    process_m = _NAEIL_PROCESS.search(header)
+    return {
+        "name": name,
+        "origin_country": normalize_country(header),
+        "origin_region": fields.get("region") or None,
+        "origin_farm": None,
+        "process": process_m.group(1).title() if process_m else None,
+        "roast_level": None,  # not stated on this site
+        "is_decaf": decaf,
+        "decaf_process": find_decaf_method(text) if decaf else None,
+        "flavor_notes": [w.strip() for w in notes_m.group(1).split("/") if w.strip()][:8] if notes_m else [],
+        "price_krw": int(price) if price is not None else None,
+        "weight_g": parse_weight_g(name),
+        "altitude_m": parse_altitude_m(fields.get("altitude_raw")),
+        # the JSON-LD description is cut off at ~100 chars ("... / 재배품종 : Arusha bl..."): keep the variety
+        # only when the next label (인증) proves the value wasn't truncated.
+        "variety": (fields.get("variety") or "").strip(" .") or None if re.search(r"재배품종.*인증", desc) else None,
+        **gauge_fields(dot_gauges(text), NAEIL_GAUGE_SCALE),
+        "product_url": url,
+    }
+
+
+@dataclass
+class NaeilCoffeeCollector:
+    name: str = "naeilcoffee"
+    base_url: str = "https://www.naeilcoffee.co.kr"
+    roaster: str = "내일의커피"
+
+    def collect(self, http, cache_dir: Path, collected_at: str) -> list[BeanFactRecord]:
+        sitemap = fetch_cached(http, f"{self.base_url}/sitemap.xml", cache_dir, "sitemap.xml")
+        if not sitemap:
+            return []
+        ids = dict.fromkeys(re.findall(r"/shop_view/(\d+)", sitemap))
+        records = []
+        for pid in ids:
+            url = f"{self.base_url}/shop_view/?idx={pid}"
+            page = fetch_cached(http, url, cache_dir, f"product_{pid}.html")
+            if not page:
+                continue
+            facts = parse_naeil_product(page, url)
+            if facts is None:
+                continue
+            records.append(BeanFactRecord(
+                key=f"{self.name}:{pid}", site=self.name, roaster=self.roaster,
+                collected_at=collected_at, **facts,
+            ))
+        return records
+
+
+# --------------------------------------------------------------------------- #
 # Orchestration
 # --------------------------------------------------------------------------- #
 
@@ -1216,7 +1511,7 @@ ALL_ROASTER_COLLECTORS = [
     FritzCollector(), NamusairoCollector(), CoffeeLibreCollector(),
     OnekgCoffeeCollector(), BlueBottleCollector(),
     AnthraciteCollector(), FeltCollector(), BeanBrothersCollector(),
-    MomosCollector(), ManufactCollector(),
+    MomosCollector(), ManufactCollector(), GRoastingCollector(), NaeilCoffeeCollector(),
 ]
 
 
@@ -1230,6 +1525,7 @@ def _site_stats(records: list[BeanFactRecord]) -> dict[str, Any]:
         "pct_with_origin": pct(lambda r: bool(r.origin_country)),
         "pct_with_process": pct(lambda r: bool(r.process)),
         "pct_with_notes": pct(lambda r: bool(r.flavor_notes)),
+        "gauged": sum(1 for r in records if r.gauge_scale),
     }
 
 

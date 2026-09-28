@@ -34,6 +34,15 @@ from pipeline.collect.roasters_kr import (
     run_roasters_kr_collect,
     split_note_list,
 )
+from pipeline.collect.roasters_kr import (
+    ALL_ROASTER_COLLECTORS,
+    dot_gauges,
+    normalize_gauge,
+    number_gauges,
+    parse_altitude_m,
+    parse_groasting_product,
+    parse_naeil_product,
+)
 from pipeline.http import RobotsDisallowed
 
 FIXTURES = Path(__file__).parent / "fixtures" / "roasters_kr"
@@ -648,3 +657,110 @@ def test_run_roasters_kr_collect_merges_and_isolates_failures(tmp_path):
     lines = out_path.read_text(encoding="utf-8").splitlines()
     assert len(lines) == 1
     assert json.loads(lines[0])["key"] == "ok_site:1"
+
+
+# --------------------------------------------------------------------------- #
+# Taste-intensity gauges (docs/adr/0011-roaster-gauges-feature-model.md)
+# --------------------------------------------------------------------------- #
+
+
+def test_normalize_gauge_maps_five_step_scale_onto_1_to_5():
+    assert normalize_gauge(1) == 1.0
+    assert normalize_gauge(3.5) == 3.5
+    assert normalize_gauge(5) == 5.0
+    assert normalize_gauge(0.5) == 1.0          # a lone half dot is still the floor of our scale
+    assert normalize_gauge(0) == 1.0
+    assert normalize_gauge(8, scale_max=10) == 4.0
+
+
+def test_dot_gauges_reads_korean_english_and_half_dots():
+    assert dot_gauges("산미 Acidity ●●●◐○ 단맛 Sweetness ●●●○○") == {"acidity": 3.5, "sweetness": 3.0}
+    assert dot_gauges("신맛 ●◐○○○ 단맛 ●●●●○") == {"acidity": 1.5, "sweetness": 4.0}
+    assert dot_gauges("Acidity ●●●●○ / Body ●●○○○") == {"acidity": 4.0, "body": 2.0}
+
+
+def test_dot_gauges_rejects_runs_that_are_not_five_dots():
+    assert dot_gauges("Acidity ●●○○○ / Body ●●●●◐○") == {"acidity": 2.0}
+
+
+def test_number_gauges_reads_pipe_separated_summary():
+    assert number_gauges("후미 산미 4.5│향미 5│균형 2│바디감 2│단맛 3") == {
+        "acidity": 4.5, "body": 2.0, "sweetness": 3.0}
+
+
+def test_parse_altitude_m_midpoint_and_bounds():
+    assert parse_altitude_m("1,950-2,050m") == 2000
+    assert parse_altitude_m("1,066m") == 1066
+    assert parse_altitude_m("1600~2000 masl") == 1800
+    assert parse_altitude_m("50m") is None
+    assert parse_altitude_m(None) is None
+
+
+def test_parse_libre_reads_dot_gauges_altitude_and_variety():
+    facts = parse_libre_product(read_fixture("libre_product.html"), "https://coffeelibre.kr/product/x/8153/")
+    assert facts["gauge_acidity"] == 3.5
+    assert facts["gauge_sweetness"] == 3.0
+    assert "gauge_body" not in facts            # this site shows no body gauge
+    assert facts["gauge_scale"].startswith("coffeelibre")
+    assert facts["altitude_m"] == 1066
+    assert facts["variety"] == "파라이네마"
+
+
+def test_parse_libre_without_gauge_leaves_gauge_fields_unset():
+    facts = parse_libre_product(read_fixture("libre_decaf_roast.html"), "https://coffeelibre.kr/product/x/9001/")
+    assert not any(k.startswith("gauge_") for k in facts)
+    BeanFactRecord(key="coffeelibre:9001", site="coffeelibre", roaster="커피 리브레", collected_at="2026-09-28",
+                   **facts)                      # optional fields default to None
+
+
+def test_parse_onekg_reads_sensory_chart_bars():
+    facts = parse_onekg_product(read_fixture("onekg_product.html"),
+                                 "https://www.1kgcoffee.co.kr/goods/goods_view.php?goodsNo=1000000688")
+    assert facts["gauge_acidity"] == 1.0         # half segment -> floor of 1
+    assert facts["gauge_sweetness"] == 3.0
+    assert facts["gauge_bitterness"] == 1.0
+    assert facts["gauge_body"] == 2.5
+    assert facts["gauge_scale"].startswith("onekgcoffee")
+
+
+def test_parse_groasting_reads_displayed_summary_not_commented_table():
+    facts = parse_groasting_product(read_fixture("groasting_product.html"),
+                                     "https://groasting.com/product/detail.html?product_no=91")
+    assert facts["name"].startswith("약배전 산미높은 에티오피아")
+    assert facts["origin_country"] == "에티오피아"
+    assert facts["process"] == "내추럴"
+    assert facts["roast_level"] == "약배전"
+    assert facts["flavor_notes"] == ["장미", "살구", "망고", "건자두", "초콜릿", "감귤류", "베리"]
+    assert facts["price_krw"] == 13500
+    assert facts["weight_g"] == 200
+    # 바디감 2 from the live og:description, not the stale 2.5 inside the HTML comment
+    assert (facts["gauge_acidity"], facts["gauge_body"], facts["gauge_sweetness"]) == (4.5, 2.0, 3.0)
+
+
+def test_parse_naeil_single_origin_reads_summary_gauges_and_fact_line():
+    facts = parse_naeil_product(read_fixture("naeil_product.html"), "https://www.naeilcoffee.co.kr/shop_view/?idx=117")
+    assert facts["name"] == "HUNKUTE 200g"
+    assert facts["origin_country"] == "Ethiopia"
+    assert facts["process"] == "Washed"
+    assert facts["altitude_m"] == 2000
+    assert facts["variety"] == "Heirloom"
+    assert facts["flavor_notes"] == ["Black Tea", "Lemongrass", "Almond"]
+    # the product's own summary block, not the "related" widget's gauges further down the page
+    assert (facts["gauge_acidity"], facts["gauge_body"]) == (3.5, 3.5)
+    assert "gauge_sweetness" not in facts
+
+
+def test_parse_naeil_drops_truncated_variety():
+    facts = parse_naeil_product(read_fixture("naeil_blend_truncated_variety.html"), "u")
+    assert facts["variety"] is None             # "Arusha bl..." was cut off by the JSON-LD description
+    assert facts["altitude_m"] == 1800
+    assert facts["origin_country"] == "Papua New Guinea"
+
+
+def test_parse_naeil_skips_coffee_bags():
+    assert parse_naeil_product(read_fixture("naeil_coffeebag.html"), "u") is None
+
+
+def test_new_gauge_collectors_are_registered():
+    names = {c.name for c in ALL_ROASTER_COLLECTORS}
+    assert {"groasting", "naeilcoffee"} <= names
