@@ -50,13 +50,14 @@ def build_recommend_graph(deps):
     def fan_out(state: RecommendState):
         if not state.get("ranked"):
             return END
-        return [Send("explain", {"item": r["item"], "score": r["score"], "profile": state["profile"]})
-                for r in state["ranked"]]
+        return [Send("explain", {"item": r["item"], "score": r["score"], "profile": state["profile"], "rank": n})
+                for n, r in enumerate(state["ranked"])]
 
     async def explain(payload: dict) -> dict:
-        _, tag_ko = await asyncio.to_thread(deps.repo.taxonomy)
+        tag_to_cat, tag_ko = await asyncio.to_thread(deps.repo.taxonomy)
         return {"explanations": [await explain_to_stream(deps, payload["item"], payload["profile"],
-                                                         payload["score"], tag_ko)]}
+                                                         payload["score"], tag_ko, tag_to_cat=tag_to_cat,
+                                                         top_pick=payload.get("rank") == 0)]}
 
     g = StateGraph(RecommendState)
     g.add_node("load", traced("recommend.load")(load))

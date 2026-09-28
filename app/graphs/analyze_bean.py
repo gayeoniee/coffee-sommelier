@@ -100,9 +100,10 @@ def build_analyze_graph(deps):
         return {"score": s, "violation": why}
 
     async def explain(state: AnalyzeState) -> dict:
-        _, tag_ko = await asyncio.to_thread(deps.repo.taxonomy)
+        tag_to_cat, tag_ko = await asyncio.to_thread(deps.repo.taxonomy)
         return {"explanation": await explain_to_stream(deps, state["item"], state["profile"], state["score"], tag_ko,
-                                                       state.get("prediction"), state.get("violation"))}
+                                                       state.get("prediction"), state.get("violation"),
+                                                       tag_to_cat=tag_to_cat)}
 
     g = StateGraph(AnalyzeState)
     for name, fn in (("parse", parse), ("match", match), ("predict", predict), ("score", score), ("explain", explain)):

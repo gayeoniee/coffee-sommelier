@@ -1,4 +1,5 @@
 import asyncio
+import json
 from time import perf_counter
 
 import httpx
@@ -6,7 +7,7 @@ from langgraph.config import get_stream_writer
 
 from app import config, telemetry
 from app.config import EXPLAIN_TASK
-from app.core.explain import explain_messages, template_explanation
+from app.core.explain import explain_messages, finalize_explanation, template_explanation
 from app.llm import TRUNCATED
 from app.models import Item, Prediction, Profile
 from pipeline.llm import LLMError
@@ -22,7 +23,11 @@ def _last_complete_sentence(text: str) -> str:
 
 EMPTY_EXPLANATION = "empty explanation"
 FALLBACK_REASONS = ("timeout_first_token", "timeout_midstream", "error_before_token", "error_midstream",
-                    "truncated_empty", "empty")
+                    "truncated_empty", "empty", "guard")
+
+
+class GuardRejected(LLMError):
+    """The finished text failed finalize_explanation (copied placeholder/key/true, contradicted direction)."""
 
 
 def fallback_reason(exc: BaseException, had_output: bool, truncated: bool) -> str:
@@ -32,7 +37,11 @@ def fallback_reason(exc: BaseException, had_output: bool, truncated: bool) -> st
     - error_before_token: every target failed before any text (HTTP 429/5xx, connection error, empty stream)
     - error_midstream: the stream broke after text had started
     - truncated_empty: cut off by max_tokens with no complete sentence to keep
-    - empty: the model finished normally but produced no usable text"""
+    - empty: the model finished normally but produced no usable text
+    - guard: the text was complete but finalize_explanation rejected it (docs/adr/0005 3차); the specific guard
+      is also counted as `guard_<reason>`"""
+    if isinstance(exc, GuardRejected):
+        return "guard"
     if isinstance(exc, TimeoutError):
         return "timeout_midstream" if had_output else "timeout_first_token"
     if isinstance(exc, LLMError) and str(exc) == EMPTY_EXPLANATION:
@@ -41,12 +50,14 @@ def fallback_reason(exc: BaseException, had_output: bool, truncated: bool) -> st
 
 
 async def explain_to_stream(deps, item: Item, profile: Profile, score: float, tag_ko: dict[str, str],
-                            prediction: Prediction | None = None, violation: str | None = None) -> dict:
+                            prediction: Prediction | None = None, violation: str | None = None,
+                            tag_to_cat: dict[str, str] | None = None, top_pick: bool = False) -> dict:
     """Stream an LLM explanation token by token; on failure or past the deadline, replace it with the template.
 
     A completion cut off by `max_tokens` (surfaced as the `TRUNCATED` sentinel) is trimmed back to its last
     complete sentence rather than shown mid-sentence; if nothing complete remains, it falls back like any
-    other failure.
+    other failure. The finished text then goes through `finalize_explanation`: an edited text is what
+    `explain_done` carries (the client replaces the streamed text with it); a rejected one falls back.
     """
     writer = get_stream_writer()
     template = template_explanation(item, profile, score, tag_ko, violation)
@@ -55,8 +66,9 @@ async def explain_to_stream(deps, item: Item, profile: Profile, score: float, ta
     t0 = perf_counter()
     try:
         async with asyncio.timeout(config.EXPLAIN_DEADLINE_S):
-            async for tok in deps.stream_text(EXPLAIN_TASK,
-                                              explain_messages(item, profile, score, prediction, violation)):
+            msgs = explain_messages(item, profile, score, prediction, violation, tag_to_cat=tag_to_cat, tag_ko=tag_ko,
+                                    top_pick=top_pick)
+            async for tok in deps.stream_text(EXPLAIN_TASK, msgs):
                 if tok is TRUNCATED:
                     truncated = True
                     continue
@@ -70,6 +82,11 @@ async def explain_to_stream(deps, item: Item, profile: Profile, score: float, ta
             text = _last_complete_sentence(text)
         if not text:
             raise LLMError(EMPTY_EXPLANATION)
+        text, event = finalize_explanation(text, item, profile, json.loads(msgs[1]["content"]), violation)
+        if event:
+            telemetry.add(f"guard_{event}", 1)
+        if not text:
+            raise GuardRejected(event)
         writer({"type": "explain_done", "key": item.key, "text": text})
         return {"key": item.key, "text": text, "fallback": False}
     except (LLMError, httpx.HTTPError, TimeoutError) as e:

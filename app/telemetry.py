@@ -24,7 +24,9 @@ _open: dict[int, dict[str, Any]] = {}      # keyed by id(token): Token is unhash
 
 _LIST_FIELDS = {"ms_first_token"}
 _COUNTER_FIELDS = {"fallback", "hedged", "hedge_won", "truncated", "retried"}
-_COUNTER_PREFIXES = ("fb_",)       # per-reason fallback counters (app/graphs/common.py fallback_reason)
+# per-reason fallback counters (app/graphs/common.py fallback_reason) and explanation-guard events
+# (`guard_edited`, `guard_direction`, ... — app/core/explain.py finalize_explanation)
+_COUNTER_PREFIXES = ("fb_", "guard_")
 
 
 class _StdoutHandler(logging.StreamHandler):
@@ -67,7 +69,7 @@ def add(key: str, value: Any) -> None:
     """Record a field on the in-flight request. No-op outside a `begin()`/`end()` pair.
 
     List fields (`ms_first_token`) append; counter fields (`fallback`, `hedged`, `hedge_won`, `truncated`,
-    `retried`, and every `fb_<reason>`) accumulate; everything else (`cards`, `error`, ...) is overwritten.
+    `retried`, and every `fb_<reason>` / `guard_<event>`) accumulate; everything else (`cards`, `error`, ...) is overwritten.
     """
     data = _ctx.get()
     if data is None:
