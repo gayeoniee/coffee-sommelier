@@ -84,6 +84,20 @@ def independent_ok(profile: Profile, item: Item, raw: dict | None, brand_decaf_a
     return profile.milk_ok or not has_milk(name)
 
 
+DECAF_SHOWN_MAX_MG = 30     # a decaf-only guest's card may show more only as a flagged estimate (or not at all)
+
+
+def caffeine_display_ok(profile: Profile, item: Item) -> bool:
+    """Independent of the repo's estimate logic: a decaf-only card never shows a caffeine figure above
+    DECAF_SHOWN_MAX_MG unless it is flagged (caffeine_mg_note), and an order-decaf card always carries the flag --
+    unflagged, its figure would read as the caffeine the guest actually gets."""
+    if profile.caffeine_rule != "decaf_only":
+        return True
+    if item.order_decaf and not item.caffeine_mg_note:
+        return False
+    return item.caffeine_mg is None or item.caffeine_mg <= DECAF_SHOWN_MAX_MG or bool(item.caffeine_mg_note)
+
+
 def violation_rate(repo) -> dict:
     tag_to_cat, _ = repo.taxonomy()
     checked = violations = 0
@@ -98,6 +112,10 @@ def violation_rate(repo) -> dict:
                 if not independent_ok(p, i, raw, b["decaf_available"]):
                     violations += 1
                     details.append({"persona": label, "brand": b["key"], "item": i.name})
+                elif not caffeine_display_ok(p, i):
+                    violations += 1
+                    details.append({"persona": label, "brand": b["key"], "item": i.name,
+                                    "shown_caffeine_mg": i.caffeine_mg})
     return {"checked": checked, "violations": violations, "rate": violations / checked if checked else 0.0,
             "details": details}
 

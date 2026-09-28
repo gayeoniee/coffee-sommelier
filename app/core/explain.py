@@ -21,6 +21,9 @@ LENGTH_RULE = (" 반드시 지킬 규칙: 설명은 줄바꿈 없는 한 문단,
 FIRST_SENTENCE = "첫 문장은 결론과 가장 큰 이유"
 FIRST_SENTENCE_VIOLATION = "첫 문장 하나에 조건 위반('{violation}')과 그래서 주문 전 확인이 필요하다는 결론을 함께"
 NO_THINK = " /no_think"      # qwen: skip the reasoning phase
+DECAF_CAFFEINE_RULE = (" 이 음료의 원래 카페인 수치는 데이터에 없고 말하지도 마라. 카페인을 말할 때는 "
+                       "'디카페인 주문 시 카페인(mg, 추정)' 값만 '약 N mg(추정)'처럼 쓰고, 그 값이 null이면 수치 없이 "
+                       "'디카페인으로 주문하면 카페인이 줄어요'라고만 하라.")
 VIOLATION_RULE = " 조건 위반이 있으니 첫 문장에서 그 위반 사실(카페인·우유 조건)을 먼저 분명히 말하라."
 CAFFEINE_RULE_KO = {"decaf_only": "디카페인만", "low": "저카페인", "any": "제한 없음"}
 TOPIC_KO = {"acidity": "산미는", "body": "바디는", "sweetness": "단맛은"}
@@ -44,8 +47,10 @@ def template_explanation(item: Item, profile: Profile, score: float, tag_ko: dic
     if item.tags:
         facts.append("향미: " + ", ".join(tag_ko.get(t, t) for t in item.tags[:3]))
     if item.order_decaf:
-        surcharge = f" (+{item.decaf_surcharge_krw}원)" if item.decaf_surcharge_krw else ""
-        facts.append(f"디카페인으로 바꿔 주문하세요{surcharge}")
+        extra = [f"+{item.decaf_surcharge_krw}원"] if item.decaf_surcharge_krw else []
+        if item.caffeine_mg is not None and item.caffeine_mg_note:
+            extra.append(f"카페인 약 {item.caffeine_mg:g}mg 추정")
+        facts.append("디카페인으로 바꿔 주문하세요" + (f" ({', '.join(extra)})" if extra else ""))
     if item.source == "predicted":
         facts.append(f"유사 원두 기반 예측이에요(신뢰도 {CONFIDENCE_KO[item.confidence]})")
     return first + (" " + " · ".join(facts) + "." if facts else "")
@@ -98,9 +103,12 @@ def explain_messages(item: Item, profile: Profile, score: float, prediction: Pre
         "조건 위반": violation,
         "근거": prediction.evidence if prediction else None,
     }
+    if item.order_decaf:    # only the decaf-order estimate, never the regular drink's caffeine
+        payload["디카페인 주문 시 카페인(mg, 추정)"] = item.caffeine_mg if item.caffeine_mg_note else None
     if item.bean_note:      # franchise drink with an official bean description (docs/adr/0012); absent otherwise
         payload["원두 공식 설명"] = item.bean_note
-    system = SYSTEM_PROMPT + (VIOLATION_RULE if violation else "") + length_rule(violation) + NO_THINK
+    system = (SYSTEM_PROMPT + (DECAF_CAFFEINE_RULE if item.order_decaf else "") + (VIOLATION_RULE if violation else "")
+              + length_rule(violation) + NO_THINK)
     return [{"role": "system", "content": system},
             {"role": "user", "content": json.dumps(payload, ensure_ascii=False)}]
 
@@ -119,8 +127,8 @@ def card(item: Item, score: float, template: str, violation: str | None = None,
          "sweetness": item.sweetness, "tags": list(item.tags),
          "tags_ko": [(tag_ko or {}).get(t.lower(), t) for t in item.tags], "is_decaf": item.is_decaf,
          "order_decaf": item.order_decaf, "decaf_surcharge_krw": item.decaf_surcharge_krw,
-         "caffeine_mg": item.caffeine_mg, "is_milk": item.is_milk, "coffee_id": item.coffee_id,
-         "menu_item_id": item.menu_item_id, "violation": violation, "template": template}
+         "caffeine_mg": item.caffeine_mg, "caffeine_mg_note": item.caffeine_mg_note, "is_milk": item.is_milk,
+         "coffee_id": item.coffee_id, "menu_item_id": item.menu_item_id, "violation": violation, "template": template}
     if prediction is not None:
         c["evidence"] = prediction.evidence
         c["n_neighbors"] = prediction.n_neighbors

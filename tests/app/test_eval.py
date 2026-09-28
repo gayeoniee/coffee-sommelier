@@ -169,3 +169,18 @@ def test_rescore_explain_quality_reruns_rules_and_keeps_generation_and_judges():
                                                "rule_failures": before["rule_failures"]}
     assert out["models"] == {"explain": "m"}
     assert doc["cases"][0]["rules"] == stale          # the input document is not mutated
+
+
+
+def test_caffeine_display_check_flags_regular_mg_on_decaf_only_cards():
+    from app.eval import caffeine_display_ok
+    decaf, anyone = Profile(caffeine_rule="decaf_only"), Profile()
+    base = Item(key="menu:1", name="꿀화이트 아메리카노", source="brand_bean", decaf_option=True, order_decaf=True)
+    assert not caffeine_display_ok(decaf, replace(base, caffeine_mg=202))          # the production bug
+    assert not caffeine_display_ok(decaf, replace(base, caffeine_mg=7))            # unflagged number on a swap
+    assert caffeine_display_ok(decaf, replace(base, caffeine_mg=7, caffeine_mg_note="디카페인 주문 시 추정"))
+    assert caffeine_display_ok(decaf, replace(base, caffeine_mg_note="디카페인 주문 시 카페인 ↓"))
+    sku = Item(key="menu:2", name="디카페인 카페 모카", source="brand_bean", is_decaf=True)
+    assert caffeine_display_ok(decaf, replace(sku, caffeine_mg=12))
+    assert not caffeine_display_ok(decaf, replace(sku, caffeine_mg=136.7))
+    assert caffeine_display_ok(anyone, replace(base, caffeine_mg=202))

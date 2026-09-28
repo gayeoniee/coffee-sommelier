@@ -10,7 +10,7 @@ from psycopg_pool import ConnectionPool
 from app import config
 from app.core.explain import sample_card
 from app.core.flavors import build_tag_to_category, load_tag_ko_extra, merge_tag_ko
-from app.core.scoring import is_milk_drink, needs_decaf_order
+from app.core.scoring import decaf_order_caffeine, decaf_twin_key, decaf_twins, is_milk_drink, needs_decaf_order
 from app.models import ATTRS, Item, Neighbor, Profile
 from pipeline.query import to_vector_literal
 from pipeline.rules import normalize_country
@@ -145,6 +145,9 @@ class Repo:
                          " FROM brands b WHERE b.active ORDER BY b.name")
 
     def brand_items(self, brand_key: str, caffeine_rule: str) -> list[Item]:
+        """The brand's drinks for this caffeine rule. A drink that would have to be ordered decaf is left out when the
+        brand sells its own decaf SKU of it (이디야 "디카페인 카페 라떼", 폴바셋 "디카페인 카페라떼"): that SKU is
+        already a candidate, with its real caffeine, so the guest gets it instead of "regular + swap" twice."""
         b = self._one("SELECT * FROM brands WHERE key = %s AND active", (brand_key,))
         if b is None:
             return []
@@ -153,26 +156,39 @@ class Repo:
         if not menus:
             menus = [{"id": None, "name": n, "is_decaf": False, "decaf_option": b["decaf_available"],
                       "caffeine_mg": None} for n in SYNTHETIC_MENU]
-        return [self._menu_item(b, m, caffeine_rule) for m in menus]
+        twins = decaf_twins(menus)
+        items = [self._menu_item(b, m, caffeine_rule, twins) for m in menus]
+        return [i for i in items if not (i.order_decaf and decaf_twin_key(i.name) in twins)]
 
-    def _menu_item(self, b: dict, m: dict, caffeine_rule: str) -> Item:
+    def _menu_item(self, b: dict, m: dict, caffeine_rule: str, twins: dict[str, list] | None = None) -> Item:
         order_decaf = needs_decaf_order(caffeine_rule, m["is_decaf"], m["decaf_option"], m["caffeine_mg"])
+        caffeine, caffeine_note = m["caffeine_mg"], None
+        if order_decaf:       # never show the regular drink's caffeine on a "order it decaf" card
+            caffeine, caffeine_note = decaf_order_caffeine(m["name"], twins or {})
         house, decaf = brand_bean_columns()
-        bean = (b[decaf] if (m["is_decaf"] or order_decaf) and b.get(decaf) else b.get(house)) or {}
+        use_decaf = (m["is_decaf"] or order_decaf) and b.get(decaf)
+        bean = (b[decaf] if use_decaf else b.get(house)) or {}
+        note = bean.get("official_note")
+        if use_decaf and not note and (b.get(house) or {}).get("official_note"):
+            # no official word on the decaf bean (이디야·빽다방): the house bean's line, labelled as such
+            note = f"{b[house]['official_note']} (일반 원두 기준 — 디카페인 원두는 공식 설명 없음)"
         key = f"menu:{m['id']}" if m["id"] is not None else f"{b['key']}:{m['name']}"
         return Item(key=key, name=m["name"], source="brand_bean", acidity=bean.get("acidity"), body=bean.get("body"),
                     sweetness=bean.get("sweetness"), tags=tuple(bean.get("flavor_tags", ())), is_decaf=m["is_decaf"],
-                    decaf_option=m["decaf_option"], order_decaf=order_decaf, caffeine_mg=m["caffeine_mg"],
-                    is_milk=is_milk_drink(m["name"]), confidence="medium", brand=b["name"],
-                    decaf_surcharge_krw=b["decaf_surcharge_krw"], menu_item_id=m["id"],
-                    bean_note=bean.get("official_note"))
+                    decaf_option=m["decaf_option"], order_decaf=order_decaf, caffeine_mg=caffeine,
+                    caffeine_mg_note=caffeine_note, is_milk=is_milk_drink(m["name"]), confidence="medium",
+                    brand=b["name"], decaf_surcharge_krw=b["decaf_surcharge_krw"], menu_item_id=m["id"],
+                    bean_note=note)
 
     def get_menu_item(self, menu_item_id: int, caffeine_rule: str) -> Item | None:
         m = self._one("SELECT id, brand_id, name, is_decaf, decaf_option, caffeine_mg FROM menu_items WHERE id = %s",
                       (menu_item_id,))
         if m is None:
             return None
-        return self._menu_item(self._one("SELECT * FROM brands WHERE id = %s", (m["brand_id"],)), m, caffeine_rule)
+        decaf_skus = self._all("SELECT name, is_decaf, caffeine_mg FROM menu_items"
+                               " WHERE brand_id = %s AND active AND is_decaf", (m["brand_id"],))
+        return self._menu_item(self._one("SELECT * FROM brands WHERE id = %s", (m["brand_id"],)), m, caffeine_rule,
+                               decaf_twins(decaf_skus))
 
     def raw_menu(self, menu_item_id: int) -> dict | None:
         return self._one("SELECT m.name, m.is_decaf, m.decaf_option, m.caffeine_mg, b.decaf_available"

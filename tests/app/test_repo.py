@@ -129,6 +129,54 @@ def test_brand_items_decaf_option_and_synthetic_menu(repo):
     assert repo.get_menu_item(am.menu_item_id, "decaf_only").order_decaf is True
 
 
+def _decaf_sku_brand(db_conn):
+    """이디야-like brand: official house note only, decaf SKUs of some drinks, plus a drink with no decaf SKU."""
+    house = Jsonb({"acidity": 2, "body": 4, "sweetness": 3, "flavor_tags": ["smoky"],
+                   "official_note": "공식: 블렌드 원두 — 스모키"})
+    dbean = Jsonb({"acidity": 2, "body": 3, "sweetness": 3, "flavor_tags": ["caramelized"], "official_note": None})
+    db_conn.execute("INSERT INTO brands (key, name, decaf_available, verified_at, bean, decaf_bean, bean_open,"
+                    " decaf_bean_open) VALUES ('brand:ed', '이디야', true, '2026-09-28', %s, %s, %s, %s)",
+                    (house, dbean, house, dbean))
+    for key, name, is_decaf, opt, mg in [("e1", "카페 라떼", False, True, 202), ("e2", "디카페인 카페 라떼", True, False, 7),
+                                         ("e3", "달달커피", False, True, 162), ("e4", "디카페인 카페 모카", True, False, 11),
+                                         ("e5", "제로슈가 달달커피", False, True, 47)]:
+        db_conn.execute("INSERT INTO menu_items (key, brand_id, name, is_decaf, decaf_option, caffeine_mg, collected_at)"
+                        " VALUES (%s, (SELECT id FROM brands WHERE key='brand:ed'), %s, %s, %s, %s, '2026-09-28')",
+                        (key, name, is_decaf, opt, mg))
+    db_conn.commit()
+
+
+def test_decaf_sku_replaces_regular_plus_swap_and_caffeine_is_never_the_regular_mg(repo, db_conn):
+    _decaf_sku_brand(db_conn)
+    decaf = {i.name: i for i in repo.brand_items("brand:ed", "decaf_only")}
+    assert "카페 라떼" not in decaf                           # its decaf SKU is the candidate instead: no duplicate
+    assert (decaf["디카페인 카페 라떼"].caffeine_mg, decaf["디카페인 카페 라떼"].caffeine_mg_note) == (7, None)
+    sweet = decaf["달달커피"]                                   # no decaf SKU of its own -> swap, brand median shown
+    assert (sweet.order_decaf, sweet.caffeine_mg, sweet.caffeine_mg_note) == (True, 9.0, "디카페인 주문 시 추정")
+    low = {i.name: i for i in repo.brand_items("brand:ed", "low")}
+    assert "카페 라떼" not in low and low["달달커피"].caffeine_mg == 9.0
+    assert low["제로슈가 달달커피"].order_decaf is False and low["제로슈가 달달커피"].caffeine_mg == 47
+    plain = {i.name: i for i in repo.brand_items("brand:ed", "any")}
+    assert plain["카페 라떼"].caffeine_mg == 202 and plain["카페 라떼"].caffeine_mg_note is None
+    latte_id = plain["카페 라떼"].menu_item_id                  # logging the regular drink as ordered decaf
+    logged = repo.get_menu_item(latte_id, "decaf_only")
+    assert (logged.order_decaf, logged.caffeine_mg, logged.caffeine_mg_note) == (True, 7.0, "디카페인 주문 시 추정")
+    sb = {i.name: i for i in repo.brand_items("brand:sb", "decaf_only")}["아메리카노"]   # brand without decaf SKUs
+    assert (sb.caffeine_mg, sb.caffeine_mg_note) == (None, "디카페인 주문 시 카페인 ↓")
+
+
+def test_decaf_card_falls_back_to_the_labelled_house_note_when_the_decaf_bean_has_none(repo, db_conn, monkeypatch):
+    """이디야: official house-bean note, none for the decaf bean -> decaf cards still get an evidence line."""
+    from app import config
+    _decaf_sku_brand(db_conn)
+    for variant in ("full", "open"):
+        monkeypatch.setattr(config, "DATA_VARIANT", variant)
+        items = {i.name: i for i in repo.brand_items("brand:ed", "decaf_only")}
+        for name in ("디카페인 카페 라떼", "달달커피"):
+            assert items[name].bean_note == "공식: 블렌드 원두 — 스모키 (일반 원두 기준 — 디카페인 원두는 공식 설명 없음)"
+        assert {i.name: i for i in repo.brand_items("brand:ed", "any")}["카페 라떼"].bean_note == "공식: 블렌드 원두 — 스모키"
+
+
 def test_order_decaf_depends_on_caffeine_rule(repo):
     def latte(rule):
         return {i.name: i for i in repo.brand_items("brand:sb", rule)}["카페 라떼"]

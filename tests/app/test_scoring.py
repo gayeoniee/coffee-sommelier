@@ -87,3 +87,39 @@ def test_mmr_spreads_drink_families_when_attributes_are_identical():
     top = mmr_top_k(items, T2C, k=3)
     assert len(top) == 3
     assert sum(drink_family(i.name) == "latte" for i, _ in top) <= 1
+
+
+
+def test_decaf_twin_key_pairs_real_brand_names():
+    from app.core.scoring import decaf_twin_key as k
+    pairs = [("카페 라떼", "디카페인 카페 라떼"),                               # 이디야
+             ("꿀화이트 아메리카노", "디카페인 꿀화이트 아메리카노"),
+             ("카페라떼", "디카페인 카페라떼"),                                  # 메가·컴포즈·폴바셋
+             ("아이스 카페 오트", "아이스 디카페인 카페오트"),                  # 폴바셋
+             ("아이스 카라멜 마키아토", "아이스 디카페인카라멜 마키아토"),
+             ("스페니쉬 카페 라떼 [연유]", "디카페인 스페니쉬 카페라떼"),
+             ("아메리카노(HOT)", "디카페인 아메리카노(ICED)"),                  # 빽다방
+             ("챔피언스 블랙 벨벳 라떼 HOT", "디카페인 챔피언스 블랙 벨벳 라떼 ICED"),
+             ("(ICE)헛개리카노", "(HOT)디카페인 헛개리카노"),                   # 메가
+             ("콜드브루", "콜드브루디카페인"),
+             ("할리스 데일리 커피", "할리스 데일리 커피 디카페인"),             # 할리스
+             ("얼박샷추", "얼박샷추(디카페인 원두)"),
+             ("Caffe Latte", "Decaf Caffe Latte")]
+    for regular, decaf in pairs:
+        assert k(regular) == k(decaf), (regular, decaf)
+    assert k("아이스 카페라떼") != k("카페라떼")          # 폴바셋 sells both, each with its own decaf SKU
+    assert k("빅포즈 카페라떼") != k("빅포즈 디카페인라떼")
+    assert k("화이트 초콜릿 모카") != k("디카페인 카페 모카")
+
+
+def test_decaf_order_caffeine_prefers_the_twin_then_the_brand_median():
+    from app.core.scoring import DECAF_ESTIMATE_NOTE, DECAF_UNKNOWN_NOTE, decaf_order_caffeine, decaf_twins
+    menus = [{"name": "카페 라떼", "is_decaf": False, "caffeine_mg": 202},
+             {"name": "디카페인 카페 라떼", "is_decaf": True, "caffeine_mg": 7},
+             {"name": "디카페인 카페 모카", "is_decaf": True, "caffeine_mg": 50},
+             {"name": "디카페인 콜드브루", "is_decaf": True, "caffeine_mg": 12},
+             {"name": "디카페인 원액", "is_decaf": True, "caffeine_mg": None}]
+    twins = decaf_twins(menus)
+    assert decaf_order_caffeine("카페 라떼", twins) == (7.0, DECAF_ESTIMATE_NOTE)
+    assert decaf_order_caffeine("달달커피", twins) == (12.0, DECAF_ESTIMATE_NOTE)     # median of 7/12/50
+    assert decaf_order_caffeine("카페 아메리카노", {}) == (None, DECAF_UNKNOWN_NOTE)   # brand sells no decaf SKU

@@ -5,7 +5,7 @@ from dataclasses import replace
 
 from app.core.explain import sample_card
 from app.core.flavors import load_tag_ko_extra, merge_tag_ko
-from app.core.scoring import needs_decaf_order
+from app.core.scoring import decaf_order_caffeine, needs_decaf_order
 from app.graphs import Deps
 from app.models import Item, Neighbor, Profile
 from pipeline.llm import LLMError
@@ -103,8 +103,13 @@ class FakeRepo:
                  "notes": "", "has_menu": True}]
 
     def brand_items(self, brand_key, caffeine_rule):
-        return [replace(i, order_decaf=needs_decaf_order(caffeine_rule, i.is_decaf, i.decaf_option, i.caffeine_mg))
-                for i in self.menu.get(brand_key, [])]
+        out = []
+        for i in self.menu.get(brand_key, []):
+            if needs_decaf_order(caffeine_rule, i.is_decaf, i.decaf_option, i.caffeine_mg):   # as Repo._menu_item
+                mg, note = decaf_order_caffeine(i.name, {})
+                i = replace(i, order_decaf=True, caffeine_mg=mg, caffeine_mg_note=note)
+            out.append(i)
+        return out
 
     def get_menu_item(self, menu_item_id, caffeine_rule):
         for brand_key in self.menu:

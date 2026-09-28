@@ -17,7 +17,8 @@ class Item:
     is_decaf: bool = False
     decaf_option: bool = False
     order_decaf: bool = False     # recommend ordering the decaf version of this drink
-    caffeine_mg: float | None = None
+    caffeine_mg: float | None = None    # shown caffeine; for order_decaf the decaf estimate, never the regular mg
+    caffeine_mg_note: str | None = None  # set when caffeine_mg is not the drink's own measured value (decaf order)
     is_milk: bool = False
     confidence: str = "high"      # high | medium | low
     brand: str | None = None

@@ -203,3 +203,28 @@ def test_length_rule_is_last_with_example():
     assert example.count(".") == 2 and not any(ch.isdigit() for ch in example)   # no numbers to copy
     # placeholders only: a concrete example ("강한 산미와 과일 향") got copied into explanations as if it were fact
     assert example.count("〔") >= 3 and "산미" not in example and "과일" not in example
+
+
+
+def test_order_decaf_card_never_carries_the_regular_caffeine():
+    """이디야 꿀화이트 아메리카노 202mg ordered decaf: card, template and LLM payload show only the decaf estimate."""
+    est = Item(key="menu:1", name="꿀화이트 아메리카노", source="brand_bean", decaf_option=True, order_decaf=True,
+               caffeine_mg=7.0, caffeine_mg_note="디카페인 주문 시 추정")
+    c = card(est, 0.7, "t")
+    assert (c["caffeine_mg"], c["caffeine_mg_note"]) == (7.0, "디카페인 주문 시 추정")
+    assert "디카페인으로 바꿔 주문하세요 (카페인 약 7mg 추정)" in template_explanation(est, Profile(), 0.7, {})
+    msgs = explain_messages(est, Profile(caffeine_rule="decaf_only"), 0.7)
+    p = json.loads(msgs[1]["content"])
+    assert p["디카페인 주문 시 카페인(mg, 추정)"] == 7.0 and "202" not in msgs[1]["content"]
+    assert "원래 카페인 수치" in msgs[0]["content"]
+    assert check_explanation("디카페인으로 주문하면 카페인은 약 7mg(추정)이에요.", p, 70, None)["numbers_grounded"]
+    assert not check_explanation("원래 카페인은 202mg이에요.", p, 70, None)["numbers_grounded"]
+    unknown = Item(key="menu:2", name="카페 아메리카노", source="brand_bean", decaf_option=True, order_decaf=True,
+                   decaf_surcharge_krw=300, caffeine_mg=None, caffeine_mg_note="디카페인 주문 시 카페인 ↓")
+    assert "디카페인으로 바꿔 주문하세요 (+300원)." in template_explanation(unknown, Profile(), 0.7, {})
+    assert json.loads(explain_messages(unknown, Profile(), 0.7)[1]["content"])["디카페인 주문 시 카페인(mg, 추정)"] is None
+    plain = Item(key="menu:3", name="카페 아메리카노", source="brand_bean", caffeine_mg=150)
+    msgs = explain_messages(plain, Profile(), 0.7)
+    assert "디카페인 주문 시 카페인(mg, 추정)" not in json.loads(msgs[1]["content"])
+    assert "원래 카페인 수치" not in msgs[0]["content"]
+    assert card(plain, 0.7, "t")["caffeine_mg_note"] is None

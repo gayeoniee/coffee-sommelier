@@ -1,3 +1,6 @@
+import re
+from statistics import median
+
 from app.core.flavors import category_vector, cosine
 from app.models import ATTRS, Item, Profile
 
@@ -47,6 +50,38 @@ def needs_decaf_order(caffeine_rule: str, is_decaf: bool, decaf_option: bool, ca
     low_enough = caffeine_mg is not None and caffeine_mg <= LOW_CAFFEINE_MG
     return bool(decaf_option and not is_decaf
                 and (caffeine_rule == "decaf_only" or (caffeine_rule == "low" and not low_enough)))
+
+
+# Stripped when pairing a drink with the brand's own decaf SKU of it ("카페 라떼" ~ "디카페인 카페라떼",
+# "스페니쉬 카페 라떼 [연유]" ~ "디카페인 스페니쉬 카페라떼", "디카페인 아메리카노(HOT)" ~ "아메리카노"). "아이스" stays:
+# 폴바셋 sells "아이스 카페라떼" and "아이스 디카페인 카페라떼" as their own pair.
+_TWIN_NOISE = re.compile(r"\(디카페인\s*원두\)|디카페인|decaf|\[[^\]]*\]|\((?:hot|iced?)\)|\b(?:hot|iced?)\b")
+DECAF_ESTIMATE_NOTE = "디카페인 주문 시 추정"        # caffeine_mg is an estimate for the decaf order
+DECAF_UNKNOWN_NOTE = "디카페인 주문 시 카페인 ↓"     # no estimate: the regular drink's mg must not be shown
+
+
+def decaf_twin_key(name: str) -> str:
+    return "".join(_TWIN_NOISE.sub(" ", name.lower()).split())
+
+
+def decaf_twins(menus: list[dict]) -> dict[str, list[float | None]]:
+    """twin key -> caffeine_mg of the brand's decaf SKUs with that key (HOT/ICED can give two)."""
+    out: dict[str, list[float | None]] = {}
+    for m in menus:
+        if m["is_decaf"]:
+            out.setdefault(decaf_twin_key(m["name"]), []).append(m["caffeine_mg"])
+    return out
+
+
+def decaf_order_caffeine(name: str, twins: dict[str, list[float | None]]) -> tuple[float | None, str]:
+    """(shown caffeine_mg, note) for a drink ordered decaf: never the regular drink's mg. The twin SKU's
+    caffeine when the brand sells one, else the median of the brand's decaf SKUs, else unknown."""
+    mgs = [v for v in twins.get(decaf_twin_key(name), ()) if v is not None]
+    if not mgs:
+        mgs = [v for vs in twins.values() for v in vs if v is not None]
+    if not mgs:
+        return None, DECAF_UNKNOWN_NOTE
+    return float(round(median(mgs))), DECAF_ESTIMATE_NOTE
 
 
 def passes(profile: Profile, item: Item) -> tuple[bool, str | None]:
