@@ -1,0 +1,1744 @@
+{
+  "generated_at": "2026-09-28T07:02:52.074999+00:00",
+  "k": 10,
+  "w_a": 0.5,
+  "w_b": 0.3,
+  "offset_shrink": 5.0,
+  "use_nbr": {
+    "acidity": true,
+    "body": true,
+    "sweetness": false
+  },
+  "rows": {
+    "B": 192,
+    "gauge": 82,
+    "A": 199
+  },
+  "a_labels_by_store": {
+    "Café Britt": {
+      "beans": 17,
+      "acidity": 17,
+      "body": 8
+    },
+    "Café Don Pablo": {
+      "beans": 18,
+      "acidity": 5,
+      "body": 13
+    },
+    "Coffee Supreme": {
+      "beans": 6,
+      "acidity": 6,
+      "body": 5
+    },
+    "Fresh Roasted Coffee": {
+      "beans": 13,
+      "body": 13
+    },
+    "Intelligentsia": {
+      "beans": 28,
+      "acidity": 28,
+      "sweetness": 1
+    },
+    "Kiss the Hippo": {
+      "beans": 62,
+      "acidity": 62
+    },
+    "Ozone Coffee": {
+      "beans": 26,
+      "acidity": 23,
+      "sweetness": 1,
+      "body": 7
+    },
+    "Volcanica Coffee": {
+      "beans": 29,
+      "acidity": 29
+    }
+  },
+  "a_labels_per_attr": {
+    "acidity": 170,
+    "body": 46,
+    "sweetness": 2
+  },
+  "b_labels_per_attr": {
+    "acidity": 186,
+    "body": 187,
+    "sweetness": 189
+  },
+  "weak_agreement": {
+    "acidity": {
+      "n": 32,
+      "of": 82,
+      "weak": {
+        "n": 32,
+        "mae": 0.9353,
+        "within1": 0.5938,
+        "spearman": 0.6367
+      },
+      "weak_centred": {
+        "n": 32,
+        "mae": 0.7818,
+        "within1": 0.6562,
+        "spearman": 0.6635
+      },
+      "origin_mean": {
+        "n": 32,
+        "mae": 1.0826,
+        "within1": 0.4688,
+        "spearman": 0.2097
+      },
+      "beats_origin_mean": true
+    },
+    "body": {
+      "n": 25,
+      "of": 64,
+      "weak": {
+        "n": 25,
+        "mae": 0.7912,
+        "within1": 0.68,
+        "spearman": 0.4292
+      },
+      "weak_centred": {
+        "n": 25,
+        "mae": 0.765,
+        "within1": 0.68,
+        "spearman": 0.4077
+      },
+      "origin_mean": {
+        "n": 25,
+        "mae": 0.7642,
+        "within1": 0.68,
+        "spearman": 0.3838
+      },
+      "beats_origin_mean": false
+    },
+    "sweetness": {
+      "n": 23,
+      "of": 72,
+      "weak": {
+        "n": 23,
+        "mae": 0.5417,
+        "within1": 0.913,
+        "spearman": 0.1808
+      },
+      "weak_centred": {
+        "n": 23,
+        "mae": 0.9508,
+        "within1": 0.4783,
+        "spearman": 0.167
+      },
+      "origin_mean": {
+        "n": 23,
+        "mae": 1.0539,
+        "within1": 0.4348,
+        "spearman": -0.3053
+      },
+      "beats_origin_mean": true
+    }
+  },
+  "transfer_gauge_model_to_A": {
+    "acidity": {
+      "all": {
+        "n": 170,
+        "mae": 0.7098,
+        "within1": 0.7353,
+        "spearman": 0.6895
+      },
+      "by_store": {
+        "Café Britt": {
+          "n": 17,
+          "mae": 0.9805,
+          "within1": 0.5882,
+          "spearman": 0.8775
+        },
+        "Café Don Pablo": {
+          "n": 5,
+          "mae": 0.3896,
+          "within1": 1.0,
+          "spearman": null
+        },
+        "Coffee Supreme": {
+          "n": 6,
+          "mae": 0.5892,
+          "within1": 0.8333,
+          "spearman": 1.0
+        },
+        "Intelligentsia": {
+          "n": 28,
+          "mae": 0.5085,
+          "within1": 0.8571,
+          "spearman": 0.4494
+        },
+        "Kiss the Hippo": {
+          "n": 62,
+          "mae": 0.8136,
+          "within1": 0.6613,
+          "spearman": 0.458
+        },
+        "Ozone Coffee": {
+          "n": 23,
+          "mae": 0.8385,
+          "within1": 0.6522,
+          "spearman": 0.2747
+        },
+        "Volcanica Coffee": {
+          "n": 29,
+          "mae": 0.5018,
+          "within1": 0.8621,
+          "spearman": null
+        }
+      }
+    },
+    "body": {
+      "all": {
+        "n": 46,
+        "mae": 0.6173,
+        "within1": 0.8261,
+        "spearman": 0.4061
+      },
+      "by_store": {
+        "Café Britt": {
+          "n": 8,
+          "mae": 0.3435,
+          "within1": 1.0,
+          "spearman": null
+        },
+        "Café Don Pablo": {
+          "n": 13,
+          "mae": 0.5443,
+          "within1": 0.8462,
+          "spearman": 0.7527
+        },
+        "Coffee Supreme": {
+          "n": 5,
+          "mae": 0.6654,
+          "within1": 0.8,
+          "spearman": 0.8
+        },
+        "Fresh Roasted Coffee": {
+          "n": 13,
+          "mae": 0.9239,
+          "within1": 0.6154,
+          "spearman": 0.7253
+        },
+        "Ozone Coffee": {
+          "n": 7,
+          "mae": 0.4618,
+          "within1": 1.0,
+          "spearman": null
+        }
+      }
+    }
+  },
+  "cv": {
+    "acidity": {
+      "n": 82,
+      "roasters": {
+        "1킬로커피": 37,
+        "G로스팅": 17,
+        "내일의커피": 10,
+        "커피 리브레": 18
+      },
+      "table": {
+        "global_mean": {
+          "n": 82,
+          "mae": 1.0327,
+          "within1": 0.5244
+        },
+        "origin_mean": {
+          "n": 82,
+          "mae": 1.0216,
+          "within1": 0.5122
+        },
+        "neighbor_avg_old": {
+          "n": 82,
+          "mae": 1.1216,
+          "within1": 0.5
+        },
+        "neighbor_avg_new": {
+          "n": 82,
+          "mae": 1.0649,
+          "within1": 0.5244
+        },
+        "base": {
+          "n": 82,
+          "mae": 0.9229,
+          "within1": 0.6585
+        },
+        "+A": {
+          "n": 82,
+          "mae": 0.7852,
+          "within1": 0.6463
+        },
+        "+B": {
+          "n": 82,
+          "mae": 0.7712,
+          "within1": 0.6951
+        },
+        "+Bf": {
+          "n": 82,
+          "mae": 0.8957,
+          "within1": 0.6463
+        },
+        "+C": {
+          "n": 82,
+          "mae": 0.9415,
+          "within1": 0.6098
+        },
+        "+A+B": {
+          "n": 82,
+          "mae": 0.7936,
+          "within1": 0.622
+        },
+        "+A+C": {
+          "n": 82,
+          "mae": 0.8434,
+          "within1": 0.6098
+        },
+        "+B+C": {
+          "n": 82,
+          "mae": 0.7704,
+          "within1": 0.6829
+        },
+        "+A+B+C": {
+          "n": 82,
+          "mae": 0.7365,
+          "within1": 0.6829
+        },
+        "~base (new pool)": {
+          "n": 82,
+          "mae": 0.9223,
+          "within1": 0.622
+        },
+        "~B (old pool)": {
+          "n": 82,
+          "mae": 0.7769,
+          "within1": 0.6951
+        },
+        "~A with altitude": {
+          "n": 82,
+          "mae": 0.6697,
+          "within1": 0.7683
+        },
+        "~B uncentred": {
+          "n": 82,
+          "mae": 0.8607,
+          "within1": 0.6341
+        },
+        "~A wA=0.25": {
+          "n": 82,
+          "mae": 0.7704,
+          "within1": 0.6585
+        },
+        "~A wA=1": {
+          "n": 82,
+          "mae": 0.818,
+          "within1": 0.6098
+        },
+        "~B wB=0.15": {
+          "n": 82,
+          "mae": 0.7805,
+          "within1": 0.6951
+        },
+        "~B wB=0.6": {
+          "n": 82,
+          "mae": 0.7526,
+          "within1": 0.7073
+        },
+        "~B ext": {
+          "n": 82,
+          "mae": 0.7705,
+          "within1": 0.6951
+        }
+      },
+      "per_roaster": {
+        "1킬로커피": {
+          "global_mean": {
+            "n": 37,
+            "mae": 0.8393,
+            "within1": 0.6757
+          },
+          "origin_mean": {
+            "n": 37,
+            "mae": 0.9561,
+            "within1": 0.5405
+          },
+          "neighbor_avg_old": {
+            "n": 37,
+            "mae": 1.3049,
+            "within1": 0.4054
+          },
+          "neighbor_avg_new": {
+            "n": 37,
+            "mae": 1.2465,
+            "within1": 0.4054
+          },
+          "base": {
+            "n": 37,
+            "mae": 1.0074,
+            "within1": 0.5405
+          },
+          "+A": {
+            "n": 37,
+            "mae": 0.7076,
+            "within1": 0.7027
+          },
+          "+B": {
+            "n": 37,
+            "mae": 0.7342,
+            "within1": 0.6486
+          },
+          "+Bf": {
+            "n": 37,
+            "mae": 0.9871,
+            "within1": 0.4865
+          },
+          "+C": {
+            "n": 37,
+            "mae": 1.0292,
+            "within1": 0.4595
+          },
+          "+A+B": {
+            "n": 37,
+            "mae": 0.7672,
+            "within1": 0.6486
+          },
+          "+A+C": {
+            "n": 37,
+            "mae": 0.8422,
+            "within1": 0.5676
+          },
+          "+B+C": {
+            "n": 37,
+            "mae": 0.7259,
+            "within1": 0.6486
+          },
+          "+A+B+C": {
+            "n": 37,
+            "mae": 0.7229,
+            "within1": 0.6486
+          },
+          "~base (new pool)": {
+            "n": 37,
+            "mae": 1.0091,
+            "within1": 0.4865
+          },
+          "~B (old pool)": {
+            "n": 37,
+            "mae": 0.7456,
+            "within1": 0.6486
+          },
+          "~A with altitude": {
+            "n": 37,
+            "mae": 0.6338,
+            "within1": 0.7838
+          },
+          "~B uncentred": {
+            "n": 37,
+            "mae": 0.9292,
+            "within1": 0.5946
+          },
+          "~A wA=0.25": {
+            "n": 37,
+            "mae": 0.7367,
+            "within1": 0.6486
+          },
+          "~A wA=1": {
+            "n": 37,
+            "mae": 0.7477,
+            "within1": 0.6757
+          },
+          "~B wB=0.15": {
+            "n": 37,
+            "mae": 0.7759,
+            "within1": 0.6486
+          },
+          "~B wB=0.6": {
+            "n": 37,
+            "mae": 0.7077,
+            "within1": 0.6757
+          },
+          "~B ext": {
+            "n": 37,
+            "mae": 0.7321,
+            "within1": 0.6486
+          }
+        },
+        "G로스팅": {
+          "global_mean": {
+            "n": 17,
+            "mae": 1.2077,
+            "within1": 0.4118
+          },
+          "origin_mean": {
+            "n": 17,
+            "mae": 1.1025,
+            "within1": 0.4118
+          },
+          "neighbor_avg_old": {
+            "n": 17,
+            "mae": 1.2171,
+            "within1": 0.4118
+          },
+          "neighbor_avg_new": {
+            "n": 17,
+            "mae": 1.1853,
+            "within1": 0.4118
+          },
+          "base": {
+            "n": 17,
+            "mae": 0.7934,
+            "within1": 0.7647
+          },
+          "+A": {
+            "n": 17,
+            "mae": 0.875,
+            "within1": 0.5882
+          },
+          "+B": {
+            "n": 17,
+            "mae": 0.6964,
+            "within1": 0.7059
+          },
+          "+Bf": {
+            "n": 17,
+            "mae": 0.7428,
+            "within1": 0.7647
+          },
+          "+C": {
+            "n": 17,
+            "mae": 0.8295,
+            "within1": 0.7059
+          },
+          "+A+B": {
+            "n": 17,
+            "mae": 0.8034,
+            "within1": 0.5882
+          },
+          "+A+C": {
+            "n": 17,
+            "mae": 0.8574,
+            "within1": 0.5882
+          },
+          "+B+C": {
+            "n": 17,
+            "mae": 0.6977,
+            "within1": 0.7059
+          },
+          "+A+B+C": {
+            "n": 17,
+            "mae": 0.7452,
+            "within1": 0.6471
+          },
+          "~base (new pool)": {
+            "n": 17,
+            "mae": 0.7958,
+            "within1": 0.7059
+          },
+          "~B (old pool)": {
+            "n": 17,
+            "mae": 0.6903,
+            "within1": 0.7059
+          },
+          "~A with altitude": {
+            "n": 17,
+            "mae": 0.7042,
+            "within1": 0.7647
+          },
+          "~B uncentred": {
+            "n": 17,
+            "mae": 0.8187,
+            "within1": 0.5882
+          },
+          "~A wA=0.25": {
+            "n": 17,
+            "mae": 0.8212,
+            "within1": 0.6471
+          },
+          "~A wA=1": {
+            "n": 17,
+            "mae": 0.9366,
+            "within1": 0.5294
+          },
+          "~B wB=0.15": {
+            "n": 17,
+            "mae": 0.7104,
+            "within1": 0.7059
+          },
+          "~B wB=0.6": {
+            "n": 17,
+            "mae": 0.6857,
+            "within1": 0.7059
+          },
+          "~B ext": {
+            "n": 17,
+            "mae": 0.6964,
+            "within1": 0.7059
+          }
+        },
+        "내일의커피": {
+          "global_mean": {
+            "n": 10,
+            "mae": 1.2514,
+            "within1": 0.2
+          },
+          "origin_mean": {
+            "n": 10,
+            "mae": 1.0857,
+            "within1": 0.4
+          },
+          "neighbor_avg_old": {
+            "n": 10,
+            "mae": 0.7463,
+            "within1": 0.6
+          },
+          "neighbor_avg_new": {
+            "n": 10,
+            "mae": 0.5953,
+            "within1": 0.8
+          },
+          "base": {
+            "n": 10,
+            "mae": 0.9336,
+            "within1": 0.6
+          },
+          "+A": {
+            "n": 10,
+            "mae": 0.8801,
+            "within1": 0.7
+          },
+          "+B": {
+            "n": 10,
+            "mae": 0.9837,
+            "within1": 0.6
+          },
+          "+Bf": {
+            "n": 10,
+            "mae": 0.9391,
+            "within1": 0.7
+          },
+          "+C": {
+            "n": 10,
+            "mae": 0.9407,
+            "within1": 0.6
+          },
+          "+A+B": {
+            "n": 10,
+            "mae": 0.8404,
+            "within1": 0.7
+          },
+          "+A+C": {
+            "n": 10,
+            "mae": 0.8349,
+            "within1": 0.6
+          },
+          "+B+C": {
+            "n": 10,
+            "mae": 0.9841,
+            "within1": 0.5
+          },
+          "+A+B+C": {
+            "n": 10,
+            "mae": 0.7677,
+            "within1": 0.7
+          },
+          "~base (new pool)": {
+            "n": 10,
+            "mae": 0.9297,
+            "within1": 0.6
+          },
+          "~B (old pool)": {
+            "n": 10,
+            "mae": 0.9906,
+            "within1": 0.6
+          },
+          "~A with altitude": {
+            "n": 10,
+            "mae": 0.675,
+            "within1": 0.7
+          },
+          "~B uncentred": {
+            "n": 10,
+            "mae": 0.9446,
+            "within1": 0.7
+          },
+          "~A wA=0.25": {
+            "n": 10,
+            "mae": 0.8444,
+            "within1": 0.7
+          },
+          "~A wA=1": {
+            "n": 10,
+            "mae": 0.9291,
+            "within1": 0.6
+          },
+          "~B wB=0.15": {
+            "n": 10,
+            "mae": 0.9849,
+            "within1": 0.6
+          },
+          "~B wB=0.6": {
+            "n": 10,
+            "mae": 0.9793,
+            "within1": 0.6
+          },
+          "~B ext": {
+            "n": 10,
+            "mae": 0.984,
+            "within1": 0.6
+          }
+        },
+        "커피 리브레": {
+          "global_mean": {
+            "n": 18,
+            "mae": 1.1432,
+            "within1": 0.5
+          },
+          "origin_mean": {
+            "n": 18,
+            "mae": 1.0441,
+            "within1": 0.6111
+          },
+          "neighbor_avg_old": {
+            "n": 18,
+            "mae": 0.8633,
+            "within1": 0.7222
+          },
+          "neighbor_avg_new": {
+            "n": 18,
+            "mae": 0.8389,
+            "within1": 0.7222
+          },
+          "base": {
+            "n": 18,
+            "mae": 0.8657,
+            "within1": 0.8333
+          },
+          "+A": {
+            "n": 18,
+            "mae": 0.8073,
+            "within1": 0.5556
+          },
+          "+B": {
+            "n": 18,
+            "mae": 0.7997,
+            "within1": 0.8333
+          },
+          "+Bf": {
+            "n": 18,
+            "mae": 0.8283,
+            "within1": 0.8333
+          },
+          "+C": {
+            "n": 18,
+            "mae": 0.8677,
+            "within1": 0.8333
+          },
+          "+A+B": {
+            "n": 18,
+            "mae": 0.8125,
+            "within1": 0.5556
+          },
+          "+A+C": {
+            "n": 18,
+            "mae": 0.8374,
+            "within1": 0.7222
+          },
+          "+B+C": {
+            "n": 18,
+            "mae": 0.812,
+            "within1": 0.8333
+          },
+          "+A+B+C": {
+            "n": 18,
+            "mae": 0.7389,
+            "within1": 0.7778
+          },
+          "~base (new pool)": {
+            "n": 18,
+            "mae": 0.8592,
+            "within1": 0.8333
+          },
+          "~B (old pool)": {
+            "n": 18,
+            "mae": 0.8045,
+            "within1": 0.8333
+          },
+          "~A with altitude": {
+            "n": 18,
+            "mae": 0.708,
+            "within1": 0.7778
+          },
+          "~B uncentred": {
+            "n": 18,
+            "mae": 0.7129,
+            "within1": 0.7222
+          },
+          "~A wA=0.25": {
+            "n": 18,
+            "mae": 0.7506,
+            "within1": 0.6667
+          },
+          "~A wA=1": {
+            "n": 18,
+            "mae": 0.789,
+            "within1": 0.5556
+          },
+          "~B wB=0.15": {
+            "n": 18,
+            "mae": 0.7427,
+            "within1": 0.8333
+          },
+          "~B wB=0.6": {
+            "n": 18,
+            "mae": 0.7821,
+            "within1": 0.8333
+          },
+          "~B ext": {
+            "n": 18,
+            "mae": 0.8006,
+            "within1": 0.8333
+          }
+        }
+      }
+    },
+    "body": {
+      "n": 64,
+      "roasters": {
+        "1킬로커피": 37,
+        "G로스팅": 17,
+        "내일의커피": 10
+      },
+      "table": {
+        "global_mean": {
+          "n": 64,
+          "mae": 0.7553,
+          "within1": 0.7031
+        },
+        "origin_mean": {
+          "n": 64,
+          "mae": 0.7439,
+          "within1": 0.7344
+        },
+        "neighbor_avg_old": {
+          "n": 64,
+          "mae": 0.7613,
+          "within1": 0.75
+        },
+        "neighbor_avg_new": {
+          "n": 64,
+          "mae": 0.753,
+          "within1": 0.7656
+        },
+        "base": {
+          "n": 64,
+          "mae": 0.6913,
+          "within1": 0.7969
+        },
+        "+A": {
+          "n": 64,
+          "mae": 0.7123,
+          "within1": 0.75
+        },
+        "+B": {
+          "n": 64,
+          "mae": 0.6474,
+          "within1": 0.8281
+        },
+        "+Bf": {
+          "n": 64,
+          "mae": 0.6986,
+          "within1": 0.7969
+        },
+        "+C": {
+          "n": 64,
+          "mae": 0.6991,
+          "within1": 0.7812
+        },
+        "+A+B": {
+          "n": 64,
+          "mae": 0.6853,
+          "within1": 0.7656
+        },
+        "+A+C": {
+          "n": 64,
+          "mae": 0.7102,
+          "within1": 0.7656
+        },
+        "+B+C": {
+          "n": 64,
+          "mae": 0.6881,
+          "within1": 0.7656
+        },
+        "+A+B+C": {
+          "n": 64,
+          "mae": 0.6894,
+          "within1": 0.7656
+        },
+        "~base (new pool)": {
+          "n": 64,
+          "mae": 0.6986,
+          "within1": 0.7969
+        },
+        "~B (old pool)": {
+          "n": 64,
+          "mae": 0.6282,
+          "within1": 0.8438
+        },
+        "~A with altitude": {
+          "n": 64,
+          "mae": 0.7145,
+          "within1": 0.7656
+        },
+        "~B uncentred": {
+          "n": 64,
+          "mae": 0.5746,
+          "within1": 0.8125
+        },
+        "~A wA=0.25": {
+          "n": 64,
+          "mae": 0.7056,
+          "within1": 0.7969
+        },
+        "~A wA=1": {
+          "n": 64,
+          "mae": 0.7069,
+          "within1": 0.7656
+        },
+        "~B wB=0.15": {
+          "n": 64,
+          "mae": 0.6308,
+          "within1": 0.8594
+        },
+        "~B wB=0.6": {
+          "n": 64,
+          "mae": 0.6584,
+          "within1": 0.7969
+        },
+        "~B ext": {
+          "n": 64,
+          "mae": 0.6464,
+          "within1": 0.8438
+        }
+      },
+      "per_roaster": {
+        "1킬로커피": {
+          "global_mean": {
+            "n": 37,
+            "mae": 0.7302,
+            "within1": 0.7838
+          },
+          "origin_mean": {
+            "n": 37,
+            "mae": 0.701,
+            "within1": 0.8108
+          },
+          "neighbor_avg_old": {
+            "n": 37,
+            "mae": 0.7514,
+            "within1": 0.8108
+          },
+          "neighbor_avg_new": {
+            "n": 37,
+            "mae": 0.7461,
+            "within1": 0.8108
+          },
+          "base": {
+            "n": 37,
+            "mae": 0.7147,
+            "within1": 0.7838
+          },
+          "+A": {
+            "n": 37,
+            "mae": 0.6865,
+            "within1": 0.7838
+          },
+          "+B": {
+            "n": 37,
+            "mae": 0.7254,
+            "within1": 0.7838
+          },
+          "+Bf": {
+            "n": 37,
+            "mae": 0.7122,
+            "within1": 0.7838
+          },
+          "+C": {
+            "n": 37,
+            "mae": 0.7133,
+            "within1": 0.7838
+          },
+          "+A+B": {
+            "n": 37,
+            "mae": 0.7084,
+            "within1": 0.7838
+          },
+          "+A+C": {
+            "n": 37,
+            "mae": 0.6848,
+            "within1": 0.7838
+          },
+          "+B+C": {
+            "n": 37,
+            "mae": 0.7269,
+            "within1": 0.7838
+          },
+          "+A+B+C": {
+            "n": 37,
+            "mae": 0.7151,
+            "within1": 0.7838
+          },
+          "~base (new pool)": {
+            "n": 37,
+            "mae": 0.7134,
+            "within1": 0.7838
+          },
+          "~B (old pool)": {
+            "n": 37,
+            "mae": 0.7119,
+            "within1": 0.7838
+          },
+          "~A with altitude": {
+            "n": 37,
+            "mae": 0.6881,
+            "within1": 0.7838
+          },
+          "~B uncentred": {
+            "n": 37,
+            "mae": 0.5896,
+            "within1": 0.7838
+          },
+          "~A wA=0.25": {
+            "n": 37,
+            "mae": 0.6945,
+            "within1": 0.7838
+          },
+          "~A wA=1": {
+            "n": 37,
+            "mae": 0.6802,
+            "within1": 0.7838
+          },
+          "~B wB=0.15": {
+            "n": 37,
+            "mae": 0.698,
+            "within1": 0.7838
+          },
+          "~B wB=0.6": {
+            "n": 37,
+            "mae": 0.733,
+            "within1": 0.7838
+          },
+          "~B ext": {
+            "n": 37,
+            "mae": 0.7259,
+            "within1": 0.7838
+          }
+        },
+        "G로스팅": {
+          "global_mean": {
+            "n": 17,
+            "mae": 0.9318,
+            "within1": 0.5294
+          },
+          "origin_mean": {
+            "n": 17,
+            "mae": 0.8469,
+            "within1": 0.7059
+          },
+          "neighbor_avg_old": {
+            "n": 17,
+            "mae": 0.8987,
+            "within1": 0.6471
+          },
+          "neighbor_avg_new": {
+            "n": 17,
+            "mae": 0.8204,
+            "within1": 0.7059
+          },
+          "base": {
+            "n": 17,
+            "mae": 0.7121,
+            "within1": 0.7647
+          },
+          "+A": {
+            "n": 17,
+            "mae": 0.8085,
+            "within1": 0.6471
+          },
+          "+B": {
+            "n": 17,
+            "mae": 0.5034,
+            "within1": 0.9412
+          },
+          "+Bf": {
+            "n": 17,
+            "mae": 0.7395,
+            "within1": 0.7647
+          },
+          "+C": {
+            "n": 17,
+            "mae": 0.7328,
+            "within1": 0.7647
+          },
+          "+A+B": {
+            "n": 17,
+            "mae": 0.6475,
+            "within1": 0.7647
+          },
+          "+A+C": {
+            "n": 17,
+            "mae": 0.7905,
+            "within1": 0.6471
+          },
+          "+B+C": {
+            "n": 17,
+            "mae": 0.6472,
+            "within1": 0.7059
+          },
+          "+A+B+C": {
+            "n": 17,
+            "mae": 0.64,
+            "within1": 0.7647
+          },
+          "~base (new pool)": {
+            "n": 17,
+            "mae": 0.7331,
+            "within1": 0.7647
+          },
+          "~B (old pool)": {
+            "n": 17,
+            "mae": 0.4714,
+            "within1": 0.9412
+          },
+          "~A with altitude": {
+            "n": 17,
+            "mae": 0.8076,
+            "within1": 0.6471
+          },
+          "~B uncentred": {
+            "n": 17,
+            "mae": 0.5078,
+            "within1": 0.9412
+          },
+          "~A wA=0.25": {
+            "n": 17,
+            "mae": 0.7687,
+            "within1": 0.7647
+          },
+          "~A wA=1": {
+            "n": 17,
+            "mae": 0.7916,
+            "within1": 0.7059
+          },
+          "~B wB=0.15": {
+            "n": 17,
+            "mae": 0.5001,
+            "within1": 1.0
+          },
+          "~B wB=0.6": {
+            "n": 17,
+            "mae": 0.523,
+            "within1": 0.8824
+          },
+          "~B ext": {
+            "n": 17,
+            "mae": 0.5034,
+            "within1": 0.9412
+          }
+        },
+        "내일의커피": {
+          "global_mean": {
+            "n": 10,
+            "mae": 0.5481,
+            "within1": 0.7
+          },
+          "origin_mean": {
+            "n": 10,
+            "mae": 0.7279,
+            "within1": 0.5
+          },
+          "neighbor_avg_old": {
+            "n": 10,
+            "mae": 0.5641,
+            "within1": 0.7
+          },
+          "neighbor_avg_new": {
+            "n": 10,
+            "mae": 0.6641,
+            "within1": 0.7
+          },
+          "base": {
+            "n": 10,
+            "mae": 0.5693,
+            "within1": 0.9
+          },
+          "+A": {
+            "n": 10,
+            "mae": 0.6445,
+            "within1": 0.8
+          },
+          "+B": {
+            "n": 10,
+            "mae": 0.6041,
+            "within1": 0.8
+          },
+          "+Bf": {
+            "n": 10,
+            "mae": 0.5787,
+            "within1": 0.9
+          },
+          "+C": {
+            "n": 10,
+            "mae": 0.5895,
+            "within1": 0.8
+          },
+          "+A+B": {
+            "n": 10,
+            "mae": 0.6641,
+            "within1": 0.7
+          },
+          "+A+C": {
+            "n": 10,
+            "mae": 0.6677,
+            "within1": 0.9
+          },
+          "+B+C": {
+            "n": 10,
+            "mae": 0.6138,
+            "within1": 0.8
+          },
+          "+A+B+C": {
+            "n": 10,
+            "mae": 0.6781,
+            "within1": 0.7
+          },
+          "~base (new pool)": {
+            "n": 10,
+            "mae": 0.5848,
+            "within1": 0.9
+          },
+          "~B (old pool)": {
+            "n": 10,
+            "mae": 0.585,
+            "within1": 0.9
+          },
+          "~A with altitude": {
+            "n": 10,
+            "mae": 0.6538,
+            "within1": 0.9
+          },
+          "~B uncentred": {
+            "n": 10,
+            "mae": 0.6324,
+            "within1": 0.7
+          },
+          "~A wA=0.25": {
+            "n": 10,
+            "mae": 0.6392,
+            "within1": 0.9
+          },
+          "~A wA=1": {
+            "n": 10,
+            "mae": 0.6617,
+            "within1": 0.8
+          },
+          "~B wB=0.15": {
+            "n": 10,
+            "mae": 0.6044,
+            "within1": 0.9
+          },
+          "~B wB=0.6": {
+            "n": 10,
+            "mae": 0.6125,
+            "within1": 0.7
+          },
+          "~B ext": {
+            "n": 10,
+            "mae": 0.5955,
+            "within1": 0.9
+          }
+        }
+      }
+    },
+    "sweetness": {
+      "n": 72,
+      "roasters": {
+        "1킬로커피": 37,
+        "G로스팅": 17,
+        "커피 리브레": 18
+      },
+      "table": {
+        "global_mean": {
+          "n": 72,
+          "mae": 1.1264,
+          "within1": 0.4028
+        },
+        "origin_mean": {
+          "n": 72,
+          "mae": 1.1632,
+          "within1": 0.4306
+        },
+        "neighbor_avg_old": {
+          "n": 72,
+          "mae": 1.0618,
+          "within1": 0.5139
+        },
+        "neighbor_avg_new": {
+          "n": 72,
+          "mae": 1.0662,
+          "within1": 0.5417
+        },
+        "base": {
+          "n": 72,
+          "mae": 1.0499,
+          "within1": 0.5694
+        },
+        "+A": {
+          "n": 72,
+          "mae": 1.0411,
+          "within1": 0.5694
+        },
+        "+B": {
+          "n": 72,
+          "mae": 1.1166,
+          "within1": 0.4583
+        },
+        "+Bf": {
+          "n": 72,
+          "mae": 1.077,
+          "within1": 0.5694
+        },
+        "+C": {
+          "n": 72,
+          "mae": 1.0493,
+          "within1": 0.5694
+        },
+        "+A+B": {
+          "n": 72,
+          "mae": 1.0955,
+          "within1": 0.4583
+        },
+        "+A+C": {
+          "n": 72,
+          "mae": 1.0201,
+          "within1": 0.5694
+        },
+        "+B+C": {
+          "n": 72,
+          "mae": 1.122,
+          "within1": 0.4583
+        },
+        "+A+B+C": {
+          "n": 72,
+          "mae": 1.0991,
+          "within1": 0.4583
+        },
+        "~base (new pool)": {
+          "n": 72,
+          "mae": 1.0499,
+          "within1": 0.5694
+        },
+        "~B (old pool)": {
+          "n": 72,
+          "mae": 1.1166,
+          "within1": 0.4583
+        },
+        "~A with altitude": {
+          "n": 72,
+          "mae": 1.0443,
+          "within1": 0.5694
+        },
+        "~B uncentred": {
+          "n": 72,
+          "mae": 0.9968,
+          "within1": 0.6389
+        },
+        "~A wA=0.25": {
+          "n": 72,
+          "mae": 1.0552,
+          "within1": 0.5556
+        },
+        "~A wA=1": {
+          "n": 72,
+          "mae": 0.9936,
+          "within1": 0.5833
+        },
+        "~B wB=0.15": {
+          "n": 72,
+          "mae": 1.098,
+          "within1": 0.4583
+        },
+        "~B wB=0.6": {
+          "n": 72,
+          "mae": 1.1139,
+          "within1": 0.4583
+        },
+        "~B ext": {
+          "n": 72,
+          "mae": 1.1169,
+          "within1": 0.4583
+        }
+      },
+      "per_roaster": {
+        "1킬로커피": {
+          "global_mean": {
+            "n": 37,
+            "mae": 1.3402,
+            "within1": 0.4595
+          },
+          "origin_mean": {
+            "n": 37,
+            "mae": 1.3414,
+            "within1": 0.4595
+          },
+          "neighbor_avg_old": {
+            "n": 37,
+            "mae": 1.3408,
+            "within1": 0.4324
+          },
+          "neighbor_avg_new": {
+            "n": 37,
+            "mae": 1.3767,
+            "within1": 0.4324
+          },
+          "base": {
+            "n": 37,
+            "mae": 1.3232,
+            "within1": 0.4595
+          },
+          "+A": {
+            "n": 37,
+            "mae": 1.2678,
+            "within1": 0.4595
+          },
+          "+B": {
+            "n": 37,
+            "mae": 1.3016,
+            "within1": 0.4595
+          },
+          "+Bf": {
+            "n": 37,
+            "mae": 1.3151,
+            "within1": 0.4595
+          },
+          "+C": {
+            "n": 37,
+            "mae": 1.321,
+            "within1": 0.4595
+          },
+          "+A+B": {
+            "n": 37,
+            "mae": 1.2679,
+            "within1": 0.4595
+          },
+          "+A+C": {
+            "n": 37,
+            "mae": 1.2243,
+            "within1": 0.4595
+          },
+          "+B+C": {
+            "n": 37,
+            "mae": 1.3103,
+            "within1": 0.4595
+          },
+          "+A+B+C": {
+            "n": 37,
+            "mae": 1.2689,
+            "within1": 0.4595
+          },
+          "~base (new pool)": {
+            "n": 37,
+            "mae": 1.3232,
+            "within1": 0.4595
+          },
+          "~B (old pool)": {
+            "n": 37,
+            "mae": 1.3016,
+            "within1": 0.4595
+          },
+          "~A with altitude": {
+            "n": 37,
+            "mae": 1.2678,
+            "within1": 0.4595
+          },
+          "~B uncentred": {
+            "n": 37,
+            "mae": 1.2965,
+            "within1": 0.4595
+          },
+          "~A wA=0.25": {
+            "n": 37,
+            "mae": 1.2948,
+            "within1": 0.4595
+          },
+          "~A wA=1": {
+            "n": 37,
+            "mae": 1.2176,
+            "within1": 0.4595
+          },
+          "~B wB=0.15": {
+            "n": 37,
+            "mae": 1.3147,
+            "within1": 0.4595
+          },
+          "~B wB=0.6": {
+            "n": 37,
+            "mae": 1.2789,
+            "within1": 0.4595
+          },
+          "~B ext": {
+            "n": 37,
+            "mae": 1.3022,
+            "within1": 0.4595
+          }
+        },
+        "G로스팅": {
+          "global_mean": {
+            "n": 17,
+            "mae": 0.9225,
+            "within1": 0.3529
+          },
+          "origin_mean": {
+            "n": 17,
+            "mae": 1.068,
+            "within1": 0.4118
+          },
+          "neighbor_avg_old": {
+            "n": 17,
+            "mae": 0.796,
+            "within1": 0.5882
+          },
+          "neighbor_avg_new": {
+            "n": 17,
+            "mae": 0.7733,
+            "within1": 0.7059
+          },
+          "base": {
+            "n": 17,
+            "mae": 0.8614,
+            "within1": 0.5294
+          },
+          "+A": {
+            "n": 17,
+            "mae": 0.9431,
+            "within1": 0.5882
+          },
+          "+B": {
+            "n": 17,
+            "mae": 0.9794,
+            "within1": 0.5294
+          },
+          "+Bf": {
+            "n": 17,
+            "mae": 0.9974,
+            "within1": 0.5294
+          },
+          "+C": {
+            "n": 17,
+            "mae": 0.8553,
+            "within1": 0.5294
+          },
+          "+A+B": {
+            "n": 17,
+            "mae": 0.9617,
+            "within1": 0.5294
+          },
+          "+A+C": {
+            "n": 17,
+            "mae": 0.9438,
+            "within1": 0.5882
+          },
+          "+B+C": {
+            "n": 17,
+            "mae": 0.9777,
+            "within1": 0.5294
+          },
+          "+A+B+C": {
+            "n": 17,
+            "mae": 0.9637,
+            "within1": 0.5294
+          },
+          "~base (new pool)": {
+            "n": 17,
+            "mae": 0.8614,
+            "within1": 0.5294
+          },
+          "~B (old pool)": {
+            "n": 17,
+            "mae": 0.9794,
+            "within1": 0.5294
+          },
+          "~A with altitude": {
+            "n": 17,
+            "mae": 0.9273,
+            "within1": 0.5882
+          },
+          "~B uncentred": {
+            "n": 17,
+            "mae": 0.8067,
+            "within1": 0.7059
+          },
+          "~A wA=0.25": {
+            "n": 17,
+            "mae": 0.9406,
+            "within1": 0.5294
+          },
+          "~A wA=1": {
+            "n": 17,
+            "mae": 0.8428,
+            "within1": 0.5882
+          },
+          "~B wB=0.15": {
+            "n": 17,
+            "mae": 0.9613,
+            "within1": 0.5294
+          },
+          "~B wB=0.6": {
+            "n": 17,
+            "mae": 0.9938,
+            "within1": 0.5294
+          },
+          "~B ext": {
+            "n": 17,
+            "mae": 0.9794,
+            "within1": 0.5294
+          }
+        },
+        "커피 리브레": {
+          "global_mean": {
+            "n": 18,
+            "mae": 0.8796,
+            "within1": 0.3333
+          },
+          "origin_mean": {
+            "n": 18,
+            "mae": 0.8867,
+            "within1": 0.3889
+          },
+          "neighbor_avg_old": {
+            "n": 18,
+            "mae": 0.7393,
+            "within1": 0.6111
+          },
+          "neighbor_avg_new": {
+            "n": 18,
+            "mae": 0.7044,
+            "within1": 0.6111
+          },
+          "base": {
+            "n": 18,
+            "mae": 0.6659,
+            "within1": 0.8333
+          },
+          "+A": {
+            "n": 18,
+            "mae": 0.6677,
+            "within1": 0.7778
+          },
+          "+B": {
+            "n": 18,
+            "mae": 0.866,
+            "within1": 0.3889
+          },
+          "+Bf": {
+            "n": 18,
+            "mae": 0.6627,
+            "within1": 0.8333
+          },
+          "+C": {
+            "n": 18,
+            "mae": 0.6741,
+            "within1": 0.8333
+          },
+          "+A+B": {
+            "n": 18,
+            "mae": 0.8675,
+            "within1": 0.3889
+          },
+          "+A+C": {
+            "n": 18,
+            "mae": 0.6723,
+            "within1": 0.7778
+          },
+          "+B+C": {
+            "n": 18,
+            "mae": 0.8711,
+            "within1": 0.3889
+          },
+          "+A+B+C": {
+            "n": 18,
+            "mae": 0.8781,
+            "within1": 0.3889
+          },
+          "~base (new pool)": {
+            "n": 18,
+            "mae": 0.6659,
+            "within1": 0.8333
+          },
+          "~B (old pool)": {
+            "n": 18,
+            "mae": 0.866,
+            "within1": 0.3889
+          },
+          "~A with altitude": {
+            "n": 18,
+            "mae": 0.6956,
+            "within1": 0.7778
+          },
+          "~B uncentred": {
+            "n": 18,
+            "mae": 0.5605,
+            "within1": 0.9444
+          },
+          "~A wA=0.25": {
+            "n": 18,
+            "mae": 0.6707,
+            "within1": 0.7778
+          },
+          "~A wA=1": {
+            "n": 18,
+            "mae": 0.6756,
+            "within1": 0.8333
+          },
+          "~B wB=0.15": {
+            "n": 18,
+            "mae": 0.7817,
+            "within1": 0.3889
+          },
+          "~B wB=0.6": {
+            "n": 18,
+            "mae": 0.888,
+            "within1": 0.3889
+          },
+          "~B ext": {
+            "n": 18,
+            "mae": 0.8658,
+            "within1": 0.3889
+          }
+        }
+      }
+    }
+  },
+  "ship": {
+    "acidity": {
+      "best": "+B",
+      "vs": "shipped (base)",
+      "within1_gain": 0.0366,
+      "margin": 0.03,
+      "shipped": true
+    },
+    "body": {
+      "best": "+C",
+      "vs": "neighbour average",
+      "within1_gain": 0.0156,
+      "margin": 0.05,
+      "shipped": false
+    },
+    "sweetness": {
+      "best": "+A+C",
+      "vs": "shipped (base)",
+      "within1_gain": 0.0,
+      "margin": 0.03,
+      "shipped": false
+    }
+  }
+}

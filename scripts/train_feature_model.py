@@ -25,6 +25,11 @@ A sanity reference (evaluation-only, never trained on): the final ridge applied 
 FULL `coffee` DB, compared with their acidity (review sub-score quintile) and body (LLM heaviness, ADR 0010)
 labels -- different label semantics, so Spearman correlation matters more than MAE there.
 
+Follow-up (docs/adr/0013-open-labels-weak-supervision.md): scripts/ablate_open_labels.py re-runs this CV with
+extra open labels and replaces an attribute's spec in the config when it wins -- run it AFTER this script, which
+writes the gauges-only specs. Since shopify_gauged is loaded into coffee_open, the neighbour pool here includes it
+(ADR 0013 reports the pool-without numbers as "base").
+
 Usage:
     uv run python scripts/train_feature_model.py            # CV + reference + write eval/config
     uv run python scripts/train_feature_model.py --no-ship  # CV + reference only
