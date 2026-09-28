@@ -422,7 +422,10 @@ _BARE_DRINK_END = re.compile(r"음료\.(?=\s|$)")
 
 def _polish(text: str) -> str:
     """Two recurring slips around the code-given phrases (docs/adr/0005 5차, live cards):
-    '비슷한 단맛을 고려할 점은 있지만 추천해요' → '단맛이 맞아 …', and a taste line ending '…음료.' → '…음료예요.'."""
+    '비슷한 단맛을 고려할 점은 있지만 추천해요' → '단맛이 맞아 …', and a taste line ending '…음료.' → '…음료예요.';
+    a sentence ended with a line break instead of a period gets the period."""
+    text = re.sub(r"(?<![.!?\s])[ \t]*\n", ".\n", text.strip())      # a line break where a period belongs
+    text = re.sub(r"\s*\n\s*", " ", text)
     text = _OBJECT_VERDICT.sub(lambda m: f"{_subject(m.group(1))} 맞아 {m.group(2)}", text)
     return _BARE_DRINK_END.sub("음료예요.", text)
 
@@ -446,8 +449,7 @@ def finalize_explanation(text: str, item: Item, profile: Profile, payload: dict,
         return "", "key_copy"
     out = _strip_foreign(text, allowed_latin(payload), item.name)
     out = re.sub(r"\s{2,}", " ", re.sub(r"\s+([,.!?])", r"\1", out)).strip()
-    out = _trim_sentences(out, violation)
-    out = _polish(out)
+    out = _trim_sentences(_polish(out), violation)      # polish first: a line-break "sentence" gets its period
     drink = {a: item.attr(a) for a in ATTRS}
     guest = {a: getattr(profile, a) for a in ATTRS}
     if direction_errors(out, drink, guest):

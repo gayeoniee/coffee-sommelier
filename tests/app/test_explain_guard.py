@@ -224,3 +224,10 @@ def test_polish_fixes_the_two_live_slips():
     assert _polish("바디를 추천해요.") == "바디가 맞아 추천해요."
     assert _polish("단맛이 맞아서 추천해요. 음료예요.") == "단맛이 맞아서 추천해요. 음료예요."        # already fine
     assert _polish("산미가 비슷해 아메리카노를 추천해요.") == "산미가 비슷해 아메리카노를 추천해요."    # a drink is fine
+
+
+def test_polish_turns_a_line_break_into_a_period():
+    from app.core.explain import _polish
+    assert _polish("이 브랜드 메뉴 중에서는 손님 취향에 가장 가까운 선택이에요\n초콜릿 향의 음료예요.") == \
+        "이 브랜드 메뉴 중에서는 손님 취향에 가장 가까운 선택이에요. 초콜릿 향의 음료예요."
+    assert _polish("첫 문장이에요.\n둘째 문장이에요.") == "첫 문장이에요. 둘째 문장이에요."
