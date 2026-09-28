@@ -8,26 +8,27 @@
   "attrs": {
     "acidity": {
       "shipped": true,
-      "n_labels": 7668,
+      "n_labels": 7764,
       "model_type": "mlp",
       "cv": {
-        "ridge_mae": 0.6653,
-        "mlp_mae": 0.6569,
+        "ridge_mae": 0.665,
+        "mlp_mae": 0.6578,
         "picked": "mlp"
       },
       "holdout": {
         "n_scored": 200,
         "model": {
-          "mae": 0.6272,
-          "within1": 0.81
+          "mae": 0.6211,
+          "within1": 0.83
         },
         "neighbor_avg": {
           "n": 198,
-          "mae": 0.7297,
+          "mae": 0.7309,
           "within1": 0.7273
         },
         "note": "both scored on the SAME tag-free (leak-free) query embeddings of the fixed held-out targets; neighbor_avg is predict_from_neighbors's weighted average (production defaults, k=10) over the production neighbour pool."
-      }
+      },
+      "trained_at": "2026-09-28T03:32:52.037506+00:00"
     },
     "body": {
       "shipped": true,
@@ -75,5 +76,7 @@
         "note": "both scored on the SAME tag-free (leak-free) query embeddings of the fixed held-out targets; neighbor_avg is predict_from_neighbors's weighted average (production defaults, k=10) over the production neighbour pool."
       }
     }
-  }
+  },
+  "holdout_pinned": true,
+  "retrain_2026_09_28": "see data/eval/phase2_retrain_2026-09-28.json; acidity replaced, body/sweetness kept"
 }

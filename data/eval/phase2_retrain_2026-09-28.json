@@ -1,0 +1,180 @@
+{
+  "date": "2026-09-28",
+  "holdout": "the 200 ids in data/eval/loo_tagfree_query_embeddings.jsonl (pinned: --pin-holdout), tag-free query embeddings, leak-free (excluded from training)",
+  "why_pinned": "random_coffee_ids_for_loo(200, 42) now draws a slightly different set (199/200 overlap) because the eligible pool grew; pinning keeps the comparison on the exact targets the shipped metrics used",
+  "training_data": "dev DB coffee: coffeereview_kaggle 7,393 / cqi 1,546 / roasterdb 100 / shopify 9 / roasters_kr 209 (119 acidity, 113 body, 129 sweetness labels from roaster-published gauges, ADR 0010 body relabel)",
+  "tag_model": {
+    "shipped": {
+      "n": 168,
+      "precision": 0.7799,
+      "recall": 0.6913,
+      "f1": 0.7329,
+      "category_f1": 0.8292
+    },
+    "retrained": {
+      "n": 168,
+      "precision": 0.7799,
+      "recall": 0.6913,
+      "f1": 0.7329,
+      "category_f1": 0.8292
+    },
+    "n_tagged_train": {
+      "shipped": 7327,
+      "retrained": 7327
+    },
+    "korean_roasters_check_retrained": {
+      "n_scored": 94,
+      "model": {
+        "n": 94,
+        "precision": 0.4419,
+        "recall": 0.5108,
+        "f1": 0.4739,
+        "category_f1": 0.7126
+      },
+      "neighbor_vote": {
+        "n": 94,
+        "precision": 0.2331,
+        "recall": 0.2684,
+        "f1": 0.2495,
+        "category_f1": 0.5497
+      },
+      "note": "roasters_kr active beans with flavor_tags (Korean note-word rule tags, pipeline/enrich.py ko_rule_tags), excluded from training and never a target elsewhere; independent of the coffeereview-derived n=200 held-out set above. Tag-free query embeddings; neighbor_vote uses production defaults (k=10, thr=0.3, lift=1.2)."
+    },
+    "decision": "keep shipped: identical training pool (roasters_kr is never a tag-training row) and identical held-out F1 0.7329"
+  },
+  "attr_model_intermediate_roasters_kr_177": {
+    "acidity": {
+      "shipped": {
+        "n_labels": 7668,
+        "model_type": "mlp",
+        "mae": 0.6272,
+        "within1": 0.81,
+        "n_scored": 200
+      },
+      "retrained": {
+        "n_labels": 7688,
+        "model_type": "mlp",
+        "mae": 0.6274,
+        "within1": 0.805,
+        "n_scored": 200,
+        "cv": {
+          "ridge_mae": 0.6642,
+          "mlp_mae": 0.6597,
+          "picked": "mlp"
+        }
+      }
+    },
+    "body": {
+      "shipped": {
+        "n_labels": 6436,
+        "model_type": "ridge",
+        "mae": 0.6695,
+        "within1": 0.7778,
+        "n_scored": 153
+      },
+      "retrained": {
+        "n_labels": 6459,
+        "model_type": "ridge",
+        "mae": 0.6726,
+        "within1": 0.7712,
+        "n_scored": 153,
+        "cv": {
+          "ridge_mae": 0.7323,
+          "mlp_mae": 0.7451,
+          "picked": "ridge"
+        }
+      }
+    },
+    "sweetness": {
+      "shipped": {
+        "n_labels": 4745,
+        "model_type": "ridge",
+        "mae": 0.4407,
+        "within1": 0.9293,
+        "n_scored": 99
+      },
+      "retrained": {
+        "n_labels": 4777,
+        "model_type": "ridge",
+        "mae": 0.4391,
+        "within1": 0.9293,
+        "n_scored": 99,
+        "cv": {
+          "ridge_mae": 0.4789,
+          "mlp_mae": 0.4981,
+          "picked": "ridge"
+        }
+      }
+    }
+  },
+  "attr_model": {
+    "acidity": {
+      "shipped": {
+        "n_labels": 7668,
+        "model_type": "mlp",
+        "mae": 0.6272,
+        "within1": 0.81,
+        "n_scored": 200
+      },
+      "retrained": {
+        "n_labels": 7764,
+        "model_type": "mlp",
+        "mae": 0.6211,
+        "within1": 0.83,
+        "n_scored": 200,
+        "cv": {
+          "ridge_mae": 0.665,
+          "mlp_mae": 0.6578,
+          "picked": "mlp"
+        }
+      }
+    },
+    "body": {
+      "shipped": {
+        "n_labels": 6436,
+        "model_type": "ridge",
+        "mae": 0.6695,
+        "within1": 0.7778,
+        "n_scored": 153
+      },
+      "retrained": {
+        "n_labels": 6523,
+        "model_type": "ridge",
+        "mae": 0.674,
+        "within1": 0.7647,
+        "n_scored": 153,
+        "cv": {
+          "ridge_mae": 0.7326,
+          "mlp_mae": 0.7465,
+          "picked": "ridge"
+        }
+      }
+    },
+    "sweetness": {
+      "shipped": {
+        "n_labels": 4745,
+        "model_type": "ridge",
+        "mae": 0.4407,
+        "within1": 0.9293,
+        "n_scored": 99
+      },
+      "retrained": {
+        "n_labels": 4844,
+        "model_type": "ridge",
+        "mae": 0.4459,
+        "within1": 0.9394,
+        "n_scored": 99,
+        "cv": {
+          "ridge_mae": 0.4822,
+          "mlp_mae": 0.4992,
+          "picked": "ridge"
+        }
+      }
+    }
+  },
+  "attr_decisions": {
+    "acidity": "ship retrained (MAE 0.6272 -> 0.6211, within1 0.81 -> 0.83, +96 labels)",
+    "body": "keep shipped (retrained MAE 0.6695 -> 0.6740, within1 0.7778 -> 0.7647: worse)",
+    "sweetness": "keep shipped (retrained MAE 0.4407 -> 0.4459 worse; within1 0.9293 -> 0.9394 better; MAE is the selection metric)"
+  }
+}

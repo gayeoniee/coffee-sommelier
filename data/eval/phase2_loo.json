@@ -13,18 +13,21 @@
   "embedding_model": "nvidia/nemotron-3-embed-1b",
   "acidity": {
     "n": 200,
-    "exact": 0.42,
-    "within1": 0.735
+    "exact": 0.425,
+    "within1": 0.735,
+    "mae": 0.7392
   },
   "body": {
     "n": 153,
     "exact": 0.3072,
-    "within1": 0.6405
+    "within1": 0.6405,
+    "mae": 0.8826
   },
   "sweetness": {
     "n": 95,
     "exact": 0.5263,
-    "within1": 0.8737
+    "within1": 0.8737,
+    "mae": 0.5668
   },
   "acidity_within1_by_confidence": {
     "medium": {
@@ -50,7 +53,7 @@
     "precision": 0.3672,
     "recall": 0.3693,
     "f1": 0.3683,
-    "category_f1": 0.6267
+    "category_f1": 0.6274
   },
   "tags_model": {
     "n": 168,
@@ -63,12 +66,12 @@
     "acidity": {
       "model": {
         "n": 200,
-        "mae": 0.6274,
-        "within1": 0.81
+        "mae": 0.6233,
+        "within1": 0.835
       },
       "neighbor": {
         "n": 198,
-        "mae": 0.7307,
+        "mae": 0.7325,
         "within1": 0.7273
       },
       "note": "both scored on the same leak-free tag-free query embedding as `tags` above (docs/adr/0009-learned-attribute-model.md); neighbor = predict_from_neighbors's weighted average over that embedding's neighbours, production defaults (k=10)."

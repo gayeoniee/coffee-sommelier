@@ -21,6 +21,10 @@ Outputs:
 Usage:
     uv run python scripts/train_tag_model.py             # embeds (cached) + trains + writes everything
     uv run python scripts/train_tag_model.py --no-embed  # reuse existing embedding caches only (no API calls)
+    uv run python scripts/train_tag_model.py --out-dir <tmp> --pin-holdout
+        # retrain candidate: config/phase2/loo cache go to <tmp> (shipped files untouched), and the 200 held-out
+        # targets are the exact ids in data/eval/loo_tagfree_query_embeddings.jsonl (the draw the shipped
+        # model was scored on) rather than a fresh draw that may drift as the DB grows.
 
 Retraining later (new data, a schema change, or a different embed model): just re-run the plain command --
 the embedding cache makes reruns with unchanged text free, and training is a few seconds.
@@ -202,6 +206,13 @@ def round_matrix(m: np.ndarray) -> list:
     return [[round(float(x), ROUND) for x in row] for row in m] if m.ndim == 2 else [round(float(x), ROUND) for x in m]
 
 
+def pinned_holdout_ids(path: Path = LOO_QUERY_CACHE) -> list[int]:
+    """The held-out ids (in drawn order) the shipped model was scored on -- data/eval/loo_tagfree_query_
+    embeddings.jsonl. Lets a retrain be compared against the shipped metrics on the SAME 200 targets even
+    after the DB grows and random_coffee_ids_for_loo's draw drifts."""
+    return [json.loads(line)["id"] for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+
 def write_config(model: MLPClassifier, tags: list[str], threshold: float, n_train: int, cv: dict,
                  holdout: dict) -> Path:
     W1, W2 = model.coefs_
@@ -233,7 +244,17 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--no-embed", action="store_true", help="reuse cached embeddings only, no NVIDIA API calls")
     ap.add_argument("--batch", type=int, default=32)
+    ap.add_argument("--out-dir", type=Path, default=None,
+                    help="write config/phase2/loo-cache outputs here instead of config/ and data/eval/")
+    ap.add_argument("--pin-holdout", action="store_true",
+                    help="use the held-out ids in data/eval/loo_tagfree_query_embeddings.jsonl, not a fresh draw")
     args = ap.parse_args()
+    global CONFIG_JSON, CONFIG_GZ, PHASE2_OUT, LOO_QUERY_CACHE
+    pinned = pinned_holdout_ids() if args.pin_holdout else None
+    if args.out_dir is not None:
+        args.out_dir.mkdir(parents=True, exist_ok=True)
+        CONFIG_JSON, CONFIG_GZ = args.out_dir / "tag_model.json", args.out_dir / "tag_model.json.gz"
+        PHASE2_OUT, LOO_QUERY_CACHE = args.out_dir / "phase2_tag_model.json", args.out_dir / LOO_QUERY_CACHE.name
 
     repo = Repo(settings.DATABASE_URL)
     try:
@@ -243,7 +264,8 @@ def main() -> int:
         by_id = {r["id"]: r for r in rows}
         print(f"{len(rows)} active beans (excl. {NEVER_LOO_TARGETS}) with embeddings")
 
-        holdout_ids = repo.random_coffee_ids_for_loo(N_HOLDOUT, HOLDOUT_SEED, exclude_sources=NEVER_LOO_TARGETS)
+        holdout_ids = pinned or repo.random_coffee_ids_for_loo(N_HOLDOUT, HOLDOUT_SEED,
+                                                                exclude_sources=NEVER_LOO_TARGETS)
         holdout_set = set(holdout_ids)
         print(f"{len(holdout_ids)} fixed LOO held-out targets excluded from training")
 
@@ -378,7 +400,8 @@ def main() -> int:
             "min_positives": MIN_POS, "thresholds_swept": list(THRESHOLDS), "picked_threshold": threshold,
             "holdout_n": N_HOLDOUT, "holdout_seed": HOLDOUT_SEED, "cv": cv, "holdout": holdout,
             "korean_roasters": korean_roasters,
-            "config_path": cfg_path.relative_to(ROOT).as_posix(),
+            "config_path": cfg_path.relative_to(ROOT).as_posix() if cfg_path.is_relative_to(ROOT) else str(cfg_path),
+            "holdout_pinned": bool(pinned),
         }
         PHASE2_OUT.write_text(json.dumps(phase2, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"wrote {PHASE2_OUT}")

@@ -32,6 +32,9 @@ Usage:
     uv run python scripts/train_attr_model.py --variant full
     uv run python scripts/train_attr_model.py --variant open
     uv run python scripts/train_attr_model.py --variant full --no-embed   # cached embeddings only
+    uv run python scripts/train_attr_model.py --variant full --out-dir <tmp> --pin-holdout
+        # retrain candidate: config/phase2 go to <tmp>, held-out ids pinned to data/eval/loo_tagfree_query_
+        # embeddings.jsonl (full variant only -- the draw the shipped model was scored on)
 """
 import argparse
 import gzip
@@ -138,6 +141,12 @@ def embed_missing(cache_path: Path, items: list[tuple[str, int, str]], embedder,
     return cache
 
 
+def pinned_holdout_ids() -> list[int]:
+    """Held-out ids in drawn order from data/eval/loo_tagfree_query_embeddings.jsonl (full variant's draw)."""
+    path = settings.EVAL_DIR / "loo_tagfree_query_embeddings.jsonl"
+    return [json.loads(line)["id"] for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+
 def load_loo_query_cache() -> dict[int, list[float]]:
     path = settings.EVAL_DIR / "loo_tagfree_query_embeddings.jsonl"
     if not path.exists():
@@ -240,7 +249,15 @@ def main() -> int:
     ap.add_argument("--variant", choices=("full", "open"), default="full")
     ap.add_argument("--no-embed", action="store_true", help="reuse cached embeddings only, no NVIDIA API calls")
     ap.add_argument("--batch", type=int, default=32)
+    ap.add_argument("--out-dir", type=Path, default=None,
+                    help="write the config/phase2 outputs here instead of config/ and data/eval/")
+    ap.add_argument("--pin-holdout", action="store_true",
+                    help="(full variant) use the held-out ids in data/eval/loo_tagfree_query_embeddings.jsonl")
     args = ap.parse_args()
+    if args.pin_holdout and args.variant != "full":
+        ap.error("--pin-holdout only applies to --variant full")
+    if args.out_dir is not None:
+        args.out_dir.mkdir(parents=True, exist_ok=True)
     spec = VARIANTS[args.variant]
     only_sources = spec["only_sources"]
 
@@ -251,8 +268,8 @@ def main() -> int:
         print(f"variant={args.variant}: {len(rows)} active beans with an attribute present"
              f"{f' (sources={only_sources})' if only_sources else ''}")
 
-        holdout_ids = repo.random_coffee_ids_for_loo(N_HOLDOUT, HOLDOUT_SEED, exclude_sources=NEVER_LOO_TARGETS,
-                                                     sources=only_sources)
+        holdout_ids = pinned_holdout_ids() if args.pin_holdout else repo.random_coffee_ids_for_loo(
+            N_HOLDOUT, HOLDOUT_SEED, exclude_sources=NEVER_LOO_TARGETS, sources=only_sources)
         holdout_set = set(holdout_ids)
         print(f"{len(holdout_ids)} fixed held-out targets excluded from training")
 
@@ -338,7 +355,7 @@ def main() -> int:
             print(f"  held-out (n={n_scored}): model_mae={phase2_attrs[a]['holdout']['model']['mae']} "
                  f"neighbor_mae={phase2_attrs[a]['holdout']['neighbor_avg']['mae']}")
 
-        config_path = settings.CONFIG_DIR / spec["config_name"]
+        config_path = (args.out_dir or settings.CONFIG_DIR) / spec["config_name"]
         cfg_out = write_config(config_path, model_name, attrs_out) if attrs_out else None
         if cfg_out is None:
             print("no attribute cleared the label threshold; not writing a config file")
@@ -346,10 +363,12 @@ def main() -> int:
         phase2 = {
             "variant": args.variant, "only_sources": list(only_sources), "embed_model": model_name,
             "holdout_n": len(holdout_ids), "holdout_seed": HOLDOUT_SEED,
-            "config_path": cfg_out.relative_to(ROOT).as_posix() if cfg_out else None,
+            "config_path": (cfg_out.relative_to(ROOT).as_posix() if cfg_out.is_relative_to(ROOT) else str(cfg_out))
+                           if cfg_out else None,
+            "holdout_pinned": args.pin_holdout,
             "attrs": phase2_attrs,
         }
-        phase2_path = settings.EVAL_DIR / spec["phase2_name"]
+        phase2_path = (args.out_dir or settings.EVAL_DIR) / spec["phase2_name"]
         phase2_path.write_text(json.dumps(phase2, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"\nwrote {phase2_path}")
     finally:
