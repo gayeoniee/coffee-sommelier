@@ -62,7 +62,7 @@ NEON_DATABASE_URL='postgresql://...' bash scripts/deploy/migrate_to_neon.sh
 - `vector` 확장 생성 → 스키마 전체 + 카탈로그 데이터 복원(한 트랜잭션, 실패하면 전부 롤백) → 테이블별 행 수 대조 → `ANALYZE`.
 - 복사하지 않는 데이터: 사용자 테이블(`users`, `taste_profiles`, `tastings`, `profile_history`: 운영은 빈 상태로 시작), 파이프라인 전용(`reviews`, `enrich_log`: API가 읽지 않음, `INCLUDE_REVIEWS=1`이면 포함).
 - 크기: 로컬 대역 컨테이너로 실측 **131 MB**(그중 HNSW 인덱스가 대부분), 약 30초. Neon 무료 한도 0.5 GB 안이다.
-- 대상에 테이블이 이미 있으면 멈춘다. 처음부터 다시 옮기려면 `RESET=1`(운영 사용자 데이터까지 지워짐). 카탈로그만 갱신하려면 로컬에서 `DATABASE_URL=<neon> uv run python -m pipeline run --only load`(upsert).
+- 대상에 테이블이 이미 있으면 멈춘다. 처음부터 다시 옮기려면 `RESET=1`(운영 사용자 데이터까지 지워짐). 이미 운영 중인 DB의 카탈로그만 갱신하려면 `MODE=catalog`(키 기준 upsert, 바뀐 행만, 사용자 테이블 불변, `DRY_RUN=1`이면 계획만 출력; 9절).
 
 ### (c) Render (백엔드)
 
@@ -205,3 +205,38 @@ uv run python scripts/ops/prod_stats.py --hours 24
 - `--service-name`으로 다른 서비스 이름을 지정할 수 있다(기본 `coffee-sommelier-api`).
 - 결과는 표로 출력되고, `data/eval/prod_stats_<YYYY-MM-DD>.json`에도 저장된다.
 - 텔레메트리 로그 줄이 아직 없거나(배포 직후) 조회 구간에 요청이 없으면 `requests: 0`으로 정상 종료한다.
+
+## 9. 자동 갱신 (주 1회)
+
+메뉴·원두를 손으로 다시 모으지 않도록 `.github/workflows/refresh.yml`이 **매주 월요일 03:00 KST**(일 18:00 UTC)에
+`scripts/refresh/refresh.py`를 돌린다. 설계·게이트·실패 모드·비용은 [ADR 0015](adr/0015-automated-refresh.md), 첫 DRY_RUN
+결과는 [샘플 리포트](ops/refresh-sample-report.md).
+
+```
+수집(브랜드 메뉴 8 + Shopify + 로스터리) → 운영 DB를 스테이징에 복제 → 차이 → 신규·변경 원두만 보강(enrich_ci)·임베딩
+→ 스테이징 적재(전체판) + 오픈판 파생 → 게이트 → 통과·변경 있음이면 Neon 게시(카탈로그의 바뀐 행만) + PR refresh/<날짜>
+                                        → 실패면 DB 쓰기 없이 이슈 "데이터 갱신 실패 <날짜>"
+```
+
+- **비밀**(Settings → Secrets → Actions): `NVIDIA_API_KEY`, `NEON_DATABASE_URL`(전체판, direct 연결), `NEON_OPEN_DATABASE_URL`
+  (`npx neonctl connection-string --database-name coffee_open`). 값은 GitHub가 로그에서 가리고, 스크립트는 DB를 `remote:<이름>`으로만 적는다.
+- **첫 실행은 DRY_RUN**: `gh workflow run refresh.yml -f dry_run=true` → 실행 요약(Job summary)과 아티팩트
+  `refresh-report-<run id>`(report.json·report.md·평가 로그)에서 결과 확인. DRY_RUN은 Neon에 쓰지 않고 PR·이슈도 만들지 않는다.
+- **게이트**: 삭제 비율(표 20%, 그룹 절반), 조건 위반 0(두 판), LOO 산미 ±1 ≥ 커밋 기준선 − 0.02(두 판), README·초안 수치 재생성
+  후 대조, pytest. 하나라도 실패하면 운영 DB는 그대로다.
+- **라벨 필요**: 리포트의 "라벨 필요" 메뉴명을 `data/curated/menu_milk_labels.yaml`에 추가해 main에 올리면 다음 갱신에서 추천에 들어간다
+  (그 전까지 `needs_review=true`라 추천 제외).
+- **PR 자동 병합**: `gh pr merge --auto --squash`를 시도한다. 저장소 설정 *Allow auto-merge*와 *Actions → General → Allow GitHub
+  Actions to create and approve pull requests*가 켜져 있어야 PR 생성·자동 병합이 된다. `GITHUB_TOKEN`으로 만든 PR에는 CI가 다시
+  돌지 않으므로(게이트가 같은 검사를 이미 했다), 보호 규칙으로 CI 통과를 요구하려면 PAT/앱 토큰을 `GH_TOKEN`에 넣어야 한다.
+- **월간 재학습**: 매달 첫 월요일 `retrain` 잡이 태그·속성·특징 모델 후보를 학습해 보류 지표가 좋아졌을 때만 `retrain/<날짜>` PR을
+  연다(자동 병합 안 함). 지금 돌리려면 `gh workflow run refresh.yml -f dry_run=true -f retrain=true`.
+- **로컬 실행**(개발 DB 대상, 수집은 별도 폴더로):
+
+```bash
+DRY_RUN=1 PUBLISH_OPEN_URL=postgresql://coffee:coffee@localhost:5432/coffee_open \
+  uv run python -m scripts.refresh.refresh --raw-dir data/refresh/raw
+# 스테이징: 같은 서버의 coffee_refresh / coffee_refresh_open(매번 새로 만듦). 원본·게시 대상 기본값 = DATABASE_URL
+```
+
+- **수동 카탈로그 게시**: `MODE=catalog NEON_DATABASE_URL=... bash scripts/deploy/migrate_to_neon.sh`(오픈판은 `SRC_DB=coffee_open`).

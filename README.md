@@ -133,7 +133,7 @@ npx neonctl auth && npx vercel login     # (선택) export RENDER_API_KEY=...
 bash scripts/deploy/deploy_all.sh        # Neon 생성·DB 이전 → Render → Vercel → 연결 확인
 ```
 
-API 이미지는 파이프라인 의존성을 뺀 356 MB, 실행 메모리 약 75 MiB(Render 한도 512 MB). 단계별 수동 절차·환경변수·콜드 스타트 대응·운영 통계(`scripts/ops/prod_stats.py`)는 [docs/deploy.md](docs/deploy.md).
+API 이미지는 파이프라인 의존성을 뺀 356 MB, 실행 메모리 약 75 MiB(Render 한도 512 MB). 단계별 수동 절차·환경변수·콜드 스타트 대응·운영 통계(`scripts/ops/prod_stats.py`)·주간 자동 갱신(`.github/workflows/refresh.yml`)은 [docs/deploy.md](docs/deploy.md).
 
 ## 데이터 출처·라이선스
 
@@ -143,7 +143,7 @@ API 이미지는 파이프라인 의존성을 뺀 356 MB, 실행 메모리 약 7
 | Kaggle: [patkle](https://www.kaggle.com/datasets/patkle/coffeereviewcom-over-7000-ratings-and-reviews), [hanifalirsyad](https://www.kaggle.com/datasets/hanifalirsyad/coffee-scrap-coffeereview), [schmoyote](https://www.kaggle.com/datasets/schmoyote/coffee-reviews-dataset) | coffeereview.com 리뷰 스크랩 | 원 저작권은 Coffee Review에 있음. 비상업 포트폴리오 용도로만 사용, 원본 데이터는 레포에 포함하지 않음 |
 | [RoasterDB 샘플](https://github.com/RoasterDB/specialty-coffee-roasterdb) | 로스터리 원두 + SCA 노트 | CC BY-NC 4.0 |
 | [SCA 플레이버 휠 JSON](https://github.com/fschlz/coffee-flavor-api) | 향미 분류 체계 | © SCA/WCR 2016, CC BY-NC-ND 4.0 (원본 수정 없이 별도 한국어 매핑) |
-| 스타벅스·메가MGC·빽다방·할리스·커피빈·폴바셋·컴포즈·이디야 공식 메뉴 | 음료, 카페인 mg, 디카페인(이디야는 DECAF 카테고리의 디카페인 SKU) | robots.txt 허용 범위(폴바셋은 인증서 오류로 해당 호스트만 검증 해제, 이디야는 `/inc/` 미호출), 1회 스냅샷 |
+| 스타벅스·메가MGC·빽다방·할리스·커피빈·폴바셋·컴포즈·이디야 공식 메뉴 | 음료, 카페인 mg, 디카페인(이디야는 DECAF 카테고리의 디카페인 SKU) | robots.txt 허용 범위(폴바셋은 인증서 오류로 해당 호스트만 검증 해제, 이디야는 `/inc/` 미호출), 주 1회 자동 재수집([ADR 0015](docs/adr/0015-automated-refresh.md)) |
 | 블루보틀 코리아 `products.json` | 원두 상품 설명 | Shopify 공개 엔드포인트 |
 | 해외 Shopify 로스터 8곳 `products.json` (Kiss the Hippo·Intelligentsia·Volcanica·Ozone·Café Don Pablo·Café Britt·Fresh Roasted·Coffee Supreme, `shopify_gauged`) | 원두 사실 정보 + **로스터가 직접 붙인 강도 표기**("VIBRANT & BRIGHT"·"Low Acid"·"Body: full" → 한 사전으로 1~5, 원두 199개: 산미 170·바디 46·단맛 2, [ADR 0013](docs/adr/0013-open-labels-weak-supervision.md)) | Shopify 공개 엔드포인트, robots.txt 확인, 설명 문구 미저장 |
 | 국내 로스터리 12곳(프릳츠·나무사이로·커피 리브레·1kg커피·블루보틀 코리아·앤트러사이트·펠트·빈브라더스·모모스·매뉴팩트·G로스팅·내일의커피) 상품 페이지 (`pipeline roasters-kr`) | 원두 사실 정보만(산지·가공·로스팅·디카페인·노트 단어·가격·표기된 고도/품종) + **로스터가 공개한 맛 게이지**(산미·바디·단맛, 4곳 82건 — 오픈판 특징 모델의 사람 라벨, [ADR 0011](docs/adr/0011-roaster-gauges-feature-model.md)) | robots.txt 준수, 설명 문구 미저장, 이미지 게이지는 읽지 않음, 테라로사·헬카페(둘 다 robots.txt 차단) 등 제외 |
@@ -164,6 +164,7 @@ coffeereview.com 원본 사이트, 투썸플레이스 메뉴(봇 차단)는 직�
 | 2. 추천 + 기록 | 취향 온보딩, 조건 필터 + 취향 점수 추천, 음용 기록, PWA | ✅ 완료 · 배포됨 |
 | 3. 스캔 + 추론 + 평가 | 원두카드/메뉴 사진 Vision 추출, 근거 기반 향미 예측, 모델 비교 | 미착수 (사진 스캔·Vision은 시작하지 않음. 텍스트 입력 기반 향미 예측·설명 품질 평가·임베딩/판정자 모델 비교는 2단계에서 먼저 함) |
 | 4. 에이전트 | 멀티턴 대화("아까 거보다 산미 센 걸로") | 미착수 |
+| 운영 자동화 | 주 1회(월 03:00 KST) 메뉴·로스터리 원두 재수집 → 현재 DB와 차이 → 신규·변경 원두만 보강·임베딩 → 게이트(삭제 20% 한도·조건 위반 0·LOO 산미 기준선−0.02·README 수치·pytest, 두 판 모두) → 운영 Neon에 카탈로그의 바뀐 행만 게시 + 수치 PR, 실패 시 이슈. 우유 라벨 없는 새 메뉴는 추천 제외(needs_review). 월 1회 모델 재학습 후보는 지표가 좋아질 때만 PR([ADR 0015](docs/adr/0015-automated-refresh.md), [샘플 리포트](docs/ops/refresh-sample-report.md)) | ✅ 구현 · 첫 DRY_RUN 완료 |
 
 설계 문서: [`docs/superpowers/specs/2026-09-24-coffee-sommelier-design.md`](docs/superpowers/specs/2026-09-24-coffee-sommelier-design.md)
 
