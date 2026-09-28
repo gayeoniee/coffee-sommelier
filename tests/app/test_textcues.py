@@ -29,6 +29,9 @@ CUE_CASES = [
     ("쓴맛이 강해요", {"sweetness": 2.0}),
     ("bitter aftertaste", {"sweetness": 2.0}),
     ("에티오피아 예가체프 워시드", {}),                    # no cue at all
+    ("에티오피아 구지 라이트 로스트", {}),                 # a roast, not a light body
+    ("라이트 로스팅 원두", {}),
+    ("라이트 배전", {}),
     ("산미가 강하면서도 약한 느낌", {}),                    # both sides hit -> ambiguous, no override
 ]
 
@@ -96,3 +99,16 @@ def test_with_text_cues_caps_union_at_five_tags():
     tag_ko = {**TAG_KO, "vanilla": "바닐라", "honey": "꿀", "nutty": "고소한"}
     out = with_text_cues(pred, "자몽, 베리, 바닐라, 꿀, 고소한 향", tag_to_cat, tag_ko)
     assert len(out.tags) == 5
+
+
+def test_text_tags_free_text_card_line_reads_whole_korean_note_tokens():
+    t2c = {**TAG_TO_CAT, "strawberry": "fruity", "jasmine": "floral", "fermented": "sour/fermented"}
+    ko = {**TAG_KO, "strawberry": "딸기", "jasmine": "재스민", "fermented": "발효"}
+    line = "에티오피아 구지 내추럴 딸기 자스민 라이트 로스트"
+    assert text_tags(line, t2c, ko) == []                                  # pipeline rules: not a note list
+    assert text_tags(line, t2c, ko, free_text=True) == ["strawberry", "jasmine"]
+    assert text_tags("예가체프 재스민향 딸기와 초콜릿", t2c, ko, free_text=True) == ["jasmine", "strawberry", "chocolate"]
+    assert text_tags("콜롬비아 우일라 무산소 발효 워시드 미디엄 로스트", t2c, ko, free_text=True) == []  # process word
+    # prose stays out even in free-text mode
+    assert text_tags("에티오피아 원두는 자몽 향이 나는 것으로 유명한 산지에서 재배됩니다.", TAG_TO_CAT, TAG_KO,
+                     free_text=True) == []

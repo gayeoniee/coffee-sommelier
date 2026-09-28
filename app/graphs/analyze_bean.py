@@ -15,7 +15,7 @@ from app.core.predict import (
 )
 from app.core.scoring import passes, score_item
 from app.graphs.common import explain_to_stream
-from app.models import Item, ParsedBean, Prediction, Profile
+from app.models import Item, ParsedBean, Prediction, Profile, cap_confidence
 from app.tracing import traced
 from pipeline.llm import LLMError
 
@@ -88,6 +88,8 @@ def build_analyze_graph(deps):
         # explicit cues in the user's own text (app/core/textcues.py) outrank both the model and the neighbour
         # average -- applied last, regardless of degraded/model state (docs/adr/0010-body-heaviness.md).
         pred = with_text_cues(pred, parsed.text, tag_ko=tag_ko, tag_to_cat=tag_to_cat)
+        # a missing core attribute caps the confidence (one -> medium, two+ -> low)
+        pred = replace(pred, confidence=cap_confidence(pred.confidence, (pred.acidity, pred.body, pred.sweetness)))
         return {"item": item_from_prediction(parsed, pred), "prediction": pred}
 
     async def score(state: AnalyzeState) -> dict:

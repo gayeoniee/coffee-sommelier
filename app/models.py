@@ -2,6 +2,15 @@ from dataclasses import asdict, dataclass, field
 
 ATTRS = ("acidity", "body", "sweetness")
 CAFFEINE_RULES = ("decaf_only", "low", "any")
+CONFIDENCE_LEVELS = ("low", "medium", "high")
+
+
+def cap_confidence(confidence: str, values) -> str:
+    """A card that cannot show one of acidity/body/sweetness is not "high" confidence: one missing core attribute
+    caps it at "medium", two or more at "low" (never raises a lower level)."""
+    missing = sum(v is None for v in values)
+    cap = "high" if missing == 0 else "medium" if missing == 1 else "low"
+    return min(confidence, cap, key=CONFIDENCE_LEVELS.index)
 
 
 @dataclass(frozen=True)

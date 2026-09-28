@@ -68,6 +68,8 @@ def test_evidence_line_korean_top_contributors():
     assert line == "특징 모델: 고지대(1,900m)·워시드 → 산미↑, 강배전 → 산미↓"
     assert evidence_line("body", {"notes_other": 0.01}) is None
     assert feature_label_ko("country_Ethiopia") == "에티오피아"
+    # with the shown value + the model's baseline: the arrows are relative to that baseline
+    assert evidence_line("acidity", {"roast_light": 0.3, "roast_dark": -0.2}, value=2.94, base=2.2) ==         "특징 모델 산미 2.9/5: 약배전 ↑, 강배전 ↓ (기준값 2.2)"
 
 
 def test_load_missing_file_returns_none(tmp_path):

@@ -7,7 +7,7 @@ that outranks both the learned model and the neighbour average -- we're not infe
 """
 import re
 
-from pipeline.enrich import KO_TAG_ALIASES, rule_tags
+from pipeline.enrich import KO_TAG_ALIASES, is_note_list, rule_tags
 
 ATTR_KO = {"acidity": "산미", "body": "바디", "sweetness": "단맛"}
 
@@ -28,8 +28,9 @@ _ACIDITY_LOW = re.compile(
     rf"{_near('산미', '약')}|{_near('산미', '부드러')}|low\s*acid", re.I)
 _BODY_HIGH = re.compile(
     r"묵직(?:한|해요)?(?:\s*바디)?|무거운(?:\s*바디)?|풀\s*바디|full[\s-]?body|heavy|syrupy", re.I)
+# "라이트 로스트"/"라이트 로스팅"/"라이트 배전" is a roast, not a body -- the lookahead keeps it out.
 _BODY_LOW = re.compile(
-    r"가벼운(?:\s*바디)?|라이트(?:한)?(?:\s*바디)?|tea[\s-]?like|light\s*body", re.I)
+    r"가벼운(?:\s*바디)?|라이트(?:한)?(?!\s*(?:로스|배전))(?:\s*바디)?|tea[\s-]?like|light\s*body", re.I)
 _SWEET_HIGH = re.compile(r"달콤(?:한|해요)?|단맛|sweet", re.I)
 _SWEET_LOW = re.compile(r"쓴맛|쓴(?:맛)?|bitter", re.I)
 
@@ -67,9 +68,46 @@ def ko_vocab_from_tag_ko(tag_to_cat: dict[str, str], tag_ko: dict[str, str]) -> 
     return out
 
 
-def text_tags(text: str, tag_to_cat: dict[str, str], tag_ko: dict[str, str], limit: int = 6) -> list[str]:
+# Free-text card lines ("에티오피아 구지 내추럴 딸기 자스민 라이트 로스트"): a Korean note word counts only as a WHOLE
+# token (optionally + one of these endings), never as a substring -- "커피나무" never yields "나무". Tokens that are
+# process words rather than notes are skipped.
+_TOKEN_SPLIT = re.compile(r"[\s,/·;|()\[\]]+")
+_TOKEN_SUFFIXES = ("노트", "향", "맛", "와", "과", "이랑", "랑")
+_TOKEN_SKIP = {"발효"}
+MAX_CARD_TOKENS = 15
+
+
+def _card_line_tokens(text: str, ko_vocab: dict[str, str]) -> list[str]:
+    """Korean note words that stand as whole tokens in a short card-like line (no sentence punctuation, at most
+    MAX_CARD_TOKENS tokens). Prose is left alone, like pipeline.enrich.is_note_list does."""
+    if "." in text:
+        return []
+    tokens = [t for t in _TOKEN_SPLIT.split(text) if t]
+    if len(tokens) > MAX_CARD_TOKENS:
+        return []
+    out = []
+    for tok in tokens:
+        for cand in (tok, *(tok[:-len(s)] for s in _TOKEN_SUFFIXES if tok.endswith(s) and len(tok) > len(s))):
+            if cand in ko_vocab and cand not in _TOKEN_SKIP:
+                out.append(ko_vocab[cand])
+                break
+    return out
+
+
+def text_tags(text: str, tag_to_cat: dict[str, str], tag_ko: dict[str, str], limit: int = 6,
+              free_text: bool = False) -> list[str]:
     """Flavor tags the SCA Korean/English note mapper (pipeline.enrich.rule_tags, the same rules pipeline
     enrichment uses on collected review text) finds directly in the user's text. `tag_to_cat`'s keys are the
     known English tag vocabulary (app/repo.py Repo.taxonomy()); ko_rule_tags only fires on note-list-shaped
-    text (pipeline.enrich.is_note_list), same safety net as the pipeline side."""
-    return rule_tags(text or "", list(tag_to_cat), limit=limit, ko_vocab=ko_vocab_from_tag_ko(tag_to_cat, tag_ko))
+    text (pipeline.enrich.is_note_list), same safety net as the pipeline side.
+
+    `free_text=True` (the guest's own input): a card line that is not comma-separated ("에티오피아 구지 딸기 재스민
+    라이트 로스트") also yields the Korean note words standing as whole tokens (_card_line_tokens). Stored beans'
+    note fields keep the pipeline's exact rules (free_text=False), so training features do not change."""
+    ko_vocab = ko_vocab_from_tag_ko(tag_to_cat, tag_ko)
+    tags = rule_tags(text or "", list(tag_to_cat), limit=limit, ko_vocab=ko_vocab)
+    if free_text and not is_note_list(text or ""):
+        for tag in _card_line_tokens(text or "", ko_vocab):
+            if not any(tag in h for h in tags):
+                tags.append(tag)
+    return tags[:limit]

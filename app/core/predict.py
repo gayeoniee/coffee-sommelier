@@ -1,8 +1,9 @@
 from dataclasses import replace
 from math import log, sqrt
 
+from app.core.featuremodel import drop_attr_evidence
 from app.core.textcues import ATTR_KO, attr_cues, text_tags
-from app.models import ATTRS, Item, Neighbor, ParsedBean, Prediction
+from app.models import ATTRS, Item, Neighbor, ParsedBean, Prediction, cap_confidence
 
 MIN_NEIGHBORS = 3
 TAG_SHARE = 0.3
@@ -114,11 +115,12 @@ def with_text_cues(pred: Prediction, text: str, tag_to_cat: dict[str, str], tag_
     n_neighbors are untouched (docs/adr/0010-body-heaviness.md)."""
     tag_ko = tag_ko or {}
     cues = attr_cues(text)
-    evidence = list(pred.evidence)
+    # a cue replaces the value: drop the neighbour-average / model lines that argued for the old one
+    evidence = drop_attr_evidence(pred.evidence, cues)
     for attr, (value, phrase) in cues.items():
         evidence.append(f"문구에 '{phrase}' 명시 → {ATTR_KO[attr]} {value}")
 
-    extra_tags = text_tags(text, tag_to_cat, tag_ko)
+    extra_tags = text_tags(text, tag_to_cat, tag_ko, free_text=True)
     tags = pred.tags
     if extra_tags:
         tags = list(dict.fromkeys([*extra_tags, *pred.tags]))[:MAX_TAGS]
@@ -132,4 +134,4 @@ def with_text_cues(pred: Prediction, text: str, tag_to_cat: dict[str, str], tag_
 def item_from_prediction(parsed: ParsedBean, pred: Prediction) -> Item:
     return Item(key="input", name=parsed.text, source="predicted", acidity=pred.acidity, body=pred.body,
                 sweetness=pred.sweetness, tags=tuple(pred.tags), is_decaf=parsed.is_decaf,
-                confidence=pred.confidence, origin_country=parsed.origin_country, process=parsed.process)
+                confidence=cap_confidence(pred.confidence, (pred.acidity, pred.body, pred.sweetness)), origin_country=parsed.origin_country, process=parsed.process)

@@ -11,7 +11,7 @@ from app import config
 from app.core.explain import sample_card
 from app.core.flavors import build_tag_to_category, load_tag_ko_extra, merge_tag_ko
 from app.core.scoring import decaf_order_caffeine, decaf_twin_key, decaf_twins, is_milk_drink, needs_decaf_order
-from app.models import ATTRS, Item, Neighbor, Profile
+from app.models import ATTRS, Item, Neighbor, Profile, cap_confidence
 from pipeline.query import to_vector_literal
 from pipeline.rules import normalize_country
 
@@ -27,8 +27,8 @@ def _escape_like(q: str) -> str:
 def _coffee_item(r: dict) -> Item:
     return Item(key=f"coffee:{r['id']}", name=r["name"], source="db", acidity=r["acidity"], body=r["body"],
                 sweetness=r["sweetness"], tags=tuple(r["flavor_tags"] or ()), is_decaf=r["is_decaf"],
-                confidence="high", brand=r["roaster"], coffee_id=r["id"], origin_country=r["origin_country"],
-                process=r["process"])
+                confidence=cap_confidence("high", (r["acidity"], r["body"], r["sweetness"])), brand=r["roaster"],
+                coffee_id=r["id"], origin_country=r["origin_country"], process=r["process"])
 
 
 def brand_bean_columns() -> tuple[str, str]:
@@ -187,7 +187,8 @@ class Repo:
         return Item(key=key, name=m["name"], source="brand_bean", acidity=bean.get("acidity"), body=bean.get("body"),
                     sweetness=bean.get("sweetness"), tags=tuple(bean.get("flavor_tags", ())), is_decaf=m["is_decaf"],
                     decaf_option=m["decaf_option"], order_decaf=order_decaf, caffeine_mg=caffeine,
-                    caffeine_mg_note=caffeine_note, is_milk=is_milk_drink(m["name"]), confidence="medium",
+                    caffeine_mg_note=caffeine_note, is_milk=is_milk_drink(m["name"]),
+                    confidence=cap_confidence("medium", (bean.get("acidity"), bean.get("body"), bean.get("sweetness"))),
                     brand=b["name"], decaf_surcharge_krw=b["decaf_surcharge_krw"], menu_item_id=m["id"],
                     bean_note=note)
 

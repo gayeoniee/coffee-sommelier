@@ -210,21 +210,38 @@ class FeatureModel:
 
 
 def evidence_line(attr: str, contributions: dict[str, float], altitude_m: int | None = None, top: int = 3,
-                  min_abs: float = 0.05) -> str | None:
-    """"특징 모델: 고지대(1,900m)·워시드 → 산미↑" from the top contributors (|weight x value| >= min_abs);
-    features pushing the other way get their own "→ 산미↓" clause. None when nothing clears the bar."""
+                  min_abs: float = 0.05, value: float | None = None, base: float | None = None) -> str | None:
+    """Korean evidence line from the top contributors (|weight x value| >= min_abs).
+
+    Without `value`: "특징 모델: 고지대(1,900m)·워시드 → 산미↑, 강배전 → 산미↓" (None when nothing clears the bar).
+    With `value` (what the card shows) and `base` (the model's intercept): "특징 모델 산미 2.9/5: 약배전·에티오피아 ↑
+    (기준값 2.2)" -- the arrows are relative to the model's own baseline, which is on the roasters' gauge scale and
+    can sit below the neighbour average, so the line states the shown value and the baseline the arrows refer to."""
     ranked = sorted(((k, v) for k, v in contributions.items() if abs(v) >= min_abs), key=lambda kv: -abs(kv[1]))
     ranked = ranked[:top]
-    if not ranked:
-        return None
     labels: dict[str, list[str]] = {"↑": [], "↓": []}
     for k, v in ranked:
         label = feature_label_ko(k, altitude_m)
         bucket = labels["↑" if v > 0 else "↓"]
         if label not in bucket:
             bucket.append(label)
+    if value is not None:
+        clauses = [f"{'·'.join(ls)} {arrow}" for arrow, ls in labels.items() if ls]
+        head = f"특징 모델 {ATTR_KO[attr]} {value:.1f}/5"
+        tail = f" (기준값 {base:.1f})" if base is not None else ""
+        return head + (": " + ", ".join(clauses) if clauses else "") + tail
+    if not ranked:
+        return None
     clauses = [f"{'·'.join(ls)} → {ATTR_KO[attr]}{arrow}" for arrow, ls in labels.items() if ls]
     return "특징 모델: " + ", ".join(clauses)
+
+
+def drop_attr_evidence(evidence: list[str], attrs) -> list[str]:
+    """Evidence without the lines that state a value for `attrs` (the neighbour average "유사 원두 산미 평균 ..." and
+    the feature model's "특징 모델 산미 ...") -- used when a later layer replaces that value, so the card never shows a
+    number next to a line that argues for a different one."""
+    drop = tuple(p for a in attrs for p in (f"유사 원두 {ATTR_KO[a]} 평균", f"특징 모델 {ATTR_KO[a]} "))
+    return [e for e in evidence if not e.startswith(drop)]
 
 
 def with_feature_model(pred, model: "FeatureModel", parsed, tag_to_cat: dict[str, str],
@@ -237,7 +254,7 @@ def with_feature_model(pred, model: "FeatureModel", parsed, tag_to_cat: dict[str
 
     from app.core.textcues import text_tags
 
-    tags = text_tags(parsed.text, tag_to_cat, tag_ko or {})
+    tags = text_tags(parsed.text, tag_to_cat, tag_ko or {}, free_text=True)
     cats = [tag_to_cat[t] for t in tags if t in tag_to_cat]
     altitude = altitude_from_text(parsed.text)
     feats = {a: bean_features(origin_country=parsed.origin_country, process=parsed.process,
@@ -248,9 +265,7 @@ def with_feature_model(pred, model: "FeatureModel", parsed, tag_to_cat: dict[str
     out = model.predict(feats)
     if not out:
         return pred
-    evidence = list(pred.evidence)
-    for a, (_, contrib) in out.items():
-        line = evidence_line(a, contrib, altitude_m=altitude)
-        if line:
-            evidence.append(line)
+    evidence = drop_attr_evidence(pred.evidence, out)
+    for a, (value, contrib) in out.items():
+        evidence.append(evidence_line(a, contrib, altitude_m=altitude, value=value, base=model.models[a].intercept))
     return replace(pred, evidence=evidence, **{a: v for a, (v, _) in out.items()})

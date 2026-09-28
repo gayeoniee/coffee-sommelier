@@ -211,7 +211,8 @@ def test_feature_model_replaces_shipped_attribute_and_explains_it():
     c = first_card(run_events(build_analyze_graph(deps), {"text": "에티오피아 예가체프 워시드", "profile": Profile()}))
     assert c["acidity"] == 3.7                                   # 3.0 + washed 0.4 + east africa 0.3
     assert c["body"] == base["body"] and c["sweetness"] == base["sweetness"]   # not shipped -> neighbour avg
-    assert "특징 모델: 워시드·동아프리카 → 산미↑" in c["evidence"]
+    assert "특징 모델 산미 3.7/5: 워시드·동아프리카 ↑ (기준값 3.0)" in c["evidence"]
+    assert not any(e.startswith("유사 원두 산미 평균") for e in c["evidence"])   # replaced value, line dropped
 
 
 def test_feature_model_applies_in_degraded_mode_too():
@@ -237,3 +238,63 @@ def test_feature_model_only_enabled_for_open_variant(monkeypatch):
     assert _feature_model_enabled() is True
     monkeypatch.setenv("FEATURE_MODEL", "off")
     assert _feature_model_enabled() is False
+
+
+def test_regression_light_roast_free_text_value_matches_evidence_and_keeps_note_words():
+    """Live open-variant report: "에티오피아 … 라이트 로스트" showed acidity 2.94 next to "유사 원두 산미 평균 4.1/5" and
+    "특징 모델: … → 산미↑", "라이트 로스트" set body 1.5 as if it said light body, and the guest's own 딸기/자스민
+    were lost (peach, chocolate shown). The feature model (gauge-scale intercept below the neighbour average) made
+    the value; now the evidence states that value, the roast is not a body cue, and the note words come first."""
+    from app.core.featuremodel import FeatureModel
+    from tests.app.fakes import TAG_BASE_RATES, TAG_KO, TAG_TO_CAT, FakeRepo
+
+    class Repo(FakeRepo):
+        def taxonomy(self):
+            return {**TAG_TO_CAT, "strawberry": "fruity"}, {**TAG_KO, "strawberry": "딸기", "jasmine": "재스민"}
+
+        def tag_base_rates(self):
+            return {**TAG_BASE_RATES, "strawberry": 0.1}
+
+    fm = FeatureModel.from_doc({"attrs": {"acidity": {"intercept": 2.2, "weights": {
+        "roast_light": 0.3, "country_Ethiopia": 0.2, "region_east_africa": 0.2, "nbr": 0.1}}}})
+    deps = fake_deps(repo=Repo(), feature_model=fm)
+    c = first_card(run_events(build_analyze_graph(deps),
+                              {"text": "에티오피아 구지 내추럴 딸기 자스민 라이트 로스트", "profile": Profile()}))
+    shown = f"{c['acidity']:.1f}"
+    assert c["acidity"] < 4.0                                    # the gauge-scale model value, below the nbr mean
+    model_lines = [e for e in c["evidence"] if e.startswith("특징 모델 산미")]
+    assert len(model_lines) == 1 and model_lines[0].startswith(f"특징 모델 산미 {shown}/5: ")
+    assert "(기준값 2.2)" in model_lines[0]
+    assert not any(e.startswith("유사 원두 산미 평균") for e in c["evidence"])
+    assert c["body"] == 2                                        # neighbour body, not "라이트" -> 1.5
+    assert c["tags"][:2] == ["strawberry", "jasmine"]            # the guest's own words first
+    assert c["evidence"][0] == "문구의 향미: 딸기, 재스민"
+
+
+def test_text_cue_drops_the_replaced_attributes_model_line():
+    deps = fake_deps(feature_model=_fake_feature_model())
+    c = first_card(run_events(build_analyze_graph(deps),
+                              {"text": "에티오피아 예가체프 워시드, 산미 약한", "profile": Profile()}))
+    assert c["acidity"] == 1.5
+    assert not any(e.startswith(("특징 모델 산미", "유사 원두 산미 평균")) for e in c["evidence"])
+
+
+def test_db_coffee_with_a_missing_attribute_is_not_high_confidence():
+    from dataclasses import replace as dc_replace
+
+    from tests.app.fakes import FakeRepo
+    repo = FakeRepo()
+    repo.coffees[2] = dc_replace(repo.coffees[2], acidity=None,
+                                 confidence="medium")   # Repo._coffee_item caps it (see test_repo / test_models)
+    c = first_card(run_events(build_analyze_graph(fake_deps(repo=repo)), {"coffee_id": 2, "profile": Profile()}))
+    assert c["acidity"] is None and c["confidence"] != "high"
+
+
+def test_predicted_card_confidence_capped_when_an_attribute_is_missing():
+    # neighbour vote gives all three; a model returning None for sweetness must not leave the card "high"
+    from app.core.predict import item_from_prediction
+    from app.models import ParsedBean, Prediction
+    pred = Prediction(acidity=3.0, body=3.0, sweetness=None, confidence="high", tags=[], evidence=[], n_neighbors=10)
+    assert item_from_prediction(ParsedBean(text="x"), pred).confidence == "medium"
+    pred2 = Prediction(acidity=None, body=3.0, sweetness=None, confidence="high", tags=[], evidence=[], n_neighbors=10)
+    assert item_from_prediction(ParsedBean(text="x"), pred2).confidence == "low"
