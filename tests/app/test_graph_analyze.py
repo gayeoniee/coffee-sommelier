@@ -195,3 +195,45 @@ def test_explanation_past_deadline_falls_back_to_template(monkeypatch):
     fb = [e for e in events if e["type"] == "explain_fallback"]
     assert len(fb) == 1 and fb[0]["text"].startswith("취향 적합도")
     assert not any(e["type"] == "explain_done" for e in events)
+
+
+# --- open-variant feature model (docs/adr/0011-roaster-gauges-feature-model.md) --------------------------
+def _fake_feature_model():
+    from app.core.featuremodel import FeatureModel
+    return FeatureModel.from_doc({"attrs": {"acidity": {"intercept": 3.0, "weights": {
+        "process_washed": 0.4, "region_east_africa": 0.3, "roast_dark": -1.0, "nbr": 0.0}}}})
+
+
+def test_feature_model_replaces_shipped_attribute_and_explains_it():
+    base = first_card(run_events(build_analyze_graph(fake_deps()),
+                                 {"text": "에티오피아 예가체프 워시드", "profile": Profile()}))
+    deps = fake_deps(feature_model=_fake_feature_model())
+    c = first_card(run_events(build_analyze_graph(deps), {"text": "에티오피아 예가체프 워시드", "profile": Profile()}))
+    assert c["acidity"] == 3.7                                   # 3.0 + washed 0.4 + east africa 0.3
+    assert c["body"] == base["body"] and c["sweetness"] == base["sweetness"]   # not shipped -> neighbour avg
+    assert "특징 모델: 워시드·동아프리카 → 산미↑" in c["evidence"]
+
+
+def test_feature_model_applies_in_degraded_mode_too():
+    deps = fake_deps(embed_fails=True, feature_model=_fake_feature_model())
+    c = first_card(run_events(build_analyze_graph(deps), {"text": "브라질 강배전", "profile": Profile()}))
+    assert c["confidence"] == "low" and c["acidity"] == 2.0      # 3.0 - dark 1.0; no embedding needed
+
+
+def test_text_cue_overrides_feature_model():
+    deps = fake_deps(feature_model=_fake_feature_model())
+    c = first_card(run_events(build_analyze_graph(deps),
+                              {"text": "에티오피아 예가체프 워시드, 산미 약한", "profile": Profile()}))
+    assert c["acidity"] == 1.5                                   # cue value, not the model's 3.7
+    assert any(e.startswith("문구에") for e in c["evidence"])
+
+
+def test_feature_model_only_enabled_for_open_variant(monkeypatch):
+    from app import config
+    from app.graphs import _feature_model_enabled
+    monkeypatch.setattr(config, "DATA_VARIANT", "full")
+    assert _feature_model_enabled() is False
+    monkeypatch.setattr(config, "DATA_VARIANT", "open")
+    assert _feature_model_enabled() is True
+    monkeypatch.setenv("FEATURE_MODEL", "off")
+    assert _feature_model_enabled() is False

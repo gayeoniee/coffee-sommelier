@@ -225,3 +225,32 @@ def evidence_line(attr: str, contributions: dict[str, float], altitude_m: int | 
             bucket.append(label)
     clauses = [f"{'·'.join(ls)} → {ATTR_KO[attr]}{arrow}" for arrow, ls in labels.items() if ls]
     return "특징 모델: " + ", ".join(clauses)
+
+
+def with_feature_model(pred, model: "FeatureModel", parsed, tag_to_cat: dict[str, str],
+                       tag_ko: dict[str, str] | None = None):
+    """Open-variant attribute prediction (app/graphs/analyze_bean.py): replace the neighbour average with the
+    feature model wherever it shipped the attribute, and append one Korean evidence line per replaced
+    attribute. The current `pred` value (the neighbour average) is the model's `nbr` feature. Attributes the
+    model doesn't ship keep the neighbour average; text cues are applied after this and still win."""
+    from dataclasses import replace
+
+    from app.core.textcues import text_tags
+
+    tags = text_tags(parsed.text, tag_to_cat, tag_ko or {})
+    cats = [tag_to_cat[t] for t in tags if t in tag_to_cat]
+    altitude = altitude_from_text(parsed.text)
+    feats = {a: bean_features(origin_country=parsed.origin_country, process=parsed.process,
+                              roast_level=parsed.roast_level, is_decaf=parsed.is_decaf,
+                              decaf_process=parsed.decaf_process, altitude_m=altitude, text=parsed.text,
+                              note_categories=cats, neighbor_value=getattr(pred, a))
+             for a in model.models}
+    out = model.predict(feats)
+    if not out:
+        return pred
+    evidence = list(pred.evidence)
+    for a, (_, contrib) in out.items():
+        line = evidence_line(a, contrib, altitude_m=altitude)
+        if line:
+            evidence.append(line)
+    return replace(pred, evidence=evidence, **{a: v for a, (v, _) in out.items()})

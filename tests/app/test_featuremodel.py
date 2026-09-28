@@ -1,3 +1,4 @@
+import json
 import random
 
 import numpy as np
@@ -6,6 +7,7 @@ from sklearn.linear_model import Ridge
 from app.core.featuremodel import (
     FEATURES, FeatureModel, altitude_from_text, bean_features, evidence_line, feature_label_ko,
 )
+from pipeline import settings
 
 
 def test_bean_features_one_hots_and_counts():
@@ -71,3 +73,12 @@ def test_evidence_line_korean_top_contributors():
 def test_load_missing_file_returns_none(tmp_path):
     assert FeatureModel.load(tmp_path / "nope.json") is None
 
+
+
+def test_shipped_config_loads_and_only_uses_known_features():
+    p = settings.CONFIG_DIR / "feature_model_open.json"
+    doc = json.loads(p.read_text(encoding="utf-8"))
+    fm = FeatureModel.load(p)
+    assert fm is not None and set(fm.models) <= {"acidity", "body", "sweetness"}
+    for spec in doc["attrs"].values():
+        assert set(spec["weights"]) <= set(FEATURES)

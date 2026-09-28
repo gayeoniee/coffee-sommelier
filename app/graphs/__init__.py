@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Any, AsyncIterator, Awaitable, Callable
 
 from app.core.attrmodel import AttrModel
+from app.core.featuremodel import FeatureModel
 from app.core.tagmodel import TagModel
 
 
@@ -15,6 +16,8 @@ class Deps:
     chat_json: Callable[[str, list[dict], type], Awaitable[Any]]
     tag_model: TagModel | None = None      # learned flavor-tag model; None -> analyze_bean falls back to the vote
     attr_model: AttrModel | None = None    # learned attribute regressor; None -> falls back to the neighbour average
+    # open-variant interpretable feature model (docs/adr/0011-roaster-gauges-feature-model.md); None -> neighbour avg
+    feature_model: FeatureModel | None = None
 
 
 def _tag_model_enabled() -> bool:
@@ -35,6 +38,14 @@ def _attr_model_enabled() -> bool:
     return os.getenv("ATTR_MODEL", "").lower() != "off"
 
 
+def _feature_model_enabled() -> bool:
+    """Only the open data variant uses the roaster-gauge feature model (config/feature_model_open.json,
+    docs/adr/0011-roaster-gauges-feature-model.md): the full variant has coffeereview's much larger labelled
+    pool behind its neighbour average/attribute model. `FEATURE_MODEL=off` disables it explicitly."""
+    from app import config
+    return config.DATA_VARIANT == "open" and os.getenv("FEATURE_MODEL", "").lower() != "off"
+
+
 def default_deps(repo) -> Deps:
     from app import llm
     from pipeline.llm import embedder_for
@@ -46,5 +57,6 @@ def default_deps(repo) -> Deps:
 
     tag_model = TagModel.load() if _tag_model_enabled() else None
     attr_model = AttrModel.load() if _attr_model_enabled() else None
+    feature_model = FeatureModel.load() if _feature_model_enabled() else None
     return Deps(repo=repo, embed=embed, stream_text=llm.astream_text, chat_json=llm.achat_json,
-               tag_model=tag_model, attr_model=attr_model)
+               tag_model=tag_model, attr_model=attr_model, feature_model=feature_model)

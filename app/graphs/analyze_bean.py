@@ -8,6 +8,7 @@ from langgraph.graph import END, START, StateGraph
 
 from app.config import PARSE_BEAN_TASK
 from app.core.explain import card, template_explanation
+from app.core.featuremodel import with_feature_model
 from app.core.parse import BeanParse, bean_parse_messages, merge_llm_parse, needs_llm_parse, parse_bean_text
 from app.core.predict import (
     item_from_prediction, predict_from_neighbors, with_model_attrs, with_model_tags, with_text_cues,
@@ -78,6 +79,12 @@ def build_analyze_graph(deps):
                 # it shipped a value; an attribute it doesn't cover (e.g. open-variant sweetness) keeps the
                 # neighbour average. Evidence/confidence/n_neighbors are untouched either way.
                 pred = with_model_attrs(pred, deps.attr_model.predict(vec))
+        if deps.feature_model is not None:
+            # open variant: the interpretable roaster-gauge feature model (app/core/featuremodel.py) replaces
+            # the neighbour average for the attributes it shipped, using that average as one of its features.
+            # It needs no embedding, so it also applies in degraded mode (docs/adr/0011-roaster-gauges-feature-
+            # model.md). Priority: text cues > feature model > neighbour average.
+            pred = with_feature_model(pred, deps.feature_model, parsed, tag_to_cat, tag_ko)
         # explicit cues in the user's own text (app/core/textcues.py) outrank both the model and the neighbour
         # average -- applied last, regardless of degraded/model state (docs/adr/0010-body-heaviness.md).
         pred = with_text_cues(pred, parsed.text, tag_ko=tag_ko, tag_to_cat=tag_to_cat)
