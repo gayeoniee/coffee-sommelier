@@ -415,6 +415,18 @@ def _trim_sentences(text: str, violation: str | None) -> str:
     return "".join(spans[:2]).strip()
 
 
+# only a taste word as the object is wrong ("단맛을 추천해요"); "아메리카노를 추천해요" is fine and stays
+_OBJECT_VERDICT = re.compile(r"(\S*(?:산미|바디|단맛|향))[을를] (고려할 점은 있지만 추천해요|추천해요)")
+_BARE_DRINK_END = re.compile(r"음료\.(?=\s|$)")
+
+
+def _polish(text: str) -> str:
+    """Two recurring slips around the code-given phrases (docs/adr/0005 5차, live cards):
+    '비슷한 단맛을 고려할 점은 있지만 추천해요' → '단맛이 맞아 …', and a taste line ending '…음료.' → '…음료예요.'."""
+    text = _OBJECT_VERDICT.sub(lambda m: f"{_subject(m.group(1))} 맞아 {m.group(2)}", text)
+    return _BARE_DRINK_END.sub("음료예요.", text)
+
+
 def finalize_explanation(text: str, item: Item, profile: Profile, payload: dict,
                          violation: str | None) -> tuple[str, str | None]:
     """Deterministic guard on a finished LLM explanation (docs/adr/0005 3차) → (text, event).
@@ -435,6 +447,7 @@ def finalize_explanation(text: str, item: Item, profile: Profile, payload: dict,
     out = _strip_foreign(text, allowed_latin(payload), item.name)
     out = re.sub(r"\s{2,}", " ", re.sub(r"\s+([,.!?])", r"\1", out)).strip()
     out = _trim_sentences(out, violation)
+    out = _polish(out)
     drink = {a: item.attr(a) for a in ATTRS}
     guest = {a: getattr(profile, a) for a in ATTRS}
     if direction_errors(out, drink, guest):

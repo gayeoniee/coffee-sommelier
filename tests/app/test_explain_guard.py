@@ -215,3 +215,12 @@ def test_polarity_reads_the_no_match_verdicts_as_negative():
     assert polarity("딱 맞는 점이 없어 다른 메뉴가 더 나을 수 있어요") == "negative"     # "딱 맞" is a positive word
     assert polarity("딱 맞는 점은 없지만 고려해 볼 만해요") == "negative"
     assert polarity("산미가 선호와 비슷해서 딱 맞아요") == "positive"
+
+
+def test_polish_fixes_the_two_live_slips():
+    from app.core.explain import _polish
+    assert _polish("손님 선호와 비슷한 단맛을 고려할 점은 있지만 추천해요. 초콜릿 향에 단맛이 적은 편인 음료.") == \
+        "손님 선호와 비슷한 단맛이 맞아 고려할 점은 있지만 추천해요. 초콜릿 향에 단맛이 적은 편인 음료예요."
+    assert _polish("바디를 추천해요.") == "바디가 맞아 추천해요."
+    assert _polish("단맛이 맞아서 추천해요. 음료예요.") == "단맛이 맞아서 추천해요. 음료예요."        # already fine
+    assert _polish("산미가 비슷해 아메리카노를 추천해요.") == "산미가 비슷해 아메리카노를 추천해요."    # a drink is fine
