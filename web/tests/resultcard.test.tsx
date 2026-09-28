@@ -64,7 +64,7 @@ describe("ResultCard", () => {
     render(<ResultCard card={open} onLog={() => {}} />);
     expect(screen.getByText("?")).toHaveAttribute("title", "근거 부족");
     expect(screen.getByText("근거↓")).toBeInTheDocument();
-    expect(screen.getByText("높음")).toBeInTheDocument();
+    expect(screen.getByText("신뢰 높음")).toBeInTheDocument();
     expect(screen.getByText("단맛: 근거 부족")).toBeInTheDocument();
     expect(screen.getByText("유사 원두 10개 기반 예측 · 신뢰도 보통")).toBeInTheDocument();
   });

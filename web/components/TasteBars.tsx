@@ -22,8 +22,8 @@ export default function TasteBars({ card, profile }: { card: Card; profile?: Pro
               {v == null ? "?" : fmt1(v)}
             </span>
             {card.attr_confidence && (
-              <span className="w-8 shrink-0 text-right text-[10px] text-roast/80">
-                {v == null ? "근거↓" : CONFIDENCE_KO[card.attr_confidence[k] ?? "low"]}
+              <span className="w-12 shrink-0 text-right text-[10px] text-roast/80" title="이 값의 신뢰도">
+                {v == null ? "근거↓" : `신뢰 ${CONFIDENCE_KO[card.attr_confidence[k] ?? "low"]}`}
               </span>
             )}
           </div>
