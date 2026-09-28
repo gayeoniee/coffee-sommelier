@@ -12,7 +12,9 @@ def test_recommend_streams_cards_then_three_explanations():
     assert all("template" in c and "text" not in c for c in cards)
     done = [e for e in events if e["type"] == "explain_done"]
     assert sorted(e["key"] for e in done) == sorted(c["key"] for c in cards)
-    assert all(e["text"] == "잘 맞아요" for e in done)
+    # the model's text, or — for a drink with nothing close to the guest — the code-written one (no model call)
+    assert all(e["text"] == "잘 맞아요" or e["text"].startswith("딱 맞는 점") for e in done)
+    assert any(e["text"] == "잘 맞아요" for e in done)
     assert events.index(next(e for e in events if e["type"] == "cards")) < events.index(done[0])
 
 

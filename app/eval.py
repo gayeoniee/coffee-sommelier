@@ -9,7 +9,7 @@ from collections import Counter
 
 import yaml
 
-from app.core.explain import GUARD_REJECTS, explain_messages
+from app.core.explain import GUARD_REJECTS, explain_messages, rule_explanation
 from app.core.predict import predict_from_neighbors
 from app.core.scoring import mmr_top_k, passes, score_item
 from app.core.simulate import simulate_convergence
@@ -582,8 +582,12 @@ def explain_quality(repo) -> dict:
                                     tag_to_cat=tag_to_cat, tag_ko=tag_ko)
             payload = json.loads(msgs[1]["content"])
             raw, guard = None, None
+            rule = rule_explanation(c["item"], c["profile"], c["score"], c["violation"], tag_to_cat, tag_ko)
             try:
-                raw, first, total = await generate(msgs)
+                if rule:                              # same as the app: no model call when nothing matches
+                    raw, first, total = rule, 0.0, 0.0
+                else:
+                    raw, first, total = await generate(msgs)
                 text, guard = finalize_explanation(raw, c["item"], c["profile"], payload, c["violation"])
                 if not text:                          # same as the app: a rejected text shows the template
                     raise LLMError(f"guard: {guard}")
@@ -603,7 +607,7 @@ def explain_quality(repo) -> dict:
             rows.append({"id": c["id"], "persona": c["persona"], "source": c["item"].source,
                          "score": round(c["score"] * 100), "violation": c["violation"], "fallback": fallback,
                          "error": error, "first_token_s": first, "total_s": total, "text": text, "raw_text": raw,
-                         "guard": guard, "raw_rules": raw_rules, "rules": rules,
+                         "guard": guard, "rule_based": bool(rule), "raw_rules": raw_rules, "rules": rules,
                          "rule_pass": all(rules.values()), "judges": judges, "judge_errors": judge_errors or None})
             brief = [None if v is None else (v["contradiction"], v["hallucination"], v["helpful"])
                      for v in judges.values()]

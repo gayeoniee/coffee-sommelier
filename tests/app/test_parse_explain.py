@@ -201,7 +201,9 @@ def test_system_prompt_decaf_order_wording():
 
 
 def test_length_rule_is_last_and_has_no_copyable_example():
-    msgs = explain_messages(Item(key="menu:1", name="카페 라떼", source="brand_bean"), Profile(), 0.7)
+    p = Profile()
+    msgs = explain_messages(Item(key="menu:1", name="카페 라떼", source="brand_bean", acidity=p.acidity, body=p.body,
+                                 sweetness=p.sweetness), p, 0.7)
     rule = length_rule(verdict=verdict_phrase(70))
     assert msgs[0]["content"].endswith(rule + " /no_think")
     assert "'고려할 점은 있지만 추천해요'로 맺는다" in rule           # the card's own verdict, not a label to copy

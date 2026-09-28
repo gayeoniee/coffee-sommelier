@@ -7,7 +7,7 @@ from langgraph.config import get_stream_writer
 
 from app import config, telemetry
 from app.config import EXPLAIN_TASK
-from app.core.explain import explain_messages, finalize_explanation, template_explanation
+from app.core.explain import explain_messages, finalize_explanation, rule_explanation, template_explanation
 from app.llm import TRUNCATED
 from app.models import Item, Prediction, Profile
 from pipeline.llm import LLMError
@@ -60,6 +60,10 @@ async def explain_to_stream(deps, item: Item, profile: Profile, score: float, ta
     `explain_done` carries (the client replaces the streamed text with it); a rejected one falls back.
     """
     writer = get_stream_writer()
+    rule = rule_explanation(item, profile, score, violation, tag_to_cat, tag_ko, top_pick)
+    if rule:                               # nothing close to the guest: the data says it all, no model call
+        writer({"type": "explain_done", "key": item.key, "text": rule})
+        return {"key": item.key, "text": rule, "fallback": False}
     template = template_explanation(item, profile, score, tag_ko, violation)
     parts: list[str] = []
     truncated = False

@@ -185,3 +185,33 @@ def test_direction_comparison_does_not_cross_into_the_next_attribute():
     text = "초콜릿·견과 향에 산미가 선호보다 조금 약하고 바디가 중간 정도이고 단맛이 선호보다 조금 약한 음료예요."
     assert not direction_errors(text, drink, guest)                   # 5차 eval: 바디 3 = 3 was blamed for 단맛's gap
     assert direction_errors("바디가 선호보다 조금 약해요.", drink, guest)
+
+
+def test_no_match_card_gets_its_own_first_sentence():
+    guest = Profile(caffeine_rule="decaf_only", milk_ok=True, acidity=2, body=4, sweetness=4)
+    far = Item(key="m", name="라떼", source="brand_bean", acidity=4, body=2.5, sweetness=2.5, tags=())
+    msgs = explain_messages(far, guest, 0.6)
+    payload = json.loads(msgs[1]["content"])
+    assert payload["추천 여부"] == "딱 맞는 점은 없지만 고려해 볼 만해요"
+    assert "첫 문장은 '딱 맞는 점은 없지만 고려해 볼 만해요'라고만 쓴다" in msgs[0]["content"]
+    assert explain_messages(far, guest, 0.3)[0]["content"].count("다른 메뉴가 더 나을 수 있어요") >= 1
+
+
+def test_rule_explanation_only_when_nothing_matches():
+    from app.core.explain import rule_explanation
+    guest = Profile(caffeine_rule="decaf_only", milk_ok=True, acidity=2, body=4, sweetness=4)
+    far = Item(key="m", name="라떼", source="brand_bean", acidity=4, body=2.5, sweetness=2.5, tags=("chocolate",))
+    text = rule_explanation(far, guest, 0.6, tag_ko={"chocolate": "초콜릿"})
+    assert text == ("딱 맞는 점은 없지만 고려해 볼 만해요. 초콜릿 향에 산미가 선호보다 훨씬 강하고 바디가 선호보다 조금 "
+                    "가볍고 단맛이 선호보다 조금 약한 음료예요.")
+    assert len(sentences(text)) == 2
+    assert rule_explanation(far, guest, 0.6, violation="디카페인이 아니에요") is None       # the model states it
+    close = Item(key="m", name="라떼", source="brand_bean", acidity=2, body=4, sweetness=3, tags=())
+    assert rule_explanation(close, guest, 0.8) is None
+
+
+def test_polarity_reads_the_no_match_verdicts_as_negative():
+    from app.core.explain_check import polarity
+    assert polarity("딱 맞는 점이 없어 다른 메뉴가 더 나을 수 있어요") == "negative"     # "딱 맞" is a positive word
+    assert polarity("딱 맞는 점은 없지만 고려해 볼 만해요") == "negative"
+    assert polarity("산미가 선호와 비슷해서 딱 맞아요") == "positive"

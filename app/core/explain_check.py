@@ -3,7 +3,7 @@ import re
 
 MAX_SENTENCES, MAX_CHARS = 2, 220        # the product rule: at most two sentences (explain.LENGTH_RULE)
 POSITIVE = ("잘 맞", "추천해", "딱 맞", "어울려요", "잘 어울")
-NEGATIVE = ("맞지 않", "어울리지 않", "거리가 있", "안 맞", "추천하기 어려")
+NEGATIVE = ("맞지 않", "어울리지 않", "거리가 있", "안 맞", "추천하기 어려", "맞는 점이 없", "맞는 점은 없", "다른 메뉴가 더 나을")
 _FIT_LOW = re.compile(r"적합도[^.!?]{0,10}낮")      # "적합도가 90%로 낮아" — the fit score itself called low
 _FIT_HIGH = re.compile(r"적합도[^.!?]{0,10}높")
 CONDITION_WORDS = ("디카페인", "카페인", "우유")

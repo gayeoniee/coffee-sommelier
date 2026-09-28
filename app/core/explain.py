@@ -36,6 +36,9 @@ FIRST_SENTENCE = ("첫 문장은 결론과 이유를 한 문장에 담는다: '�
                   "'{verdict}'로 맺는다(결론만 따로 한 문장으로 쓰지 마라). "
                   "둘째 문장은 '맛 한 줄'을 그대로 써서 '예요'로 맺는다(아쉬운 점은 그 안에 이미 들어 있으니 따로 덧붙이지 마라). "
                   "마침표는 두 문장 끝에만 찍는다")
+FIRST_SENTENCE_NO_MATCH = ("첫 문장은 '{verdict}'라고만 쓴다. "
+                           "둘째 문장은 '맛 한 줄'을 그대로 써서 '예요'로 맺는다(아쉬운 점은 그 안에 이미 들어 있으니 따로 덧붙이지 마라). "
+                           "마침표는 두 문장 끝에만 찍는다")
 FIRST_SENTENCE_TOP_PICK = ("첫 문장은 '이 브랜드 메뉴 중에서는 손님 취향에 가장 가까운 선택이에요'라고 쓴다. "
                            "둘째 문장은 '맛 한 줄'을 그대로 써서 '예요'로 맺는다(아쉬운 점은 그 안에 이미 들어 있으니 따로 덧붙이지 마라). "
                            "마침표는 두 문장 끝에만 찍는다")
@@ -118,11 +121,13 @@ def violation_lead(violation: str) -> str:
     return f"{violation}(조건 위반)이라"
 
 
-def length_rule(violation: str | None = None, verdict: str = "추천해요", top_pick: bool = False) -> str:
+def length_rule(violation: str | None = None, verdict: str = "추천해요", top_pick: bool = False,
+                no_match: bool = False) -> str:
     """The hard two-sentence rule, stated last; with a violation its first sentence must open with the violation,
     otherwise it ends with the card's own verdict phrase (or the top-pick framing)."""
     first = (FIRST_SENTENCE_VIOLATION.format(lead=violation_lead(violation), violation=violation) if violation
-             else FIRST_SENTENCE_TOP_PICK if top_pick else FIRST_SENTENCE.format(verdict=verdict))
+             else FIRST_SENTENCE_TOP_PICK if top_pick
+             else FIRST_SENTENCE_NO_MATCH.format(verdict=verdict) if no_match else FIRST_SENTENCE.format(verdict=verdict))
     return LENGTH_RULE.format(first=first)
 
 
@@ -162,6 +167,9 @@ def taste_comparison(item: Item, profile: Profile) -> dict[str, str]:
     return out
 
 
+NO_MATCH = "없음 — 잘 맞는다고 말하지 마라"
+
+
 def fit_points(item: Item, profile: Profile, tag_to_cat: dict[str, str] | None,
                tag_ko: dict[str, str] | None) -> tuple[list[str], list[str]]:
     """(맞는 점, 아쉬운 점) sorted for the model, so a gap is never offered as the reason for a good fit
@@ -186,7 +194,7 @@ def fit_points(item: Item, profile: Profile, tag_to_cat: dict[str, str] | None,
             bad.append("좋아하는 향미와 겹치는 향이 없는 점")
         if worse:
             bad.append(f"싫어하는 향미와 겹치는 {'·'.join(worse)} 향")
-    return good or ["없음 — 잘 맞는다고 말하지 마라"], bad or ["없음"]
+    return good or [NO_MATCH], bad or ["없음"]
 
 
 TASTE_WORDS = {   # attr_band → (connective, adnominal); every phrase is tied to the number, so it is not filler
@@ -232,7 +240,11 @@ def taste_line(item: Item, profile: Profile, tag_ko: dict[str, str] | None) -> s
     return (f"{'·'.join(names)} 향에 " if names else "") + body + " 음료"
 
 
-def verdict_phrase(pct: int) -> str:
+def verdict_phrase(pct: int, has_match: bool = True) -> str:
+    """Sentence 1's ending, from the fit score. With nothing close to the guest (no '맞는 점') there is no reason to
+    give, so the phrase is the whole first sentence ("아쉬운 점을 고려할 점은 있지만 추천해요" came out otherwise)."""
+    if not has_match:
+        return "딱 맞는 점이 없어 다른 메뉴가 더 나을 수 있어요" if fit_level(pct) == "낮음" else "딱 맞는 점은 없지만 고려해 볼 만해요"
     return {"높음": "추천해요", "중간": "고려할 점은 있지만 추천해요", "낮음": "다른 메뉴가 더 나을 수 있어요"}[fit_level(pct)]
 
 
@@ -303,6 +315,22 @@ def condition_check(item: Item, profile: Profile, violation: str | None) -> dict
             f"우유(손님: {'가능' if profile.milk_ok else '불가'})": milk}
 
 
+def rule_explanation(item: Item, profile: Profile, score: float, violation: str | None = None,
+                     tag_to_cat: dict[str, str] | None = None, tag_ko: dict[str, str] | None = None,
+                     top_pick: bool = False) -> str | None:
+    """The whole explanation from data when nothing is close to the guest: both sentences are fixed by the code
+    (the verdict and the taste line), so there is nothing for the model to add — it only dropped the period or broke
+    the line ("…나을 수 있어요
+산미가…"). None whenever the model has something to explain."""
+    pct = round(score * 100)
+    top_pick = top_pick and fit_level(pct) != "높음"
+    good, _ = fit_points(item, profile, tag_to_cat, tag_ko)
+    line = taste_line(item, profile, tag_ko)
+    if violation or top_pick or good != [NO_MATCH] or line is None:
+        return None
+    return f"{verdict_phrase(pct, False)}. {line}예요."
+
+
 def explain_messages(item: Item, profile: Profile, score: float, prediction: Prediction | None = None,
                      violation: str | None = None, tag_to_cat: dict[str, str] | None = None,
                      tag_ko: dict[str, str] | None = None, top_pick: bool = False) -> list[dict]:
@@ -310,13 +338,16 @@ def explain_messages(item: Item, profile: Profile, score: float, prediction: Pre
     closest option rather than "doesn't suit you" (TOP_PICK_RULE)."""
     pct = round(score * 100)
     top_pick = top_pick and fit_level(pct) != "높음"
+    good, bad = fit_points(item, profile, tag_to_cat, tag_ko)
+    no_match = good == [NO_MATCH]
+    verdict = verdict_phrase(pct, not no_match)
     payload: dict = {"조건 위반": violation} if violation else {}     # first: the one thing the text must not omit
     payload |= {
         "음료": item.name, "브랜드": item.brand,
         "적합도": f"{pct}%({fit_level(pct)})",
         # the verdict the text must end sentence 1 with, stated as a fact so a judge (and the model) can see it
         "추천 여부": ("주문 전 조건 확인 필요" if violation else "이 브랜드 메뉴 중 가장 가까운 선택" if top_pick
-                  else verdict_phrase(pct)),
+                  else verdict),
         **({"추천 순위": "이 브랜드 메뉴 중 1순위(가장 가까운 선택)"} if top_pick else {}),
         "맛 비교": taste_comparison(item, profile),
         "향미": flavor_names(item.tags, tag_ko),
@@ -324,7 +355,7 @@ def explain_messages(item: Item, profile: Profile, score: float, prediction: Pre
     }
     if tag_to_cat is not None:
         payload["향미 비교"] = flavor_comparison(item, profile, tag_to_cat, tag_ko)
-    payload["맞는 점"], payload["아쉬운 점"] = fit_points(item, profile, tag_to_cat, tag_ko)
+    payload["맞는 점"], payload["아쉬운 점"] = good, bad
     payload["디카페인"] = decaf_state(item)
     if item.order_decaf:    # only the decaf-order estimate, never the regular drink's caffeine
         payload["디카페인 주문 시 카페인(mg, 추정)"] = (item.caffeine_mg if item.caffeine_mg is not None
@@ -343,7 +374,7 @@ def explain_messages(item: Item, profile: Profile, score: float, prediction: Pre
     payload = {k: v for k, v in payload.items() if v is not None}     # a JSON null got copied as "null"
     system = (SYSTEM_PROMPT + (DECAF_CAFFEINE_RULE if item.order_decaf else "") + (VIOLATION_RULE if violation else "")
               + (TOP_PICK_RULE if top_pick and not violation else "")
-              + length_rule(violation, verdict_phrase(pct), top_pick and not violation) + NO_THINK)
+              + length_rule(violation, verdict, top_pick and not violation, no_match) + NO_THINK)
     return [{"role": "system", "content": system},
             {"role": "user", "content": json.dumps(payload, ensure_ascii=False)}]
 
