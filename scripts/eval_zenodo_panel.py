@@ -18,7 +18,8 @@ Per sample:
   predict  the real analyze path's core functions (app/graphs/analyze_bean.py `predict`), rules-only parse (no
            LLM parse), k=10 neighbours with the same origin/process filter:
              full : coffee DB neighbours → learned tag model → learned attribute model → text cues
-             open : coffee_open DB neighbours → roaster-gauge feature model (its shipped heads) → text cues
+             open : coffee_open DB neighbours (thin tag vote topped up from tagged-only neighbours, ADR 0017)
+                    → roaster-gauge feature model (its shipped heads) → text cues
                     (no attribute/tag model ships for open; an attribute without a head = neighbour average)
              open_neighbours : the open variant with the feature model off (neighbour averages + text cues)
   tags     flavor-tag agreement vs the panel's aroma/bouquet/aftertaste words through the SAME rule mapper the
@@ -257,17 +258,24 @@ class CachedEmbedder:
         return self.cache[key]
 
 
-def predict(sample: dict, vec, repo, tax, attr_model=None, tag_model=None, feature_model=None):
+def predict(sample: dict, vec, repo, tax, attr_model=None, tag_model=None, feature_model=None, tag_fill=False):
     """Mirror of app/graphs/analyze_bean.py `predict` (rules-only parse; embedding succeeded). Returns the final
     Prediction and the tags BEFORE text cues."""
     from app.core.featuremodel import with_feature_model
     from app.core.parse import parse_bean_text
-    from app.core.predict import predict_from_neighbors, with_model_attrs, with_model_tags, with_text_cues
+    from app.core.predict import (
+        FILL_EXCLUDE_SOURCES, FILL_MIN_TAGS, predict_from_neighbors, with_model_attrs, with_model_tags, with_tag_fill,
+        with_text_cues,
+    )
 
     tag_to_cat, tag_ko, base_rates = tax
     parsed = parse_bean_text(sample["text"])
     neighbors = repo.neighbors(vec, 10, parsed.origin_country, parsed.process)
     pred = predict_from_neighbors(neighbors, tag_ko, base_rates=base_rates)
+    if tag_fill and len(pred.tags) < FILL_MIN_TAGS:
+        tagged = repo.neighbors(vec, 10, parsed.origin_country, parsed.process, exclude_sources=FILL_EXCLUDE_SOURCES,
+                                tagged_only=True)
+        pred = with_tag_fill(pred, tagged, tag_ko, base_rates=base_rates)
     if tag_model is not None:
         pred = with_model_tags(pred, tag_model.tags(vec), tag_ko)
     if attr_model is not None:
@@ -312,12 +320,14 @@ def main() -> int:
     embed = CachedEmbedder()
     variants = {
         "full": {"db": args.full_db, "attr_model": AttrModel.load(settings.CONFIG_DIR / "attr_model.json"),
-                 "tag_model": TagModel.load(settings.CONFIG_DIR / "tag_model.json"), "feature_model": None},
+                 "tag_model": TagModel.load(settings.CONFIG_DIR / "tag_model.json"), "feature_model": None,
+                 "tag_fill": False},
         "open": {"db": args.open_db, "attr_model": None, "tag_model": None,
-                 "feature_model": FeatureModel.load(settings.CONFIG_DIR / "feature_model_open.json")},
+                 "feature_model": FeatureModel.load(settings.CONFIG_DIR / "feature_model_open.json"), "tag_fill": True},
         # the open variant with the feature model off (FEATURE_MODEL=off): neighbour averages + text cues -- the
         # baseline every feature-model head has to beat on this external panel too
-        "open_neighbours": {"db": args.open_db, "attr_model": None, "tag_model": None, "feature_model": None},
+        "open_neighbours": {"db": args.open_db, "attr_model": None, "tag_model": None, "feature_model": None,
+                            "tag_fill": True},
     }
     result = {"source": "https://doi.org/10.5281/zenodo.20840464", "file": "panelists_scores_EN.xlsx",
               "file_md5": RECORD_MD5, "attribution": ATTRIBUTION,
@@ -346,7 +356,7 @@ def main() -> int:
             parsed_origin = 0
             for s in samples:
                 pred, tags_before = predict(s, embed(s["text"]), repo, tax, v["attr_model"], v["tag_model"],
-                                            v["feature_model"])
+                                            v["feature_model"], v["tag_fill"])
                 from app.core.parse import parse_bean_text
                 parsed_origin += parse_bean_text(s["text"]).origin_country is not None
                 for a in ATTRS:

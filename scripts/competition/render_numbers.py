@@ -214,6 +214,20 @@ def render_open_v3(tags: dict | None, v3: dict | None) -> list[str]:
     return lines
 
 
+def render_open_tag_fill(fill: dict) -> list[str]:
+    """Open tag fill (docs/adr/0017-open-tag-fill.md): the current path vs the shipped one, per input situation."""
+    rows = (("노트 없는 입력 — E1", "e1_free"), ("노트 없는 입력 — E2", "e2_free"),
+            ("노트 한 단어 입력 — E1", "e1_notes"), ("노트 한 단어 입력 — E2", "e2_notes"))
+    lines = ["**오픈판 향미 태그 채우기: 이전 → 탑재** (`phase6_open_tag_fill.json`)", "",
+             "| 입력 | 정밀도 | 재현율 | 태그 F1 | 대분류 F1 | 원두당 태그 수 |", "|---|---|---|---|---|---|"]
+    for label, key in rows:
+        cur, new = fill["summary"][key]["current"], fill["summary"][key]["shipped"]
+        lines.append(f"| {label} | " + " | ".join(
+            f"{cur[c]:.3f} → {new[c]:.3f}" if c != "tags_shown" else f"{cur[c]:.2f} → {new[c]:.2f}"
+            for c in ("precision", "recall", "f1", "category_f1", "tags_shown")) + " |")
+    return lines
+
+
 def main(eval_dir: str | Path) -> str:
     eval_dir = Path(eval_dir)
     parts: list[str] = [NUMBERS_START, "", "### 수치 (자동 생성 — scripts/competition/render_numbers.py, 손으로 고치지 마세요)", ""]
@@ -258,6 +272,10 @@ def main(eval_dir: str | Path) -> str:
     open_tags, open_v3 = _load(eval_dir, "phase5_open_tags.json"), _load(eval_dir, "phase5_open_v3.json")
     if open_tags is not None or open_v3 is not None:
         parts += render_open_v3(open_tags, open_v3) + [""]
+
+    fill = _load(eval_dir, "phase6_open_tag_fill.json")
+    if fill is not None and fill.get("summary"):
+        parts += render_open_tag_fill(fill) + [""]
 
     parts.append(NUMBERS_END)
     return "\n".join(parts) + "\n"

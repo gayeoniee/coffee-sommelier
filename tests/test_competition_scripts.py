@@ -319,3 +319,18 @@ class TestRenderHeadline:
 
         assert text.index("핵심 정확도") < text.index("조건 위반")
         assert "0.700 · 0.700 · 0.50" in text and "80.0%" in text and "항상 3 65.0%" in text
+
+
+class TestRenderOpenTagFill:
+    def test_renders_current_to_shipped_rows(self, tmp_path):
+        eval_dir = tmp_path / "ev"
+        eval_dir.mkdir()
+        cur = {"precision": 0.18, "recall": 0.076, "f1": 0.106, "category_f1": 0.315, "tags_shown": 1.839,
+               "share_tagged": 1.0}
+        new = dict(cur, precision=0.141, tags_shown=2.511)
+        _write(eval_dir / "phase6_open_tag_fill.json", {"summary": {
+            k: {"current": cur, "shipped": new} for k in ("e1_free", "e2_free", "e1_notes", "e2_notes")}})
+        text = render_numbers.main(eval_dir)
+        assert "phase6_open_tag_fill.json" in text
+        assert "| 노트 한 단어 입력 — E1 | 0.180 → 0.141 | 0.076 → 0.076 |" in text and "1.84 → 2.51" in text
+        assert text.index("phase6_open_tag_fill.json") < text.index("numbers:end -->")

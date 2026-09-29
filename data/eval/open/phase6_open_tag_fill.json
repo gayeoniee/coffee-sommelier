@@ -1,0 +1,1751 @@
+{
+  "generated_at": "2026-09-29T06:05:40.515339+00:00",
+  "k": 10,
+  "max_tags": 5,
+  "shipped_fill": "vote_all+vote_tagged_clean^2",
+  "fill_min_tags": 2,
+  "summary": {
+    "e1_free": {
+      "current": {
+        "precision": 0.1609,
+        "recall": 0.2508,
+        "f1": 0.196,
+        "category_f1": 0.6039,
+        "tags_shown": 3.635,
+        "share_tagged": 0.9964
+      },
+      "shipped": {
+        "precision": 0.1609,
+        "recall": 0.2508,
+        "f1": 0.196,
+        "category_f1": 0.6039,
+        "tags_shown": 3.635,
+        "share_tagged": 0.9964
+      }
+    },
+    "e1_notes": {
+      "current": {
+        "precision": 0.18,
+        "recall": 0.0756,
+        "f1": 0.1065,
+        "category_f1": 0.3147,
+        "tags_shown": 1.839,
+        "share_tagged": 1.0
+      },
+      "shipped": {
+        "precision": 0.1406,
+        "recall": 0.1134,
+        "f1": 0.1256,
+        "category_f1": 0.5068,
+        "tags_shown": 2.511,
+        "share_tagged": 1.0
+      }
+    },
+    "e2_free": {
+      "current": {
+        "precision": 0.2641,
+        "recall": 0.142,
+        "f1": 0.1847,
+        "category_f1": 0.554,
+        "tags_shown": 2.582,
+        "share_tagged": 1.0
+      },
+      "shipped": {
+        "precision": 0.2641,
+        "recall": 0.142,
+        "f1": 0.1847,
+        "category_f1": 0.554,
+        "tags_shown": 2.582,
+        "share_tagged": 1.0
+      }
+    },
+    "e2_notes": {
+      "current": {
+        "precision": 0.3409,
+        "recall": 0.0898,
+        "f1": 0.1422,
+        "category_f1": 0.3158,
+        "tags_shown": 1.868,
+        "share_tagged": 1.0
+      },
+      "shipped": {
+        "precision": 0.2931,
+        "recall": 0.1018,
+        "f1": 0.1511,
+        "category_f1": 0.3636,
+        "tags_shown": 2.132,
+        "share_tagged": 1.0
+      }
+    }
+  },
+  "pools": {
+    "vote_all": "",
+    "vote_tagged": " AND cardinality(flavor_tags) > 0",
+    "vote_tagged_clean": " AND cardinality(flavor_tags) > 0 AND source <> 'roasterdb'"
+  },
+  "e1": {
+    "n": 277,
+    "roasters": {
+      "앤트러사이트": 16,
+      "빈브라더스": 4,
+      "커피 리브레": 7,
+      "펠트": 13,
+      "프릳츠": 5,
+      "G로스팅": 17,
+      "매뉴팩트": 8,
+      "모모스커피": 14,
+      "내일의커피": 10,
+      "나무사이로": 27,
+      "Café Britt": 2,
+      "Café Don Pablo": 17,
+      "Coffee Supreme": 5,
+      "Fresh Roasted Coffee": 12,
+      "Kiss the Hippo": 61,
+      "Ozone Coffee": 23,
+      "Volcanica Coffee": 27,
+      "Blue Bottle Coffee": 9
+    },
+    "free": {
+      "feat": {
+        "n": 277,
+        "precision": 0.1609,
+        "recall": 0.2508,
+        "f1": 0.196,
+        "category_f1": 0.6039,
+        "tags_shown": 3.635,
+        "share_tagged": 0.9964,
+        "fill_per_bean": 3.635
+      },
+      "feat_pertag": {
+        "n": 277,
+        "precision": 0.138,
+        "recall": 0.2957,
+        "f1": 0.1882,
+        "category_f1": 0.6187,
+        "tags_shown": 4.996,
+        "share_tagged": 1.0,
+        "fill_per_bean": 4.996
+      },
+      "emb": {
+        "n": 277,
+        "precision": 0.154,
+        "recall": 0.3019,
+        "f1": 0.204,
+        "category_f1": 0.5966,
+        "tags_shown": 4.57,
+        "share_tagged": 1.0,
+        "fill_per_bean": 4.57
+      },
+      "emb_mlp": {
+        "n": 277,
+        "precision": 0.1608,
+        "recall": 0.1563,
+        "f1": 0.1586,
+        "category_f1": 0.5556,
+        "tags_shown": 2.267,
+        "share_tagged": 0.9061,
+        "fill_per_bean": 2.267
+      },
+      "vote_all": {
+        "n": 277,
+        "precision": 0.1866,
+        "recall": 0.0387,
+        "f1": 0.0641,
+        "category_f1": 0.239,
+        "tags_shown": 0.484,
+        "share_tagged": 0.3502,
+        "fill_per_bean": 0.484
+      },
+      "vote_tagged": {
+        "n": 277,
+        "precision": 0.1875,
+        "recall": 0.1393,
+        "f1": 0.1599,
+        "category_f1": 0.5141,
+        "tags_shown": 1.733,
+        "share_tagged": 0.917,
+        "fill_per_bean": 1.733
+      },
+      "vote_tagged@s0.3l2.0": {
+        "n": 277,
+        "precision": 0.1603,
+        "recall": 0.0975,
+        "f1": 0.1213,
+        "category_f1": 0.4811,
+        "tags_shown": 1.419,
+        "share_tagged": 0.7978,
+        "fill_per_bean": 1.419
+      },
+      "vote_tagged@s0.4l1.2": {
+        "n": 277,
+        "precision": 0.2314,
+        "recall": 0.082,
+        "f1": 0.1211,
+        "category_f1": 0.366,
+        "tags_shown": 0.827,
+        "share_tagged": 0.6498,
+        "fill_per_bean": 0.827
+      },
+      "vote_tagged@s0.4l2.0": {
+        "n": 277,
+        "precision": 0.1806,
+        "recall": 0.0402,
+        "f1": 0.0658,
+        "category_f1": 0.283,
+        "tags_shown": 0.52,
+        "share_tagged": 0.4332,
+        "fill_per_bean": 0.52
+      },
+      "vote_tagged@s0.5l1.2": {
+        "n": 277,
+        "precision": 0.2743,
+        "recall": 0.048,
+        "f1": 0.0817,
+        "category_f1": 0.2367,
+        "tags_shown": 0.408,
+        "share_tagged": 0.3718,
+        "fill_per_bean": 0.408
+      },
+      "vote_tagged@s0.5l2.0": {
+        "n": 277,
+        "precision": 0.2131,
+        "recall": 0.0201,
+        "f1": 0.0368,
+        "category_f1": 0.1706,
+        "tags_shown": 0.22,
+        "share_tagged": 0.213,
+        "fill_per_bean": 0.22
+      },
+      "vote_tagged_clean": {
+        "n": 277,
+        "precision": 0.1831,
+        "recall": 0.1409,
+        "f1": 0.1592,
+        "category_f1": 0.5255,
+        "tags_shown": 1.794,
+        "share_tagged": 0.87,
+        "fill_per_bean": 1.794
+      },
+      "vote_tagged_clean@s0.3l2.0": {
+        "n": 277,
+        "precision": 0.1564,
+        "recall": 0.1022,
+        "f1": 0.1236,
+        "category_f1": 0.506,
+        "tags_shown": 1.523,
+        "share_tagged": 0.8195,
+        "fill_per_bean": 1.523
+      },
+      "vote_tagged_clean@s0.4l1.2": {
+        "n": 277,
+        "precision": 0.2091,
+        "recall": 0.0851,
+        "f1": 0.121,
+        "category_f1": 0.4022,
+        "tags_shown": 0.949,
+        "share_tagged": 0.6354,
+        "fill_per_bean": 0.949
+      },
+      "vote_tagged_clean@s0.4l2.0": {
+        "n": 277,
+        "precision": 0.1596,
+        "recall": 0.0464,
+        "f1": 0.0719,
+        "category_f1": 0.3505,
+        "tags_shown": 0.679,
+        "share_tagged": 0.5126,
+        "fill_per_bean": 0.679
+      },
+      "vote_tagged_clean@s0.5l1.2": {
+        "n": 277,
+        "precision": 0.2396,
+        "recall": 0.0356,
+        "f1": 0.062,
+        "category_f1": 0.2218,
+        "tags_shown": 0.347,
+        "share_tagged": 0.3249,
+        "fill_per_bean": 0.347
+      },
+      "vote_tagged_clean@s0.5l2.0": {
+        "n": 277,
+        "precision": 0.1639,
+        "recall": 0.0155,
+        "f1": 0.0283,
+        "category_f1": 0.1703,
+        "tags_shown": 0.22,
+        "share_tagged": 0.213,
+        "fill_per_bean": 0.22
+      },
+      "vote_tagged_k5": {
+        "n": 277,
+        "precision": 0.164,
+        "recall": 0.1424,
+        "f1": 0.1524,
+        "category_f1": 0.5142,
+        "tags_shown": 2.025,
+        "share_tagged": 0.9278,
+        "fill_per_bean": 2.025
+      },
+      "vote_tagged_k20": {
+        "n": 277,
+        "precision": 0.2105,
+        "recall": 0.0805,
+        "f1": 0.1165,
+        "category_f1": 0.3755,
+        "tags_shown": 0.892,
+        "share_tagged": 0.6065,
+        "fill_per_bean": 0.892
+      },
+      "feat+vote_tagged": {
+        "n": 277,
+        "precision": 0.1543,
+        "recall": 0.2678,
+        "f1": 0.1958,
+        "category_f1": 0.6184,
+        "tags_shown": 4.047,
+        "share_tagged": 0.9964,
+        "fill_per_bean": 4.047
+      },
+      "feat|vote_tagged": {
+        "n": 277,
+        "precision": 0.1609,
+        "recall": 0.2508,
+        "f1": 0.196,
+        "category_f1": 0.6039,
+        "tags_shown": 3.635,
+        "share_tagged": 0.9964,
+        "fill_per_bean": 3.635
+      },
+      "feat+vote_tagged_clean": {
+        "n": 277,
+        "precision": 0.1562,
+        "recall": 0.2724,
+        "f1": 0.1985,
+        "category_f1": 0.6155,
+        "tags_shown": 4.069,
+        "share_tagged": 0.9964,
+        "fill_per_bean": 4.069
+      },
+      "feat|vote_tagged_clean": {
+        "n": 277,
+        "precision": 0.1609,
+        "recall": 0.2508,
+        "f1": 0.196,
+        "category_f1": 0.6039,
+        "tags_shown": 3.635,
+        "share_tagged": 0.9964,
+        "fill_per_bean": 3.635
+      },
+      "vote_tagged+feat": {
+        "n": 277,
+        "precision": 0.157,
+        "recall": 0.2724,
+        "f1": 0.1992,
+        "category_f1": 0.6179,
+        "tags_shown": 4.047,
+        "share_tagged": 0.9964,
+        "fill_per_bean": 4.047
+      },
+      "vote_tagged|feat": {
+        "n": 277,
+        "precision": 0.1803,
+        "recall": 0.1533,
+        "f1": 0.1657,
+        "category_f1": 0.5408,
+        "tags_shown": 1.982,
+        "share_tagged": 0.9964,
+        "fill_per_bean": 1.982
+      },
+      "vote_tagged_clean+feat": {
+        "n": 277,
+        "precision": 0.1624,
+        "recall": 0.2833,
+        "f1": 0.2064,
+        "category_f1": 0.6124,
+        "tags_shown": 4.069,
+        "share_tagged": 0.9964,
+        "fill_per_bean": 4.069
+      },
+      "vote_tagged_clean|feat": {
+        "n": 277,
+        "precision": 0.177,
+        "recall": 0.1672,
+        "f1": 0.172,
+        "category_f1": 0.5613,
+        "tags_shown": 2.202,
+        "share_tagged": 0.9964,
+        "fill_per_bean": 2.202
+      },
+      "vote_tagged^1": {
+        "n": 277,
+        "precision": 0.1654,
+        "recall": 0.065,
+        "f1": 0.0933,
+        "category_f1": 0.4345,
+        "tags_shown": 0.917,
+        "share_tagged": 0.917,
+        "fill_per_bean": 0.917
+      },
+      "vote_tagged^2": {
+        "n": 277,
+        "precision": 0.1827,
+        "recall": 0.1146,
+        "f1": 0.1408,
+        "category_f1": 0.4988,
+        "tags_shown": 1.462,
+        "share_tagged": 0.917,
+        "fill_per_bean": 1.462
+      },
+      "vote_tagged^3": {
+        "n": 277,
+        "precision": 0.1844,
+        "recall": 0.1316,
+        "f1": 0.1536,
+        "category_f1": 0.5118,
+        "tags_shown": 1.664,
+        "share_tagged": 0.917,
+        "fill_per_bean": 1.664
+      },
+      "vote_all+vote_tagged^2": {
+        "n": 277,
+        "precision": 0.1812,
+        "recall": 0.1161,
+        "f1": 0.1415,
+        "category_f1": 0.5048,
+        "tags_shown": 1.495,
+        "share_tagged": 0.917,
+        "fill_per_bean": 1.495
+      },
+      "vote_tagged_clean^1": {
+        "n": 277,
+        "precision": 0.1369,
+        "recall": 0.0511,
+        "f1": 0.0744,
+        "category_f1": 0.429,
+        "tags_shown": 0.87,
+        "share_tagged": 0.87,
+        "fill_per_bean": 0.87
+      },
+      "vote_tagged_clean^2": {
+        "n": 277,
+        "precision": 0.1781,
+        "recall": 0.1084,
+        "f1": 0.1347,
+        "category_f1": 0.5085,
+        "tags_shown": 1.419,
+        "share_tagged": 0.87,
+        "fill_per_bean": 1.419
+      },
+      "vote_tagged_clean^3": {
+        "n": 277,
+        "precision": 0.179,
+        "recall": 0.1269,
+        "f1": 0.1486,
+        "category_f1": 0.5215,
+        "tags_shown": 1.653,
+        "share_tagged": 0.87,
+        "fill_per_bean": 1.653
+      },
+      "vote_all+vote_tagged_clean^2": {
+        "n": 277,
+        "precision": 0.1767,
+        "recall": 0.1176,
+        "f1": 0.1413,
+        "category_f1": 0.5252,
+        "tags_shown": 1.552,
+        "share_tagged": 0.8953,
+        "fill_per_bean": 1.552
+      },
+      "current": {
+        "n": 277,
+        "precision": 0.1609,
+        "recall": 0.2508,
+        "f1": 0.196,
+        "category_f1": 0.6039,
+        "tags_shown": 3.635,
+        "share_tagged": 0.9964,
+        "fill_per_bean": 3.635
+      },
+      "feat|vote_all": {
+        "n": 277,
+        "precision": 0.1609,
+        "recall": 0.2508,
+        "f1": 0.196,
+        "category_f1": 0.6039,
+        "tags_shown": 3.635,
+        "share_tagged": 0.9964,
+        "fill_per_bean": 3.635
+      },
+      "shipped": {
+        "n": 277,
+        "precision": 0.1609,
+        "recall": 0.2508,
+        "f1": 0.196,
+        "category_f1": 0.6039,
+        "tags_shown": 3.635,
+        "share_tagged": 0.9964,
+        "fill_per_bean": 3.635
+      }
+    },
+    "notes": {
+      "n": 137,
+      "example": "COLD BREW 디카페인 decaf unknown cinnamon",
+      "table": {
+        "feat": {
+          "n": 137,
+          "precision": 0.1204,
+          "recall": 0.2059,
+          "f1": 0.1519,
+          "category_f1": 0.6078,
+          "tags_shown": 4.08,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.971
+        },
+        "feat_pertag": {
+          "n": 137,
+          "precision": 0.0957,
+          "recall": 0.2143,
+          "f1": 0.1323,
+          "category_f1": 0.6151,
+          "tags_shown": 5.0,
+          "share_tagged": 1.0,
+          "fill_per_bean": 3.891
+        },
+        "emb": {
+          "n": 137,
+          "precision": 0.1175,
+          "recall": 0.2479,
+          "f1": 0.1595,
+          "category_f1": 0.5649,
+          "tags_shown": 4.774,
+          "share_tagged": 1.0,
+          "fill_per_bean": 3.664
+        },
+        "emb_mlp": {
+          "n": 137,
+          "precision": 0.1303,
+          "recall": 0.1555,
+          "f1": 0.1418,
+          "category_f1": 0.5741,
+          "tags_shown": 3.182,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.073
+        },
+        "vote_all": {
+          "n": 137,
+          "precision": 0.18,
+          "recall": 0.0756,
+          "f1": 0.1065,
+          "category_f1": 0.3147,
+          "tags_shown": 1.839,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.73
+        },
+        "vote_tagged": {
+          "n": 137,
+          "precision": 0.1429,
+          "recall": 0.1176,
+          "f1": 0.129,
+          "category_f1": 0.4659,
+          "tags_shown": 2.54,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.431
+        },
+        "vote_tagged@s0.3l2.0": {
+          "n": 137,
+          "precision": 0.1198,
+          "recall": 0.084,
+          "f1": 0.0988,
+          "category_f1": 0.435,
+          "tags_shown": 2.328,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.219
+        },
+        "vote_tagged@s0.4l1.2": {
+          "n": 137,
+          "precision": 0.1778,
+          "recall": 0.0672,
+          "f1": 0.0976,
+          "category_f1": 0.3251,
+          "tags_shown": 1.766,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.657
+        },
+        "vote_tagged@s0.4l2.0": {
+          "n": 137,
+          "precision": 0.1333,
+          "recall": 0.0336,
+          "f1": 0.0537,
+          "category_f1": 0.2548,
+          "tags_shown": 1.547,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.438
+        },
+        "vote_tagged@s0.5l1.2": {
+          "n": 137,
+          "precision": 0.2564,
+          "recall": 0.042,
+          "f1": 0.0722,
+          "category_f1": 0.2033,
+          "tags_shown": 1.394,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.285
+        },
+        "vote_tagged@s0.5l2.0": {
+          "n": 137,
+          "precision": 0.2381,
+          "recall": 0.021,
+          "f1": 0.0386,
+          "category_f1": 0.1228,
+          "tags_shown": 1.263,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.153
+        },
+        "vote_tagged_clean": {
+          "n": 137,
+          "precision": 0.1286,
+          "recall": 0.1134,
+          "f1": 0.1205,
+          "category_f1": 0.5302,
+          "tags_shown": 2.642,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.533
+        },
+        "vote_tagged_clean@s0.3l2.0": {
+          "n": 137,
+          "precision": 0.1158,
+          "recall": 0.0924,
+          "f1": 0.1028,
+          "category_f1": 0.5165,
+          "tags_shown": 2.496,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.387
+        },
+        "vote_tagged_clean@s0.4l1.2": {
+          "n": 137,
+          "precision": 0.1504,
+          "recall": 0.0714,
+          "f1": 0.0969,
+          "category_f1": 0.4026,
+          "tags_shown": 1.934,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.825
+        },
+        "vote_tagged_clean@s0.4l2.0": {
+          "n": 137,
+          "precision": 0.1222,
+          "recall": 0.0462,
+          "f1": 0.0671,
+          "category_f1": 0.3686,
+          "tags_shown": 1.766,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.657
+        },
+        "vote_tagged_clean@s0.5l1.2": {
+          "n": 137,
+          "precision": 0.225,
+          "recall": 0.0378,
+          "f1": 0.0647,
+          "category_f1": 0.1935,
+          "tags_shown": 1.401,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.292
+        },
+        "vote_tagged_clean@s0.5l2.0": {
+          "n": 137,
+          "precision": 0.2222,
+          "recall": 0.0252,
+          "f1": 0.0453,
+          "category_f1": 0.1617,
+          "tags_shown": 1.307,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.197
+        },
+        "feat+vote_tagged": {
+          "n": 137,
+          "precision": 0.117,
+          "recall": 0.2227,
+          "f1": 0.1534,
+          "category_f1": 0.6206,
+          "tags_shown": 4.416,
+          "share_tagged": 1.0,
+          "fill_per_bean": 3.307
+        },
+        "feat|vote_tagged": {
+          "n": 137,
+          "precision": 0.1204,
+          "recall": 0.2059,
+          "f1": 0.1519,
+          "category_f1": 0.6078,
+          "tags_shown": 4.08,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.971
+        },
+        "feat+vote_tagged_clean": {
+          "n": 137,
+          "precision": 0.1163,
+          "recall": 0.2185,
+          "f1": 0.1518,
+          "category_f1": 0.6094,
+          "tags_shown": 4.372,
+          "share_tagged": 1.0,
+          "fill_per_bean": 3.263
+        },
+        "feat|vote_tagged_clean": {
+          "n": 137,
+          "precision": 0.1204,
+          "recall": 0.2059,
+          "f1": 0.1519,
+          "category_f1": 0.6078,
+          "tags_shown": 4.08,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.971
+        },
+        "vote_tagged+feat": {
+          "n": 137,
+          "precision": 0.1192,
+          "recall": 0.2269,
+          "f1": 0.1563,
+          "category_f1": 0.6024,
+          "tags_shown": 4.416,
+          "share_tagged": 1.0,
+          "fill_per_bean": 3.307
+        },
+        "vote_tagged|feat": {
+          "n": 137,
+          "precision": 0.1336,
+          "recall": 0.1303,
+          "f1": 0.1319,
+          "category_f1": 0.4934,
+          "tags_shown": 2.803,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.693
+        },
+        "vote_tagged_clean+feat": {
+          "n": 137,
+          "precision": 0.1141,
+          "recall": 0.2143,
+          "f1": 0.1489,
+          "category_f1": 0.6039,
+          "tags_shown": 4.372,
+          "share_tagged": 1.0,
+          "fill_per_bean": 3.263
+        },
+        "vote_tagged_clean|feat": {
+          "n": 137,
+          "precision": 0.1282,
+          "recall": 0.1261,
+          "f1": 0.1271,
+          "category_f1": 0.5528,
+          "tags_shown": 2.818,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.708
+        },
+        "vote_tagged^1": {
+          "n": 137,
+          "precision": 0.0952,
+          "recall": 0.0336,
+          "f1": 0.0497,
+          "category_f1": 0.3136,
+          "tags_shown": 1.723,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.613
+        },
+        "vote_tagged^2": {
+          "n": 137,
+          "precision": 0.1474,
+          "recall": 0.0966,
+          "f1": 0.1168,
+          "category_f1": 0.4431,
+          "tags_shown": 2.248,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.139
+        },
+        "vote_tagged^3": {
+          "n": 137,
+          "precision": 0.1323,
+          "recall": 0.105,
+          "f1": 0.1171,
+          "category_f1": 0.4699,
+          "tags_shown": 2.489,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.38
+        },
+        "vote_all+vote_tagged^2": {
+          "n": 137,
+          "precision": 0.1462,
+          "recall": 0.105,
+          "f1": 0.1222,
+          "category_f1": 0.4548,
+          "tags_shown": 2.358,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.248
+        },
+        "vote_tagged_clean^1": {
+          "n": 137,
+          "precision": 0.0792,
+          "recall": 0.0336,
+          "f1": 0.0472,
+          "category_f1": 0.3883,
+          "tags_shown": 1.847,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.737
+        },
+        "vote_tagged_clean^2": {
+          "n": 137,
+          "precision": 0.1273,
+          "recall": 0.0882,
+          "f1": 0.1042,
+          "category_f1": 0.4871,
+          "tags_shown": 2.314,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.204
+        },
+        "vote_tagged_clean^3": {
+          "n": 137,
+          "precision": 0.1276,
+          "recall": 0.105,
+          "f1": 0.1152,
+          "category_f1": 0.5189,
+          "tags_shown": 2.54,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.431
+        },
+        "vote_all+vote_tagged_clean^2": {
+          "n": 137,
+          "precision": 0.1406,
+          "recall": 0.1134,
+          "f1": 0.1256,
+          "category_f1": 0.5068,
+          "tags_shown": 2.511,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.401
+        },
+        "current": {
+          "n": 137,
+          "precision": 0.18,
+          "recall": 0.0756,
+          "f1": 0.1065,
+          "category_f1": 0.3147,
+          "tags_shown": 1.839,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.73
+        },
+        "shipped": {
+          "n": 137,
+          "precision": 0.1406,
+          "recall": 0.1134,
+          "f1": 0.1256,
+          "category_f1": 0.5068,
+          "tags_shown": 2.511,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.401
+        }
+      }
+    },
+    "per_roaster_f1_free": {
+      "Blue Bottle Coffee": {
+        "current": 0.2222,
+        "feat+vote_tagged": 0.2195,
+        "vote_tagged": 0.1091
+      },
+      "Café Britt": {
+        "current": 0.1667,
+        "feat+vote_tagged": 0.1667,
+        "vote_tagged": 0.0
+      },
+      "Café Don Pablo": {
+        "current": 0.368,
+        "feat+vote_tagged": 0.3651,
+        "vote_tagged": 0.4103
+      },
+      "Coffee Supreme": {
+        "current": 0.3333,
+        "feat+vote_tagged": 0.3333,
+        "vote_tagged": 0.4
+      },
+      "Fresh Roasted Coffee": {
+        "current": 0.1316,
+        "feat+vote_tagged": 0.1316,
+        "vote_tagged": 0.0
+      },
+      "G로스팅": {
+        "current": 0.1986,
+        "feat+vote_tagged": 0.1986,
+        "vote_tagged": 0.1458
+      },
+      "Kiss the Hippo": {
+        "current": 0.1677,
+        "feat+vote_tagged": 0.1565,
+        "vote_tagged": 0.11
+      },
+      "Ozone Coffee": {
+        "current": 0.1447,
+        "feat+vote_tagged": 0.1569,
+        "vote_tagged": 0.1647
+      },
+      "Volcanica Coffee": {
+        "current": 0.163,
+        "feat+vote_tagged": 0.1507,
+        "vote_tagged": 0.1633
+      },
+      "나무사이로": {
+        "current": 0.2151,
+        "feat+vote_tagged": 0.2256,
+        "vote_tagged": 0.16
+      },
+      "내일의커피": {
+        "current": 0.2069,
+        "feat+vote_tagged": 0.2,
+        "vote_tagged": 0.2222
+      },
+      "매뉴팩트": {
+        "current": 0.1754,
+        "feat+vote_tagged": 0.1724,
+        "vote_tagged": 0.1081
+      },
+      "모모스커피": {
+        "current": 0.0968,
+        "feat+vote_tagged": 0.1905,
+        "vote_tagged": 0.1587
+      },
+      "빈브라더스": {
+        "current": 0.0952,
+        "feat+vote_tagged": 0.0909,
+        "vote_tagged": 0.0
+      },
+      "앤트러사이트": {
+        "current": 0.225,
+        "feat+vote_tagged": 0.2118,
+        "vote_tagged": 0.037
+      },
+      "커피 리브레": {
+        "current": 0.2439,
+        "feat+vote_tagged": 0.2083,
+        "vote_tagged": 0.2051
+      },
+      "펠트": {
+        "current": 0.1846,
+        "feat+vote_tagged": 0.1892,
+        "vote_tagged": 0.1176
+      },
+      "프릳츠": {
+        "current": 0.1579,
+        "feat+vote_tagged": 0.1579,
+        "vote_tagged": 0.2727
+      }
+    },
+    "thresholds": {
+      "Blue Bottle Coffee": {
+        "feat": 0.1,
+        "emb": 0.1,
+        "emb_mlp": 0.05
+      },
+      "Café Britt": {
+        "feat": 0.05,
+        "emb": 0.1,
+        "emb_mlp": 0.05
+      },
+      "Café Don Pablo": {
+        "feat": 0.1,
+        "emb": 0.05,
+        "emb_mlp": 0.05
+      },
+      "Coffee Supreme": {
+        "feat": 0.1,
+        "emb": 0.1,
+        "emb_mlp": 0.05
+      },
+      "Fresh Roasted Coffee": {
+        "feat": 0.1,
+        "emb": 0.1,
+        "emb_mlp": 0.05
+      },
+      "G로스팅": {
+        "feat": 0.05,
+        "emb": 0.05,
+        "emb_mlp": 0.05
+      },
+      "Kiss the Hippo": {
+        "feat": 0.15,
+        "emb": 0.1,
+        "emb_mlp": 0.05
+      },
+      "Ozone Coffee": {
+        "feat": 0.1,
+        "emb": 0.05,
+        "emb_mlp": 0.05
+      },
+      "Volcanica Coffee": {
+        "feat": 0.15,
+        "emb": 0.1,
+        "emb_mlp": 0.05
+      },
+      "나무사이로": {
+        "feat": 0.15,
+        "emb": 0.1,
+        "emb_mlp": 0.05
+      },
+      "내일의커피": {
+        "feat": 0.2,
+        "emb": 0.1,
+        "emb_mlp": 0.05
+      },
+      "매뉴팩트": {
+        "feat": 0.15,
+        "emb": 0.1,
+        "emb_mlp": 0.05
+      },
+      "모모스커피": {
+        "feat": 0.15,
+        "emb": 0.1,
+        "emb_mlp": 0.05
+      },
+      "빈브라더스": {
+        "feat": 0.15,
+        "emb": 0.1,
+        "emb_mlp": 0.05
+      },
+      "앤트러사이트": {
+        "feat": 0.15,
+        "emb": 0.05,
+        "emb_mlp": 0.05
+      },
+      "커피 리브레": {
+        "feat": 0.15,
+        "emb": 0.1,
+        "emb_mlp": 0.05
+      },
+      "펠트": {
+        "feat": 0.15,
+        "emb": 0.1,
+        "emb_mlp": 0.05
+      },
+      "프릳츠": {
+        "feat": 0.05,
+        "emb": 0.1,
+        "emb_mlp": 0.05
+      }
+    }
+  },
+  "e2": {
+    "free": {
+      "n": 110,
+      "table": {
+        "feat": {
+          "n": 110,
+          "precision": 0.2641,
+          "recall": 0.142,
+          "f1": 0.1847,
+          "category_f1": 0.554,
+          "tags_shown": 2.582,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.582
+        },
+        "feat_pertag": {
+          "n": 110,
+          "precision": 0.1491,
+          "recall": 0.1553,
+          "f1": 0.1521,
+          "category_f1": 0.5848,
+          "tags_shown": 5.0,
+          "share_tagged": 1.0,
+          "fill_per_bean": 5.0
+        },
+        "emb": {
+          "n": 110,
+          "precision": 0.2137,
+          "recall": 0.1591,
+          "f1": 0.1824,
+          "category_f1": 0.5894,
+          "tags_shown": 3.573,
+          "share_tagged": 1.0,
+          "fill_per_bean": 3.573
+        },
+        "emb_mlp": {
+          "n": 110,
+          "precision": 0.1716,
+          "recall": 0.0549,
+          "f1": 0.0832,
+          "category_f1": 0.3834,
+          "tags_shown": 1.536,
+          "share_tagged": 0.8,
+          "fill_per_bean": 1.536
+        },
+        "vote_all": {
+          "n": 110,
+          "precision": 0.2887,
+          "recall": 0.0777,
+          "f1": 0.1224,
+          "category_f1": 0.3502,
+          "tags_shown": 1.291,
+          "share_tagged": 0.7182,
+          "fill_per_bean": 1.291
+        },
+        "vote_tagged": {
+          "n": 110,
+          "precision": 0.285,
+          "recall": 0.108,
+          "f1": 0.1566,
+          "category_f1": 0.4237,
+          "tags_shown": 1.818,
+          "share_tagged": 0.9,
+          "fill_per_bean": 1.818
+        },
+        "vote_tagged@s0.3l2.0": {
+          "n": 110,
+          "precision": 0.2645,
+          "recall": 0.0777,
+          "f1": 0.1201,
+          "category_f1": 0.3009,
+          "tags_shown": 1.409,
+          "share_tagged": 0.7455,
+          "fill_per_bean": 1.409
+        },
+        "vote_tagged@s0.4l1.2": {
+          "n": 110,
+          "precision": 0.3558,
+          "recall": 0.0701,
+          "f1": 0.1171,
+          "category_f1": 0.3462,
+          "tags_shown": 0.945,
+          "share_tagged": 0.7273,
+          "fill_per_bean": 0.945
+        },
+        "vote_tagged@s0.4l2.0": {
+          "n": 110,
+          "precision": 0.3559,
+          "recall": 0.0398,
+          "f1": 0.0716,
+          "category_f1": 0.1828,
+          "tags_shown": 0.536,
+          "share_tagged": 0.3818,
+          "fill_per_bean": 0.536
+        },
+        "vote_tagged@s0.5l1.2": {
+          "n": 110,
+          "precision": 0.4068,
+          "recall": 0.0455,
+          "f1": 0.0818,
+          "category_f1": 0.2691,
+          "tags_shown": 0.536,
+          "share_tagged": 0.4909,
+          "fill_per_bean": 0.536
+        },
+        "vote_tagged@s0.5l2.0": {
+          "n": 110,
+          "precision": 0.4516,
+          "recall": 0.0265,
+          "f1": 0.0501,
+          "category_f1": 0.1425,
+          "tags_shown": 0.282,
+          "share_tagged": 0.2545,
+          "fill_per_bean": 0.282
+        },
+        "vote_tagged_clean": {
+          "n": 110,
+          "precision": 0.2186,
+          "recall": 0.089,
+          "f1": 0.1265,
+          "category_f1": 0.4444,
+          "tags_shown": 1.955,
+          "share_tagged": 0.9364,
+          "fill_per_bean": 1.955
+        },
+        "vote_tagged_clean@s0.3l2.0": {
+          "n": 110,
+          "precision": 0.2131,
+          "recall": 0.0739,
+          "f1": 0.1097,
+          "category_f1": 0.3545,
+          "tags_shown": 1.664,
+          "share_tagged": 0.8364,
+          "fill_per_bean": 1.664
+        },
+        "vote_tagged_clean@s0.4l1.2": {
+          "n": 110,
+          "precision": 0.2783,
+          "recall": 0.0606,
+          "f1": 0.0995,
+          "category_f1": 0.3389,
+          "tags_shown": 1.045,
+          "share_tagged": 0.6727,
+          "fill_per_bean": 1.045
+        },
+        "vote_tagged_clean@s0.4l2.0": {
+          "n": 110,
+          "precision": 0.2892,
+          "recall": 0.0455,
+          "f1": 0.0786,
+          "category_f1": 0.2216,
+          "tags_shown": 0.755,
+          "share_tagged": 0.4545,
+          "fill_per_bean": 0.755
+        },
+        "vote_tagged_clean@s0.5l1.2": {
+          "n": 110,
+          "precision": 0.3462,
+          "recall": 0.0341,
+          "f1": 0.0621,
+          "category_f1": 0.2324,
+          "tags_shown": 0.473,
+          "share_tagged": 0.4091,
+          "fill_per_bean": 0.473
+        },
+        "vote_tagged_clean@s0.5l2.0": {
+          "n": 110,
+          "precision": 0.3939,
+          "recall": 0.0246,
+          "f1": 0.0463,
+          "category_f1": 0.1425,
+          "tags_shown": 0.3,
+          "share_tagged": 0.2545,
+          "fill_per_bean": 0.3
+        },
+        "feat+vote_tagged": {
+          "n": 110,
+          "precision": 0.2541,
+          "recall": 0.1742,
+          "f1": 0.2067,
+          "category_f1": 0.5525,
+          "tags_shown": 3.291,
+          "share_tagged": 1.0,
+          "fill_per_bean": 3.291
+        },
+        "feat|vote_tagged": {
+          "n": 110,
+          "precision": 0.2641,
+          "recall": 0.142,
+          "f1": 0.1847,
+          "category_f1": 0.554,
+          "tags_shown": 2.582,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.582
+        },
+        "feat+vote_tagged_clean": {
+          "n": 110,
+          "precision": 0.2361,
+          "recall": 0.1686,
+          "f1": 0.1967,
+          "category_f1": 0.5673,
+          "tags_shown": 3.427,
+          "share_tagged": 1.0,
+          "fill_per_bean": 3.427
+        },
+        "feat|vote_tagged_clean": {
+          "n": 110,
+          "precision": 0.2641,
+          "recall": 0.142,
+          "f1": 0.1847,
+          "category_f1": 0.554,
+          "tags_shown": 2.582,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.582
+        },
+        "vote_tagged+feat": {
+          "n": 110,
+          "precision": 0.2486,
+          "recall": 0.1705,
+          "f1": 0.2022,
+          "category_f1": 0.5492,
+          "tags_shown": 3.291,
+          "share_tagged": 1.0,
+          "fill_per_bean": 3.291
+        },
+        "vote_tagged|feat": {
+          "n": 110,
+          "precision": 0.2795,
+          "recall": 0.1212,
+          "f1": 0.1691,
+          "category_f1": 0.4837,
+          "tags_shown": 2.082,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.082
+        },
+        "vote_tagged_clean+feat": {
+          "n": 110,
+          "precision": 0.2255,
+          "recall": 0.161,
+          "f1": 0.1878,
+          "category_f1": 0.5632,
+          "tags_shown": 3.427,
+          "share_tagged": 1.0,
+          "fill_per_bean": 3.427
+        },
+        "vote_tagged_clean|feat": {
+          "n": 110,
+          "precision": 0.217,
+          "recall": 0.0966,
+          "f1": 0.1337,
+          "category_f1": 0.4628,
+          "tags_shown": 2.136,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.136
+        },
+        "vote_tagged^1": {
+          "n": 110,
+          "precision": 0.3434,
+          "recall": 0.0644,
+          "f1": 0.1085,
+          "category_f1": 0.3341,
+          "tags_shown": 0.9,
+          "share_tagged": 0.9,
+          "fill_per_bean": 0.9
+        },
+        "vote_tagged^2": {
+          "n": 110,
+          "precision": 0.2945,
+          "recall": 0.0909,
+          "f1": 0.1389,
+          "category_f1": 0.3797,
+          "tags_shown": 1.482,
+          "share_tagged": 0.9,
+          "fill_per_bean": 1.482
+        },
+        "vote_tagged^3": {
+          "n": 110,
+          "precision": 0.2895,
+          "recall": 0.1042,
+          "f1": 0.1532,
+          "category_f1": 0.4163,
+          "tags_shown": 1.727,
+          "share_tagged": 0.9,
+          "fill_per_bean": 1.727
+        },
+        "vote_all+vote_tagged^2": {
+          "n": 110,
+          "precision": 0.2989,
+          "recall": 0.1042,
+          "f1": 0.1545,
+          "category_f1": 0.4292,
+          "tags_shown": 1.673,
+          "share_tagged": 0.9,
+          "fill_per_bean": 1.673
+        },
+        "vote_tagged_clean^1": {
+          "n": 110,
+          "precision": 0.3204,
+          "recall": 0.0625,
+          "f1": 0.1046,
+          "category_f1": 0.3615,
+          "tags_shown": 0.936,
+          "share_tagged": 0.9364,
+          "fill_per_bean": 0.936
+        },
+        "vote_tagged_clean^2": {
+          "n": 110,
+          "precision": 0.2457,
+          "recall": 0.0814,
+          "f1": 0.1223,
+          "category_f1": 0.4129,
+          "tags_shown": 1.591,
+          "share_tagged": 0.9364,
+          "fill_per_bean": 1.591
+        },
+        "vote_tagged_clean^3": {
+          "n": 110,
+          "precision": 0.2327,
+          "recall": 0.089,
+          "f1": 0.1288,
+          "category_f1": 0.4361,
+          "tags_shown": 1.836,
+          "share_tagged": 0.9364,
+          "fill_per_bean": 1.836
+        },
+        "vote_all+vote_tagged_clean^2": {
+          "n": 110,
+          "precision": 0.2594,
+          "recall": 0.1042,
+          "f1": 0.1486,
+          "category_f1": 0.4571,
+          "tags_shown": 1.927,
+          "share_tagged": 0.9727,
+          "fill_per_bean": 1.927
+        },
+        "current": {
+          "n": 110,
+          "precision": 0.2641,
+          "recall": 0.142,
+          "f1": 0.1847,
+          "category_f1": 0.554,
+          "tags_shown": 2.582,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.582
+        },
+        "shipped": {
+          "n": 110,
+          "precision": 0.2641,
+          "recall": 0.142,
+          "f1": 0.1847,
+          "category_f1": 0.554,
+          "tags_shown": 2.582,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.582
+        }
+      }
+    },
+    "notes": {
+      "n": 53,
+      "example": "Tasty coffee Ethiopia Иргачефф natural | medium roast | jasmine",
+      "table": {
+        "feat": {
+          "n": 53,
+          "precision": 0.1339,
+          "recall": 0.1018,
+          "f1": 0.1156,
+          "category_f1": 0.4019,
+          "tags_shown": 3.434,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.396
+        },
+        "feat_pertag": {
+          "n": 53,
+          "precision": 0.0905,
+          "recall": 0.1138,
+          "f1": 0.1008,
+          "category_f1": 0.4662,
+          "tags_shown": 5.0,
+          "share_tagged": 1.0,
+          "fill_per_bean": 3.962
+        },
+        "emb": {
+          "n": 53,
+          "precision": 0.1283,
+          "recall": 0.1437,
+          "f1": 0.1356,
+          "category_f1": 0.4774,
+          "tags_shown": 4.566,
+          "share_tagged": 1.0,
+          "fill_per_bean": 3.528
+        },
+        "emb_mlp": {
+          "n": 53,
+          "precision": 0.1964,
+          "recall": 0.0659,
+          "f1": 0.0987,
+          "category_f1": 0.319,
+          "tags_shown": 2.094,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.057
+        },
+        "vote_all": {
+          "n": 53,
+          "precision": 0.3409,
+          "recall": 0.0898,
+          "f1": 0.1422,
+          "category_f1": 0.3158,
+          "tags_shown": 1.868,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.83
+        },
+        "vote_tagged": {
+          "n": 53,
+          "precision": 0.2857,
+          "recall": 0.0958,
+          "f1": 0.1435,
+          "category_f1": 0.3478,
+          "tags_shown": 2.094,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.057
+        },
+        "vote_tagged@s0.3l2.0": {
+          "n": 53,
+          "precision": 0.2955,
+          "recall": 0.0778,
+          "f1": 0.1232,
+          "category_f1": 0.2533,
+          "tags_shown": 1.868,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.83
+        },
+        "vote_tagged@s0.4l1.2": {
+          "n": 53,
+          "precision": 0.3793,
+          "recall": 0.0659,
+          "f1": 0.1122,
+          "category_f1": 0.2517,
+          "tags_shown": 1.585,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.547
+        },
+        "vote_tagged@s0.4l2.0": {
+          "n": 53,
+          "precision": 0.5,
+          "recall": 0.0479,
+          "f1": 0.0874,
+          "category_f1": 0.1364,
+          "tags_shown": 1.34,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.302
+        },
+        "vote_tagged@s0.5l1.2": {
+          "n": 53,
+          "precision": 0.5,
+          "recall": 0.0419,
+          "f1": 0.0773,
+          "category_f1": 0.1667,
+          "tags_shown": 1.302,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.264
+        },
+        "vote_tagged@s0.5l2.0": {
+          "n": 53,
+          "precision": 0.6667,
+          "recall": 0.0359,
+          "f1": 0.0682,
+          "category_f1": 0.1102,
+          "tags_shown": 1.208,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.17
+        },
+        "vote_tagged_clean": {
+          "n": 53,
+          "precision": 0.2963,
+          "recall": 0.0958,
+          "f1": 0.1448,
+          "category_f1": 0.3457,
+          "tags_shown": 2.057,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.019
+        },
+        "vote_tagged_clean@s0.3l2.0": {
+          "n": 53,
+          "precision": 0.2791,
+          "recall": 0.0719,
+          "f1": 0.1143,
+          "category_f1": 0.271,
+          "tags_shown": 1.849,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.811
+        },
+        "vote_tagged_clean@s0.4l1.2": {
+          "n": 53,
+          "precision": 0.5172,
+          "recall": 0.0898,
+          "f1": 0.1531,
+          "category_f1": 0.2639,
+          "tags_shown": 1.585,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.547
+        },
+        "vote_tagged_clean@s0.4l2.0": {
+          "n": 53,
+          "precision": 0.6471,
+          "recall": 0.0659,
+          "f1": 0.1196,
+          "category_f1": 0.1493,
+          "tags_shown": 1.358,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.321
+        },
+        "vote_tagged_clean@s0.5l1.2": {
+          "n": 53,
+          "precision": 0.5385,
+          "recall": 0.0419,
+          "f1": 0.0778,
+          "category_f1": 0.1527,
+          "tags_shown": 1.283,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.245
+        },
+        "vote_tagged_clean@s0.5l2.0": {
+          "n": 53,
+          "precision": 0.5714,
+          "recall": 0.024,
+          "f1": 0.046,
+          "category_f1": 0.0794,
+          "tags_shown": 1.17,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.132
+        },
+        "feat+vote_tagged": {
+          "n": 53,
+          "precision": 0.1667,
+          "recall": 0.1497,
+          "f1": 0.1577,
+          "category_f1": 0.4344,
+          "tags_shown": 3.868,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.83
+        },
+        "feat|vote_tagged": {
+          "n": 53,
+          "precision": 0.1339,
+          "recall": 0.1018,
+          "f1": 0.1156,
+          "category_f1": 0.4019,
+          "tags_shown": 3.434,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.396
+        },
+        "feat+vote_tagged_clean": {
+          "n": 53,
+          "precision": 0.1579,
+          "recall": 0.1437,
+          "f1": 0.1505,
+          "category_f1": 0.4292,
+          "tags_shown": 3.906,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.868
+        },
+        "feat|vote_tagged_clean": {
+          "n": 53,
+          "precision": 0.1339,
+          "recall": 0.1018,
+          "f1": 0.1156,
+          "category_f1": 0.4019,
+          "tags_shown": 3.434,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.396
+        },
+        "vote_tagged+feat": {
+          "n": 53,
+          "precision": 0.1667,
+          "recall": 0.1497,
+          "f1": 0.1577,
+          "category_f1": 0.4364,
+          "tags_shown": 3.868,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.83
+        },
+        "vote_tagged|feat": {
+          "n": 53,
+          "precision": 0.2857,
+          "recall": 0.0958,
+          "f1": 0.1435,
+          "category_f1": 0.3478,
+          "tags_shown": 2.094,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.057
+        },
+        "vote_tagged_clean+feat": {
+          "n": 53,
+          "precision": 0.1645,
+          "recall": 0.1497,
+          "f1": 0.1567,
+          "category_f1": 0.4434,
+          "tags_shown": 3.906,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.868
+        },
+        "vote_tagged_clean|feat": {
+          "n": 53,
+          "precision": 0.2881,
+          "recall": 0.1018,
+          "f1": 0.1504,
+          "category_f1": 0.3636,
+          "tags_shown": 2.151,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.113
+        },
+        "vote_tagged^1": {
+          "n": 53,
+          "precision": 0.4615,
+          "recall": 0.0719,
+          "f1": 0.1244,
+          "category_f1": 0.2483,
+          "tags_shown": 1.528,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.491
+        },
+        "vote_tagged^2": {
+          "n": 53,
+          "precision": 0.3636,
+          "recall": 0.0958,
+          "f1": 0.1517,
+          "category_f1": 0.3226,
+          "tags_shown": 1.868,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.83
+        },
+        "vote_tagged^3": {
+          "n": 53,
+          "precision": 0.32,
+          "recall": 0.0958,
+          "f1": 0.1475,
+          "category_f1": 0.3312,
+          "tags_shown": 1.981,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.943
+        },
+        "vote_all+vote_tagged^2": {
+          "n": 53,
+          "precision": 0.3137,
+          "recall": 0.0958,
+          "f1": 0.1468,
+          "category_f1": 0.3396,
+          "tags_shown": 2.0,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.962
+        },
+        "vote_tagged_clean^1": {
+          "n": 53,
+          "precision": 0.4231,
+          "recall": 0.0659,
+          "f1": 0.114,
+          "category_f1": 0.2345,
+          "tags_shown": 1.528,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.491
+        },
+        "vote_tagged_clean^2": {
+          "n": 53,
+          "precision": 0.3261,
+          "recall": 0.0898,
+          "f1": 0.1408,
+          "category_f1": 0.3057,
+          "tags_shown": 1.906,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.868
+        },
+        "vote_tagged_clean^3": {
+          "n": 53,
+          "precision": 0.3077,
+          "recall": 0.0958,
+          "f1": 0.1461,
+          "category_f1": 0.325,
+          "tags_shown": 2.019,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.981
+        },
+        "vote_all+vote_tagged_clean^2": {
+          "n": 53,
+          "precision": 0.2931,
+          "recall": 0.1018,
+          "f1": 0.1511,
+          "category_f1": 0.3636,
+          "tags_shown": 2.132,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.094
+        },
+        "current": {
+          "n": 53,
+          "precision": 0.3409,
+          "recall": 0.0898,
+          "f1": 0.1422,
+          "category_f1": 0.3158,
+          "tags_shown": 1.868,
+          "share_tagged": 1.0,
+          "fill_per_bean": 0.83
+        },
+        "shipped": {
+          "n": 53,
+          "precision": 0.2931,
+          "recall": 0.1018,
+          "f1": 0.1511,
+          "category_f1": 0.3636,
+          "tags_shown": 2.132,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.094
+        }
+      }
+    },
+    "thresholds": {
+      "feat": 0.15,
+      "emb": 0.1,
+      "emb_mlp": 0.1
+    }
+  },
+  "embedding_requests": 0,
+  "note_cache_sha1": "1808f27c3079"
+}
