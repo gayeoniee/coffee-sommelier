@@ -217,6 +217,9 @@ CONFIGS = {
     "+A+C": cfg(a=True, c=True, pool="new"),
     "+B+C": cfg(b=True, c=True, pool="new"),
     "+A+B+C": cfg(a=True, b=True, c=True, pool="new"),
+    # ADR 0020: the body recipe shipped after the ADR 0019 relabel -- same as the "~A wA=1" sensitivity row, promoted
+    # to a named ship candidate so the shipped recipe never points at a diagnostic
+    "+A wA=1": cfg(a=True, pool="new", wa=1.0),
     "~base (new pool)": cfg(pool="new"),
     "~B (old pool)": cfg(b=True),
     "~A with altitude": cfg(a=True, pool="new", a_alt=True),
@@ -361,7 +364,7 @@ def final_spec(rows, attr, name) -> dict:
     return {"type": "ridge", "alpha": alpha, "intercept": round(float(m.intercept_), R),
             "weights": {n: round(float(c), R) for n, c in zip(names, m.coef_) if abs(c) >= 1e-4},
             "n_train": int(len(y)), "n_gauge": sum(k == "gauge" for k in kinds), "uses_nbr": USE_NBR[attr],
-            "config": name, **({"roaster_offsets": {g: round(v, R) for g, v in off.items()}} if off else {})}
+            "config": name, **({"roaster_offsets": {g: round(v, R) for g, v in sorted(off.items())}} if off else {})}
 
 
 def main() -> int:

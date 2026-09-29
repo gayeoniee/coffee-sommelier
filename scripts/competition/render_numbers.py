@@ -206,9 +206,14 @@ def render_open_v3(tags: dict | None, v3: dict | None) -> list[str]:
                          f"{_f3(r['e1']['mae'])} | {_f3(r['e2']['coverage'])} · {_f3(r['e2']['within1'])} · "
                          f"{_f3(r['e2']['mae'])} |")
         b1 = v3["body_e1"]
-        best = max((k for k in b1 if k != "neighbour_avg"), key=lambda k: (b1[k]["within1"], -b1[k]["mae"]))
+        shipped = v3.get("body_shipped")
+        if shipped in b1:           # ADR 0020: a body recipe ships -> show it, not the best candidate
+            best, tag = shipped, "탑재"
+        else:
+            best = max((k for k in b1 if k != "neighbour_avg"), key=lambda k: (b1[k]["within1"], -b1[k]["mae"]))
+            tag = "미탑재"
         e2 = v3["body_e2"][best]
-        lines.append(f"| 바디 최고 후보 `{best}` vs 이웃 평균: ±1 (미탑재) | {_f3(b1[best]['within1'])} vs "
+        lines.append(f"| 바디 {'탑재' if tag == '탑재' else '최고 후보'} `{best}` vs 이웃 평균: ±1 ({tag}) | {_f3(b1[best]['within1'])} vs "
                      f"{_f3(b1['neighbour_avg']['within1'])} | {_f3(e2['model']['within1'])} vs "
                      f"{_f3(e2['neighbour']['within1'])} |")
     return lines

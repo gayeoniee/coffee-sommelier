@@ -77,7 +77,10 @@ R = 4
 # the neighbour feature iff uses_nbr; ("ablation", name) = scripts/ablate_open_labels.py CONFIGS[name] via its
 # final_spec. Decisions: ADR 0011 (acidity/sweetness), ADR 0013 (acidity -> "+B"), ADR 0014 (sweetness kept after
 # the Zenodo panel check).
-SHIPPED_RECIPES = {"acidity": ("ablation", "+B"), "sweetness": ("gauges", False)}
+# ADR 0020 (after the ADR 0019 relabel): sweetness "+C" (per-roaster gauge offsets) replaces the gauges-only ridge,
+# whose refit lost the Zenodo panel (answered +-1 44.2% -> 35.3%); body ships "+A wA=1" (overseas shops' body marks at
+# full weight) instead of the neighbour average -- both measured by scripts/eval_open_recipes.py
+SHIPPED_RECIPES = {"acidity": ("ablation", "+B"), "body": ("ablation", "+A wA=1"), "sweetness": ("ablation", "+C")}
 # ADR 0016: the note-free flavor-tag model ("feat" in scripts/eval_open_tags.py) ships in the same config file
 SHIP_TAG_MODEL = True
 # ADR 0016: sweetness abstains without support (E1 coverage 51%, answered +-1 and MAE better on E1 and E2)
@@ -340,13 +343,13 @@ def shipped_config(rows: list[dict]) -> str:
             with psycopg.connect(OPEN_URL, row_factory=dict_row) as conn:
                 ablation_rows = load_rows(conn)
         specs[a] = final_spec(ablation_rows, a, arg)
-        if "B" in arg:
+        if "B" in arg.replace("Bf", ""):
             weak.append(a)
     labels = "roaster-published intensity gauges (roasters_kr)"
     if weak:
         labels += (f"; {', '.join(sorted(weak))} also trained on note-word weak labels (weight {W_B}, re-centred;"
                    " app/core/weaklabels.py, ADR 0013)")
-    doc = {"labels": labels, "recipes": "scripts/train_feature_model.py SHIPPED_RECIPES (ADR 0011, 0013, 0014, 0016)",
+    doc = {"labels": labels, "recipes": "scripts/train_feature_model.py SHIPPED_RECIPES (ADR 0011, 0013, 0014, 0016, 0020)",
            "eval": "data/eval/open/phase3_feature_model.json + data/eval/open/phase4_open_labels.json"
                    " + data/eval/open/phase5_open_tags.json + data/eval/open/phase5_open_v3.json",
            "attrs": {a: specs[a] for a in ATTRS if a in specs}}

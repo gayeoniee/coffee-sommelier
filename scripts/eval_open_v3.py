@@ -184,6 +184,9 @@ def main() -> int:
     for name, (c, k) in body_cands.items():
         bpreds[name] = oof(rows, "body", c, use_k=k)
     report["body_e1"] = e1_table(rows, "body", bpreds)
+    from scripts.train_feature_model import SHIPPED_RECIPES
+    # ADR 0020: which body candidate ships (the same config under its v3 name), None = neighbour average
+    report["body_shipped"] = {"+A wA=1": "+A wA=1"}.get((SHIPPED_RECIPES.get("body") or (None, None))[1])
 
     embed = CachedEmbedder()
     samples = samples_from_rows(read_xlsx_rows(download(XLSX)))
@@ -206,11 +209,19 @@ def main() -> int:
 
         # ---- sweetness abstention (rule chosen on E1, checked on E2) ---------------------------------------------
         from app.core.parse import ParsedBean
-        acid_oof = oof(rows, "acidity", CONFIGS["+B"])
-        sweet_oof = oof(rows, "sweetness", CONFIGS["base"])
-        body_nbr = {r["key"]: r["nbr"]["new"]["body"] for r in rows if r["kind"] == "gauge"}
+        # the SHIPPED recipe per attribute (scripts/train_feature_model.py SHIPPED_RECIPES); body without one is the
+        # neighbour average
+        from scripts.train_feature_model import SHIPPED_RECIPES
+
+        def shipped_oof(attr):
+            kind, arg = SHIPPED_RECIPES[attr]
+            return oof(rows, attr, CONFIGS["base"] if kind == "gauges" else CONFIGS[arg])
+        acid_oof = shipped_oof("acidity")
+        sweet_oof = shipped_oof("sweetness")
+        body_pred = shipped_oof("body") if "body" in SHIPPED_RECIPES else {
+            r["key"]: r["nbr"]["new"]["body"] for r in rows if r["kind"] == "gauge"}
         e1 = {}
-        for attr, p in (("acidity", acid_oof), ("sweetness", sweet_oof), ("body", body_nbr)):
+        for attr, p in (("acidity", acid_oof), ("sweetness", sweet_oof), ("body", body_pred)):
             e1[attr] = []
             for r in rows:
                 if r["kind"] != "gauge" or r["labels"].get(attr) is None or p.get(r["key"]) is None:

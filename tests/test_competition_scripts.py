@@ -349,3 +349,19 @@ class TestRenderOpenTagCooc:
         assert "| 노트 한 단어 입력 — E1 | 0.141 → 0.139 |" in text and "8.8% → 6.6%" in text
         assert "노트 없는 입력 — E1" not in text.split("phase7_open_tag_cooc.json")[1]
         assert text.index("phase7_open_tag_cooc.json") < text.index("numbers:end -->")
+
+
+class TestRenderShippedBody:
+    def test_shipped_body_recipe_is_labelled_shipped(self, tmp_path):
+        eval_dir = tmp_path / "ev"
+        eval_dir.mkdir()
+        m = {"n": 5, "mae": 0.7, "within1": 0.7, "spearman": 0.5, "coverage": 1.0}
+        good = dict(m, within1=0.8)
+        rule = {"e1": m, "e2": m}
+        _write(eval_dir / "phase5_open_v3.json", {
+            "abstention": {"sweetness": {"answer all (shipped)": rule, "cue or neighbour value": rule}},
+            "body_e1": {"neighbour_avg": m, "+A wA=1": good, "+K": dict(m, within1=0.9)},
+            "body_e2": {"+A wA=1": {"model": good, "neighbour": m}, "+K": {"model": m, "neighbour": m}},
+            "body_shipped": "+A wA=1"})
+        text = render_numbers.main(eval_dir)
+        assert "| 바디 탑재 `+A wA=1` vs 이웃 평균: ±1 (탑재) | 0.800 vs 0.700" in text
