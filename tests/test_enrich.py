@@ -255,3 +255,14 @@ def test_label_source_tracks_korean_cue_llm_and_heaviness(tmp_path):
     by = {c.key: c for c in out}
     assert by["cr1"].attr_label_source == {"body": "llm_review"}
     assert by["cq1"].attr_label_source == {"acidity": "cqi_quality"}
+
+
+def test_peaberry_is_not_berry_and_light_roast_is_not_light_body():
+    from pipeline.enrich import ko_body_cue, ko_rule_tags
+    vocab = {"베리": "berry", "블루베리": "blueberry"}
+    assert ko_rule_tags("탄자니아 피베리 워시드", vocab) == []
+    assert ko_rule_tags("피베리, 블루베리", vocab) == ["blueberry"]
+    assert ko_rule_tags("베리", vocab) == ["berry"]
+    assert ko_body_cue("에티오피아 라이트 로스트 자스민") is None
+    assert ko_body_cue("라이트 배전") is None
+    assert ko_body_cue("라이트한 바디") == 2 and ko_body_cue("가벼운 산미") == 2

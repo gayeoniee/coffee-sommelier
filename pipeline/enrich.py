@@ -50,7 +50,8 @@ MAX_NOTE_CHARS = 20
 # a heaviness reading straight from the note words is the only rule-based signal available before the LLM
 # enrich fallback (needs_llm) would otherwise guess from the same short text anyway.
 _KO_BODY_HEAVY = re.compile(r"묵직|무거운|풀\s*바디")
-_KO_BODY_LIGHT = re.compile(r"가벼운|라이트|깔끔한\s*바디")
+# "라이트 로스트"/"라이트 배전" is a roast, not a body (same lookahead as app/core/textcues.py)
+_KO_BODY_LIGHT = re.compile(r"가벼운|라이트(?!\s*(?:로스|배전))|깔끔한\s*바디")
 
 
 def ko_body_cue(text: str) -> int | None:
@@ -76,16 +77,22 @@ def is_note_list(text: str) -> bool:
     return bool(notes) and all(len(n) <= MAX_NOTE_CHARS and "." not in n for n in notes)
 
 
+# Words that contain a note word but are not notes: their span is blocked like a longer hit
+# ("피베리" is peaberry, a bean shape — not berry).
+KO_NON_NOTES = ("피베리",)
+
+
 def ko_rule_tags(text: str, ko_vocab: dict[str, str]) -> list[str]:
     """Match Korean terms inside each note, longest first; a shorter term inside a longer hit is skipped
-    ("블루베리" is blueberry, not also berry). One-letter terms (배, 꿀, 꽃) must be the whole note."""
+    ("블루베리" is blueberry, not also berry), and so is one inside a KO_NON_NOTES word ("피베리").
+    One-letter terms (배, 꿀, 꽃) must be the whole note."""
     hits: list[tuple[tuple[int, int], str]] = []
     terms = sorted(ko_vocab, key=len, reverse=True)
     for i, note in enumerate(_NOTE_SPLIT.split(text or "")):
         n = "".join(note.split())
         if not _HANGUL.search(n):
             continue
-        spans: list[tuple[int, int]] = []
+        spans = [(m.start(), m.end()) for w in KO_NON_NOTES for m in re.finditer(w, n)]
         for term in terms:
             if len(term) == 1:
                 if n == term:
