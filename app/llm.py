@@ -104,8 +104,8 @@ async def _hedged_stream(t: Target, messages: list[dict], transport, hedge_after
     Early-failure retry (ADR 0004 "폴백 원인 분해"): when the FIRST request ends without any output -- an
     HTTP error (in production almost always 429 Too Many Requests) or an empty 200 stream -- before the
     hedge has fired, the same second request is sent right away after `config.EARLY_RETRY_BACKOFF_S`
-    instead of waiting for the hedge timer. Retry and hedge share one budget: at most two requests per
-    call, whichever triggers first.
+    instead of waiting for the hedge timer; if that one fails the same way too, once more after twice the
+    pause (`config.EARLY_RETRY_MAX` retries in all). Once the hedge has fired there are no more retries.
     """
     if hedge_after_s <= 0:
         async for tok in _stream_once(t, messages, transport):
@@ -117,11 +117,12 @@ async def _hedged_stream(t: Target, messages: list[dict], transport, hedge_after
     attempts = [_Attempt(t, messages, transport)]
     waiting: dict[asyncio.Future, _Attempt] = {asyncio.ensure_future(attempts[0].q.get()): attempts[0]}
     try:
-        winner, first, error = None, None, None
+        winner, first, error, hedged = None, None, None, False
         while waiting and winner is None:
             timeout = max(0.0, hedge_at - loop.time()) if len(attempts) == 1 else None
             done, _ = await asyncio.wait(waiting, timeout=timeout, return_when=asyncio.FIRST_COMPLETED)
             if not done:                                    # primary still silent → fire the hedge
+                hedged = True
                 telemetry.add("hedged", 1)
                 hedge = _Attempt(t, messages, transport)
                 attempts.append(hedge)
@@ -135,11 +136,14 @@ async def _hedged_stream(t: Target, messages: list[dict], transport, hedge_after
                 elif isinstance(item, Exception):
                     error = item                            # this attempt is out; the other may still win
                 # anything else (_END / TRUNCATED with no text yet): this attempt ended empty -- it's out too
-            if winner is None and not waiting and len(attempts) == 1 and config.EARLY_RETRY:
-                # the only request so far ended with no output (429 / 5xx / empty 200) before the hedge
-                # fired → spend the one extra request now instead of failing over to the fallback target
+            retries = len(attempts) - 1
+            if (winner is None and not waiting and not hedged and config.EARLY_RETRY
+                    and retries < config.EARLY_RETRY_MAX):
+                # every request so far ended with no output (429 / 5xx / empty 200) before the hedge fired →
+                # retry with a growing pause (1 s, 2 s) instead of failing over to the fallback target; a 429
+                # burst usually clears within a couple of seconds (prod 2026-09-29: 38 of 45 fallbacks)
                 telemetry.add("retried", 1)
-                await asyncio.sleep(config.EARLY_RETRY_BACKOFF_S)
+                await asyncio.sleep(config.EARLY_RETRY_BACKOFF_S * 2 ** retries)
                 retry = _Attempt(t, messages, transport)
                 attempts.append(retry)
                 waiting[asyncio.ensure_future(retry.q.get())] = retry

@@ -121,6 +121,8 @@ def summarize(events: list[dict], window: dict | None = None) -> dict:
         summary["hedge_won"] = sum(int(e.get("hedge_won") or 0) for e in events)
     if any("retried" in e for e in events):
         summary["retried"] = sum(int(e.get("retried") or 0) for e in events)
+    if any("cached" in e for e in events):
+        summary["cached"] = sum(int(e.get("cached") or 0) for e in events)
     summary["fallback_breakdown"] = fallback_breakdown(events)
     return summary
 
@@ -248,6 +250,8 @@ def _format_table(summary: dict) -> str:
         lines.append(f"| 헤지 발사 / 두 번째 요청 승(헤지·조기 재시도 합산) | {summary['hedged']} / {summary['hedge_won']} |")
     if "retried" in summary:
         lines.append(f"| 조기 실패 재시도 | {summary['retried']} |")
+    if "cached" in summary:
+        lines.append(f"| 캐시에서 바로 낸 설명 | {summary['cached']} |")
     if summary.get("fallback_breakdown"):
         parts = ", ".join(f"{k}={v}" for k, v in sorted(summary["fallback_breakdown"].items()))
         lines.append(f"| 폴백 원인 | {parts} |")

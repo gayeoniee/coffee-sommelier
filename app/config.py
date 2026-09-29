@@ -14,9 +14,10 @@ DATA_VARIANT = os.getenv("DATA_VARIANT", "full")
 HEDGE_AFTER_S = float(os.getenv("HEDGE_AFTER_S", "3.0"))
 # The primary's FIRST request ends with no output (HTTP 429/5xx or an empty 200 stream) → wait this long and
 # send the same request once more instead of failing over (the fallback target is local-only; in production
-# that meant the template). Shares the one-extra-request budget with the hedge. EARLY_RETRY=0 disables.
+# that meant the template). No retries once the hedge has fired. EARLY_RETRY=0 disables.
 EARLY_RETRY = os.getenv("EARLY_RETRY", "1") == "1"
 EARLY_RETRY_BACKOFF_S = float(os.getenv("EARLY_RETRY_BACKOFF_S", "1.0"))
+EARLY_RETRY_MAX = int(os.getenv("EARLY_RETRY_MAX", "2"))   # retries after early failures: pauses 1 s, then 2 s
 
 
 def cookie_secure() -> bool:

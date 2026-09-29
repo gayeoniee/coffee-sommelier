@@ -1,5 +1,7 @@
 import asyncio
+import hashlib
 import json
+from collections import OrderedDict
 from time import perf_counter
 
 import httpx
@@ -22,6 +24,15 @@ def _last_complete_sentence(text: str) -> str:
 
 
 EMPTY_EXPLANATION = "empty explanation"
+# Finished, guard-approved explanations by exact model input: the same card for the same guest profile (every
+# onboarding preset gives identical profiles — demos, repeated brand taps) is answered without another call,
+# which also spares the NVIDIA rate limit that causes most fallbacks. Per process, oldest dropped first.
+EXPLAIN_CACHE_MAX = 1024
+_explain_cache: OrderedDict[str, str] = OrderedDict()
+
+
+def _cache_key(msgs: list[dict]) -> str:
+    return hashlib.sha256(json.dumps(msgs, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
 FALLBACK_REASONS = ("timeout_first_token", "timeout_midstream", "error_before_token", "error_midstream",
                     "truncated_empty", "empty", "guard")
 
@@ -68,10 +79,16 @@ async def explain_to_stream(deps, item: Item, profile: Profile, score: float, ta
     parts: list[str] = []
     truncated = False
     t0 = perf_counter()
+    msgs = explain_messages(item, profile, score, prediction, violation, tag_to_cat=tag_to_cat, tag_ko=tag_ko,
+                            top_pick=top_pick)
+    key = _cache_key(msgs)
+    if key in _explain_cache:
+        _explain_cache.move_to_end(key)
+        telemetry.add("cached", 1)
+        writer({"type": "explain_done", "key": item.key, "text": _explain_cache[key]})
+        return {"key": item.key, "text": _explain_cache[key], "fallback": False}
     try:
         async with asyncio.timeout(config.EXPLAIN_DEADLINE_S):
-            msgs = explain_messages(item, profile, score, prediction, violation, tag_to_cat=tag_to_cat, tag_ko=tag_ko,
-                                    top_pick=top_pick)
             async for tok in deps.stream_text(EXPLAIN_TASK, msgs):
                 if tok is TRUNCATED:
                     truncated = True
@@ -92,6 +109,9 @@ async def explain_to_stream(deps, item: Item, profile: Profile, score: float, ta
         if not text:
             raise GuardRejected(event)
         writer({"type": "explain_done", "key": item.key, "text": text})
+        _explain_cache[key] = text
+        if len(_explain_cache) > EXPLAIN_CACHE_MAX:
+            _explain_cache.popitem(last=False)
         return {"key": item.key, "text": text, "fallback": False}
     except (LLMError, httpx.HTTPError, TimeoutError) as e:
         telemetry.add("fallback", 1)

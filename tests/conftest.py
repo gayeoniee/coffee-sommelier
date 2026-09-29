@@ -37,3 +37,12 @@ def caplog(caplog):
     yield caplog
     lg.removeHandler(caplog.handler)
     lg.propagate = propagate
+
+
+@pytest.fixture(autouse=True)
+def _clear_explain_cache():
+    """app/graphs/common.py keeps finished explanations per process; tests reuse identical cards."""
+    from app.graphs import common
+    common._explain_cache.clear()
+    yield
+    common._explain_cache.clear()

@@ -390,13 +390,23 @@ def test_completely_empty_primary_stream_is_retried(monkeypatch):
     assert toks == ["두 번째"] and fake.calls == ["p", "p"] and counts["retried"] == 1
 
 
-def test_retry_failing_too_falls_back_and_never_hedges(monkeypatch):
-    """Retry and hedge share one extra request: after a failed retry there is no hedge, only the fallback."""
-    fake = FakeStreams([(0.0, LLMError("HTTP 429"))], [(0.0, LLMError("HTTP 429"))], [(0.0, "폴백")])
+def test_retries_failing_too_fall_back_and_never_hedge(monkeypatch):
+    """Up to EARLY_RETRY_MAX (2) retries after early failures; when they fail too, no hedge, only the fallback."""
+    fake = FakeStreams([(0.0, LLMError("HTTP 429"))], [(0.0, LLMError("HTTP 429"))],
+                       [(0.0, LLMError("HTTP 429"))], [(0.0, "폴백")])
     counts = hedge_env(monkeypatch, fake, hedge_after=0.05)
     toks, _, leftover = run_stream()
-    assert toks == ["폴백"] and fake.calls == ["p", "p", "f"]
-    assert counts == {"retried": 1} and leftover == []
+    assert toks == ["폴백"] and fake.calls == ["p", "p", "p", "f"]
+    assert counts == {"retried": 2} and leftover == []
+
+
+def test_second_retry_can_still_answer(monkeypatch):
+    """A 429 burst often outlasts the first 1 s pause; the second retry (after 2 s × backoff) answers."""
+    fake = FakeStreams([(0.0, LLMError("HTTP 429"))], [(0.0, LLMError("HTTP 429"))], [(0.0, "두 번째 재시도")])
+    counts = hedge_env(monkeypatch, fake, hedge_after=0.05)
+    toks, _, _ = run_stream()
+    assert toks == ["두 번째 재시도"] and fake.calls == ["p", "p", "p"]
+    assert counts == {"retried": 2, "hedge_won": 1}
 
 
 def test_slow_retry_is_not_hedged_again(monkeypatch):
@@ -467,3 +477,28 @@ def test_hedge_loser_http_response_is_closed(monkeypatch):
         return httpx.Response(200, text=sse({"content": "헤지"}))
     assert collect("explain", httpx.MockTransport(handler)) == ["헤지"]
     assert n["calls"] == 2 and closed == [True]
+
+
+def test_same_card_same_guest_is_answered_from_the_cache(monkeypatch):
+    calls = []
+
+    async def once(task, messages):
+        calls.append(1)
+        yield "산미가 손님 선호와 비슷해 잘 맞아요. 바디도 비슷해요."
+
+    first, _ = run_explain(monkeypatch, once)
+    second, events = run_explain(monkeypatch, once)
+    assert first == second and len(calls) == 1                   # the second request made no model call
+    assert [e["type"] for e in events] == ["explain_done"]
+
+
+def test_a_fallback_is_never_cached(monkeypatch):
+    calls = []
+
+    async def failing(task, messages):
+        calls.append(1)
+        raise LLMError("HTTP 429")
+        yield  # pragma: no cover
+
+    assert run_explain(monkeypatch, failing)[0]["fallback"] is True
+    assert run_explain(monkeypatch, failing)[0]["fallback"] is True and len(calls) == 2
