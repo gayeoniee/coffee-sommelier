@@ -85,6 +85,13 @@ SHIPPED_RECIPES = {"acidity": ("ablation", "+B"), "body": ("ablation", "+A wA=1"
 SHIP_TAG_MODEL = True
 # ADR 0016: sweetness abstains without support (E1 coverage 51%, answered +-1 and MAE better on E1 and E2)
 ABSTAIN = ("sweetness",)
+# ADR 0021: after the ADR 0019 relabel, the ADR 0016 rule's E1 coverage fell to 48.6% (below the 50% floor) because
+# fewer beans have >=3 labelled neighbours post-relabel. A similarity-weighted neighbour count (same per-neighbour
+# weight as the neighbour average itself) answers a few more beans whose neighbours are fewer but closer, without
+# the accuracy loss of just lowering the raw count to 2 (scripts/eval_open_sweetness_abstain.py ->
+# data/eval/open/phase10_open_sweetness.json): E1 coverage 51.4% (was 48.6%), +-1 0.676 (was 0.686, within noise),
+# E2 (secondary check) improves 0.497 -> 0.558 answered +-1. Cue text still overrides regardless.
+ABSTAIN_MIN_WEIGHT = {"sweetness": 1.4}
 CONFIG_PATH = settings.CONFIG_DIR / "feature_model_open.json"
 
 
@@ -355,8 +362,10 @@ def shipped_config(rows: list[dict]) -> str:
            "attrs": {a: specs[a] for a in ATTRS if a in specs}}
     if ABSTAIN:
         doc["abstain"] = {"attrs": list(ABSTAIN),
-                          "rule": "answer only with a text cue or a neighbour value (>= 3 of the k=10 neighbours carry"
-                                  " the attribute); otherwise None + '단맛: 근거 부족' (ADR 0016)"}
+                          "rule": "answer only with a text cue, a neighbour value (>= 3 of the k=10 neighbours carry"
+                                  " the attribute, ADR 0016), or (attrs in min_weight) a similarity-weighted"
+                                  " neighbour count >= the threshold (ADR 0021); otherwise None + '단맛: 근거 부족'",
+                          "min_weight": ABSTAIN_MIN_WEIGHT}
     v3 = settings.DATA_DIR / "eval" / "open" / "phase5_open_v3.json"
     if v3.exists():      # calibrated per-attribute confidence from grouped-CV residuals (scripts/eval_open_v3.py)
         cal = json.loads(v3.read_text(encoding="utf-8"))["calibration"]

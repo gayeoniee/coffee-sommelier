@@ -94,7 +94,11 @@ def build_analyze_graph(deps):
             # the neighbour average for the attributes it shipped, using that average as one of its features.
             # It needs no embedding, so it also applies in degraded mode (docs/adr/0011-roaster-gauges-feature-
             # model.md). Priority: text cues > feature model > neighbour average.
-            pred = with_feature_model(pred, deps.feature_model, parsed, tag_to_cat, tag_ko)
+            # `neighbors` is the similarity-ranked list only when the embedding call succeeded (ADR 0021's
+            # weighted-support abstention check needs real similarities); in degraded mode the fallback list has
+            # no meaningful similarity, so the model falls back to the plain ADR 0016 rule.
+            pred = with_feature_model(pred, deps.feature_model, parsed, tag_to_cat, tag_ko,
+                                      neighbors=None if degraded else neighbors)
         # explicit cues in the user's own text (app/core/textcues.py) outrank both the model and the neighbour
         # average -- applied last, regardless of degraded/model state (docs/adr/0010-body-heaviness.md).
         pred = with_text_cues(pred, parsed.text, tag_ko=tag_ko, tag_to_cat=tag_to_cat)

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T09:02:13.979651+00:00",
+  "generated_at": "2026-09-29T15:25:15.184255+00:00",
   "k": 10,
   "ship_margin_within1": 0.05,
   "cqi_aux_weight": 0.2,
@@ -52,8 +52,8 @@
         },
         "gbt+cqi": {
           "n": 82,
-          "mae": 1.0542,
-          "within1": 0.4634
+          "mae": 1.0499,
+          "within1": 0.5122
         },
         "ridge+nbr": {
           "n": 82,
@@ -72,8 +72,8 @@
         },
         "gbt+nbr+cqi": {
           "n": 82,
-          "mae": 0.9306,
-          "within1": 0.6098
+          "mae": 0.9384,
+          "within1": 0.5976
         }
       },
       "alphas": {
@@ -670,7 +670,7 @@
         "mae": 0.8151,
         "within1": 0.714
       },
-      "spearman": 0.294
+      "spearman": 0.2839
     },
     "body": {
       "label": "LLM heaviness (ADR 0010)",
@@ -684,7 +684,7 @@
         "mae": 0.9184,
         "within1": 0.6106
       },
-      "spearman": 0.0234
+      "spearman": 0.023
     }
   }
 }

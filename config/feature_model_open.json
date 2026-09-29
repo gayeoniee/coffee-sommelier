@@ -150,7 +150,10 @@
   "attrs": [
    "sweetness"
   ],
-  "rule": "answer only with a text cue or a neighbour value (>= 3 of the k=10 neighbours carry the attribute); otherwise None + '단맛: 근거 부족' (ADR 0016)"
+  "rule": "answer only with a text cue, a neighbour value (>= 3 of the k=10 neighbours carry the attribute, ADR 0016), or (attrs in min_weight) a similarity-weighted neighbour count >= the threshold (ADR 0021); otherwise None + '단맛: 근거 부족'",
+  "min_weight": {
+   "sweetness": 1.4
+  }
  },
  "calibration": {
   "rule": "high: within+-1 >= 0.75 and Spearman >= 0.3; medium: within+-1 >= 0.55 and Spearman > 0; else low. Buckets with n < 10 use the pooled '*' level; 'cue' is always high.",

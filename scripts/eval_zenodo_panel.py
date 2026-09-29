@@ -282,7 +282,7 @@ def predict(sample: dict, vec, repo, tax, attr_model=None, tag_model=None, featu
     if attr_model is not None:
         pred = with_model_attrs(pred, attr_model.predict(vec))
     if feature_model is not None:
-        pred = with_feature_model(pred, feature_model, parsed, tag_to_cat, tag_ko)
+        pred = with_feature_model(pred, feature_model, parsed, tag_to_cat, tag_ko, neighbors=neighbors)
     tags_before_cues = set(pred.tags)
     pred = with_text_cues(pred, parsed.text, tag_ko=tag_ko, tag_to_cat=tag_to_cat)
     if tag_cooc is not None:        # open variant: co-occurrence top-up (docs/adr/0018-open-tag-cooccurrence.md)

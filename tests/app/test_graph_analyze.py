@@ -337,6 +337,34 @@ def test_open_sweetness_answers_with_neighbour_support_or_a_cue():
     assert c["sweetness"] == 4.0 and "단맛: 근거 부족" not in c["evidence"]      # the guest's own cue answers it
 
 
+class _FewCloseSweetRepo:
+    """FakeRepo whose neighbours carry sweetness for only 2 of 10 (below predict_from_neighbors' MIN_NEIGHBORS=3,
+    so the neighbour average is None), but those 2 are close matches -- similarity-weighted evidence 1.6."""
+    def __new__(cls):
+        from app.models import Neighbor
+        from tests.app.fakes import FakeRepo
+
+        class R(FakeRepo):
+            def neighbors(self, vec, k=10, origin=None, process=None, exclude_id=None, exclude_sources=(),
+                          tagged_only=False):
+                close = [Neighbor(100 + i, f"n{i}", 0.9 - i * 0.2, 4.0, 2, 3.5, ("lemon",)) for i in range(2)]
+                rest = [Neighbor(200 + i, f"m{i}", 0.1, 4.0, 2, None, ()) for i in range(k - 2)]
+                return close + rest
+        return R()
+
+
+def test_open_sweetness_weighted_support_answers_below_the_raw_neighbour_count():
+    deps = fake_deps(repo=_FewCloseSweetRepo(),
+                     feature_model=_v3_model(abstain={"attrs": ["sweetness"], "min_weight": {"sweetness": 1.4}}))
+    c = first_card(run_events(build_analyze_graph(deps), {"text": "에티오피아 예가체프 워시드", "profile": Profile()}))
+    assert c["sweetness"] == 3.8 and "단맛: 근거 부족" not in c["evidence"]    # 0.9 + 0.7 = 1.6 >= 1.4
+    # the ADR 0016 rule alone (no min_weight) still abstains on the same repo -- weighted support is additive,
+    # not a replacement, for an attribute that doesn't configure it.
+    deps2 = fake_deps(repo=_FewCloseSweetRepo(), feature_model=_v3_model(abstain={"attrs": ["sweetness"]}))
+    c2 = first_card(run_events(build_analyze_graph(deps2), {"text": "에티오피아 예가체프 워시드", "profile": Profile()}))
+    assert c2["sweetness"] is None and "단맛: 근거 부족" in c2["evidence"]
+
+
 def test_open_calibrated_confidence_per_attribute_on_the_card():
     cal = {"levels": {"acidity": {"*": "medium", "facts": "medium"}, "body": {"*": "high"},
                       "sweetness": {"*": "low"}}}

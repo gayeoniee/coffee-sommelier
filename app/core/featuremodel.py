@@ -12,10 +12,10 @@ process, roast, variety group, decaf method, SCA flavor-category counts of the b
 import json
 import logging
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
-from app.models import ATTRS
+from app.models import ATTRS, Neighbor
 
 log = logging.getLogger("coffee.featuremodel")
 _warned_missing = False
@@ -193,12 +193,27 @@ class TagLogit:
 ABSTAIN_NOTE = "{attr}: 근거 부족"
 
 
+def neighbour_support_weight(neighbors: "list[Neighbor] | None", attr: str) -> float:
+    """Similarity-weighted count of neighbours that carry `attr` (docs/adr/0021-sweetness-abstention-and-body-
+    nested-check.md): the same per-neighbour weight as app.core.predict.predict_from_neighbors/_weighted
+    (similarity, floored at 0.01), but reported even below that function's MIN_NEIGHBORS=3 cutoff -- a softer,
+    continuous evidence signal for abstention than "the neighbour average exists or it doesn't"."""
+    if not neighbors:
+        return 0.0
+    return round(sum(max(n.similarity, 0.01) for n in neighbors if getattr(n, attr) is not None), 4)
+
+
 @dataclass
 class FeatureModel:
     models: dict[str, _Linear]        # attribute -> ridge; an attribute missing here isn't shipped
     tag_model: TagLogit | None = None
     # attributes answered only with support (ADR 0016): no cue in the text and no neighbour value -> None
     abstain: tuple[str, ...] = ()
+    # attr -> minimum similarity-weighted neighbour count (ADR 0021): an attribute listed here answers with a
+    # weaker signal than a plain neighbour-average ("aggregate has >=3 labelled neighbours") would allow -- see
+    # neighbour_support_weight. An attribute in `abstain` without an entry here keeps the ADR 0016 rule
+    # (neighbour average not None, i.e. >=3 raw labelled neighbours).
+    abstain_min_weight: dict[str, float] = field(default_factory=dict)
     # attr -> support bucket -> "high" | "medium" | "low", from grouped-CV residuals (ADR 0016); "*" = pooled
     calibration: dict[str, dict[str, str]] | None = None
 
@@ -211,10 +226,12 @@ class FeatureModel:
                                  max_tags=int(tags["max_tags"]),
                                  tags={t: _Linear(intercept=float(s["intercept"]), weights=dict(s["weights"]),
                                                   uses_nbr=False) for t, s in tags["tags"].items()})
+        abstain_doc = doc.get("abstain", {})
         return cls(models={a: _Linear(intercept=float(s["intercept"]), weights=dict(s["weights"]),
                                       uses_nbr="nbr" in s["weights"])
                            for a, s in doc["attrs"].items()}, tag_model=tag_model,
-                   abstain=tuple(doc.get("abstain", {}).get("attrs", ())),
+                   abstain=tuple(abstain_doc.get("attrs", ())),
+                   abstain_min_weight={k: float(v) for k, v in abstain_doc.get("min_weight", {}).items()},
                    calibration={a: dict(v) for a, v in doc["calibration"]["levels"].items()}
                    if doc.get("calibration") else None)
 
@@ -286,11 +303,15 @@ def drop_attr_evidence(evidence: list[str], attrs) -> list[str]:
 
 
 def with_feature_model(pred, model: "FeatureModel", parsed, tag_to_cat: dict[str, str],
-                       tag_ko: dict[str, str] | None = None):
+                       tag_ko: dict[str, str] | None = None, neighbors: "list[Neighbor] | None" = None):
     """Open-variant attribute prediction (app/graphs/analyze_bean.py): replace the neighbour average with the
     feature model wherever it shipped the attribute, and append one Korean evidence line per replaced
     attribute. The current `pred` value (the neighbour average) is the model's `nbr` feature. Attributes the
-    model doesn't ship keep the neighbour average; text cues are applied after this and still win."""
+    model doesn't ship keep the neighbour average; text cues are applied after this and still win.
+
+    `neighbors` (the raw, similarity-ranked list the caller already fetched; None in degraded mode, where the
+    caller has only an unranked fallback list) feeds the ADR 0021 weighted-support abstention check for any
+    attribute in `model.abstain_min_weight`; without it that attribute falls back to the ADR 0016 rule."""
     from dataclasses import replace
 
     from app.core.textcues import text_tags
@@ -303,10 +324,18 @@ def with_feature_model(pred, model: "FeatureModel", parsed, tag_to_cat: dict[str
                               decaf_process=parsed.decaf_process, altitude_m=altitude, text=parsed.text,
                               note_categories=cats, neighbor_value=getattr(pred, a))
              for a in model.models}
-    # abstention (ADR 0016): an attribute in model.abstain with no neighbour value (fewer than 3 of the neighbours
-    # carry it) has no support beyond the roasters' gauge conventions -- say so instead of a number. A text cue,
-    # applied after this, still answers it.
-    abstained = [a for a in model.abstain if getattr(pred, a) is None and a in feats]
+
+    def has_support(a: str) -> bool:
+        thr = model.abstain_min_weight.get(a)
+        if thr is not None and neighbors is not None:
+            return neighbour_support_weight(neighbors, a) >= thr
+        return getattr(pred, a) is not None
+
+    # abstention (ADR 0016, weighted variant ADR 0021): an attribute in model.abstain with no support -- neither
+    # a neighbour value (fewer than 3 of the neighbours carry it) nor, where configured, enough similarity-
+    # weighted evidence below that -- has no basis beyond the roasters' gauge conventions; say so instead of a
+    # number. A text cue, applied after this, still answers it.
+    abstained = [a for a in model.abstain if not has_support(a) and a in feats]
     for a in abstained:
         feats.pop(a)
     out = model.predict(feats)

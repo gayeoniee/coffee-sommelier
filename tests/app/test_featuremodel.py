@@ -111,6 +111,68 @@ def test_support_bucket_from_the_input_itself():
     assert support_bucket("body", ParsedBean(text="하우스 블렌드"), t2c, ko) == "sparse"
 
 
+def test_neighbour_support_weight_sums_similarity_of_labelled_neighbours():
+    from app.core.featuremodel import neighbour_support_weight
+    from app.models import Neighbor
+    ns = [Neighbor(1, "a", 0.8, None, None, 3.0), Neighbor(2, "b", 0.7, None, None, None),
+         Neighbor(3, "c", 0.005, None, None, 4.0)]     # similarity floored at 0.01 (matches predict_from_neighbors)
+    assert neighbour_support_weight(ns, "sweetness") == 0.81
+    assert neighbour_support_weight(ns, "acidity") == 0.0
+    assert neighbour_support_weight([], "sweetness") == 0.0
+    assert neighbour_support_weight(None, "sweetness") == 0.0
+
+
+def test_from_doc_parses_abstain_min_weight():
+    fm = FeatureModel.from_doc({"attrs": {}, "abstain": {"attrs": ["sweetness"], "min_weight": {"sweetness": 1.4}}})
+    assert fm.abstain == ("sweetness",) and fm.abstain_min_weight == {"sweetness": 1.4}
+    fm2 = FeatureModel.from_doc({"attrs": {}, "abstain": {"attrs": ["sweetness"]}})
+    assert fm2.abstain_min_weight == {}
+
+
+def _sweet_model(min_weight=None):
+    doc = {"attrs": {"sweetness": {"intercept": 3.8, "weights": {"roast_dark": 0.5}}},
+           "abstain": {"attrs": ["sweetness"], **({"min_weight": {"sweetness": min_weight}} if min_weight else {})}}
+    return FeatureModel.from_doc(doc)
+
+
+def test_with_feature_model_weighted_support_answers_below_the_raw_neighbour_count():
+    from app.core.featuremodel import with_feature_model
+    from app.models import Neighbor, ParsedBean, Prediction
+    parsed = ParsedBean(text="브라질 강배전", origin_country="Brazil", roast_level="dark")
+    pred = Prediction(acidity=3.0, body=3.0, sweetness=None, confidence="high", tags=[], evidence=[], n_neighbors=10)
+    # only 2 of the neighbours carry sweetness (below predict_from_neighbors' MIN_NEIGHBORS=3, so pred.sweetness is
+    # already None), but both are close matches -- similarity-weighted evidence 1.6 clears a 1.4 threshold.
+    neighbors = [Neighbor(1, "a", 0.9, None, None, 3.5), Neighbor(2, "b", 0.7, None, None, 4.0),
+                Neighbor(3, "c", 0.5, None, None, None)]
+    out = with_feature_model(pred, _sweet_model(min_weight=1.4), parsed, {}, {}, neighbors=neighbors)
+    assert out.sweetness == 4.3 and "단맛: 근거 부족" not in out.evidence            # 3.8 + roast_dark 0.5
+
+
+def test_with_feature_model_weighted_support_still_abstains_below_threshold():
+    from app.core.featuremodel import with_feature_model
+    from app.models import Neighbor, ParsedBean, Prediction
+    parsed = ParsedBean(text="브라질 강배전", origin_country="Brazil", roast_level="dark")
+    pred = Prediction(acidity=3.0, body=3.0, sweetness=None, confidence="high", tags=[], evidence=[], n_neighbors=10)
+    neighbors = [Neighbor(1, "a", 0.5, None, None, 3.5)]                          # weight 0.5 < 1.4
+    out = with_feature_model(pred, _sweet_model(min_weight=1.4), parsed, {}, {}, neighbors=neighbors)
+    assert out.sweetness is None and "단맛: 근거 부족" in out.evidence
+
+
+def test_with_feature_model_without_neighbors_arg_keeps_the_legacy_rule():
+    """A caller that doesn't pass `neighbors` (e.g. degraded mode) gets the ADR 0016 behaviour even when the
+    model configures a min_weight -- it never answers on weighted support it can't compute."""
+    from app.core.featuremodel import with_feature_model
+    from app.models import ParsedBean, Prediction
+    parsed = ParsedBean(text="브라질 강배전", origin_country="Brazil", roast_level="dark")
+    pred = Prediction(acidity=3.0, body=3.0, sweetness=None, confidence="high", tags=[], evidence=[], n_neighbors=10)
+    out = with_feature_model(pred, _sweet_model(min_weight=1.4), parsed, {}, {})
+    assert out.sweetness is None and "단맛: 근거 부족" in out.evidence
+    # with a neighbour average present (pred.sweetness not None), the legacy rule still answers with no neighbors
+    pred2 = Prediction(acidity=3.0, body=3.0, sweetness=3.6, confidence="high", tags=[], evidence=[], n_neighbors=10)
+    out2 = with_feature_model(pred2, _sweet_model(min_weight=1.4), parsed, {}, {})
+    assert out2.sweetness == 4.3
+
+
 def test_shipped_config_v3_blocks_load():
     doc = json.loads((settings.CONFIG_DIR / "feature_model_open.json").read_text(encoding="utf-8"))
     fm = FeatureModel.from_doc(doc)
@@ -118,5 +180,6 @@ def test_shipped_config_v3_blocks_load():
         assert fm.tag_model is not None and fm.tag_model.tags and 0 < fm.tag_model.threshold < 1
     if "abstain" in doc:
         assert set(fm.abstain) <= {"acidity", "body", "sweetness"}
+        assert set(fm.abstain_min_weight) <= set(fm.abstain) and all(v > 0 for v in fm.abstain_min_weight.values())
     if "calibration" in doc:
         assert all(set(v.values()) <= {"high", "medium", "low"} for v in fm.calibration.values())
