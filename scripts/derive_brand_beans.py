@@ -21,11 +21,11 @@ So the open profile (brands.yaml bean_open/decaf_bean_open) uses ONLY licence-cl
   1. official_gauge      -- a published 1~5 gauge, as above.
   2. official_cue        -- an explicit cue in the brand's own copy (app/core/textcues.attr_cues); for flavor tags,
      the brand's own flavor words (official_word_tags). No tag model at all.
-  3. open_feature_model  -- acidity/sweetness only: the roaster-gauge feature model (config/feature_model_open.json,
+  3. open_feature_model  -- whatever attributes the roaster-gauge feature model ships (acidity/body/sweetness since ADR 0020) (config/feature_model_open.json,
      app/core/featuremodel.py) on the official FACTS -- single origin country vs blend, official roast level,
      decaf method, the SCA categories of the official flavor words. No neighbour average (a brand bean has
      no neighbours), so its `nbr` feature sits at the centre. Only for beans with official facts
-     (status official/partial); body is not shipped by that model.
+     (status official/partial).
   4. estimate            -- the hand estimate from before ADR 0012 (brands.yaml at ESTIMATE_REV).
 Output: data/eval/brand_beans_derived_open.json plus ready-to-paste YAML lines on stdout.
 
@@ -67,7 +67,7 @@ BRANDS = settings.CURATED_DIR / "brands.yaml"
 OUT = settings.EVAL_DIR / "brand_beans_derived.json"
 OUT_OPEN = settings.EVAL_DIR / "brand_beans_derived_open.json"
 ESTIMATE_REV = "bd0a6f6^"   # brands.yaml before ADR 0012: the hand estimates (notes/news), no model involved
-OPEN_FEATURE_ATTRS = ("acidity", "sweetness")   # what config/feature_model_open.json ships
+OPEN_FEATURE_ATTRS = ("acidity", "body", "sweetness")   # asked of config/feature_model_open.json; it answers what it ships
 MAX_TAGS = 3            # brand profiles carry 2~3 tags (the card shows 3)
 MODEL_TAG_MIN_P = 0.5   # model-only tags (no flavor word in the official text) need at least this probability
 GENERIC_TAGS = {"sweet aromatics", "overall sweet"}   # SCA umbrella nodes: say nothing a guest can taste

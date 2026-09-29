@@ -16,15 +16,15 @@
       },
       "values": {
         "acidity": 2.0,
-        "body": 4.0,
-        "sweetness": 4.5,
+        "body": 3.5,
+        "sweetness": 4.0,
         "flavor_tags": [
           "caramelized"
         ]
       },
       "label_source": {
         "acidity": "open_feature_model",
-        "body": "estimate",
+        "body": "open_feature_model",
         "sweetness": "open_feature_model",
         "flavor_tags": "official_cue"
       },
@@ -32,18 +32,25 @@
         "acidity": {
           "model": 1.78,
           "contributions": {
-            "blend_or_unknown_origin": -0.006,
-            "roast_dark": -0.244,
-            "notes_sweet": -0.18
+            "blend_or_unknown_origin": 0.021,
+            "roast_dark": -0.27,
+            "notes_sweet": -0.155
           }
         },
-        "body": "hand estimate (pre-ADR 0012)",
-        "sweetness": {
-          "model": 4.3,
+        "body": {
+          "model": 3.74,
           "contributions": {
-            "blend_or_unknown_origin": 0.684,
-            "roast_dark": 0.55,
-            "notes_sweet": 0.109
+            "blend_or_unknown_origin": 0.077,
+            "roast_dark": 0.233,
+            "notes_sweet": -0.005
+          }
+        },
+        "sweetness": {
+          "model": 3.85,
+          "contributions": {
+            "blend_or_unknown_origin": 0.38,
+            "roast_dark": 0.352,
+            "notes_sweet": 0.082
           }
         },
         "flavor_tags": {
@@ -73,7 +80,7 @@
       },
       "values": {
         "acidity": 2.0,
-        "body": 3.0,
+        "body": 3.5,
         "sweetness": 3.0,
         "flavor_tags": [
           "chocolate",
@@ -82,26 +89,33 @@
       },
       "label_source": {
         "acidity": "open_feature_model",
-        "body": "estimate",
+        "body": "open_feature_model",
         "sweetness": "open_feature_model",
         "flavor_tags": "estimate"
       },
       "basis": {
         "acidity": {
-          "model": 2.09,
+          "model": 2.22,
           "contributions": {
-            "blend_or_unknown_origin": -0.006,
-            "decaf": -0.103,
-            "decaf_water": -0.014
+            "blend_or_unknown_origin": 0.021,
+            "decaf": -0.012,
+            "decaf_water": 0.031
           }
         },
-        "body": "hand estimate (pre-ADR 0012)",
-        "sweetness": {
-          "model": 2.89,
+        "body": {
+          "model": 3.27,
           "contributions": {
-            "blend_or_unknown_origin": 0.684,
-            "decaf": -0.219,
-            "decaf_water": -0.53
+            "blend_or_unknown_origin": 0.077,
+            "decaf": -0.128,
+            "decaf_water": -0.112
+          }
+        },
+        "sweetness": {
+          "model": 2.86,
+          "contributions": {
+            "blend_or_unknown_origin": 0.38,
+            "decaf": -0.209,
+            "decaf_water": -0.341
           }
         },
         "flavor_tags": {
@@ -134,7 +148,7 @@
       "values": {
         "acidity": 2.6,
         "body": 5.0,
-        "sweetness": 5.0,
+        "sweetness": 4.5,
         "flavor_tags": [
           "chocolate",
           "smoky",
@@ -151,12 +165,12 @@
         "acidity": "gauge 2.6",
         "body": "gauge 5.0",
         "sweetness": {
-          "model": 4.97,
+          "model": 4.41,
           "contributions": {
-            "blend_or_unknown_origin": 0.684,
-            "roast_dark": 0.55,
-            "notes_nutty/cocoa": 0.817,
-            "notes_roasted": -0.043
+            "blend_or_unknown_origin": 0.38,
+            "roast_dark": 0.352,
+            "notes_nutty/cocoa": 0.543,
+            "notes_roasted": 0.103
           }
         },
         "flavor_tags": {
@@ -253,16 +267,16 @@
       },
       "basis": {
         "acidity": {
-          "model": 2.21,
+          "model": 2.2,
           "contributions": {
-            "blend_or_unknown_origin": -0.006
+            "blend_or_unknown_origin": 0.021
           }
         },
         "body": "cue '묵직한 바디' → 4.5",
         "sweetness": {
-          "model": 3.64,
+          "model": 3.41,
           "contributions": {
-            "blend_or_unknown_origin": 0.684
+            "blend_or_unknown_origin": 0.38
           }
         },
         "flavor_tags": {
@@ -289,7 +303,7 @@
       "values": {
         "acidity": 2.0,
         "body": 4.5,
-        "sweetness": 3.5,
+        "sweetness": 3.0,
         "flavor_tags": [
           "nutty",
           "chocolate"
@@ -303,18 +317,18 @@
       },
       "basis": {
         "acidity": {
-          "model": 2.1,
+          "model": 2.19,
           "contributions": {
-            "blend_or_unknown_origin": -0.006,
-            "decaf": -0.103
+            "blend_or_unknown_origin": 0.021,
+            "decaf": -0.012
           }
         },
         "body": "cue '묵직한 바디' → 4.5",
         "sweetness": {
-          "model": 3.42,
+          "model": 3.2,
           "contributions": {
-            "blend_or_unknown_origin": 0.684,
-            "decaf": -0.219
+            "blend_or_unknown_origin": 0.38,
+            "decaf": -0.209
           }
         },
         "flavor_tags": {
@@ -443,12 +457,12 @@
         "acidity": {
           "model": 1.0,
           "contributions": {
-            "region_south_america": -0.084,
-            "country_Brazil": 0.011,
-            "roast_medium-dark": -0.516,
-            "notes_spices": -0.091,
-            "notes_sweet": -0.18,
-            "notes_nutty/cocoa": -0.869
+            "region_south_america": -0.046,
+            "country_Brazil": 0.028,
+            "roast_medium-dark": -0.49,
+            "notes_spices": -0.128,
+            "notes_sweet": -0.155,
+            "notes_nutty/cocoa": -1.153
           }
         },
         "body": "cue '묵직한 바디' → 4.5",
@@ -458,6 +472,7 @@
             "cinnamon",
             "brown sugar",
             "dark chocolate",
+            "nutty",
             "peanuts"
           ]
         }
@@ -468,7 +483,7 @@
         "roast_medium-dark": 1.0,
         "notes_spices": 1.0,
         "notes_sweet": 1.0,
-        "notes_nutty/cocoa": 2.0
+        "notes_nutty/cocoa": 3.0
       },
       "official_note": "빽다방 공식: 시그니처 블렌딩 — 묵직한 바디, 시나몬·브라운슈가·다크초콜릿"
     },
@@ -525,43 +540,55 @@
         ]
       },
       "values": {
-        "acidity": 2.0,
-        "body": 3.0,
-        "sweetness": 3.5,
+        "acidity": 1.5,
+        "body": 4.0,
+        "sweetness": 4.0,
         "flavor_tags": [
+          "nutty",
           "smoky"
         ]
       },
       "label_source": {
         "acidity": "open_feature_model",
-        "body": "estimate",
+        "body": "open_feature_model",
         "sweetness": "open_feature_model",
         "flavor_tags": "official_cue"
       },
       "basis": {
         "acidity": {
-          "model": 1.95,
+          "model": 1.48,
           "contributions": {
-            "blend_or_unknown_origin": -0.006,
-            "notes_roasted": -0.254
+            "blend_or_unknown_origin": 0.021,
+            "notes_nutty/cocoa": -0.385,
+            "notes_roasted": -0.336
           }
         },
-        "body": "hand estimate (pre-ADR 0012)",
-        "sweetness": {
-          "model": 3.6,
+        "body": {
+          "model": 3.76,
           "contributions": {
-            "blend_or_unknown_origin": 0.684,
-            "notes_roasted": -0.043
+            "blend_or_unknown_origin": 0.077,
+            "notes_nutty/cocoa": 0.217,
+            "notes_roasted": 0.036
+          }
+        },
+        "sweetness": {
+          "model": 3.79,
+          "contributions": {
+            "blend_or_unknown_origin": 0.38,
+            "notes_nutty/cocoa": 0.272,
+            "notes_roasted": 0.103
           }
         },
         "flavor_tags": {
           "from_text": [
+            "nutty",
             "smoky"
           ]
         }
       },
       "features": {
         "blend_or_unknown_origin": 1.0,
+        "notes_nutty/cocoa": 1.0,
         "notes_roasted": 1.0
       },
       "official_note": "이디야 공식: 블렌드 원두 — 고소한 단맛·구수한 쓴맛, 스모키하고 풍부한 바디감"
@@ -622,34 +649,43 @@
       },
       "values": {
         "acidity": 1.5,
-        "body": 3.0,
+        "body": 3.5,
         "sweetness": 3.5,
         "flavor_tags": [
-          "chocolate",
           "nutty"
         ]
       },
       "label_source": {
         "acidity": "official_cue",
-        "body": "estimate",
+        "body": "open_feature_model",
         "sweetness": "open_feature_model",
-        "flavor_tags": "estimate"
+        "flavor_tags": "official_cue"
       },
       "basis": {
         "acidity": "cue '부드러운 산미' → 1.5",
-        "body": "hand estimate (pre-ADR 0012)",
-        "sweetness": {
-          "model": 3.64,
+        "body": {
+          "model": 3.73,
           "contributions": {
-            "blend_or_unknown_origin": 0.684
+            "blend_or_unknown_origin": 0.077,
+            "notes_nutty/cocoa": 0.217
+          }
+        },
+        "sweetness": {
+          "model": 3.69,
+          "contributions": {
+            "blend_or_unknown_origin": 0.38,
+            "notes_nutty/cocoa": 0.272
           }
         },
         "flavor_tags": {
-          "from_text": []
+          "from_text": [
+            "nutty"
+          ]
         }
       },
       "features": {
-        "blend_or_unknown_origin": 1.0
+        "blend_or_unknown_origin": 1.0,
+        "notes_nutty/cocoa": 1.0
       },
       "official_note": "할리스 공식: 시그니처 블렌드 — 부드러운 산미와 고소한 풍미, 균형잡힌 바디"
     },
@@ -666,7 +702,7 @@
       },
       "values": {
         "acidity": 2.0,
-        "body": 2.0,
+        "body": 3.5,
         "sweetness": 4.0,
         "flavor_tags": [
           "brown sugar"
@@ -674,19 +710,25 @@
       },
       "label_source": {
         "acidity": "open_feature_model",
-        "body": "estimate",
+        "body": "open_feature_model",
         "sweetness": "official_cue",
         "flavor_tags": "estimate"
       },
       "basis": {
         "acidity": {
-          "model": 2.1,
+          "model": 2.19,
           "contributions": {
-            "blend_or_unknown_origin": -0.006,
-            "decaf": -0.103
+            "blend_or_unknown_origin": 0.021,
+            "decaf": -0.012
           }
         },
-        "body": "hand estimate (pre-ADR 0012)",
+        "body": {
+          "model": 3.38,
+          "contributions": {
+            "blend_or_unknown_origin": 0.077,
+            "decaf": -0.128
+          }
+        },
         "sweetness": "cue '단맛' → 4.0",
         "flavor_tags": {
           "from_text": []
@@ -716,7 +758,7 @@
       },
       "values": {
         "acidity": 4.5,
-        "body": 3.0,
+        "body": 3.5,
         "sweetness": 4.0,
         "flavor_tags": [
           "chocolate"
@@ -724,13 +766,19 @@
       },
       "label_source": {
         "acidity": "official_cue",
-        "body": "estimate",
+        "body": "open_feature_model",
         "sweetness": "official_cue",
         "flavor_tags": "official_cue"
       },
       "basis": {
         "acidity": "cue '상큼한' → 4.5",
-        "body": "hand estimate (pre-ADR 0012)",
+        "body": {
+          "model": 3.73,
+          "contributions": {
+            "blend_or_unknown_origin": 0.077,
+            "notes_nutty/cocoa": 0.217
+          }
+        },
         "sweetness": "cue 'Sweet' → 4.0",
         "flavor_tags": {
           "from_text": [
@@ -758,8 +806,8 @@
       },
       "values": {
         "acidity": 2.0,
-        "body": 3.0,
-        "sweetness": 3.5,
+        "body": 3.5,
+        "sweetness": 3.0,
         "flavor_tags": [
           "chocolate",
           "citrus fruit"
@@ -767,24 +815,30 @@
       },
       "label_source": {
         "acidity": "open_feature_model",
-        "body": "estimate",
+        "body": "open_feature_model",
         "sweetness": "open_feature_model",
         "flavor_tags": "estimate"
       },
       "basis": {
         "acidity": {
-          "model": 2.1,
+          "model": 2.19,
           "contributions": {
-            "blend_or_unknown_origin": -0.006,
-            "decaf": -0.103
+            "blend_or_unknown_origin": 0.021,
+            "decaf": -0.012
           }
         },
-        "body": "hand estimate (pre-ADR 0012)",
-        "sweetness": {
-          "model": 3.42,
+        "body": {
+          "model": 3.38,
           "contributions": {
-            "blend_or_unknown_origin": 0.684,
-            "decaf": -0.219
+            "blend_or_unknown_origin": 0.077,
+            "decaf": -0.128
+          }
+        },
+        "sweetness": {
+          "model": 3.2,
+          "contributions": {
+            "blend_or_unknown_origin": 0.38,
+            "decaf": -0.209
           }
         },
         "flavor_tags": {
@@ -815,7 +869,7 @@
       },
       "values": {
         "acidity": 2.0,
-        "body": 3.0,
+        "body": 3.5,
         "sweetness": 4.0,
         "flavor_tags": [
           "chocolate"
@@ -823,19 +877,25 @@
       },
       "label_source": {
         "acidity": "open_feature_model",
-        "body": "estimate",
+        "body": "open_feature_model",
         "sweetness": "official_cue",
         "flavor_tags": "official_cue"
       },
       "basis": {
         "acidity": {
-          "model": 1.77,
+          "model": 1.82,
           "contributions": {
-            "blend_or_unknown_origin": -0.006,
-            "notes_nutty/cocoa": -0.435
+            "blend_or_unknown_origin": 0.021,
+            "notes_nutty/cocoa": -0.385
           }
         },
-        "body": "hand estimate (pre-ADR 0012)",
+        "body": {
+          "model": 3.73,
+          "contributions": {
+            "blend_or_unknown_origin": 0.077,
+            "notes_nutty/cocoa": 0.217
+          }
+        },
         "sweetness": "cue '달콤' → 4.0",
         "flavor_tags": {
           "from_text": [
@@ -872,21 +932,29 @@
       },
       "label_source": {
         "acidity": "open_feature_model",
-        "body": "estimate",
+        "body": "open_feature_model",
         "sweetness": "official_cue",
         "flavor_tags": "official_cue"
       },
       "basis": {
         "acidity": {
-          "model": 1.97,
+          "model": 2.07,
           "contributions": {
-            "blend_or_unknown_origin": -0.006,
-            "roast_medium": 0.048,
-            "decaf": -0.103,
-            "notes_sweet": -0.18
+            "blend_or_unknown_origin": 0.021,
+            "roast_medium": 0.033,
+            "decaf": -0.012,
+            "notes_sweet": -0.155
           }
         },
-        "body": "hand estimate (pre-ADR 0012)",
+        "body": {
+          "model": 3.22,
+          "contributions": {
+            "blend_or_unknown_origin": 0.077,
+            "roast_medium": -0.162,
+            "decaf": -0.128,
+            "notes_sweet": -0.005
+          }
+        },
         "sweetness": "cue '단맛' → 4.0",
         "flavor_tags": {
           "from_text": [
@@ -920,7 +988,7 @@
       },
       "values": {
         "acidity": 2.0,
-        "body": 4.0,
+        "body": 3.5,
         "sweetness": 4.0,
         "flavor_tags": [
           "dark chocolate",
@@ -929,24 +997,30 @@
       },
       "label_source": {
         "acidity": "open_feature_model",
-        "body": "estimate",
+        "body": "open_feature_model",
         "sweetness": "open_feature_model",
         "flavor_tags": "estimate"
       },
       "basis": {
         "acidity": {
-          "model": 1.96,
+          "model": 1.93,
           "contributions": {
-            "blend_or_unknown_origin": -0.006,
-            "roast_dark": -0.244
+            "blend_or_unknown_origin": 0.021,
+            "roast_dark": -0.27
           }
         },
-        "body": "hand estimate (pre-ADR 0012)",
-        "sweetness": {
-          "model": 4.19,
+        "body": {
+          "model": 3.74,
           "contributions": {
-            "blend_or_unknown_origin": 0.684,
-            "roast_dark": 0.55
+            "blend_or_unknown_origin": 0.077,
+            "roast_dark": 0.233
+          }
+        },
+        "sweetness": {
+          "model": 3.77,
+          "contributions": {
+            "blend_or_unknown_origin": 0.38,
+            "roast_dark": 0.352
           }
         },
         "flavor_tags": {
@@ -972,7 +1046,7 @@
       },
       "values": {
         "acidity": 2.0,
-        "body": 3.0,
+        "body": 3.5,
         "sweetness": 4.0,
         "flavor_tags": [
           "caramelized"
@@ -980,21 +1054,29 @@
       },
       "label_source": {
         "acidity": "open_feature_model",
-        "body": "estimate",
+        "body": "open_feature_model",
         "sweetness": "official_cue",
         "flavor_tags": "official_cue"
       },
       "basis": {
         "acidity": {
-          "model": 1.91,
+          "model": 2.07,
           "contributions": {
-            "blend_or_unknown_origin": -0.006,
-            "decaf": -0.103,
-            "decaf_water": -0.014,
-            "notes_sweet": -0.18
+            "blend_or_unknown_origin": 0.021,
+            "decaf": -0.012,
+            "decaf_water": 0.031,
+            "notes_sweet": -0.155
           }
         },
-        "body": "hand estimate (pre-ADR 0012)",
+        "body": {
+          "model": 3.27,
+          "contributions": {
+            "blend_or_unknown_origin": 0.077,
+            "decaf": -0.128,
+            "decaf_water": -0.112,
+            "notes_sweet": -0.005
+          }
+        },
         "sweetness": "cue '달콤' → 4.0",
         "flavor_tags": {
           "from_text": [

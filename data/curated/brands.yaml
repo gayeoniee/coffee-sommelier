@@ -33,10 +33,10 @@
     flavor_tags: [chocolate, caramelized]
     label_source: {acidity: estimate, body: estimate, sweetness: estimate, flavor_tags: estimate}
     official_note: "스타벅스 공식: 디카페인은 워터 프로세스(99.9%) 원두"
-  bean_open: {acidity: 2, body: 4, sweetness: 4.5, flavor_tags: [caramelized],
-    label_source: {acidity: open_feature_model, body: estimate, sweetness: open_feature_model, flavor_tags: official_cue}, official_note: "스타벅스 공식: 에스프레소 로스트(다크) — 강한 바디감과 캬라멜 향"}
-  decaf_bean_open: {acidity: 2, body: 3, sweetness: 3, flavor_tags: [chocolate, caramelized],
-    label_source: {acidity: open_feature_model, body: estimate, sweetness: open_feature_model, flavor_tags: estimate}, official_note: "스타벅스 공식: 디카페인은 워터 프로세스(99.9%) 원두"}
+  bean_open: {acidity: 2, body: 3.5, sweetness: 4, flavor_tags: [caramelized],
+    label_source: {acidity: open_feature_model, body: open_feature_model, sweetness: open_feature_model, flavor_tags: official_cue}, official_note: "스타벅스 공식: 에스프레소 로스트(다크) — 강한 바디감과 캬라멜 향"}
+  decaf_bean_open: {acidity: 2, body: 3.5, sweetness: 3, flavor_tags: [chocolate, caramelized],
+    label_source: {acidity: open_feature_model, body: open_feature_model, sweetness: open_feature_model, flavor_tags: estimate}, official_note: "스타벅스 공식: 디카페인은 워터 프로세스(99.9%) 원두"}
 - key: brand:twosome
   name: 투썸플레이스
   decaf_available: true
@@ -63,7 +63,7 @@
     flavor_tags: [nutty]
     label_source: {acidity: official_gauge, body: official_gauge, sweetness: official_notes_model, flavor_tags: official_notes_model}
     official_note: "투썸플레이스 공식: 디카페인(다크, 콜롬비아) — 견과류의 고소함과 은은한 단맛, 산미 40%·바디 80%"
-  bean_open: {acidity: 2.6, body: 5, sweetness: 5, flavor_tags: [chocolate, smoky, nutty],
+  bean_open: {acidity: 2.6, body: 5, sweetness: 4.5, flavor_tags: [chocolate, smoky, nutty],
     label_source: {acidity: official_gauge, body: official_gauge, sweetness: open_feature_model, flavor_tags: official_cue}, official_note: "투썸플레이스 공식: 블랙그라운드(다크) — 다크 초콜릿·꽉 찬 바디감·스모키한 향, 산미 40%·바디 100%"}
   decaf_bean_open: {acidity: 2.6, body: 4.2, sweetness: 4, flavor_tags: [nutty],
     label_source: {acidity: official_gauge, body: official_gauge, sweetness: official_cue, flavor_tags: official_cue}, official_note: "투썸플레이스 공식: 디카페인(다크, 콜롬비아) — 견과류의 고소함과 은은한 단맛, 산미 40%·바디 80%"}
@@ -90,7 +90,7 @@
     official_note: "메가MGC커피 공식: 디카페인 — 향과 풍미 그대로, 묵직한 바디감"
   bean_open: {acidity: 2, body: 4.5, sweetness: 3.5, flavor_tags: [nutty, dark chocolate],
     label_source: {acidity: open_feature_model, body: official_cue, sweetness: open_feature_model, flavor_tags: estimate}, official_note: "메가MGC커피 공식: 블렌드 원두 — 풍부한·묵직한 바디감"}
-  decaf_bean_open: {acidity: 2, body: 4.5, sweetness: 3.5, flavor_tags: [nutty, chocolate],
+  decaf_bean_open: {acidity: 2, body: 4.5, sweetness: 3, flavor_tags: [nutty, chocolate],
     label_source: {acidity: open_feature_model, body: official_cue, sweetness: open_feature_model, flavor_tags: estimate}, official_note: "메가MGC커피 공식: 디카페인 — 향과 풍미 그대로, 묵직한 바디감"}
 - key: brand:compose
   name: 컴포즈커피
@@ -174,8 +174,8 @@
     flavor_tags: [chocolate, caramelized]
     label_source: {acidity: estimate, body: estimate, sweetness: estimate, flavor_tags: estimate}
   decaf_option_categories: [COFFEE]
-  bean_open: {acidity: 2, body: 3, sweetness: 3.5, flavor_tags: [smoky],
-    label_source: {acidity: open_feature_model, body: estimate, sweetness: open_feature_model, flavor_tags: official_cue}, official_note: "이디야 공식: 블렌드 원두 — 고소한 단맛·구수한 쓴맛, 스모키하고 풍부한 바디감"}
+  bean_open: {acidity: 1.5, body: 4, sweetness: 4, flavor_tags: [nutty, smoky],
+    label_source: {acidity: open_feature_model, body: open_feature_model, sweetness: open_feature_model, flavor_tags: official_cue}, official_note: "이디야 공식: 블렌드 원두 — 고소한 단맛·구수한 쓴맛, 스모키하고 풍부한 바디감"}
   decaf_bean_open: {acidity: 2, body: 3, sweetness: 3, flavor_tags: [chocolate, caramelized],
     label_source: {acidity: estimate, body: estimate, sweetness: estimate, flavor_tags: estimate}}
 - key: brand:hollys
@@ -207,10 +207,10 @@
     label_source: {acidity: official_notes_model, body: official_notes_model, sweetness: official_notes_model, flavor_tags: official_notes_model}
     official_note: "할리스 공식: 디카페인 콜드브루 — 깔끔한 후미와 은은한 단맛"
   decaf_option_categories: []
-  bean_open: {acidity: 1.5, body: 3, sweetness: 3.5, flavor_tags: [chocolate, nutty],
-    label_source: {acidity: official_cue, body: estimate, sweetness: open_feature_model, flavor_tags: estimate}, official_note: "할리스 공식: 시그니처 블렌드 — 부드러운 산미와 고소한 풍미, 균형잡힌 바디"}
-  decaf_bean_open: {acidity: 2, body: 2, sweetness: 4, flavor_tags: [brown sugar],
-    label_source: {acidity: open_feature_model, body: estimate, sweetness: official_cue, flavor_tags: estimate}, official_note: "할리스 공식: 디카페인 콜드브루 — 깔끔한 후미와 은은한 단맛"}
+  bean_open: {acidity: 1.5, body: 3.5, sweetness: 3.5, flavor_tags: [nutty],
+    label_source: {acidity: official_cue, body: open_feature_model, sweetness: open_feature_model, flavor_tags: official_cue}, official_note: "할리스 공식: 시그니처 블렌드 — 부드러운 산미와 고소한 풍미, 균형잡힌 바디"}
+  decaf_bean_open: {acidity: 2, body: 3.5, sweetness: 4, flavor_tags: [brown sugar],
+    label_source: {acidity: open_feature_model, body: open_feature_model, sweetness: official_cue, flavor_tags: estimate}, official_note: "할리스 공식: 디카페인 콜드브루 — 깔끔한 후미와 은은한 단맛"}
 - key: brand:paulbassett
   name: 폴바셋
   decaf_available: true
@@ -241,10 +241,10 @@
     label_source: {acidity: official_notes_model, body: official_notes_model, sweetness: official_notes_model, flavor_tags: official_notes_model}
     official_note: "폴바셋 공식: 디카페인 — 부드럽고 깔끔한 풍미"
   decaf_option_categories: [커피]
-  bean_open: {acidity: 4.5, body: 3, sweetness: 4, flavor_tags: [chocolate],
-    label_source: {acidity: official_cue, body: estimate, sweetness: official_cue, flavor_tags: official_cue}, official_note: "폴바셋 공식: 시그니처 블렌드(브라질+에티오피아) — 달콤한 초콜릿과 상큼한 신맛"}
-  decaf_bean_open: {acidity: 2, body: 3, sweetness: 3.5, flavor_tags: [chocolate, citrus fruit],
-    label_source: {acidity: open_feature_model, body: estimate, sweetness: open_feature_model, flavor_tags: estimate}, official_note: "폴바셋 공식: 디카페인 — 부드럽고 깔끔한 풍미"}
+  bean_open: {acidity: 4.5, body: 3.5, sweetness: 4, flavor_tags: [chocolate],
+    label_source: {acidity: official_cue, body: open_feature_model, sweetness: official_cue, flavor_tags: official_cue}, official_note: "폴바셋 공식: 시그니처 블렌드(브라질+에티오피아) — 달콤한 초콜릿과 상큼한 신맛"}
+  decaf_bean_open: {acidity: 2, body: 3.5, sweetness: 3, flavor_tags: [chocolate, citrus fruit],
+    label_source: {acidity: open_feature_model, body: open_feature_model, sweetness: open_feature_model, flavor_tags: estimate}, official_note: "폴바셋 공식: 디카페인 — 부드럽고 깔끔한 풍미"}
 - key: brand:bluebottle
   name: 블루보틀
   decaf_available: true
@@ -266,10 +266,10 @@
     flavor_tags: [molasses]
     label_source: {acidity: official_notes_model, body: official_notes_model, sweetness: official_notes_model, flavor_tags: official_notes_model}
     official_note: "블루보틀 공식: 나이트 라이트 디카페인(미디엄) — 당밀의 단맛과 부드러운 질감"
-  bean_open: {acidity: 2, body: 3, sweetness: 4, flavor_tags: [chocolate],
-    label_source: {acidity: open_feature_model, body: estimate, sweetness: official_cue, flavor_tags: official_cue}, official_note: "블루보틀 공식: 헤이즈 벨리 에스프레소 — 인상 깊은 점도, 달콤하고 부드러운 초콜릿"}
+  bean_open: {acidity: 2, body: 3.5, sweetness: 4, flavor_tags: [chocolate],
+    label_source: {acidity: open_feature_model, body: open_feature_model, sweetness: official_cue, flavor_tags: official_cue}, official_note: "블루보틀 공식: 헤이즈 벨리 에스프레소 — 인상 깊은 점도, 달콤하고 부드러운 초콜릿"}
   decaf_bean_open: {acidity: 2, body: 3, sweetness: 4, flavor_tags: [molasses],
-    label_source: {acidity: open_feature_model, body: estimate, sweetness: official_cue, flavor_tags: official_cue}, official_note: "블루보틀 공식: 나이트 라이트 디카페인(미디엄) — 당밀의 단맛과 부드러운 질감"}
+    label_source: {acidity: open_feature_model, body: open_feature_model, sweetness: official_cue, flavor_tags: official_cue}, official_note: "블루보틀 공식: 나이트 라이트 디카페인(미디엄) — 당밀의 단맛과 부드러운 질감"}
 - key: brand:coffeebean
   name: 커피빈
   decaf_available: true
@@ -298,7 +298,7 @@
     label_source: {acidity: official_notes_model, body: official_notes_model, sweetness: official_notes_model, flavor_tags: official_notes_model}
     official_note: "커피빈 공식: 에스프레소 로스트 디카페인 — 캐러멜 향, 흙 맛, 달콤 쌉사름한 끝 맛"
   decaf_option_categories: [에스프레소 음료]
-  bean_open: {acidity: 2, body: 4, sweetness: 4, flavor_tags: [dark chocolate, caramelized],
-    label_source: {acidity: open_feature_model, body: estimate, sweetness: open_feature_model, flavor_tags: estimate}, official_note: "커피빈 공식: 에스프레소 로스트(다크 로스트)"}
-  decaf_bean_open: {acidity: 2, body: 3, sweetness: 4, flavor_tags: [caramelized],
-    label_source: {acidity: open_feature_model, body: estimate, sweetness: official_cue, flavor_tags: official_cue}, official_note: "커피빈 공식: 에스프레소 로스트 디카페인 — 캐러멜 향, 흙 맛, 달콤 쌉사름한 끝 맛"}
+  bean_open: {acidity: 2, body: 3.5, sweetness: 4, flavor_tags: [dark chocolate, caramelized],
+    label_source: {acidity: open_feature_model, body: open_feature_model, sweetness: open_feature_model, flavor_tags: estimate}, official_note: "커피빈 공식: 에스프레소 로스트(다크 로스트)"}
+  decaf_bean_open: {acidity: 2, body: 3.5, sweetness: 4, flavor_tags: [caramelized],
+    label_source: {acidity: open_feature_model, body: open_feature_model, sweetness: official_cue, flavor_tags: official_cue}, official_note: "커피빈 공식: 에스프레소 로스트 디카페인 — 캐러멜 향, 흙 맛, 달콤 쌉사름한 끝 맛"}
