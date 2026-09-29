@@ -266,3 +266,13 @@ def test_peaberry_is_not_berry_and_light_roast_is_not_light_body():
     assert ko_body_cue("에티오피아 라이트 로스트 자스민") is None
     assert ko_body_cue("라이트 배전") is None
     assert ko_body_cue("라이트한 바디") == 2 and ko_body_cue("가벼운 산미") == 2
+
+
+def test_rich_is_not_the_lychee_alias():
+    # docs/adr/0018-open-tag-cooccurrence.md: "리치" (lychee, ADR 0017 alias) is also the loanword "rich"
+    from pipeline.enrich import ko_rule_tags
+    vocab = {"리치": "other fruit", "초콜릿": "chocolate"}
+    assert ko_rule_tags("리치한 바디, 초콜릿", vocab) == ["chocolate"]
+    assert ko_rule_tags("리치함", vocab) == []
+    assert ko_rule_tags("리치하고 달콤한", vocab) == []
+    assert ko_rule_tags("리치, 장미", vocab) == ["other fruit"]

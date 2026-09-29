@@ -415,3 +415,39 @@ def test_tag_fill_skipped_in_degraded_mode():
     run_events(build_analyze_graph(fake_deps(repo=repo, tag_fill=True, embed_fails=True)),
                {"text": "에티오피아 예가체프", "profile": Profile()})
     assert repo.tagged_calls == []
+
+
+# --- open tag co-occurrence (docs/adr/0018-open-tag-cooccurrence.md) ----------------------------------------------
+class _UntaggedRepo:
+    """FakeRepo whose neighbours (plain and tagged-only) share no tag: the guest's note word stays alone."""
+    def __new__(cls):
+        from app.models import Neighbor
+        from tests.app.fakes import FakeRepo
+
+        class R(FakeRepo):
+            def neighbors(self, vec, k=10, origin=None, process=None, exclude_id=None, exclude_sources=(),
+                          tagged_only=False):
+                return [Neighbor(100 + i, f"n{i}", 0.9, 4, 2, 3, ()) for i in range(k)]
+        return R()
+
+
+def _cooc():
+    from app.core.tagcooc import TagCooc
+    return TagCooc.from_beans([{"caramelized", "chocolate"}] * 4 + [{"caramelized"}] * 2 + [{"jasmine"}] * 4)
+
+
+def test_open_lone_note_word_is_topped_up_from_cooccurrence():
+    deps = fake_deps(repo=_UntaggedRepo(), tag_fill=True, tag_cooc=_cooc())
+    c = first_card(run_events(build_analyze_graph(deps), {"text": "온두라스 디카페인 카라멜", "profile": Profile()}))
+    assert c["tags"] == ["caramelized", "chocolate"]            # the guest's word first, then the co-occurring one
+    # (the fake taxonomy has no Korean name for caramelized)
+    assert c["evidence"][:2] == ["문구의 향미: caramelized", "'caramelized' 표기 원두 6개 중 4개가 '초콜릿'도 언급"]
+
+
+def test_cooccurrence_needs_a_guest_word_and_is_off_without_the_table():
+    c = first_card(run_events(build_analyze_graph(fake_deps(repo=_UntaggedRepo(), tag_cooc=_cooc())),
+                              {"text": "온두라스 워시드", "profile": Profile()}))
+    assert c["tags"] == []                                     # no note word typed: nothing to co-occur with
+    c = first_card(run_events(build_analyze_graph(fake_deps(repo=_UntaggedRepo())),
+                              {"text": "온두라스 디카페인 카라멜", "profile": Profile()}))
+    assert c["tags"] == ["caramelized"]                        # full variant / TAG_COOC=off: no table, unchanged

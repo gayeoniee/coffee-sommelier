@@ -15,6 +15,8 @@ from app.core.predict import (
     with_model_tags, with_tag_fill, with_text_cues,
 )
 from app.core.scoring import passes, score_item
+from app.core.tagcooc import with_cooc_fill
+from app.core.textcues import text_tags
 from app.graphs.common import explain_to_stream
 from app.models import Item, ParsedBean, Prediction, Profile, cap_confidence
 from app.tracing import traced
@@ -96,6 +98,11 @@ def build_analyze_graph(deps):
         # explicit cues in the user's own text (app/core/textcues.py) outrank both the model and the neighbour
         # average -- applied last, regardless of degraded/model state (docs/adr/0010-body-heaviness.md).
         pred = with_text_cues(pred, parsed.text, tag_ko=tag_ko, tag_to_cat=tag_to_cat)
+        if deps.tag_cooc is not None:
+            # open variant: a guest's note word still alone after the vote is topped up from what the licence-clean
+            # beans that carry it also say (docs/adr/0018-open-tag-cooccurrence.md); static table, no embedding
+            pred = with_cooc_fill(pred, text_tags(parsed.text, tag_to_cat, tag_ko, free_text=True), deps.tag_cooc,
+                                  tag_ko)
         if deps.feature_model is not None and not degraded:
             # open variant: calibrated per-attribute confidence from grouped-CV residuals (ADR 0016); the
             # degraded path keeps "low"

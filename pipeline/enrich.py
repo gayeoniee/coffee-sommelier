@@ -34,14 +34,17 @@ def tag_vocab(taxonomy: list[TaxonomyNode]) -> list[str]:
 
 # Korean note words the SCA Korean names (data/curated/sca_ko.yaml) don't spell the same way -> SCA tag.
 # Only aliases whose target is in the vocabulary are used.
-KO_TAG_ALIASES = {
+_KO_TAG_ALIASES_BASE = {
     "카라멜": "caramelized", "캬라멜": "caramelized", "카카오": "cocoa", "초코": "chocolate",
     "플로럴": "floral", "벚꽃": "floral", "아카시아": "floral", "국화": "floral", "꽃": "floral",
     "자스민": "jasmine", "와이니": "winey", "건자두": "prune", "흑당": "brown sugar", "브라운슈가": "brown sugar",
     "메이플": "maple syrup", "호두": "nutty", "피스타치오": "nutty", "군밤": "nutty",
     "베르가못": "citrus fruit", "유자": "citrus fruit", "금귤": "citrus fruit", "블랙커런트": "berry",
-    # docs/adr/0017-open-tag-fill.md: the most frequent unmapped Korean note words on roasters_kr/Blue Bottle Korea
-    # cards and words guests type -- each to its nearest SCA wheel node (a fruit the wheel lacks -> "other fruit")
+}
+# docs/adr/0017-open-tag-fill.md: the most frequent unmapped Korean note words on roasters_kr/Blue Bottle Korea
+# cards and words guests type -- each to its nearest SCA wheel node (a fruit the wheel lacks -> "other fruit").
+# Kept apart so scripts/eval_ko_alias_holdout.py can measure them on roasteries they were not picked from.
+KO_TAG_ALIASES_0017 = {
     "초콜렛": "chocolate", "밀크초콜릿": "chocolate", "밀크초콜렛": "chocolate", "다크초콜렛": "dark chocolate",
     "견과류": "nutty", "캐슈넛": "nutty", "마카다미아": "nutty", "로스티드넛": "nutty", "너티": "nutty",
     "고소한": "nutty", "고소함": "nutty", "헤이즐럿": "hazelnut",
@@ -56,6 +59,7 @@ KO_TAG_ALIASES = {
     "얼그레이": "black tea", "로즈마리": "herb-like", "스피어민트": "herb-like", "샹그리아": "winey",
     "오트밀": "cereal",
 }
+KO_TAG_ALIASES = {**_KO_TAG_ALIASES_BASE, **KO_TAG_ALIASES_0017}
 _HANGUL = re.compile(r"[가-힣]")
 _NOTE_SPLIT = re.compile(r"[,/·;\n]+")
 MAX_NOTE_CHARS = 20
@@ -93,8 +97,9 @@ def is_note_list(text: str) -> bool:
 
 
 # Words that contain a note word but are not notes: their span is blocked like a longer hit
-# ("피베리" is peaberry, a bean shape — not berry).
-KO_NON_NOTES = ("피베리",)
+# ("피베리" is peaberry, a bean shape — not berry; "리치한/리치함/리치하다" is "rich", not the lychee alias --
+# docs/adr/0018-open-tag-cooccurrence.md).
+KO_NON_NOTES = ("피베리", "리치한", "리치함", "리치하")
 
 
 def ko_rule_tags(text: str, ko_vocab: dict[str, str]) -> list[str]:

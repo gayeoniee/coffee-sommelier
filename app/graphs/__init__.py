@@ -5,6 +5,7 @@ from typing import Any, AsyncIterator, Awaitable, Callable
 
 from app.core.attrmodel import AttrModel
 from app.core.featuremodel import FeatureModel
+from app.core.tagcooc import TagCooc
 from app.core.tagmodel import TagModel
 
 
@@ -20,6 +21,8 @@ class Deps:
     feature_model: FeatureModel | None = None
     # open variant: top thin neighbour-vote tags up from the tagged-only neighbours (docs/adr/0017-open-tag-fill.md)
     tag_fill: bool = False
+    # open variant: top a guest's lone note word up from tag co-occurrence (docs/adr/0018-open-tag-cooccurrence.md)
+    tag_cooc: TagCooc | None = None
 
 
 def _tag_model_enabled() -> bool:
@@ -55,6 +58,13 @@ def _tag_fill_enabled() -> bool:
     return config.DATA_VARIANT == "open" and os.getenv("TAG_FILL", "").lower() != "off"
 
 
+def _tag_cooc_enabled() -> bool:
+    """Only the open data variant tops the guest's own note words up from the licence-clean co-occurrence table
+    (config/tag_cooc_open.json); the full variant's learned tag model is untouched. `TAG_COOC=off` disables it."""
+    from app import config
+    return config.DATA_VARIANT == "open" and os.getenv("TAG_COOC", "").lower() != "off"
+
+
 def default_deps(repo) -> Deps:
     from app import llm
     from pipeline.llm import embedder_for
@@ -67,5 +77,7 @@ def default_deps(repo) -> Deps:
     tag_model = TagModel.load() if _tag_model_enabled() else None
     attr_model = AttrModel.load() if _attr_model_enabled() else None
     feature_model = FeatureModel.load() if _feature_model_enabled() else None
+    tag_cooc = TagCooc.load() if _tag_cooc_enabled() else None
     return Deps(repo=repo, embed=embed, stream_text=llm.astream_text, chat_json=llm.achat_json,
-               tag_model=tag_model, attr_model=attr_model, feature_model=feature_model, tag_fill=_tag_fill_enabled())
+               tag_model=tag_model, attr_model=attr_model, feature_model=feature_model, tag_fill=_tag_fill_enabled(),
+               tag_cooc=tag_cooc)
