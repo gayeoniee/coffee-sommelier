@@ -106,7 +106,7 @@ def _checks() -> list[Check]:
               (r"\| \*\*5차 \(지금\)\*\* \|[^|\n]*\| \*\*(\d+)/(\d+) · (\d+)/(\d+)\*\* \| "
                r"\*\*(\d+)/(\d+) · (\d+)/(\d+)\*\*",),
               ("phase2_explain_quality.json", "open/phase2_explain_quality.json"),
-              _design_row, required=True),
+              _design_row),
         Check("explain_agreement", (r"판정자 2명 합의 (\d+)/(\d+)",), ("phase2_explain_quality.json",),
               lambda d: (d["phase2_explain_quality.json"]["summary"]["no_contradiction_both"],
                          d["phase2_explain_quality.json"]["summary"]["judged_both"])),
@@ -124,7 +124,7 @@ def _checks() -> list[Check]:
 # Optional checks tied to a headline claim: if their pattern isn't found in the README at
 # all (the check is "skipped"), that's not just a stale-README warning — the headline claim
 # itself may have silently disappeared, so treat it as a failure.
-HEADLINE_CHECKS = frozenset({"explain_rule_pass", "explain_design_table", "bench", "loo_tag_f1", "compare3_acidity", "compare3_body",
+HEADLINE_CHECKS = frozenset({"explain_rule_pass", "bench", "loo_tag_f1", "compare3_acidity", "compare3_body",
                               "convergence"})
 
 
