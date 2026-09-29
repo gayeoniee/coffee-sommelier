@@ -258,7 +258,8 @@ class CachedEmbedder:
         return self.cache[key]
 
 
-def predict(sample: dict, vec, repo, tax, attr_model=None, tag_model=None, feature_model=None, tag_fill=False):
+def predict(sample: dict, vec, repo, tax, attr_model=None, tag_model=None, feature_model=None, tag_fill=False,
+            tag_cooc=None):
     """Mirror of app/graphs/analyze_bean.py `predict` (rules-only parse; embedding succeeded). Returns the final
     Prediction and the tags BEFORE text cues."""
     from app.core.featuremodel import with_feature_model
@@ -284,6 +285,10 @@ def predict(sample: dict, vec, repo, tax, attr_model=None, tag_model=None, featu
         pred = with_feature_model(pred, feature_model, parsed, tag_to_cat, tag_ko)
     tags_before_cues = set(pred.tags)
     pred = with_text_cues(pred, parsed.text, tag_ko=tag_ko, tag_to_cat=tag_to_cat)
+    if tag_cooc is not None:        # open variant: co-occurrence top-up (docs/adr/0018-open-tag-cooccurrence.md)
+        from app.core.tagcooc import with_cooc_fill
+        from app.core.textcues import text_tags
+        pred = with_cooc_fill(pred, text_tags(parsed.text, tag_to_cat, tag_ko, free_text=True), tag_cooc, tag_ko)
     return pred, tags_before_cues
 
 
@@ -310,6 +315,7 @@ def main() -> int:
 
     from app.core.attrmodel import AttrModel
     from app.core.featuremodel import FeatureModel
+    from app.core.tagcooc import TagCooc
     from app.core.tagmodel import TagModel
     from app.models import ATTRS
     from app.repo import Repo
@@ -321,13 +327,14 @@ def main() -> int:
     variants = {
         "full": {"db": args.full_db, "attr_model": AttrModel.load(settings.CONFIG_DIR / "attr_model.json"),
                  "tag_model": TagModel.load(settings.CONFIG_DIR / "tag_model.json"), "feature_model": None,
-                 "tag_fill": False},
+                 "tag_fill": False, "tag_cooc": None},
         "open": {"db": args.open_db, "attr_model": None, "tag_model": None,
-                 "feature_model": FeatureModel.load(settings.CONFIG_DIR / "feature_model_open.json"), "tag_fill": True},
+                 "feature_model": FeatureModel.load(settings.CONFIG_DIR / "feature_model_open.json"), "tag_fill": True,
+                 "tag_cooc": TagCooc.load(settings.CONFIG_DIR / "tag_cooc_open.json")},
         # the open variant with the feature model off (FEATURE_MODEL=off): neighbour averages + text cues -- the
         # baseline every feature-model head has to beat on this external panel too
         "open_neighbours": {"db": args.open_db, "attr_model": None, "tag_model": None, "feature_model": None,
-                            "tag_fill": True},
+                            "tag_fill": True, "tag_cooc": TagCooc.load(settings.CONFIG_DIR / "tag_cooc_open.json")},
     }
     result = {"source": "https://doi.org/10.5281/zenodo.20840464", "file": "panelists_scores_EN.xlsx",
               "file_md5": RECORD_MD5, "attribution": ATTRIBUTION,
@@ -339,7 +346,8 @@ def main() -> int:
                                           "milk drinks": "dark"}},
               "embedding_model": embed.model,
               "model_files_sha1": {f: hashlib.sha1((settings.CONFIG_DIR / f).read_bytes()).hexdigest()[:12]
-                                   for f in ("attr_model.json", "tag_model.json", "feature_model_open.json")
+                                   for f in ("attr_model.json", "tag_model.json", "feature_model_open.json",
+                                             "tag_cooc_open.json")
                                    if (settings.CONFIG_DIR / f).exists()},
               "variants": {}}
     pairs_const = {a: [] for a in ATTRS}
@@ -356,7 +364,7 @@ def main() -> int:
             parsed_origin = 0
             for s in samples:
                 pred, tags_before = predict(s, embed(s["text"]), repo, tax, v["attr_model"], v["tag_model"],
-                                            v["feature_model"], v["tag_fill"])
+                                            v["feature_model"], v["tag_fill"], v["tag_cooc"])
                 from app.core.parse import parse_bean_text
                 parsed_origin += parse_bean_text(s["text"]).origin_country is not None
                 for a in ATTRS:

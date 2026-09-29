@@ -56,7 +56,8 @@
   "model_files_sha1": {
     "attr_model.json": "fa15cf7ad595",
     "tag_model.json": "57fd105ee18b",
-    "feature_model_open.json": "108e3fe13fba"
+    "feature_model_open.json": "108e3fe13fba",
+    "tag_cooc_open.json": "fe08f6f306e3"
   },
   "variants": {
     "full": {

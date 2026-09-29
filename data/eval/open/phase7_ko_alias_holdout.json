@@ -1,0 +1,684 @@
+{
+  "generated_at": "2026-09-29T06:36:38.765407+00:00",
+  "n_items": 433,
+  "roasteries": {
+    "G로스팅": 93,
+    "나무사이로": 124,
+    "매뉴팩트": 34,
+    "모모스커피": 57,
+    "블루보틀": 20,
+    "빈브라더스": 17,
+    "앤트러사이트": 38,
+    "커피 리브레": 28,
+    "프릳츠": 22
+  },
+  "n_aliases": 49,
+  "in_sample": {
+    "base": 0.612,
+    "all49": 0.7875
+  },
+  "held_out": {
+    "n_splits": 126,
+    "base": {
+      "mean": 0.6169,
+      "p5": 0.5627,
+      "p95": 0.6922
+    },
+    "picked_from_other_half": {
+      "mean": 0.6654,
+      "p5": 0.599,
+      "p95": 0.7561
+    },
+    "all49": {
+      "mean": 0.7943,
+      "p5": 0.7286,
+      "p95": 0.8847
+    },
+    "n_picked": {
+      "mean": 20.1825,
+      "p5": 14.0,
+      "p95": 26.0
+    },
+    "gain_picked": 0.0486,
+    "gain_all49": 0.1775
+  },
+  "aliases_never_in_notes": [
+    "견과류",
+    "고소한",
+    "고소함",
+    "리치",
+    "밀크초콜렛",
+    "밀크초콜릿",
+    "베리류",
+    "샤인머스캣",
+    "천도복숭아",
+    "청포도",
+    "패션프루트"
+  ],
+  "aliases_one_roastery": [
+    "갈색설탕",
+    "건과일",
+    "건과일류",
+    "건대추",
+    "건무화과",
+    "구아바",
+    "귤피",
+    "너티",
+    "다크초콜렛",
+    "대추야자",
+    "라일락",
+    "레드커런트",
+    "로스티드넛",
+    "마카다미아",
+    "만다린",
+    "바이올렛",
+    "샹그리아",
+    "스피어민트",
+    "얼그레이",
+    "열대과일",
+    "케인슈가",
+    "크림브륄레",
+    "클레멘타인",
+    "패션프룻",
+    "패션후르츠",
+    "핵과류",
+    "헤이즐럿"
+  ],
+  "per_alias": {
+    "초콜렛": {
+      "tag": "chocolate",
+      "unread_items_hit": 4,
+      "roasteries": [
+        "매뉴팩트",
+        "앤트러사이트"
+      ],
+      "examples": [
+        "다크 초콜렛",
+        "초콜렛"
+      ]
+    },
+    "밀크초콜릿": {
+      "tag": "chocolate",
+      "unread_items_hit": 0,
+      "roasteries": [],
+      "examples": []
+    },
+    "밀크초콜렛": {
+      "tag": "chocolate",
+      "unread_items_hit": 0,
+      "roasteries": [],
+      "examples": []
+    },
+    "다크초콜렛": {
+      "tag": "dark chocolate",
+      "unread_items_hit": 2,
+      "roasteries": [
+        "앤트러사이트"
+      ],
+      "examples": [
+        "다크 초콜렛"
+      ]
+    },
+    "견과류": {
+      "tag": "nutty",
+      "unread_items_hit": 0,
+      "roasteries": [],
+      "examples": []
+    },
+    "캐슈넛": {
+      "tag": "nutty",
+      "unread_items_hit": 3,
+      "roasteries": [
+        "G로스팅",
+        "앤트러사이트"
+      ],
+      "examples": [
+        "캐슈넛"
+      ]
+    },
+    "마카다미아": {
+      "tag": "nutty",
+      "unread_items_hit": 1,
+      "roasteries": [
+        "매뉴팩트"
+      ],
+      "examples": [
+        "마카다미아"
+      ]
+    },
+    "로스티드넛": {
+      "tag": "nutty",
+      "unread_items_hit": 2,
+      "roasteries": [
+        "모모스커피"
+      ],
+      "examples": [
+        "로스티드 넛"
+      ]
+    },
+    "너티": {
+      "tag": "nutty",
+      "unread_items_hit": 1,
+      "roasteries": [
+        "매뉴팩트"
+      ],
+      "examples": [
+        "너티"
+      ]
+    },
+    "고소한": {
+      "tag": "nutty",
+      "unread_items_hit": 0,
+      "roasteries": [],
+      "examples": []
+    },
+    "고소함": {
+      "tag": "nutty",
+      "unread_items_hit": 0,
+      "roasteries": [],
+      "examples": []
+    },
+    "헤이즐럿": {
+      "tag": "hazelnut",
+      "unread_items_hit": 1,
+      "roasteries": [
+        "G로스팅"
+      ],
+      "examples": [
+        "헤이즐럿"
+      ]
+    },
+    "갈색설탕": {
+      "tag": "brown sugar",
+      "unread_items_hit": 9,
+      "roasteries": [
+        "G로스팅"
+      ],
+      "examples": [
+        "갈색설탕"
+      ]
+    },
+    "케인슈가": {
+      "tag": "brown sugar",
+      "unread_items_hit": 2,
+      "roasteries": [
+        "모모스커피"
+      ],
+      "examples": [
+        "케인 슈가"
+      ]
+    },
+    "버터스카치": {
+      "tag": "caramelized",
+      "unread_items_hit": 2,
+      "roasteries": [
+        "나무사이로",
+        "매뉴팩트"
+      ],
+      "examples": [
+        "버터스카치"
+      ]
+    },
+    "크림브륄레": {
+      "tag": "caramelized",
+      "unread_items_hit": 1,
+      "roasteries": [
+        "나무사이로"
+      ],
+      "examples": [
+        "크림브륄레"
+      ]
+    },
+    "감귤": {
+      "tag": "citrus fruit",
+      "unread_items_hit": 4,
+      "roasteries": [
+        "G로스팅",
+        "모모스커피"
+      ],
+      "examples": [
+        "감귤류"
+      ]
+    },
+    "감귤류": {
+      "tag": "citrus fruit",
+      "unread_items_hit": 4,
+      "roasteries": [
+        "G로스팅",
+        "모모스커피"
+      ],
+      "examples": [
+        "감귤류"
+      ]
+    },
+    "귤피": {
+      "tag": "citrus fruit",
+      "unread_items_hit": 1,
+      "roasteries": [
+        "빈브라더스"
+      ],
+      "examples": [
+        "귤피"
+      ]
+    },
+    "만다린": {
+      "tag": "orange",
+      "unread_items_hit": 1,
+      "roasteries": [
+        "매뉴팩트"
+      ],
+      "examples": [
+        "만다린"
+      ]
+    },
+    "클레멘타인": {
+      "tag": "orange",
+      "unread_items_hit": 1,
+      "roasteries": [
+        "빈브라더스"
+      ],
+      "examples": [
+        "클레멘타인"
+      ]
+    },
+    "레드커런트": {
+      "tag": "berry",
+      "unread_items_hit": 2,
+      "roasteries": [
+        "앤트러사이트"
+      ],
+      "examples": [
+        "레드커런트"
+      ]
+    },
+    "베리류": {
+      "tag": "berry",
+      "unread_items_hit": 0,
+      "roasteries": [],
+      "examples": []
+    },
+    "청포도": {
+      "tag": "grape",
+      "unread_items_hit": 0,
+      "roasteries": [],
+      "examples": []
+    },
+    "샤인머스캣": {
+      "tag": "grape",
+      "unread_items_hit": 0,
+      "roasteries": [],
+      "examples": []
+    },
+    "살구": {
+      "tag": "peach",
+      "unread_items_hit": 6,
+      "roasteries": [
+        "G로스팅",
+        "나무사이로"
+      ],
+      "examples": [
+        "살구",
+        "살구잼"
+      ]
+    },
+    "핵과류": {
+      "tag": "peach",
+      "unread_items_hit": 2,
+      "roasteries": [
+        "모모스커피"
+      ],
+      "examples": [
+        "핵과류"
+      ]
+    },
+    "천도복숭아": {
+      "tag": "peach",
+      "unread_items_hit": 0,
+      "roasteries": [],
+      "examples": []
+    },
+    "자두": {
+      "tag": "other fruit",
+      "unread_items_hit": 6,
+      "roasteries": [
+        "G로스팅",
+        "나무사이로",
+        "모모스커피",
+        "커피 리브레"
+      ],
+      "examples": [
+        "자두"
+      ]
+    },
+    "망고": {
+      "tag": "other fruit",
+      "unread_items_hit": 3,
+      "roasteries": [
+        "G로스팅",
+        "매뉴팩트"
+      ],
+      "examples": [
+        "망고"
+      ]
+    },
+    "구아바": {
+      "tag": "other fruit",
+      "unread_items_hit": 2,
+      "roasteries": [
+        "나무사이로"
+      ],
+      "examples": [
+        "구아바"
+      ]
+    },
+    "리치": {
+      "tag": "other fruit",
+      "unread_items_hit": 0,
+      "roasteries": [],
+      "examples": []
+    },
+    "패션프룻": {
+      "tag": "other fruit",
+      "unread_items_hit": 2,
+      "roasteries": [
+        "나무사이로"
+      ],
+      "examples": [
+        "패션프룻"
+      ]
+    },
+    "패션후르츠": {
+      "tag": "other fruit",
+      "unread_items_hit": 1,
+      "roasteries": [
+        "매뉴팩트"
+      ],
+      "examples": [
+        "패션후르츠"
+      ]
+    },
+    "패션프루트": {
+      "tag": "other fruit",
+      "unread_items_hit": 0,
+      "roasteries": [],
+      "examples": []
+    },
+    "열대과일": {
+      "tag": "other fruit",
+      "unread_items_hit": 1,
+      "roasteries": [
+        "프릳츠"
+      ],
+      "examples": [
+        "열대과일"
+      ]
+    },
+    "건과일": {
+      "tag": "dried fruit",
+      "unread_items_hit": 2,
+      "roasteries": [
+        "모모스커피"
+      ],
+      "examples": [
+        "건과일류"
+      ]
+    },
+    "건과일류": {
+      "tag": "dried fruit",
+      "unread_items_hit": 2,
+      "roasteries": [
+        "모모스커피"
+      ],
+      "examples": [
+        "건과일류"
+      ]
+    },
+    "건무화과": {
+      "tag": "dried fruit",
+      "unread_items_hit": 1,
+      "roasteries": [
+        "프릳츠"
+      ],
+      "examples": [
+        "건무화과"
+      ]
+    },
+    "건대추": {
+      "tag": "dried fruit",
+      "unread_items_hit": 1,
+      "roasteries": [
+        "프릳츠"
+      ],
+      "examples": [
+        "건대추"
+      ]
+    },
+    "대추야자": {
+      "tag": "dried fruit",
+      "unread_items_hit": 2,
+      "roasteries": [
+        "앤트러사이트"
+      ],
+      "examples": [
+        "데이트(대추야자)"
+      ]
+    },
+    "히비스커스": {
+      "tag": "floral",
+      "unread_items_hit": 3,
+      "roasteries": [
+        "나무사이로",
+        "블루보틀"
+      ],
+      "examples": [
+        "히비스커스"
+      ]
+    },
+    "라일락": {
+      "tag": "floral",
+      "unread_items_hit": 1,
+      "roasteries": [
+        "빈브라더스"
+      ],
+      "examples": [
+        "라일락"
+      ]
+    },
+    "바이올렛": {
+      "tag": "floral",
+      "unread_items_hit": 1,
+      "roasteries": [
+        "빈브라더스"
+      ],
+      "examples": [
+        "바이올렛"
+      ]
+    },
+    "얼그레이": {
+      "tag": "black tea",
+      "unread_items_hit": 1,
+      "roasteries": [
+        "빈브라더스"
+      ],
+      "examples": [
+        "얼그레이"
+      ]
+    },
+    "로즈마리": {
+      "tag": "herb-like",
+      "unread_items_hit": 2,
+      "roasteries": [
+        "G로스팅",
+        "나무사이로"
+      ],
+      "examples": [
+        "로즈마리"
+      ]
+    },
+    "스피어민트": {
+      "tag": "herb-like",
+      "unread_items_hit": 1,
+      "roasteries": [
+        "모모스커피"
+      ],
+      "examples": [
+        "스피어민트"
+      ]
+    },
+    "샹그리아": {
+      "tag": "winey",
+      "unread_items_hit": 1,
+      "roasteries": [
+        "프릳츠"
+      ],
+      "examples": [
+        "샹그리아"
+      ]
+    },
+    "오트밀": {
+      "tag": "cereal",
+      "unread_items_hit": 2,
+      "roasteries": [
+        "G로스팅",
+        "매뉴팩트"
+      ],
+      "examples": [
+        "오트밀"
+      ]
+    }
+  },
+  "ambiguous": {
+    "리치": "'리치한 바디'/'리치함' = rich (not lychee) -- blocked via KO_NON_NOTES"
+  },
+  "contexts": {
+    "갈색설탕": [
+      "갈색설탕"
+    ],
+    "감귤": [
+      "감귤류"
+    ],
+    "감귤류": [
+      "감귤류"
+    ],
+    "건과일": [
+      "건과일류"
+    ],
+    "건과일류": [
+      "건과일류"
+    ],
+    "건대추": [
+      "건대추"
+    ],
+    "건무화과": [
+      "건무화과"
+    ],
+    "견과류": [
+      "견과류"
+    ],
+    "구아바": [
+      "구아바"
+    ],
+    "귤피": [
+      "귤피"
+    ],
+    "너티": [
+      "너티"
+    ],
+    "다크초콜렛": [
+      "다크 초콜렛"
+    ],
+    "대추야자": [
+      "데이트(대추야자)"
+    ],
+    "라일락": [
+      "라일락"
+    ],
+    "레드커런트": [
+      "레드커런트"
+    ],
+    "로스티드넛": [
+      "로스티드 넛"
+    ],
+    "로즈마리": [
+      "로즈마리"
+    ],
+    "마카다미아": [
+      "마카다미아"
+    ],
+    "만다린": [
+      "만다린"
+    ],
+    "망고": [
+      "망고"
+    ],
+    "밀크초콜릿": [
+      "밀크초콜릿"
+    ],
+    "바이올렛": [
+      "바이올렛"
+    ],
+    "버터스카치": [
+      "버터스카치"
+    ],
+    "베리류": [
+      "베리류"
+    ],
+    "살구": [
+      "살구",
+      "살구잼"
+    ],
+    "샹그리아": [
+      "샹그리아"
+    ],
+    "스피어민트": [
+      "스피어민트"
+    ],
+    "얼그레이": [
+      "얼그레이"
+    ],
+    "열대과일": [
+      "열대과일"
+    ],
+    "오트밀": [
+      "오트밀"
+    ],
+    "자두": [
+      "건자두",
+      "자두"
+    ],
+    "천도복숭아": [
+      "천도복숭아"
+    ],
+    "초콜렛": [
+      "다크 초콜렛",
+      "초콜렛"
+    ],
+    "캐슈넛": [
+      "캐슈넛"
+    ],
+    "케인슈가": [
+      "케인 슈가"
+    ],
+    "크림브륄레": [
+      "크림브륄레"
+    ],
+    "클레멘타인": [
+      "클레멘타인"
+    ],
+    "패션프룻": [
+      "패션프룻"
+    ],
+    "패션후르츠": [
+      "패션후르츠"
+    ],
+    "핵과류": [
+      "핵과류"
+    ],
+    "헤이즐럿": [
+      "헤이즐럿"
+    ],
+    "히비스커스": [
+      "히비스커스"
+    ]
+  }
+}

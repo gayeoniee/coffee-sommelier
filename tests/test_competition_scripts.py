@@ -334,3 +334,18 @@ class TestRenderOpenTagFill:
         assert "phase6_open_tag_fill.json" in text
         assert "| 노트 한 단어 입력 — E1 | 0.180 → 0.141 | 0.076 → 0.076 |" in text and "1.84 → 2.51" in text
         assert text.index("phase6_open_tag_fill.json") < text.index("numbers:end -->")
+
+
+class TestRenderOpenTagCooc:
+    def test_renders_before_to_after_rows(self, tmp_path):
+        eval_dir = tmp_path / "ev"
+        eval_dir.mkdir()
+        before = {"precision": 0.141, "recall": 0.113, "f1": 0.126, "category_f1": 0.507, "tags_shown": 2.511,
+                  "share_le1": 0.088}
+        after = dict(before, precision=0.139, share_le1=0.066)
+        _write(eval_dir / "phase7_open_tag_cooc.json", {"summary": {
+            k: {"n": 1, "before": before, "after": after} for k in ("e1_notes1", "e2_notes1")}})
+        text = render_numbers.main(eval_dir)
+        assert "| 노트 한 단어 입력 — E1 | 0.141 → 0.139 |" in text and "8.8% → 6.6%" in text
+        assert "노트 없는 입력 — E1" not in text.split("phase7_open_tag_cooc.json")[1]
+        assert text.index("phase7_open_tag_cooc.json") < text.index("numbers:end -->")

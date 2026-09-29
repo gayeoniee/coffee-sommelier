@@ -228,6 +228,24 @@ def render_open_tag_fill(fill: dict) -> list[str]:
     return lines
 
 
+def render_open_tag_cooc(cooc: dict) -> list[str]:
+    """Open tag co-occurrence fill (docs/adr/0018-open-tag-cooccurrence.md): current main vs shipped, per input."""
+    rows = (("노트 없는 입력 — E1", "e1_free"), ("노트 없는 입력 — E2", "e2_free"),
+            ("노트 한 단어 입력 — E1", "e1_notes1"), ("노트 한 단어 입력 — E2", "e2_notes1"),
+            ("노트 전체 입력 — E1", "e1_notesall"), ("노트 전체 입력 — E2", "e2_notesall"))
+    lines = ["**오픈판 향미 태그 공기 채우기: 이전 → 탑재** (`phase7_open_tag_cooc.json`)", "",
+             "| 입력 | 정밀도 | 태그 F1 | 대분류 F1 | 원두당 태그 수 | 태그 1개 이하 |", "|---|---|---|---|---|---|"]
+    for label, key in rows:
+        if key not in cooc["summary"]:
+            continue
+        b, a = cooc["summary"][key]["before"], cooc["summary"][key]["after"]
+        cells = [f"{b[c]:.3f} → {a[c]:.3f}" for c in ("precision", "f1", "category_f1")]
+        cells.append(f"{b['tags_shown']:.2f} → {a['tags_shown']:.2f}")
+        cells.append(f"{b['share_le1'] * 100:.1f}% → {a['share_le1'] * 100:.1f}%")
+        lines.append(f"| {label} | " + " | ".join(cells) + " |")
+    return lines
+
+
 def main(eval_dir: str | Path) -> str:
     eval_dir = Path(eval_dir)
     parts: list[str] = [NUMBERS_START, "", "### 수치 (자동 생성 — scripts/competition/render_numbers.py, 손으로 고치지 마세요)", ""]
@@ -276,6 +294,10 @@ def main(eval_dir: str | Path) -> str:
     fill = _load(eval_dir, "phase6_open_tag_fill.json")
     if fill is not None and fill.get("summary"):
         parts += render_open_tag_fill(fill) + [""]
+
+    cooc = _load(eval_dir, "phase7_open_tag_cooc.json")
+    if cooc is not None and cooc.get("summary"):
+        parts += render_open_tag_cooc(cooc) + [""]
 
     parts.append(NUMBERS_END)
     return "\n".join(parts) + "\n"
