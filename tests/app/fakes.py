@@ -136,7 +136,7 @@ class FakeRepo:
         return [{"id": c.coffee_id, "name": c.name, "roaster": "R", "origin_country": c.origin_country,
                  "is_decaf": c.is_decaf} for c in self.coffees.values() if q in c.name.lower()][:limit]
 
-    def neighbors(self, vec, k=10, origin=None, process=None, exclude_id=None):
+    def neighbors(self, vec, k=10, origin=None, process=None, exclude_id=None, exclude_sources=(), tagged_only=False):
         return [Neighbor(100 + i, f"n{i}", 0.9 - i * 0.05, 4 + (i % 2) * 0.5, 2, 3, ("lemon",)) for i in range(k)]
 
     def fallback_neighbors(self, origin, process, limit=50):
@@ -149,7 +149,7 @@ class FakeRepo:
 
 
 def fake_deps(repo=None, tokens=("잘 ", "맞아요"), fail_keys=(), parse=None, embed_fails=False,
-              json_fails=False, tag_model=None, attr_model=None, feature_model=None) -> Deps:
+              json_fails=False, tag_model=None, attr_model=None, feature_model=None, tag_fill=False) -> Deps:
     repo = repo or FakeRepo()
     calls = {"stream": 0, "json": 0, "embed": 0}
 
@@ -175,7 +175,7 @@ def fake_deps(repo=None, tokens=("잘 ", "맞아요"), fail_keys=(), parse=None,
         return [0.0] * 8
 
     d = Deps(repo=repo, embed=embed, stream_text=stream_text, chat_json=chat_json, tag_model=tag_model,
-            attr_model=attr_model, feature_model=feature_model)
+            attr_model=attr_model, feature_model=feature_model, tag_fill=tag_fill)
     d.calls = calls
     return d
 

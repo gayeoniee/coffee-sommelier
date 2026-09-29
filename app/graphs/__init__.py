@@ -18,6 +18,8 @@ class Deps:
     attr_model: AttrModel | None = None    # learned attribute regressor; None -> falls back to the neighbour average
     # open-variant interpretable feature model (docs/adr/0011-roaster-gauges-feature-model.md); None -> neighbour avg
     feature_model: FeatureModel | None = None
+    # open variant: top thin neighbour-vote tags up from the tagged-only neighbours (docs/adr/0017-open-tag-fill.md)
+    tag_fill: bool = False
 
 
 def _tag_model_enabled() -> bool:
@@ -46,6 +48,13 @@ def _feature_model_enabled() -> bool:
     return config.DATA_VARIANT == "open" and os.getenv("FEATURE_MODEL", "").lower() != "off"
 
 
+def _tag_fill_enabled() -> bool:
+    """Only the open data variant fills thin tag votes from tagged-only neighbours (its pool is ~75% untagged CQI
+    rows; the full variant's learned tag model replaces the vote anyway). `TAG_FILL=off` disables it."""
+    from app import config
+    return config.DATA_VARIANT == "open" and os.getenv("TAG_FILL", "").lower() != "off"
+
+
 def default_deps(repo) -> Deps:
     from app import llm
     from pipeline.llm import embedder_for
@@ -59,4 +68,4 @@ def default_deps(repo) -> Deps:
     attr_model = AttrModel.load() if _attr_model_enabled() else None
     feature_model = FeatureModel.load() if _feature_model_enabled() else None
     return Deps(repo=repo, embed=embed, stream_text=llm.astream_text, chat_json=llm.achat_json,
-               tag_model=tag_model, attr_model=attr_model, feature_model=feature_model)
+               tag_model=tag_model, attr_model=attr_model, feature_model=feature_model, tag_fill=_tag_fill_enabled())

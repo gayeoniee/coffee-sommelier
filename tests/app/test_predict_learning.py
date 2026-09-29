@@ -134,3 +134,27 @@ def test_simulated_users_converge():
     r = simulate_convergence(grid, {}, users=100, steps=10, seed=1)
     assert len(r["mae_by_step"]) == 11
     assert r["mae_by_step"][-1] < r["mae_by_step"][0] - 0.05
+
+
+def test_fill_tags_tops_up_without_reordering():
+    from app.core.predict import fill_tags
+    assert fill_tags([], ["a", "b", "c"]) == ["a", "b"]
+    assert fill_tags(["x"], ["x", "a", "b"]) == ["x", "a"]
+    assert fill_tags(["x", "y", "z"], ["a"]) == ["x", "y", "z"]          # never drops the vote's own tags
+    assert fill_tags(["x"], []) == ["x"]
+
+
+def test_with_tag_fill_adds_tagged_vote_tags_and_evidence_after_the_vote_lines():
+    from app.core.predict import with_tag_fill
+    plain = [Neighbor(i, f"n{i}", 0.9, 4, 3, 3, ("lemon",) if i < 3 else ()) for i in range(10)]
+    pred = predict_from_neighbors(plain, {"lemon": "레몬"})
+    assert pred.tags == ["lemon"]
+    tagged = [Neighbor(20 + i, f"t{i}", 0.8, 4, 3, 3, ("jasmine", "lemon") if i < 4 else ("berry",)) for i in range(10)]
+    out = with_tag_fill(pred, tagged, {"jasmine": "재스민"})
+    assert out.tags == ["lemon", "berry"]
+    assert out.evidence[0].startswith("유사 원두 10개 중 3개에서 '레몬'")
+    assert out.evidence[1].startswith("유사 원두(향미 표기 있는 것) 10개 중")
+    assert (out.acidity, out.confidence, out.n_neighbors) == (pred.acidity, pred.confidence, pred.n_neighbors)
+    full = predict_from_neighbors([Neighbor(i, "n", 0.9, 4, 3, 3, ("lemon", "berry")) for i in range(10)])
+    assert with_tag_fill(full, tagged) is full                            # already >= 2 tags: untouched
+    assert with_tag_fill(pred, []) is pred

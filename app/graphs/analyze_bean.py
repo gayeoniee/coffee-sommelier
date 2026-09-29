@@ -11,7 +11,8 @@ from app.core.explain import card, template_explanation
 from app.core.featuremodel import calibrated_confidence, with_feature_model
 from app.core.parse import BeanParse, bean_parse_messages, merge_llm_parse, needs_llm_parse, parse_bean_text
 from app.core.predict import (
-    item_from_prediction, predict_from_neighbors, with_model_attrs, with_model_tags, with_text_cues,
+    FILL_EXCLUDE_SOURCES, FILL_MIN_TAGS, item_from_prediction, predict_from_neighbors, with_model_attrs,
+    with_model_tags, with_tag_fill, with_text_cues,
 )
 from app.core.scoring import passes, score_item
 from app.graphs.common import explain_to_stream
@@ -70,6 +71,13 @@ def build_analyze_graph(deps):
         if degraded:
             pred = replace(pred, confidence="low")
         else:
+            if deps.tag_fill and len(pred.tags) < FILL_MIN_TAGS:
+                # open variant: most of the pool carries no flavor tags, so a thin vote is topped up from the k
+                # nearest TAGGED beans (docs/adr/0017-open-tag-fill.md); a later tag model still replaces it
+                tagged = await asyncio.to_thread(deps.repo.neighbors, vec, K_NEIGHBORS, parsed.origin_country,
+                                                 parsed.process, exclude_sources=FILL_EXCLUDE_SOURCES,
+                                                 tagged_only=True)
+                pred = with_tag_fill(pred, tagged, tag_ko, base_rates=base_rates)
             if deps.tag_model is not None:
                 # the learned tag model (app/core/tagmodel.py) replaces the neighbour-vote's tags when it's
                 # loaded and the embedding call succeeded; confidence/n_neighbors stay from predict_from_neighbors.

@@ -40,6 +40,21 @@ KO_TAG_ALIASES = {
     "자스민": "jasmine", "와이니": "winey", "건자두": "prune", "흑당": "brown sugar", "브라운슈가": "brown sugar",
     "메이플": "maple syrup", "호두": "nutty", "피스타치오": "nutty", "군밤": "nutty",
     "베르가못": "citrus fruit", "유자": "citrus fruit", "금귤": "citrus fruit", "블랙커런트": "berry",
+    # docs/adr/0017-open-tag-fill.md: the most frequent unmapped Korean note words on roasters_kr/Blue Bottle Korea
+    # cards and words guests type -- each to its nearest SCA wheel node (a fruit the wheel lacks -> "other fruit")
+    "초콜렛": "chocolate", "밀크초콜릿": "chocolate", "밀크초콜렛": "chocolate", "다크초콜렛": "dark chocolate",
+    "견과류": "nutty", "캐슈넛": "nutty", "마카다미아": "nutty", "로스티드넛": "nutty", "너티": "nutty",
+    "고소한": "nutty", "고소함": "nutty", "헤이즐럿": "hazelnut",
+    "갈색설탕": "brown sugar", "케인슈가": "brown sugar", "버터스카치": "caramelized", "크림브륄레": "caramelized",
+    "감귤": "citrus fruit", "감귤류": "citrus fruit", "귤피": "citrus fruit", "만다린": "orange", "클레멘타인": "orange",
+    "레드커런트": "berry", "베리류": "berry", "청포도": "grape", "샤인머스캣": "grape",
+    "살구": "peach", "핵과류": "peach", "천도복숭아": "peach",
+    "자두": "other fruit", "망고": "other fruit", "구아바": "other fruit", "리치": "other fruit",
+    "패션프룻": "other fruit", "패션후르츠": "other fruit", "패션프루트": "other fruit", "열대과일": "other fruit",
+    "건과일": "dried fruit", "건과일류": "dried fruit", "건무화과": "dried fruit", "건대추": "dried fruit",
+    "대추야자": "dried fruit", "히비스커스": "floral", "라일락": "floral", "바이올렛": "floral",
+    "얼그레이": "black tea", "로즈마리": "herb-like", "스피어민트": "herb-like", "샹그리아": "winey",
+    "오트밀": "cereal",
 }
 _HANGUL = re.compile(r"[가-힣]")
 _NOTE_SPLIT = re.compile(r"[,/·;\n]+")

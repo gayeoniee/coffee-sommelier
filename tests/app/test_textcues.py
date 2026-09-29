@@ -112,3 +112,16 @@ def test_text_tags_free_text_card_line_reads_whole_korean_note_tokens():
     # prose stays out even in free-text mode
     assert text_tags("에티오피아 원두는 자몽 향이 나는 것으로 유명한 산지에서 재배됩니다.", TAG_TO_CAT, TAG_KO,
                      free_text=True) == []
+
+
+def test_text_tags_reads_common_korean_note_words_guests_type():
+    # docs/adr/0017-open-tag-fill.md: aliases to the nearest SCA wheel node, in card lines and note lists alike
+    t2c = {**TAG_TO_CAT, "nutty": "nutty/cocoa", "grape": "fruity", "peach": "fruity", "other fruit": "fruity",
+           "brown sugar": "sweet", "floral": "floral"}
+    ko = {**TAG_KO, "nutty": "견과", "grape": "포도", "peach": "복숭아", "other fruit": "기타 과일",
+          "brown sugar": "흑설탕", "floral": "꽃향"}
+    assert text_tags("과테말라 우에우에테낭고 중배전 견과류 밀크초콜릿", t2c, ko, free_text=True) == ["nutty", "chocolate"]
+    assert text_tags("시다모 내추럴 청포도 리치", t2c, ko, free_text=True) == ["grape", "other fruit"]
+    assert text_tags("살구, 자두, 갈색설탕, 히비스커스", t2c, ko) == ["peach", "other fruit", "brown sugar", "floral"]
+    assert text_tags("브라질 산토스 고소한 맛", t2c, ko, free_text=True) == ["nutty"]
+    assert text_tags("건자두, 커피나무", {**t2c, "prune": "fruity"}, {**ko, "prune": "말린 자두"}) == ["prune"]

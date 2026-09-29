@@ -239,10 +239,15 @@ class Repo:
         return json.loads(r["e"]) if r and r["e"] else None
 
     def neighbors(self, vec: list[float], k: int = 10, origin: str | None = None, process: str | None = None,
-                  exclude_id: int | None = None, exclude_sources: tuple[str, ...] = ()) -> list[Neighbor]:
+                  exclude_id: int | None = None, exclude_sources: tuple[str, ...] = (),
+                  tagged_only: bool = False) -> list[Neighbor]:
+        """k nearest active coffees by embedding (same origin/process first when enough match). `tagged_only`: only
+        coffees that carry flavor tags -- the open variant's tag fill (docs/adr/0017-open-tag-fill.md), whose pool is
+        otherwise mostly untagged CQI rows."""
         v = to_vector_literal(vec)
         base = ((" AND id <> %(ex)s" if exclude_id is not None else "")
-                + (" AND source <> ALL(%(xs)s)" if exclude_sources else ""))
+                + (" AND source <> ALL(%(xs)s)" if exclude_sources else "")
+                + (" AND cardinality(flavor_tags) > 0" if tagged_only else ""))
 
         def run(extra: str) -> list[Neighbor]:
             with self.pool.connection() as conn, conn.transaction():

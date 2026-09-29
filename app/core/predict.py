@@ -23,13 +23,13 @@ def _weighted(pairs: list[tuple[float, float]]) -> tuple[float, float]:
     return mean, sqrt(var)
 
 
-def _tag_kept(share: float, global_share: float, lift: float = LIFT) -> bool:
+def _tag_kept(share: float, global_share: float, lift: float = LIFT, tag_share: float = TAG_SHARE) -> bool:
     """True when a tag's share among the neighbours clears the lift-adjusted gate.
 
     `global_share` is the tag's base rate over all active coffees with >=1 tag. A tag no more common than
     the flat TAG_SHARE floor everywhere never needs the lift; one that dominates the whole catalog (e.g.
     "chocolate") needs `lift` times its base rate before it counts as evidence for this particular bean."""
-    return share >= max(TAG_SHARE, lift * global_share)
+    return share >= max(tag_share, lift * global_share)
 
 
 def _tag_rank_score(share: float, global_share: float) -> float:
@@ -38,7 +38,8 @@ def _tag_rank_score(share: float, global_share: float) -> float:
 
 
 def predict_from_neighbors(neighbors: list[Neighbor], tag_ko: dict[str, str] | None = None,
-                           base_rates: dict[str, float] | None = None) -> Prediction:
+                           base_rates: dict[str, float] | None = None, tag_share: float = TAG_SHARE,
+                           lift: float = LIFT) -> Prediction:
     tag_ko = tag_ko or {}
     weighted = [(n, max(n.similarity, 0.01)) for n in neighbors]
     values: dict[str, float | None] = {}
@@ -66,13 +67,13 @@ def predict_from_neighbors(neighbors: list[Neighbor], tag_ko: dict[str, str] | N
             count_by_tag[t] = count_by_tag.get(t, 0) + 1
     if base_rates is None:
         ranked = sorted(weight_by_tag.items(), key=lambda kv: (-kv[1], kv[0]))
-        tags = [t for t, _ in ranked if count_by_tag[t] / len(neighbors) >= TAG_SHARE][:MAX_TAGS]
+        tags = [t for t, _ in ranked if count_by_tag[t] / len(neighbors) >= tag_share][:MAX_TAGS]
     else:
         kept = []
         for t in weight_by_tag:
             share = count_by_tag[t] / len(neighbors)
             global_share = base_rates.get(t, 0.0)
-            if _tag_kept(share, global_share):
+            if _tag_kept(share, global_share, lift, tag_share):
                 kept.append((t, _tag_rank_score(share, global_share)))
         tags = [t for t, _ in sorted(kept, key=lambda kv: (-kv[1], kv[0]))][:MAX_TAGS]
 
@@ -95,6 +96,45 @@ def with_model_tags(pred: Prediction, tag_probs: list[tuple[str, float]], tag_ko
     kept_evidence = [e for e in pred.evidence if not (e.startswith("유사 원두") and "언급" in e)]
     model_evidence = [f"향미 모델: {', '.join(f'{tag_ko.get(t, t)} {p:.2f}' for t, p in tag_probs)}"] if tag_probs else []
     return replace(pred, tags=tags, evidence=model_evidence + kept_evidence)
+
+
+# Open-variant tag fill (docs/adr/0017-open-tag-fill.md): most coffee_open beans (CQI) carry no flavor tags, so the
+# vote over the plain k nearest often shows nothing. When it shows fewer than FILL_MIN_TAGS, the vote over the k
+# nearest TAGGED beans (licence-clean pool, FILL_EXCLUDE_SOURCES left out) tops it up to FILL_MIN_TAGS.
+FILL_MIN_TAGS = 2
+FILL_EXCLUDE_SOURCES = ("roasterdb",)
+
+
+def fill_tags(tags: list[str], extra: list[str], min_tags: int = FILL_MIN_TAGS) -> list[str]:
+    """`tags`, then `extra` (not already there) until there are `min_tags`; never drops or reorders `tags`."""
+    out = list(tags)
+    for t in extra:
+        if len(out) >= min_tags:
+            break
+        if t not in out:
+            out.append(t)
+    return out
+
+
+def with_tag_fill(pred: Prediction, tagged: list[Neighbor], tag_ko: dict[str, str] | None = None,
+                  base_rates: dict[str, float] | None = None) -> Prediction:
+    """Top the neighbour vote's tags up to FILL_MIN_TAGS from the same vote over `tagged` (the k nearest beans that
+    carry flavor tags), with one evidence line per added tag. Attributes/confidence/n_neighbors are untouched."""
+    if len(pred.tags) >= FILL_MIN_TAGS or not tagged:
+        return pred
+    fill = predict_from_neighbors(tagged, tag_ko, base_rates=base_rates)
+    tags = fill_tags(pred.tags, fill.tags)
+    added = tags[len(pred.tags):]
+    if not added:
+        return pred
+    tag_ko = tag_ko or {}
+    counts = {t: sum(1 for n in tagged if t in {x.lower() for x in n.tags}) for t in added}
+    # same "유사 원두 … 언급" shape as the vote's own lines, so a later layer that replaces the tags (the feature tag
+    # model, with_feature_model) drops these too
+    lines = [f"유사 원두(향미 표기 있는 것) {len(tagged)}개 중 {counts[t]}개에서 '{tag_ko.get(t, t)}' 언급" for t in added]
+    n_tag_lines = sum(1 for e in pred.evidence if e.startswith("유사 원두") and "언급" in e)
+    evidence = [*pred.evidence[:n_tag_lines], *lines, *pred.evidence[n_tag_lines:]]
+    return replace(pred, tags=tags, evidence=evidence)
 
 
 def with_model_attrs(pred: Prediction, attr_values: dict[str, float | None]) -> Prediction:

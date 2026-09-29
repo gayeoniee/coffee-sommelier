@@ -450,3 +450,14 @@ def test_dev_db_every_active_flavor_tag_has_a_korean_name():
     finally:
         repo.close()
     assert result["missing_ko"] == []
+
+
+def test_neighbors_tagged_only_skips_untagged_beans(repo):
+    with repo.pool.connection() as conn:
+        untagged = conn.execute(
+            "INSERT INTO coffees (key, name, roaster, origin_country, process, is_decaf, acidity, body, sweetness, "
+            "flavor_tags, embedding, source, collected_at) VALUES ('cq','CQI Row','R',NULL,NULL,false,3,3,3,'{}',"
+            "%s::vector,'cqi','2026-09-26') RETURNING id", (to_vector_literal(vec(0)),)).fetchone()["id"]
+    assert untagged in [n.coffee_id for n in repo.neighbors(vec(0), k=10)]
+    near = repo.neighbors(vec(0), k=10, tagged_only=True)
+    assert untagged not in [n.coffee_id for n in near] and near and all(n.tags for n in near)

@@ -315,7 +315,7 @@ class _NoSweetRepo:
         from tests.app.fakes import FakeRepo
 
         class R(FakeRepo):
-            def neighbors(self, vec, k=10, origin=None, process=None, exclude_id=None):
+            def neighbors(self, vec, k=10, origin=None, process=None, exclude_id=None, exclude_sources=(), tagged_only=False):
                 return [Neighbor(100 + i, f"n{i}", 0.9, 4.0, 2, None, ("lemon",)) for i in range(k)]
         return R()
 
@@ -364,3 +364,54 @@ def test_open_note_free_tag_model_replaces_the_vote_only_without_note_words():
     c = first_card(run_events(build_analyze_graph(deps),
                               {"text": "에티오피아 예가체프 워시드, 레몬", "profile": Profile()}))
     assert c["tags"][0] == "lemon" and "jasmine" not in c["tags"]       # note words present: vote + own words
+
+
+# --- open tag fill (docs/adr/0017-open-tag-fill.md) ---------------------------------------------------------------
+class _MostlyUntaggedRepo:
+    """FakeRepo whose plain neighbours carry no tags (coffee_open's CQI rows) while the tagged-only query finds
+    jasmine/lemon beans; records the tagged-only calls."""
+    def __new__(cls):
+        from app.models import Neighbor
+        from tests.app.fakes import FakeRepo
+
+        class R(FakeRepo):
+            tagged_calls = []
+
+            def neighbors(self, vec, k=10, origin=None, process=None, exclude_id=None, exclude_sources=(),
+                          tagged_only=False):
+                if tagged_only:
+                    self.tagged_calls.append(exclude_sources)
+                    return [Neighbor(300 + i, f"t{i}", 0.8, 4, 2, 3, ("jasmine", "lemon") if i < 5 else ("lemon",))
+                            for i in range(k)]
+                return [Neighbor(100 + i, f"n{i}", 0.9, 4, 2, 3, ()) for i in range(k)]
+        return R()
+
+
+def test_open_thin_vote_is_topped_up_from_tagged_neighbours():
+    repo = _MostlyUntaggedRepo()
+    c = first_card(run_events(build_analyze_graph(fake_deps(repo=repo, tag_fill=True)),
+                              {"text": "케냐 AA 워시드", "profile": Profile()}))
+    assert c["tags"] == ["lemon", "jasmine"]
+    assert repo.tagged_calls == [("roasterdb",)]
+    assert c["evidence"][:2] == ["유사 원두(향미 표기 있는 것) 10개 중 10개에서 '레몬' 언급",
+                                 "유사 원두(향미 표기 있는 것) 10개 중 5개에서 'jasmine' 언급"]
+    # the guest's own note words still lead, the fill follows
+    c = first_card(run_events(build_analyze_graph(fake_deps(repo=_MostlyUntaggedRepo(), tag_fill=True)),
+                              {"text": "케냐 AA 초콜릿", "profile": Profile()}))
+    assert c["tags"][0] == "chocolate" and "jasmine" in c["tags"]
+
+
+def test_tag_fill_off_and_full_vote_skip_the_tagged_query():
+    repo = _MostlyUntaggedRepo()
+    c = first_card(run_events(build_analyze_graph(fake_deps(repo=repo)), {"text": "케냐 AA 워시드", "profile": Profile()}))
+    assert c["tags"] == [] and repo.tagged_calls == []
+    deps = fake_deps(tag_fill=True)          # the default fake neighbours all say lemon + (none) -> 1 tag -> fill runs
+    c = first_card(run_events(build_analyze_graph(deps), {"text": "에티오피아 예가체프 워시드", "profile": Profile()}))
+    assert c["tags"][0] == "lemon"
+
+
+def test_tag_fill_skipped_in_degraded_mode():
+    repo = _MostlyUntaggedRepo()
+    run_events(build_analyze_graph(fake_deps(repo=repo, tag_fill=True, embed_fails=True)),
+               {"text": "에티오피아 예가체프", "profile": Profile()})
+    assert repo.tagged_calls == []
