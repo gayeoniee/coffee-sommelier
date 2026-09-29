@@ -1,6 +1,7 @@
 # ADR 0019 — 영어 노트 별칭: "caramel"·"nuts"·"berries"·"earthy"를 휠 태그로, 오픈 DB 재적재
 
-- 상태: 채택 (2026-09-29)
+- 상태: 채택 (2026-09-29) — 단맛 회귀(Zenodo 44.2% → 35.3%)는 [ADR 0020](0020-open-recipes-after-relabel.md)에서 레시피를 바꿔 49.7%로
+  고쳤고 바디 레시피도 그때 탑재했다. 아래 "재적재 뒤" 표는 ADR 0020 이전 값이다.
 - 범위: 두 판이 함께 쓰는 노트 매퍼(`pipeline/enrich.py` `rule_tags`) — 파이프라인 라벨링과 손님 입력 단서
   (`app/core/textcues.py` `text_tags`)가 같은 표를 읽는다. **전체판 라벨은 바뀌지 않는다**: coffeereview 리뷰 산문에는 별칭을 끈다.
 - 앞선 결정: [ADR 0018](0018-open-tag-cooccurrence.md)이 찾은 틈 — 매퍼가 SCA 휠의 영어 단수 이름("caramelized", "nutty",

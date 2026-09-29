@@ -1,0 +1,1703 @@
+{
+ "generated_at": "2026-09-29T09:05:27.192869+00:00",
+ "prod_rev": "25a6b4a",
+ "rules": [
+  "answer all",
+  "cue or neighbour value",
+  "cue or note words",
+  "cue or |model - neighbour| <= 1"
+ ],
+ "sweetness": {
+  "prod": {
+   "e1": "committed CV (old labels): see phase5_open_v3.json at 25a6b4a",
+   "e2": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.5321,
+     "within1": 0.4031,
+     "spearman": -0.2877,
+     "mean_truth": 2.507,
+     "mean_pred": 3.942
+    },
+    "cue or neighbour value": {
+     "coverage": 0.852,
+     "n": 167,
+     "mae": 1.4494,
+     "within1": 0.4311,
+     "spearman": -0.3291,
+     "mean_truth": 2.577,
+     "mean_pred": 3.921
+    },
+    "cue or note words": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.5321,
+     "within1": 0.4031,
+     "spearman": -0.2877,
+     "mean_truth": 2.507,
+     "mean_pred": 3.942
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.7602,
+     "n": 149,
+     "mae": 1.4844,
+     "within1": 0.4161,
+     "spearman": -0.2776,
+     "mean_truth": 2.564,
+     "mean_pred": 3.99
+    }
+   },
+   "e2_prev_mapper_inference": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.375,
+     "within1": 0.4184,
+     "spearman": -0.2255,
+     "mean_truth": 2.507,
+     "mean_pred": 3.771
+    },
+    "cue or neighbour value": {
+     "coverage": 0.852,
+     "n": 167,
+     "mae": 1.2866,
+     "within1": 0.4611,
+     "spearman": -0.278,
+     "mean_truth": 2.577,
+     "mean_pred": 3.744
+    },
+    "cue or note words": {
+     "coverage": 0.9745,
+     "n": 191,
+     "mae": 1.3851,
+     "within1": 0.4084,
+     "spearman": -0.227,
+     "mean_truth": 2.505,
+     "mean_pred": 3.78
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.7347,
+     "n": 144,
+     "mae": 1.3405,
+     "within1": 0.4236,
+     "spearman": -0.1638,
+     "mean_truth": 2.549,
+     "mean_pred": 3.826
+    }
+   }
+  },
+  "retrained": {
+   "e1": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 72,
+     "mae": 1.0307,
+     "within1": 0.5833,
+     "spearman": -0.1459,
+     "mean_truth": 3.062,
+     "mean_pred": 3.661
+    },
+    "cue or neighbour value": {
+     "coverage": 0.4861,
+     "n": 35,
+     "mae": 0.8332,
+     "within1": 0.6571,
+     "spearman": -0.2331,
+     "mean_truth": 3.414,
+     "mean_pred": 3.67
+    },
+    "cue or note words": {
+     "coverage": 0.2222,
+     "n": 16,
+     "mae": 0.8613,
+     "within1": 0.5625,
+     "spearman": -0.1787,
+     "mean_truth": 3.844,
+     "mean_pred": 3.363
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.4722,
+     "n": 34,
+     "mae": 0.8447,
+     "within1": 0.6471,
+     "spearman": -0.2142,
+     "mean_truth": 3.397,
+     "mean_pred": 3.673
+    }
+   },
+   "e2": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.5681,
+     "within1": 0.3265,
+     "spearman": -0.243,
+     "mean_truth": 2.507,
+     "mean_pred": 4.031
+    },
+    "cue or neighbour value": {
+     "coverage": 0.852,
+     "n": 167,
+     "mae": 1.487,
+     "within1": 0.3533,
+     "spearman": -0.2864,
+     "mean_truth": 2.577,
+     "mean_pred": 4.015
+    },
+    "cue or note words": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.5681,
+     "within1": 0.3265,
+     "spearman": -0.243,
+     "mean_truth": 2.507,
+     "mean_pred": 4.031
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.8316,
+     "n": 163,
+     "mae": 1.4637,
+     "within1": 0.362,
+     "spearman": -0.2712,
+     "mean_truth": 2.59,
+     "mean_pred": 4.004
+    }
+   },
+   "e2_prev_mapper_inference": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.3283,
+     "within1": 0.4592,
+     "spearman": -0.2007,
+     "mean_truth": 2.507,
+     "mean_pred": 3.773
+    },
+    "cue or neighbour value": {
+     "coverage": 0.852,
+     "n": 167,
+     "mae": 1.2463,
+     "within1": 0.503,
+     "spearman": -0.2276,
+     "mean_truth": 2.577,
+     "mean_pred": 3.757
+    },
+    "cue or note words": {
+     "coverage": 0.9745,
+     "n": 191,
+     "mae": 1.3391,
+     "within1": 0.4503,
+     "spearman": -0.198,
+     "mean_truth": 2.505,
+     "mean_pred": 3.783
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.8061,
+     "n": 158,
+     "mae": 1.248,
+     "within1": 0.5,
+     "spearman": -0.1968,
+     "mean_truth": 2.584,
+     "mean_pred": 3.769
+    }
+   }
+  },
+  "prev_mapper": {
+   "e1": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 72,
+     "mae": 1.0307,
+     "within1": 0.5833,
+     "spearman": -0.1459,
+     "mean_truth": 3.062,
+     "mean_pred": 3.661
+    },
+    "cue or neighbour value": {
+     "coverage": 0.4861,
+     "n": 35,
+     "mae": 0.8332,
+     "within1": 0.6571,
+     "spearman": -0.2331,
+     "mean_truth": 3.414,
+     "mean_pred": 3.67
+    },
+    "cue or note words": {
+     "coverage": 0.2222,
+     "n": 16,
+     "mae": 0.8613,
+     "within1": 0.5625,
+     "spearman": -0.1787,
+     "mean_truth": 3.844,
+     "mean_pred": 3.363
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.4722,
+     "n": 34,
+     "mae": 0.8447,
+     "within1": 0.6471,
+     "spearman": -0.2142,
+     "mean_truth": 3.397,
+     "mean_pred": 3.673
+    }
+   },
+   "e2": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.5353,
+     "within1": 0.3265,
+     "spearman": -0.2227,
+     "mean_truth": 2.507,
+     "mean_pred": 3.996
+    },
+    "cue or neighbour value": {
+     "coverage": 0.852,
+     "n": 167,
+     "mae": 1.456,
+     "within1": 0.3533,
+     "spearman": -0.2681,
+     "mean_truth": 2.577,
+     "mean_pred": 3.982
+    },
+    "cue or note words": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.5353,
+     "within1": 0.3265,
+     "spearman": -0.2227,
+     "mean_truth": 2.507,
+     "mean_pred": 3.996
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.8367,
+     "n": 164,
+     "mae": 1.4375,
+     "within1": 0.3598,
+     "spearman": -0.2556,
+     "mean_truth": 2.586,
+     "mean_pred": 3.972
+    }
+   }
+  },
+  "no_notes": {
+   "e1": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 72,
+     "mae": 1.075,
+     "within1": 0.5278,
+     "spearman": -0.1746,
+     "mean_truth": 3.062,
+     "mean_pred": 3.673
+    },
+    "cue or neighbour value": {
+     "coverage": 0.4861,
+     "n": 35,
+     "mae": 0.9481,
+     "within1": 0.5143,
+     "spearman": -0.3638,
+     "mean_truth": 3.414,
+     "mean_pred": 3.638
+    },
+    "cue or note words": {
+     "coverage": 0.2222,
+     "n": 16,
+     "mae": 0.915,
+     "within1": 0.6875,
+     "spearman": -0.2261,
+     "mean_truth": 3.844,
+     "mean_pred": 3.336
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.375,
+     "n": 27,
+     "mae": 0.9545,
+     "within1": 0.5556,
+     "spearman": -0.3991,
+     "mean_truth": 3.389,
+     "mean_pred": 3.657
+    }
+   },
+   "e2": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.0305,
+     "within1": 0.6173,
+     "spearman": -0.1738,
+     "mean_truth": 2.507,
+     "mean_pred": 3.394
+    },
+    "cue or neighbour value": {
+     "coverage": 0.852,
+     "n": 167,
+     "mae": 0.9671,
+     "within1": 0.6587,
+     "spearman": -0.1799,
+     "mean_truth": 2.577,
+     "mean_pred": 3.381
+    },
+    "cue or note words": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.0305,
+     "within1": 0.6173,
+     "spearman": -0.1738,
+     "mean_truth": 2.507,
+     "mean_pred": 3.394
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.7092,
+     "n": 139,
+     "mae": 1.0793,
+     "within1": 0.5971,
+     "spearman": -0.1334,
+     "mean_truth": 2.526,
+     "mean_pred": 3.489
+    }
+   }
+  },
+  "+Bf": {
+   "e1": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 72,
+     "mae": 1.0348,
+     "within1": 0.625,
+     "spearman": -0.2574,
+     "mean_truth": 3.062,
+     "mean_pred": 3.727
+    },
+    "cue or neighbour value": {
+     "coverage": 0.4861,
+     "n": 35,
+     "mae": 0.848,
+     "within1": 0.7143,
+     "spearman": -0.2262,
+     "mean_truth": 3.414,
+     "mean_pred": 3.782
+    },
+    "cue or note words": {
+     "coverage": 0.2222,
+     "n": 16,
+     "mae": 0.8464,
+     "within1": 0.75,
+     "spearman": -0.1502,
+     "mean_truth": 3.844,
+     "mean_pred": 3.732
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.4722,
+     "n": 34,
+     "mae": 0.8288,
+     "within1": 0.7353,
+     "spearman": -0.223,
+     "mean_truth": 3.412,
+     "mean_pred": 3.746
+    }
+   },
+   "e2": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.2997,
+     "within1": 0.4694,
+     "spearman": -0.2923,
+     "mean_truth": 2.507,
+     "mean_pred": 3.722
+    },
+    "cue or neighbour value": {
+     "coverage": 0.852,
+     "n": 167,
+     "mae": 1.2166,
+     "within1": 0.509,
+     "spearman": -0.3176,
+     "mean_truth": 2.577,
+     "mean_pred": 3.7
+    },
+    "cue or note words": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.2997,
+     "within1": 0.4694,
+     "spearman": -0.2923,
+     "mean_truth": 2.507,
+     "mean_pred": 3.722
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.7908,
+     "n": 155,
+     "mae": 1.2667,
+     "within1": 0.4839,
+     "spearman": -0.2842,
+     "mean_truth": 2.554,
+     "mean_pred": 3.749
+    }
+   }
+  },
+  "+C": {
+   "e1": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 72,
+     "mae": 1.0353,
+     "within1": 0.5972,
+     "spearman": -0.3344,
+     "mean_truth": 3.062,
+     "mean_pred": 3.608
+    },
+    "cue or neighbour value": {
+     "coverage": 0.4861,
+     "n": 35,
+     "mae": 0.8425,
+     "within1": 0.6857,
+     "spearman": -0.3804,
+     "mean_truth": 3.414,
+     "mean_pred": 3.575
+    },
+    "cue or note words": {
+     "coverage": 0.2222,
+     "n": 16,
+     "mae": 0.8976,
+     "within1": 0.5625,
+     "spearman": -0.2372,
+     "mean_truth": 3.844,
+     "mean_pred": 3.27
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.4722,
+     "n": 34,
+     "mae": 0.8519,
+     "within1": 0.6765,
+     "spearman": -0.3626,
+     "mean_truth": 3.397,
+     "mean_pred": 3.578
+    }
+   },
+   "e2": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.3069,
+     "within1": 0.4592,
+     "spearman": -0.2866,
+     "mean_truth": 2.507,
+     "mean_pred": 3.745
+    },
+    "cue or neighbour value": {
+     "coverage": 0.852,
+     "n": 167,
+     "mae": 1.2252,
+     "within1": 0.497,
+     "spearman": -0.3235,
+     "mean_truth": 2.577,
+     "mean_pred": 3.726
+    },
+    "cue or note words": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.3069,
+     "within1": 0.4592,
+     "spearman": -0.2866,
+     "mean_truth": 2.507,
+     "mean_pred": 3.745
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.8316,
+     "n": 163,
+     "mae": 1.2479,
+     "within1": 0.4847,
+     "spearman": -0.3084,
+     "mean_truth": 2.564,
+     "mean_pred": 3.743
+    }
+   }
+  },
+  "+A": {
+   "e1": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 72,
+     "mae": 1.0423,
+     "within1": 0.5556,
+     "spearman": 0.0465,
+     "mean_truth": 3.062,
+     "mean_pred": 3.743
+    },
+    "cue or neighbour value": {
+     "coverage": 0.4861,
+     "n": 35,
+     "mae": 0.8901,
+     "within1": 0.6286,
+     "spearman": -0.1013,
+     "mean_truth": 3.414,
+     "mean_pred": 3.871
+    },
+    "cue or note words": {
+     "coverage": 0.2222,
+     "n": 16,
+     "mae": 1.0412,
+     "within1": 0.4375,
+     "spearman": -0.3648,
+     "mean_truth": 3.844,
+     "mean_pred": 3.723
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.4722,
+     "n": 34,
+     "mae": 0.8721,
+     "within1": 0.6471,
+     "spearman": -0.0927,
+     "mean_truth": 3.412,
+     "mean_pred": 3.838
+    }
+   },
+   "e2": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.4107,
+     "within1": 0.4694,
+     "spearman": -0.4186,
+     "mean_truth": 2.507,
+     "mean_pred": 3.578
+    },
+    "cue or neighbour value": {
+     "coverage": 0.852,
+     "n": 167,
+     "mae": 1.3273,
+     "within1": 0.503,
+     "spearman": -0.441,
+     "mean_truth": 2.577,
+     "mean_pred": 3.545
+    },
+    "cue or note words": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.4107,
+     "within1": 0.4694,
+     "spearman": -0.4186,
+     "mean_truth": 2.507,
+     "mean_pred": 3.578
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.6378,
+     "n": 125,
+     "mae": 1.4239,
+     "within1": 0.472,
+     "spearman": -0.3867,
+     "mean_truth": 2.499,
+     "mean_pred": 3.83
+    }
+   }
+  },
+  "+A+C": {
+   "e1": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 72,
+     "mae": 1.0232,
+     "within1": 0.5556,
+     "spearman": 0.0479,
+     "mean_truth": 3.062,
+     "mean_pred": 3.701
+    },
+    "cue or neighbour value": {
+     "coverage": 0.4861,
+     "n": 35,
+     "mae": 0.8865,
+     "within1": 0.6286,
+     "spearman": -0.0948,
+     "mean_truth": 3.414,
+     "mean_pred": 3.838
+    },
+    "cue or note words": {
+     "coverage": 0.2222,
+     "n": 16,
+     "mae": 1.0515,
+     "within1": 0.4375,
+     "spearman": -0.3648,
+     "mean_truth": 3.844,
+     "mean_pred": 3.698
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.4722,
+     "n": 34,
+     "mae": 0.8685,
+     "within1": 0.6471,
+     "spearman": -0.0859,
+     "mean_truth": 3.412,
+     "mean_pred": 3.804
+    }
+   },
+   "e2": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.3742,
+     "within1": 0.4745,
+     "spearman": -0.4224,
+     "mean_truth": 2.507,
+     "mean_pred": 3.513
+    },
+    "cue or neighbour value": {
+     "coverage": 0.852,
+     "n": 167,
+     "mae": 1.2911,
+     "within1": 0.509,
+     "spearman": -0.4421,
+     "mean_truth": 2.577,
+     "mean_pred": 3.478
+    },
+    "cue or note words": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.3742,
+     "within1": 0.4745,
+     "spearman": -0.4224,
+     "mean_truth": 2.507,
+     "mean_pred": 3.513
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.6071,
+     "n": 119,
+     "mae": 1.4447,
+     "within1": 0.4622,
+     "spearman": -0.4099,
+     "mean_truth": 2.466,
+     "mean_pred": 3.817
+    }
+   }
+  },
+  "~A wA=1": {
+   "e1": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 72,
+     "mae": 0.9833,
+     "within1": 0.5972,
+     "spearman": -0.0414,
+     "mean_truth": 3.062,
+     "mean_pred": 3.642
+    },
+    "cue or neighbour value": {
+     "coverage": 0.4861,
+     "n": 35,
+     "mae": 0.8312,
+     "within1": 0.6857,
+     "spearman": -0.0726,
+     "mean_truth": 3.414,
+     "mean_pred": 3.755
+    },
+    "cue or note words": {
+     "coverage": 0.2222,
+     "n": 16,
+     "mae": 0.906,
+     "within1": 0.625,
+     "spearman": -0.2704,
+     "mean_truth": 3.844,
+     "mean_pred": 3.606
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.4722,
+     "n": 34,
+     "mae": 0.8116,
+     "within1": 0.7059,
+     "spearman": -0.0596,
+     "mean_truth": 3.412,
+     "mean_pred": 3.718
+    }
+   },
+   "e2": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.4111,
+     "within1": 0.4643,
+     "spearman": -0.4043,
+     "mean_truth": 2.507,
+     "mean_pred": 3.571
+    },
+    "cue or neighbour value": {
+     "coverage": 0.852,
+     "n": 167,
+     "mae": 1.3316,
+     "within1": 0.497,
+     "spearman": -0.4303,
+     "mean_truth": 2.577,
+     "mean_pred": 3.539
+    },
+    "cue or note words": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.4111,
+     "within1": 0.4643,
+     "spearman": -0.4043,
+     "mean_truth": 2.507,
+     "mean_pred": 3.571
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.6224,
+     "n": 122,
+     "mae": 1.4319,
+     "within1": 0.4672,
+     "spearman": -0.4018,
+     "mean_truth": 2.51,
+     "mean_pred": 3.854
+    }
+   }
+  },
+  "~B uncentred": {
+   "e1": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 72,
+     "mae": 0.998,
+     "within1": 0.6667,
+     "spearman": -0.3845,
+     "mean_truth": 3.062,
+     "mean_pred": 3.607
+    },
+    "cue or neighbour value": {
+     "coverage": 0.4861,
+     "n": 35,
+     "mae": 0.8196,
+     "within1": 0.7429,
+     "spearman": -0.343,
+     "mean_truth": 3.414,
+     "mean_pred": 3.555
+    },
+    "cue or note words": {
+     "coverage": 0.2222,
+     "n": 16,
+     "mae": 0.6814,
+     "within1": 0.8125,
+     "spearman": -0.2435,
+     "mean_truth": 3.844,
+     "mean_pred": 3.633
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.4861,
+     "n": 35,
+     "mae": 0.8196,
+     "within1": 0.7429,
+     "spearman": -0.343,
+     "mean_truth": 3.414,
+     "mean_pred": 3.555
+    }
+   },
+   "e2": {
+    "answer all": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.3001,
+     "within1": 0.398,
+     "spearman": 0.4103,
+     "mean_truth": 2.507,
+     "mean_pred": 3.78
+    },
+    "cue or neighbour value": {
+     "coverage": 0.852,
+     "n": 167,
+     "mae": 1.2546,
+     "within1": 0.4311,
+     "spearman": 0.3325,
+     "mean_truth": 2.577,
+     "mean_pred": 3.8
+    },
+    "cue or note words": {
+     "coverage": 1.0,
+     "n": 196,
+     "mae": 1.3001,
+     "within1": 0.398,
+     "spearman": 0.4103,
+     "mean_truth": 2.507,
+     "mean_pred": 3.78
+    },
+    "cue or |model - neighbour| <= 1": {
+     "coverage": 0.8418,
+     "n": 165,
+     "mae": 1.2417,
+     "within1": 0.4364,
+     "spearman": 0.3103,
+     "mean_truth": 2.596,
+     "mean_pred": 3.806
+    }
+   }
+  }
+ },
+ "body": {
+  "neighbour_avg": {
+   "e1": {
+    "n": 64,
+    "mae": 0.7865,
+    "within1": 0.7188,
+    "spearman": -0.0666,
+    "mean_truth": 3.398,
+    "mean_pred": 3.498
+   },
+   "e2": {
+    "n": 156,
+    "mae": 0.6427,
+    "within1": 0.7821,
+    "spearman": -0.009,
+    "mean_truth": 2.94,
+    "mean_pred": 3.435
+   }
+  },
+  "~A wA=1": {
+   "e1": {
+    "n": 64,
+    "mae": 0.6928,
+    "within1": 0.7812,
+    "spearman": 0.2897,
+    "mean_truth": 3.398,
+    "mean_pred": 3.368
+   },
+   "e2": {
+    "n": 195,
+    "mae": 0.5933,
+    "within1": 0.8308,
+    "spearman": 0.0429,
+    "mean_truth": 2.948,
+    "mean_pred": 3.409
+   }
+  },
+  "+A": {
+   "e1": {
+    "n": 64,
+    "mae": 0.6969,
+    "within1": 0.75,
+    "spearman": 0.3462,
+    "mean_truth": 3.398,
+    "mean_pred": 3.435
+   },
+   "e2": {
+    "n": 195,
+    "mae": 0.6687,
+    "within1": 0.7795,
+    "spearman": 0.0101,
+    "mean_truth": 2.948,
+    "mean_pred": 3.345
+   }
+  },
+  "+A+B+C": {
+   "e1": {
+    "n": 64,
+    "mae": 0.6829,
+    "within1": 0.7969,
+    "spearman": 0.344,
+    "mean_truth": 3.398,
+    "mean_pred": 3.496
+   },
+   "e2": {
+    "n": 195,
+    "mae": 0.7195,
+    "within1": 0.7282,
+    "spearman": 0.0758,
+    "mean_truth": 2.948,
+    "mean_pred": 3.388
+   }
+  },
+  "+B": {
+   "e1": {
+    "n": 64,
+    "mae": 0.7122,
+    "within1": 0.7812,
+    "spearman": 0.3531,
+    "mean_truth": 3.398,
+    "mean_pred": 3.716
+   },
+   "e2": {
+    "n": 195,
+    "mae": 0.8297,
+    "within1": 0.6667,
+    "spearman": 0.058,
+    "mean_truth": 2.948,
+    "mean_pred": 3.546
+   }
+  },
+  "+C": {
+   "e1": {
+    "n": 64,
+    "mae": 0.7258,
+    "within1": 0.7812,
+    "spearman": 0.3504,
+    "mean_truth": 3.398,
+    "mean_pred": 3.752
+   },
+   "e2": {
+    "n": 195,
+    "mae": 0.7569,
+    "within1": 0.7077,
+    "spearman": -0.0011,
+    "mean_truth": 2.948,
+    "mean_pred": 3.417
+   }
+  }
+ },
+ "acidity": {
+  "e1": {
+   "n": 82,
+   "mae": 0.7383,
+   "within1": 0.7073,
+   "spearman": 0.5439,
+   "mean_truth": 2.323,
+   "mean_pred": 2.386
+  },
+  "e2": {
+   "n": 196,
+   "mae": 0.5425,
+   "within1": 0.8571,
+   "spearman": 0.7141,
+   "mean_truth": 2.329,
+   "mean_pred": 2.342
+  },
+  "e2_prod_config": {
+   "n": 196,
+   "mae": 0.5428,
+   "within1": 0.8571,
+   "spearman": 0.7091,
+   "mean_truth": 2.329,
+   "mean_pred": 2.292
+  },
+  "e2_prod_config_prev_mapper": {
+   "n": 196,
+   "mae": 0.6325,
+   "within1": 0.8112,
+   "spearman": 0.6172,
+   "mean_truth": 2.329,
+   "mean_pred": 2.305
+  }
+ },
+ "specs": {
+  "sweetness:retrained": {
+   "type": "ridge",
+   "alpha": 3.0,
+   "intercept": 2.9853,
+   "weights": {
+    "region_east_africa": -0.28,
+    "region_central_america": -0.1189,
+    "region_south_america": -0.0588,
+    "region_asia_pacific": -0.2569,
+    "region_yemen": 0.1346,
+    "blend_or_unknown_origin": 0.58,
+    "country_Ethiopia": 0.1142,
+    "country_Kenya": 0.0696,
+    "country_Colombia": -0.2069,
+    "country_Brazil": 0.1359,
+    "country_Guatemala": -0.0261,
+    "alt_lt1200": -0.119,
+    "alt_1600_2000": 0.265,
+    "alt_ge2000": 0.3871,
+    "process_washed": 0.3621,
+    "process_natural": -0.0169,
+    "process_honey": 0.3793,
+    "process_anaerobic": 0.097,
+    "roast_light": -0.2216,
+    "roast_medium": -0.3851,
+    "roast_medium-dark": -0.3298,
+    "roast_dark": 0.3096,
+    "decaf": -0.2123,
+    "decaf_water": -0.3392,
+    "decaf_sugarcane": 0.1269,
+    "notes_fruity": 0.0839,
+    "notes_floral": 0.2866,
+    "notes_sweet": 0.1384,
+    "notes_nutty/cocoa": 0.3116,
+    "notes_roasted": 0.1346,
+    "notes_spices": 0.0412,
+    "notes_sour/fermented": 0.1321,
+    "notes_green/vegetative": -0.1528
+   },
+   "n_train": 72,
+   "uses_nbr": false
+  },
+  "sweetness:prev_mapper": {
+   "type": "ridge",
+   "alpha": 3.0,
+   "intercept": 2.9932,
+   "weights": {
+    "region_east_africa": -0.2831,
+    "region_central_america": -0.1229,
+    "region_south_america": -0.0596,
+    "region_asia_pacific": -0.2579,
+    "region_yemen": 0.1479,
+    "blend_or_unknown_origin": 0.5757,
+    "country_Ethiopia": 0.1158,
+    "country_Kenya": 0.0664,
+    "country_Colombia": -0.2079,
+    "country_Brazil": 0.1337,
+    "country_Guatemala": -0.0327,
+    "alt_lt1200": -0.1176,
+    "alt_1600_2000": 0.2675,
+    "alt_ge2000": 0.3889,
+    "process_washed": 0.3748,
+    "process_natural": -0.0091,
+    "process_honey": 0.3831,
+    "process_anaerobic": 0.0963,
+    "roast_light": -0.2139,
+    "roast_medium": -0.3906,
+    "roast_medium-dark": -0.3315,
+    "roast_dark": 0.3129,
+    "decaf": -0.2108,
+    "decaf_water": -0.3387,
+    "decaf_sugarcane": 0.1279,
+    "notes_fruity": 0.0761,
+    "notes_floral": 0.286,
+    "notes_sweet": 0.1388,
+    "notes_nutty/cocoa": 0.2996,
+    "notes_roasted": 0.0884,
+    "notes_spices": 0.0426,
+    "notes_sour/fermented": 0.1349,
+    "notes_green/vegetative": -0.1506
+   },
+   "n_train": 72,
+   "n_gauge": 72,
+   "uses_nbr": false,
+   "config": "base"
+  },
+  "sweetness:no_notes": {
+   "type": "ridge",
+   "alpha": 3.0,
+   "intercept": 3.2088,
+   "weights": {
+    "region_east_africa": -0.2697,
+    "region_central_america": -0.1128,
+    "region_south_america": -0.0251,
+    "region_asia_pacific": -0.2098,
+    "region_yemen": 0.1447,
+    "blend_or_unknown_origin": 0.4727,
+    "country_Ethiopia": 0.1025,
+    "country_Kenya": 0.1879,
+    "country_Colombia": -0.175,
+    "country_Brazil": 0.0974,
+    "country_Guatemala": 0.0862,
+    "alt_lt1200": -0.0911,
+    "alt_1600_2000": 0.2488,
+    "alt_ge2000": 0.4366,
+    "process_washed": 0.7125,
+    "process_natural": 0.2486,
+    "process_honey": 0.4536,
+    "process_anaerobic": 0.148,
+    "roast_light": -0.1018,
+    "roast_medium": -0.5478,
+    "roast_medium-dark": -0.4903,
+    "roast_dark": 0.3033,
+    "decaf": -0.2605,
+    "decaf_water": -0.3456,
+    "decaf_sugarcane": 0.0851
+   },
+   "n_train": 72,
+   "uses_nbr": false
+  },
+  "sweetness:+Bf": {
+   "type": "ridge",
+   "alpha": 3.0,
+   "intercept": 2.9939,
+   "weights": {
+    "region_east_africa": -0.25,
+    "region_central_america": -0.1148,
+    "region_south_america": -0.0647,
+    "region_asia_pacific": -0.2436,
+    "region_yemen": 0.1355,
+    "blend_or_unknown_origin": 0.5376,
+    "country_Ethiopia": 0.1143,
+    "country_Kenya": 0.0998,
+    "country_Colombia": -0.1951,
+    "country_Brazil": 0.1636,
+    "country_Guatemala": -0.0027,
+    "alt_lt1200": -0.1146,
+    "alt_1600_2000": 0.2363,
+    "alt_ge2000": 0.3117,
+    "process_washed": 0.3634,
+    "process_natural": -0.0524,
+    "process_honey": 0.3867,
+    "process_anaerobic": 0.0998,
+    "roast_light": -0.2416,
+    "roast_medium": -0.4179,
+    "roast_medium-dark": -0.3739,
+    "roast_dark": 0.2947,
+    "decaf": -0.2221,
+    "decaf_water": -0.3561,
+    "decaf_sugarcane": 0.1339,
+    "notes_fruity": 0.0307,
+    "notes_floral": 0.2346,
+    "notes_sweet": 0.0008,
+    "notes_nutty/cocoa": 0.261,
+    "notes_roasted": 0.0902,
+    "notes_spices": 0.0113,
+    "notes_sour/fermented": 0.1245,
+    "notes_green/vegetative": -0.1209,
+    "weak": 0.3765
+   },
+   "n_train": 72,
+   "n_gauge": 72,
+   "uses_nbr": false,
+   "config": "+Bf"
+  },
+  "sweetness:+C": {
+   "type": "ridge",
+   "alpha": 3.0,
+   "intercept": 3.0342,
+   "weights": {
+    "region_east_africa": -0.2235,
+    "region_central_america": -0.0784,
+    "region_south_america": -0.0194,
+    "region_asia_pacific": -0.2193,
+    "region_yemen": 0.1607,
+    "blend_or_unknown_origin": 0.3799,
+    "country_Ethiopia": 0.1208,
+    "country_Kenya": 0.08,
+    "country_Colombia": -0.1872,
+    "country_Brazil": 0.1727,
+    "country_Guatemala": 0.0093,
+    "alt_lt1200": -0.1474,
+    "alt_1600_2000": 0.2426,
+    "alt_ge2000": 0.3317,
+    "process_washed": 0.3164,
+    "process_natural": -0.0321,
+    "process_honey": 0.384,
+    "process_anaerobic": 0.0625,
+    "roast_light": -0.1641,
+    "roast_medium": -0.2862,
+    "roast_medium-dark": -0.2387,
+    "roast_dark": 0.3525,
+    "decaf": -0.2094,
+    "decaf_water": -0.3412,
+    "decaf_sugarcane": 0.1317,
+    "notes_fruity": 0.0065,
+    "notes_floral": 0.2615,
+    "notes_sweet": 0.0816,
+    "notes_nutty/cocoa": 0.2717,
+    "notes_roasted": 0.1034,
+    "notes_spices": 0.0028,
+    "notes_sour/fermented": 0.0904,
+    "notes_green/vegetative": -0.1555
+   },
+   "n_train": 72,
+   "n_gauge": 72,
+   "uses_nbr": false,
+   "config": "+C",
+   "roaster_offsets": {
+    "1킬로커피": -0.23,
+    "G로스팅": 0.1184,
+    "커피 리브레": 0.224
+   }
+  },
+  "sweetness:+A": {
+   "type": "ridge",
+   "alpha": 0.3,
+   "intercept": 2.6992,
+   "weights": {
+    "region_east_africa": -0.3553,
+    "region_central_america": -0.1241,
+    "region_south_america": -0.3739,
+    "region_asia_pacific": -0.3812,
+    "region_yemen": 0.2617,
+    "blend_or_unknown_origin": 0.9728,
+    "country_Ethiopia": 0.4319,
+    "country_Kenya": 0.2655,
+    "country_Colombia": -0.2411,
+    "country_Brazil": 0.673,
+    "country_Guatemala": 0.047,
+    "alt_lt1200": -0.4158,
+    "alt_1600_2000": 0.688,
+    "alt_ge2000": 0.9088,
+    "process_washed": 1.1238,
+    "process_natural": 0.2451,
+    "process_honey": 0.9542,
+    "process_anaerobic": 0.6908,
+    "roast_light": -0.2458,
+    "roast_medium": -0.3074,
+    "roast_medium-dark": -0.2226,
+    "roast_dark": 0.9675,
+    "decaf": -0.1925,
+    "decaf_water": -0.7549,
+    "decaf_sugarcane": 0.5624,
+    "notes_fruity": -0.1529,
+    "notes_floral": 0.5076,
+    "notes_sweet": 0.1541,
+    "notes_nutty/cocoa": 0.2739,
+    "notes_roasted": 0.3687,
+    "notes_spices": -0.219,
+    "notes_sour/fermented": 0.3451,
+    "notes_green/vegetative": -0.7058
+   },
+   "n_train": 74,
+   "n_gauge": 72,
+   "uses_nbr": false,
+   "config": "+A"
+  },
+  "sweetness:+A+C": {
+   "type": "ridge",
+   "alpha": 0.3,
+   "intercept": 2.7276,
+   "weights": {
+    "region_east_africa": -0.343,
+    "region_central_america": -0.1109,
+    "region_south_america": -0.3595,
+    "region_asia_pacific": -0.3726,
+    "region_yemen": 0.2511,
+    "blend_or_unknown_origin": 0.9349,
+    "country_Ethiopia": 0.4287,
+    "country_Kenya": 0.2699,
+    "country_Colombia": -0.2441,
+    "country_Brazil": 0.6725,
+    "country_Guatemala": 0.0491,
+    "alt_lt1200": -0.3969,
+    "alt_1600_2000": 0.7141,
+    "alt_ge2000": 0.9358,
+    "process_washed": 1.1051,
+    "process_natural": 0.2322,
+    "process_honey": 0.9531,
+    "process_anaerobic": 0.6728,
+    "roast_light": -0.2493,
+    "roast_medium": -0.3112,
+    "roast_medium-dark": -0.2273,
+    "roast_dark": 0.9579,
+    "decaf": -0.192,
+    "decaf_water": -0.7532,
+    "decaf_sugarcane": 0.5613,
+    "notes_fruity": -0.1712,
+    "notes_floral": 0.5059,
+    "notes_sweet": 0.1309,
+    "notes_nutty/cocoa": 0.2626,
+    "notes_roasted": 0.368,
+    "notes_spices": -0.2405,
+    "notes_sour/fermented": 0.329,
+    "notes_green/vegetative": -0.7091
+   },
+   "n_train": 74,
+   "n_gauge": 72,
+   "uses_nbr": false,
+   "config": "+A+C",
+   "roaster_offsets": {
+    "1킬로커피": -0.0372,
+    "G로스팅": 0.0525,
+    "Intelligentsia": -0.0786,
+    "Ozone Coffee": 0.0789,
+    "커피 리브레": 0.0036
+   }
+  },
+  "sweetness:~A wA=1": {
+   "type": "ridge",
+   "alpha": 0.3,
+   "intercept": 2.6513,
+   "weights": {
+    "region_east_africa": -0.3338,
+    "region_central_america": -0.1191,
+    "region_south_america": -0.3982,
+    "region_asia_pacific": -0.345,
+    "region_yemen": 0.1734,
+    "blend_or_unknown_origin": 1.0227,
+    "country_Ethiopia": 0.424,
+    "country_Kenya": 0.2281,
+    "country_Colombia": -0.1965,
+    "country_Brazil": 0.7261,
+    "country_Guatemala": 0.0865,
+    "alt_lt1200": -0.4953,
+    "alt_1600_2000": 0.6265,
+    "alt_ge2000": 0.8516,
+    "process_washed": 1.2194,
+    "process_natural": 0.2991,
+    "process_honey": 0.9619,
+    "process_anaerobic": 0.7588,
+    "roast_light": -0.3086,
+    "roast_medium": -0.2823,
+    "roast_medium-dark": -0.2048,
+    "roast_dark": 0.9823,
+    "decaf": -0.1964,
+    "decaf_water": -0.7538,
+    "decaf_sugarcane": 0.5575,
+    "notes_fruity": -0.1161,
+    "notes_floral": 0.4683,
+    "notes_sweet": 0.1529,
+    "notes_nutty/cocoa": 0.2452,
+    "notes_roasted": 0.391,
+    "notes_spices": -0.2257,
+    "notes_sour/fermented": 0.3503,
+    "notes_green/vegetative": -0.8002
+   },
+   "n_train": 74,
+   "n_gauge": 72,
+   "uses_nbr": false,
+   "config": "~A wA=1"
+  },
+  "sweetness:~B uncentred": {
+   "type": "ridge",
+   "alpha": 30.0,
+   "intercept": 3.1121,
+   "weights": {
+    "region_east_africa": -0.1023,
+    "region_central_america": -0.0366,
+    "region_south_america": -0.0248,
+    "region_asia_pacific": -0.0615,
+    "region_yemen": 0.0286,
+    "blend_or_unknown_origin": 0.1966,
+    "country_Ethiopia": -0.006,
+    "country_Kenya": 0.0057,
+    "country_Colombia": -0.0242,
+    "country_Brazil": -0.034,
+    "country_Guatemala": -0.0239,
+    "alt_lt1200": -0.0153,
+    "alt_1600_2000": 0.0371,
+    "alt_ge2000": 0.0422,
+    "process_washed": 0.0802,
+    "process_natural": 0.0184,
+    "process_honey": 0.0959,
+    "process_anaerobic": 0.0472,
+    "roast_light": -0.0196,
+    "roast_medium-light": 0.0265,
+    "roast_medium": -0.2145,
+    "roast_medium-dark": -0.1703,
+    "roast_dark": 0.0637,
+    "variety_geisha": -0.0084,
+    "variety_kenyan_sl": 0.0139,
+    "decaf": -0.0702,
+    "decaf_water": -0.0733,
+    "decaf_sugarcane": -0.017,
+    "notes_fruity": 0.157,
+    "notes_floral": 0.0446,
+    "notes_sweet": 0.2901,
+    "notes_nutty/cocoa": 0.0971,
+    "notes_roasted": 0.0086,
+    "notes_spices": -0.0153,
+    "notes_sour/fermented": 0.0188,
+    "notes_green/vegetative": -0.0433
+   },
+   "n_train": 263,
+   "n_gauge": 72,
+   "uses_nbr": false,
+   "config": "~B uncentred"
+  },
+  "body:~A wA=1": {
+   "type": "ridge",
+   "alpha": 30.0,
+   "intercept": 3.4347,
+   "weights": {
+    "region_east_africa": -0.1106,
+    "region_central_america": 0.0373,
+    "region_south_america": -0.0566,
+    "region_asia_pacific": 0.0334,
+    "region_yemen": 0.0194,
+    "blend_or_unknown_origin": 0.0771,
+    "country_Ethiopia": -0.1607,
+    "country_Kenya": 0.0905,
+    "country_Colombia": -0.0635,
+    "country_Brazil": 0.007,
+    "country_Guatemala": 0.0214,
+    "alt_lt1200": -0.0141,
+    "alt_1600_2000": -0.0086,
+    "alt_ge2000": 0.0243,
+    "process_washed": -0.0048,
+    "process_natural": 0.0066,
+    "process_honey": -0.0031,
+    "roast_light": -0.0983,
+    "roast_medium": -0.1615,
+    "roast_medium-dark": 0.0275,
+    "roast_dark": 0.2329,
+    "decaf": -0.1276,
+    "decaf_water": -0.1122,
+    "decaf_sugarcane": -0.0375,
+    "notes_fruity": -0.1402,
+    "notes_floral": -0.0172,
+    "notes_sweet": -0.0048,
+    "notes_nutty/cocoa": 0.2166,
+    "notes_roasted": 0.0361,
+    "notes_spices": -0.0359,
+    "notes_sour/fermented": -0.0433,
+    "notes_green/vegetative": -0.0285,
+    "notes_other": -0.0317,
+    "nbr": -0.0294
+   },
+   "n_train": 110,
+   "n_gauge": 64,
+   "uses_nbr": true,
+   "config": "~A wA=1"
+  },
+  "body:+A": {
+   "type": "ridge",
+   "alpha": 3.0,
+   "intercept": 3.5416,
+   "weights": {
+    "region_east_africa": -0.1059,
+    "region_central_america": 0.0057,
+    "region_south_america": -0.2132,
+    "region_asia_pacific": 0.084,
+    "region_yemen": 0.1074,
+    "blend_or_unknown_origin": 0.122,
+    "country_Ethiopia": -0.369,
+    "country_Kenya": 0.3414,
+    "country_Colombia": -0.2357,
+    "country_Brazil": 0.0225,
+    "country_Guatemala": 0.1366,
+    "alt_lt1200": -0.0619,
+    "alt_1600_2000": -0.0746,
+    "alt_ge2000": 0.1939,
+    "process_washed": -0.0326,
+    "process_natural": 0.0752,
+    "process_honey": 0.0816,
+    "roast_light": -0.3714,
+    "roast_medium": -0.3386,
+    "roast_medium-dark": 0.0928,
+    "roast_dark": 0.5608,
+    "decaf": -0.2763,
+    "decaf_water": -0.2928,
+    "decaf_sugarcane": -0.0561,
+    "notes_fruity": -0.1728,
+    "notes_floral": 0.0189,
+    "notes_sweet": 0.0502,
+    "notes_nutty/cocoa": 0.2984,
+    "notes_roasted": 0.1461,
+    "notes_spices": -0.2224,
+    "notes_sour/fermented": -0.3341,
+    "notes_green/vegetative": -0.1544,
+    "notes_other": -0.094,
+    "nbr": -0.2663
+   },
+   "n_train": 110,
+   "n_gauge": 64,
+   "uses_nbr": true,
+   "config": "+A"
+  },
+  "body:+A+B+C": {
+   "type": "ridge",
+   "alpha": 1.0,
+   "intercept": 3.6068,
+   "weights": {
+    "region_east_africa": -0.1321,
+    "region_central_america": -0.1741,
+    "region_south_america": -0.012,
+    "region_asia_pacific": 0.0877,
+    "region_yemen": 0.0256,
+    "blend_or_unknown_origin": 0.2049,
+    "country_Ethiopia": -0.3083,
+    "country_Kenya": 0.3385,
+    "country_Colombia": -0.3395,
+    "country_Brazil": -0.2186,
+    "country_Guatemala": 0.3161,
+    "alt_lt1200": -0.123,
+    "alt_1600_2000": -0.1228,
+    "alt_ge2000": 0.3828,
+    "process_washed": 0.0186,
+    "process_natural": 0.1121,
+    "process_honey": 0.1608,
+    "process_anaerobic": 0.2875,
+    "roast_light": -0.3288,
+    "roast_medium-light": -0.125,
+    "roast_medium": -0.2611,
+    "roast_medium-dark": 0.1254,
+    "roast_dark": 0.4683,
+    "variety_geisha": -0.0398,
+    "variety_kenyan_sl": -0.2178,
+    "decaf": -0.0772,
+    "decaf_water": -0.4917,
+    "decaf_sugarcane": -0.3199,
+    "notes_fruity": -0.2101,
+    "notes_floral": -0.2399,
+    "notes_sweet": 0.076,
+    "notes_nutty/cocoa": 0.2211,
+    "notes_roasted": 0.3551,
+    "notes_spices": -0.0379,
+    "notes_sour/fermented": -0.3834,
+    "notes_green/vegetative": -0.3283,
+    "notes_other": -0.1168,
+    "nbr": -0.2353
+   },
+   "n_train": 299,
+   "n_gauge": 64,
+   "uses_nbr": true,
+   "config": "+A+B+C",
+   "roaster_offsets": {
+    "1킬로커피": -0.0663,
+    "3fe Coffee": 0.0169,
+    "44 North Coffee": 0.0383,
+    "Assembly Coffee": -0.0112,
+    "Bean There Coffee": -0.0084,
+    "Black & White Coffee Roasters": -0.0568,
+    "Blue Bottle Coffee": 0.0431,
+    "Brandywine Coffee Roasters": 0.0367,
+    "Buddy Brew Coffee": -0.012,
+    "Café Britt": -0.052,
+    "Café Don Pablo": -0.1926,
+    "Cape Coffee Beans": 0.0307,
+    "Cat & Cloud": 0.0088,
+    "Ceremony Coffee Roasters": 0.0122,
+    "Coaltown Coffee": 0.0232,
+    "Coffee Compass": -0.013,
+    "Coffee Supreme": 0.0073,
+    "Corvus Coffee Roasters": 0.0407,
+    "Counter Culture Coffee": -0.0001,
+    "Dark Matter Coffee": -0.0197,
+    "Devocion": 0.0017,
+    "Equator Coffees": 0.0133,
+    "Five Senses Coffee": -0.0152,
+    "Fresh Roasted Coffee": -0.3922,
+    "Fulcrum Coffee": -0.0174,
+    "Full Circle Roasters": 0.0264,
+    "Gabriel Coffee": 0.0043,
+    "Great Lakes Coffee": 0.0019,
+    "G로스팅": 0.2004,
+    "Horsham Coffee Roaster": 0.0107,
+    "Hundred House Coffee": -0.0001,
+    "Intelligentsia Coffee": 0.024,
+    "Just Coffee Cooperative": 0.0265,
+    "KB Coffee Roasters": 0.0687,
+    "Kima Coffee": -0.0651,
+    "Kiss the Hippo Coffee": -0.0242,
+    "Kuma Coffee": -0.0077,
+    "Level Ground Trading": -0.0414,
+    "Lighthouse Roasters": -0.0013,
+    "Mad Lab Coffee": -0.0377,
+    "Marigold Coffee": 0.0269,
+    "Messenger Coffee": -0.0399,
+    "Mission Coffee Works": -0.0137,
+    "Monogram Coffee": -0.0071,
+    "North Star Coffee Roasters": 0.0041,
+    "Nossa Familia Coffee": -0.002,
+    "Ona Coffee": 0.0069,
+    "Ozone Coffee": 0.1087,
+    "PPP Coffee": -0.0126,
+    "PT's Coffee Roasting": -0.0004,
+    "Padre Coffee": 0.0299,
+    "Panther Coffee": 0.0236,
+    "Parlor Coffee": 0.0034,
+    "Passenger Coffee": 0.0241,
+    "Perc Coffee": -0.0359,
+    "Perky Blenders": 0.0019,
+    "Prevail Coffee": -0.0275,
+    "Regent Coffee": 0.0638,
+    "Rosso Coffee Roasters": 0.0392,
+    "Rumble Coffee Roasters": 0.0191,
+    "Saint Frank Coffee": -0.0082,
+    "Seven Seeds": -0.013,
+    "Sextant Coffee Roasters": 0.0202,
+    "Sey Coffee": -0.039,
+    "Small Batch Coffee": 0.0169,
+    "Sparrows Coffee": -0.0222,
+    "Standout Coffee": 0.0199,
+    "Steampunk Coffee": 0.0092,
+    "Stone Creek Coffee": -0.0154,
+    "Syra Coffee": 0.0053,
+    "Topeca Coffee": 0.0236,
+    "Transcend Coffee": 0.0049,
+    "Tres Cabezas": -0.05,
+    "Union Hand-Roasted Coffee": -0.0327,
+    "Verve Coffee Roasters": -0.0142,
+    "Victrola Coffee Roasters": -0.0302,
+    "Vigilante Coffee": -0.0253,
+    "Volcano Coffee Works": 0.032,
+    "Yellow Brick Coffee": 0.0147,
+    "Zoka Coffee": -0.0106,
+    "나무사이로": 0.0549,
+    "내일의커피": 0.0612,
+    "매뉴팩트": 0.1085,
+    "모모스커피": 0.0329,
+    "빈브라더스": 0.0299,
+    "앤트러사이트": -0.0292,
+    "펠트": 0.0253,
+    "프릳츠": 0.073
+   }
+  },
+  "body:+B": {
+   "type": "ridge",
+   "alpha": 1.0,
+   "intercept": 3.632,
+   "weights": {
+    "region_east_africa": -0.0373,
+    "region_central_america": -0.2885,
+    "region_south_america": -0.1005,
+    "region_asia_pacific": 0.1234,
+    "region_yemen": 0.0312,
+    "blend_or_unknown_origin": 0.2716,
+    "country_Ethiopia": -0.3801,
+    "country_Kenya": 0.2334,
+    "country_Colombia": -0.292,
+    "country_Brazil": -0.221,
+    "country_Guatemala": 0.3894,
+    "alt_lt1200": -0.0742,
+    "alt_1600_2000": -0.1535,
+    "alt_ge2000": 0.3411,
+    "process_washed": 0.1594,
+    "process_natural": 0.1285,
+    "process_honey": 0.265,
+    "process_anaerobic": 0.3232,
+    "roast_light": -0.3478,
+    "roast_medium-light": -0.1779,
+    "roast_medium": -0.3287,
+    "roast_medium-dark": 0.1372,
+    "roast_dark": 0.3879,
+    "variety_geisha": -0.0705,
+    "variety_kenyan_sl": -0.255,
+    "decaf": -0.2001,
+    "decaf_water": -0.447,
+    "decaf_sugarcane": -0.2363,
+    "notes_fruity": -0.2138,
+    "notes_floral": -0.2077,
+    "notes_sweet": 0.1251,
+    "notes_nutty/cocoa": 0.2288,
+    "notes_roasted": 0.3737,
+    "notes_spices": 0.0372,
+    "notes_sour/fermented": -0.3348,
+    "notes_green/vegetative": -0.3627,
+    "nbr": -0.206
+   },
+   "n_train": 253,
+   "n_gauge": 64,
+   "uses_nbr": true,
+   "config": "+B"
+  },
+  "body:+C": {
+   "type": "ridge",
+   "alpha": 3.0,
+   "intercept": 3.6999,
+   "weights": {
+    "region_east_africa": 0.0077,
+    "region_central_america": -0.1204,
+    "region_south_america": -0.2407,
+    "region_asia_pacific": 0.0988,
+    "region_yemen": 0.0433,
+    "blend_or_unknown_origin": 0.2113,
+    "country_Ethiopia": -0.4297,
+    "country_Kenya": 0.2369,
+    "country_Colombia": -0.2257,
+    "country_Brazil": -0.015,
+    "country_Guatemala": 0.1433,
+    "alt_lt1200": -0.07,
+    "alt_1600_2000": -0.1128,
+    "alt_ge2000": 0.1751,
+    "process_washed": 0.1317,
+    "process_natural": -0.0203,
+    "process_honey": 0.1899,
+    "roast_light": -0.4257,
+    "roast_medium": -0.467,
+    "roast_medium-dark": 0.0386,
+    "roast_dark": 0.6076,
+    "decaf": -0.2959,
+    "decaf_water": -0.2448,
+    "decaf_sugarcane": -0.036,
+    "notes_fruity": -0.2317,
+    "notes_floral": 0.0101,
+    "notes_sweet": 0.0106,
+    "notes_nutty/cocoa": 0.2735,
+    "notes_roasted": 0.085,
+    "notes_spices": -0.1544,
+    "notes_sour/fermented": -0.3396,
+    "notes_green/vegetative": -0.2561,
+    "nbr": -0.1643
+   },
+   "n_train": 64,
+   "n_gauge": 64,
+   "uses_nbr": true,
+   "config": "+C",
+   "roaster_offsets": {
+    "1킬로커피": -0.0431,
+    "G로스팅": 0.123,
+    "내일의커피": -0.0648
+   }
+  }
+ }
+}

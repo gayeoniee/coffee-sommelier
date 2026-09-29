@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T08:14:20.585194+00:00",
+  "generated_at": "2026-09-29T09:02:13.979651+00:00",
   "k": 10,
   "ship_margin_within1": 0.05,
   "cqi_aux_weight": 0.2,
@@ -460,15 +460,18 @@
       "candidate": "ridge+nbr",
       "within1_gain_vs_neighbor": 0.0624,
       "passes_gauges_only_rule": true,
-      "shipped_recipe": null
+      "shipped_recipe": [
+        "ablation",
+        "+A wA=1"
+      ]
     },
     "sweetness": {
       "candidate": "ridge",
       "within1_gain_vs_neighbor": 0.0139,
       "passes_gauges_only_rule": false,
       "shipped_recipe": [
-        "gauges",
-        false
+        "ablation",
+        "+C"
       ]
     }
   },

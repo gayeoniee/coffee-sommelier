@@ -56,7 +56,7 @@
   "model_files_sha1": {
     "attr_model.json": "fa15cf7ad595",
     "tag_model.json": "57fd105ee18b",
-    "feature_model_open.json": "8a0c9d92f6a3",
+    "feature_model_open.json": "8c70b7f123ab",
     "tag_cooc_open.json": "aede1765bd2d"
   },
   "variants": {
@@ -111,21 +111,21 @@
         "coverage": 1.0
       },
       "body": {
-        "n": 156,
-        "mae": 0.6427,
-        "within1": 0.7821,
-        "spearman": -0.009,
-        "mean_truth": 2.94,
-        "mean_pred": 3.435,
-        "coverage": 0.8
+        "n": 195,
+        "mae": 0.5933,
+        "within1": 0.8308,
+        "spearman": 0.0429,
+        "mean_truth": 2.948,
+        "mean_pred": 3.409,
+        "coverage": 1.0
       },
       "sweetness": {
         "n": 167,
-        "mae": 1.487,
-        "within1": 0.3533,
-        "spearman": -0.2864,
+        "mae": 1.2252,
+        "within1": 0.497,
+        "spearman": -0.3235,
         "mean_truth": 2.577,
-        "mean_pred": 4.015,
+        "mean_pred": 3.726,
         "coverage": 0.852
       },
       "tags_before_text_cues": {
@@ -231,11 +231,11 @@
     "sweetness": {
       "open_feature_model": {
         "n": 167,
-        "mae": 1.487,
-        "within1": 0.3533,
-        "spearman": -0.2864,
+        "mae": 1.2252,
+        "within1": 0.497,
+        "spearman": -0.3235,
         "mean_truth": 2.577,
-        "mean_pred": 4.015
+        "mean_pred": 3.726
       },
       "open_neighbour_average": {
         "n": 167,

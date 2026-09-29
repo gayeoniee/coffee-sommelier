@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T08:16:46.211490+00:00",
+  "generated_at": "2026-09-29T09:12:03.390039+00:00",
   "k": 10,
   "w_a": 0.5,
   "w_b": 0.3,
@@ -304,6 +304,11 @@
           "mae": 0.752,
           "within1": 0.6829
         },
+        "+A wA=1": {
+          "n": 82,
+          "mae": 0.8201,
+          "within1": 0.6098
+        },
         "~base (new pool)": {
           "n": 82,
           "mae": 0.9637,
@@ -415,6 +420,11 @@
           "+A+B+C": {
             "n": 37,
             "mae": 0.7395,
+            "within1": 0.6486
+          },
+          "+A wA=1": {
+            "n": 37,
+            "mae": 0.7833,
             "within1": 0.6486
           },
           "~base (new pool)": {
@@ -529,6 +539,11 @@
             "mae": 0.6737,
             "within1": 0.7059
           },
+          "+A wA=1": {
+            "n": 17,
+            "mae": 0.8343,
+            "within1": 0.5882
+          },
           "~base (new pool)": {
             "n": 17,
             "mae": 0.7697,
@@ -639,6 +654,11 @@
           "+A+B+C": {
             "n": 10,
             "mae": 0.813,
+            "within1": 0.6
+          },
+          "+A wA=1": {
+            "n": 10,
+            "mae": 0.8989,
             "within1": 0.6
           },
           "~base (new pool)": {
@@ -752,6 +772,11 @@
             "n": 18,
             "mae": 0.8177,
             "within1": 0.7778
+          },
+          "+A wA=1": {
+            "n": 18,
+            "mae": 0.8387,
+            "within1": 0.5556
           },
           "~base (new pool)": {
             "n": 18,
@@ -874,6 +899,11 @@
           "mae": 0.6829,
           "within1": 0.7969
         },
+        "+A wA=1": {
+          "n": 64,
+          "mae": 0.6928,
+          "within1": 0.7812
+        },
         "~base (new pool)": {
           "n": 64,
           "mae": 0.726,
@@ -987,6 +1017,11 @@
             "mae": 0.7177,
             "within1": 0.7838
           },
+          "+A wA=1": {
+            "n": 37,
+            "mae": 0.6701,
+            "within1": 0.8108
+          },
           "~base (new pool)": {
             "n": 37,
             "mae": 0.7194,
@@ -1099,6 +1134,11 @@
             "mae": 0.6158,
             "within1": 0.8235
           },
+          "+A wA=1": {
+            "n": 17,
+            "mae": 0.7827,
+            "within1": 0.6471
+          },
           "~base (new pool)": {
             "n": 17,
             "mae": 0.7813,
@@ -1210,6 +1250,11 @@
             "n": 10,
             "mae": 0.6684,
             "within1": 0.8
+          },
+          "+A wA=1": {
+            "n": 10,
+            "mae": 0.6236,
+            "within1": 0.9
           },
           "~base (new pool)": {
             "n": 10,
@@ -1332,6 +1377,11 @@
           "mae": 1.0845,
           "within1": 0.4722
         },
+        "+A wA=1": {
+          "n": 72,
+          "mae": 0.9833,
+          "within1": 0.5972
+        },
         "~base (new pool)": {
           "n": 72,
           "mae": 1.0307,
@@ -1443,6 +1493,11 @@
           "+A+B+C": {
             "n": 37,
             "mae": 1.2838,
+            "within1": 0.4595
+          },
+          "+A wA=1": {
+            "n": 37,
+            "mae": 1.2195,
             "within1": 0.4595
           },
           "~base (new pool)": {
@@ -1557,6 +1612,11 @@
             "mae": 0.8607,
             "within1": 0.5882
           },
+          "+A wA=1": {
+            "n": 17,
+            "mae": 0.7993,
+            "within1": 0.6471
+          },
           "~base (new pool)": {
             "n": 17,
             "mae": 0.7556,
@@ -1669,6 +1729,11 @@
             "mae": 0.8864,
             "within1": 0.3889
           },
+          "+A wA=1": {
+            "n": 18,
+            "mae": 0.6717,
+            "within1": 0.8333
+          },
           "~base (new pool)": {
             "n": 18,
             "mae": 0.661,
@@ -1732,11 +1797,14 @@
     },
     "body": {
       "best": "+A+B+C",
-      "vs": "neighbour average",
-      "within1_gain": 0.0781,
-      "margin": 0.05,
+      "vs": "shipped (base)",
+      "within1_gain": 0.0313,
+      "margin": 0.03,
       "would_replace": true,
-      "shipped_recipe": null
+      "shipped_recipe": [
+        "ablation",
+        "+A wA=1"
+      ]
     },
     "sweetness": {
       "best": "+Bf",
@@ -1745,8 +1813,8 @@
       "margin": 0.03,
       "would_replace": true,
       "shipped_recipe": [
-        "gauges",
-        false
+        "ablation",
+        "+C"
       ]
     }
   }
