@@ -1,0 +1,674 @@
+{
+ "generated_at": "2026-09-29T07:51:54.733143+00:00",
+ "n_aliases": 96,
+ "guest": {
+  "rows": [
+   {
+    "text": "chocolate caramel wet nut",
+    "expected": [
+     "caramelized",
+     "chocolate",
+     "nutty"
+    ],
+    "before": [
+     "chocolate"
+    ],
+    "after": [
+     "caramelized",
+     "chocolate",
+     "nutty"
+    ]
+   },
+   {
+    "text": "earthy, spicy, full body",
+    "expected": [
+     "brown spice",
+     "musty/earthy"
+    ],
+    "before": [],
+    "after": [
+     "brown spice",
+     "musty/earthy"
+    ]
+   },
+   {
+    "text": "Ethiopia Yirgacheffe washed, jasmine, bergamot, stone fruit",
+    "expected": [
+     "citrus fruit",
+     "jasmine",
+     "peach"
+    ],
+    "before": [
+     "jasmine"
+    ],
+    "after": [
+     "citrus fruit",
+     "jasmine",
+     "peach"
+    ]
+   },
+   {
+    "text": "Kenya AA blackcurrant, citrusy, winey",
+    "expected": [
+     "berry",
+     "citrus fruit",
+     "winey"
+    ],
+    "before": [
+     "winey"
+    ],
+    "after": [
+     "berry",
+     "citrus fruit",
+     "winey"
+    ]
+   },
+   {
+    "text": "Colombia Huila honey process, caramel, red apple, nuts",
+    "expected": [
+     "apple",
+     "caramelized",
+     "nutty"
+    ],
+    "before": [
+     "apple",
+     "honey"
+    ],
+    "after": [
+     "apple",
+     "caramelized",
+     "honey",
+     "nutty"
+    ]
+   },
+   {
+    "text": "Sumatra Mandheling earthy cedar dark chocolate",
+    "expected": [
+     "dark chocolate",
+     "musty/earthy",
+     "woody"
+    ],
+    "before": [
+     "dark chocolate"
+    ],
+    "after": [
+     "dark chocolate",
+     "musty/earthy",
+     "woody"
+    ]
+   },
+   {
+    "text": "Guatemala Antigua chocolatey, toffee, almond",
+    "expected": [
+     "almonds",
+     "caramelized",
+     "chocolate"
+    ],
+    "before": [],
+    "after": [
+     "almonds",
+     "caramelized",
+     "chocolate"
+    ]
+   },
+   {
+    "text": "Costa Rica Tarrazu tropical, mango, passion fruit",
+    "expected": [
+     "other fruit"
+    ],
+    "before": [],
+    "after": [
+     "other fruit"
+    ]
+   },
+   {
+    "text": "Brazil Santos nutty, cacao, low acidity",
+    "expected": [
+     "cocoa",
+     "nutty"
+    ],
+    "before": [
+     "nutty"
+    ],
+    "after": [
+     "cocoa",
+     "nutty"
+    ]
+   },
+   {
+    "text": "브라질 세라도 내추럴 caramel nuts",
+    "expected": [
+     "caramelized",
+     "nutty"
+    ],
+    "before": [],
+    "after": [
+     "caramelized",
+     "nutty"
+    ]
+   },
+   {
+    "text": "에티오피아 구지 내추럴 blueberries, strawberry jam",
+    "expected": [
+     "blueberry",
+     "strawberry"
+    ],
+    "before": [
+     "strawberry"
+    ],
+    "after": [
+     "blueberry",
+     "strawberry"
+    ]
+   },
+   {
+    "text": "케냐 키리냐가 black currant grapefruit",
+    "expected": [
+     "berry",
+     "grapefruit"
+    ],
+    "before": [
+     "grapefruit"
+    ],
+    "after": [
+     "berry",
+     "grapefruit"
+    ]
+   },
+   {
+    "text": "Decaf Colombia sugarcane EA, toffee, apricot",
+    "expected": [
+     "caramelized",
+     "peach"
+    ],
+    "before": [],
+    "after": [
+     "caramelized",
+     "peach"
+    ]
+   },
+   {
+    "text": "Panama Geisha orange blossom, peachy, earl grey",
+    "expected": [
+     "black tea",
+     "floral",
+     "peach"
+    ],
+    "before": [
+     "orange"
+    ],
+    "after": [
+     "black tea",
+     "floral",
+     "peach"
+    ]
+   },
+   {
+    "text": "House espresso blend smoky, spice, molasses",
+    "expected": [
+     "brown spice",
+     "molasses",
+     "smoky"
+    ],
+    "before": [
+     "molasses",
+     "smoky"
+    ],
+    "after": [
+     "brown spice",
+     "molasses",
+     "smoky"
+    ]
+   },
+   {
+    "text": "Honduras decaf mountain water caramel",
+    "expected": [
+     "caramelized"
+    ],
+    "before": [],
+    "after": [
+     "caramelized"
+    ]
+   }
+  ],
+  "before": {
+   "precision": 0.8333,
+   "recall": 0.2632,
+   "tags_per_text": 0.75,
+   "texts_with_tag": 10
+  },
+  "after": {
+   "precision": 0.9744,
+   "recall": 1.0,
+   "tags_per_text": 2.438,
+   "texts_with_tag": 16
+  }
+ },
+ "dryrun_open": {
+  "roasters_kr": {
+   "beans": 209,
+   "tagged_before": 121,
+   "tagged_after": 121,
+   "changed": 18,
+   "gained_tags": 24,
+   "lost_tags": 4,
+   "tags_per_bean_before": 1.756,
+   "tags_per_bean_after": 1.852,
+   "enriched_cache_matches_before": 160,
+   "gained": {
+    "cocoa": 4,
+    "almonds": 4,
+    "nutty": 4,
+    "caramelized": 3,
+    "other fruit": 3,
+    "brown sugar": 2,
+    "peanuts": 1,
+    "orange": 1,
+    "winey": 1,
+    "herb-like": 1
+   },
+   "lost": {
+    "citrus fruit": 2,
+    "sweet aromatics": 1,
+    "maple syrup": 1
+   },
+   "examples": [
+    {
+     "key": "roasters_kr:anthracite:124",
+     "before": [
+      "chocolate"
+     ],
+     "after": [
+      "cocoa",
+      "almonds",
+      "peanuts",
+      "chocolate"
+     ]
+    },
+    {
+     "key": "roasters_kr:anthracite:135",
+     "before": [
+      "citrus fruit",
+      "maple syrup",
+      "sweet aromatics"
+     ],
+     "after": [
+      "orange"
+     ]
+    },
+    {
+     "key": "roasters_kr:felt:30",
+     "before": [
+      "dried fruit",
+      "chocolate"
+     ],
+     "after": [
+      "dried fruit",
+      "chocolate",
+      "almonds"
+     ]
+    },
+    {
+     "key": "roasters_kr:felt:29",
+     "before": [
+      "apple",
+      "peach"
+     ],
+     "after": [
+      "apple",
+      "peach",
+      "caramelized"
+     ]
+    },
+    {
+     "key": "roasters_kr:felt:31",
+     "before": [
+      "dried fruit",
+      "dark chocolate"
+     ],
+     "after": [
+      "dried fruit",
+      "dark chocolate",
+      "cocoa"
+     ]
+    },
+    {
+     "key": "roasters_kr:felt:110",
+     "before": [
+      "raisin",
+      "chocolate"
+     ],
+     "after": [
+      "raisin",
+      "chocolate",
+      "almonds"
+     ]
+    }
+   ],
+   "db_matches_before": 160,
+   "db_matches_after": 142,
+   "in_db": 209,
+   "db_changed_by_reenrich": 67,
+   "db_tags_per_bean": 1.45
+  },
+  "shopify": {
+   "beans": 9,
+   "tagged_before": 9,
+   "tagged_after": 9,
+   "changed": 0,
+   "gained_tags": 0,
+   "lost_tags": 0,
+   "tags_per_bean_before": 4.444,
+   "tags_per_bean_after": 4.444,
+   "enriched_cache_matches_before": 9,
+   "gained": {},
+   "lost": {},
+   "examples": [],
+   "db_matches_before": 9,
+   "db_matches_after": 9,
+   "in_db": 9,
+   "db_changed_by_reenrich": 0,
+   "db_tags_per_bean": 4.444
+  },
+  "shopify_gauged": {
+   "beans": 199,
+   "tagged_before": 147,
+   "tagged_after": 147,
+   "changed": 95,
+   "gained_tags": 127,
+   "lost_tags": 20,
+   "tags_per_bean_before": 1.523,
+   "tags_per_bean_after": 2.06,
+   "enriched_cache_matches_before": 199,
+   "gained": {
+    "caramelized": 31,
+    "other fruit": 18,
+    "nutty": 14,
+    "berry": 13,
+    "peach": 8,
+    "almonds": 8,
+    "orange": 7,
+    "musty/earthy": 5,
+    "raisin": 4,
+    "brown sugar": 4,
+    "smoky": 3,
+    "cocoa": 2
+   },
+   "lost": {
+    "citrus fruit": 4,
+    "sweet aromatics": 4,
+    "cherry": 2,
+    "other fruit": 2,
+    "caramelized": 2,
+    "lemon": 1,
+    "honey": 1,
+    "vanilla": 1,
+    "overall sweet": 1,
+    "brown sugar": 1,
+    "dark chocolate": 1
+   },
+   "examples": [
+    {
+     "key": "shopify_gauged:cafebritt.com:costa-rican-cieloazul-coffee-from-monteverde",
+     "before": [
+      "chocolate"
+     ],
+     "after": [
+      "chocolate",
+      "cocoa",
+      "nutty",
+      "citrus fruit"
+     ]
+    },
+    {
+     "key": "shopify_gauged:cafedonpablo.com:moneymaker-organic-medium-roast-coffee",
+     "before": [
+      "chocolate"
+     ],
+     "after": [
+      "chocolate",
+      "caramelized",
+      "nutty"
+     ]
+    },
+    {
+     "key": "shopify_gauged:cafedonpablo.com:moneymaker-organic-dark-roast-coffee",
+     "before": [
+      "dark chocolate"
+     ],
+     "after": [
+      "dark chocolate",
+      "nutty",
+      "smoky"
+     ]
+    },
+    {
+     "key": "shopify_gauged:cafedonpablo.com:global-billionare-organic-medium-roast-coffee",
+     "before": [
+      "chocolate"
+     ],
+     "after": [
+      "chocolate",
+      "caramelized",
+      "nutty"
+     ]
+    },
+    {
+     "key": "shopify_gauged:cafedonpablo.com:global-billionare-organic-dark-roast-coffee",
+     "before": [
+      "dark chocolate"
+     ],
+     "after": [
+      "dark chocolate",
+      "nutty",
+      "smoky"
+     ]
+    },
+    {
+     "key": "shopify_gauged:cafedonpablo.com:don-pablo-colombian-supremo-coffee",
+     "before": [
+      "chocolate"
+     ],
+     "after": [
+      "chocolate",
+      "nutty"
+     ]
+    }
+   ],
+   "db_matches_before": 199,
+   "db_matches_after": 104,
+   "in_db": 199,
+   "db_changed_by_reenrich": 95,
+   "db_tags_per_bean": 1.523
+  },
+  "roasterdb": {
+   "beans": 100,
+   "tagged_before": 100,
+   "tagged_after": 100,
+   "changed": 0,
+   "gained_tags": 0,
+   "lost_tags": 0,
+   "tags_per_bean_before": 2.61,
+   "tags_per_bean_after": 2.61,
+   "enriched_cache_matches_before": 100,
+   "gained": {},
+   "lost": {},
+   "examples": [],
+   "db_matches_before": 100,
+   "db_matches_after": 100,
+   "in_db": 100,
+   "db_changed_by_reenrich": 0,
+   "db_tags_per_bean": 2.61
+  },
+  "cqi": {
+   "beans": 1546,
+   "tagged_before": 0,
+   "tagged_after": 0,
+   "changed": 0,
+   "gained_tags": 0,
+   "lost_tags": 0,
+   "tags_per_bean_before": 0.0,
+   "tags_per_bean_after": 0.0,
+   "enriched_cache_matches_before": 1546,
+   "gained": {},
+   "lost": {},
+   "examples": [],
+   "db_matches_before": 1546,
+   "db_matches_after": 1546,
+   "in_db": 1546,
+   "db_changed_by_reenrich": 0,
+   "db_tags_per_bean": 0.0
+  }
+ },
+ "dryrun_full_coffeereview": {
+  "coffeereview_kaggle": {
+   "beans": 7393,
+   "tagged_before": 7386,
+   "tagged_after": 7386,
+   "changed": 0,
+   "gained_tags": 0,
+   "lost_tags": 0,
+   "tags_per_bean_before": 2.907,
+   "tags_per_bean_after": 2.907,
+   "enriched_cache_matches_before": 7393,
+   "gained": {},
+   "lost": {},
+   "examples": []
+  }
+ },
+ "e2": {
+  "n_samples": 196,
+  "truth_tags_per_sample": {
+   "old": 3.781,
+   "new": 7.464
+  },
+  "samples_with_truth": {
+   "old": 192,
+   "new": 196
+  },
+  "truth_tag_counts": {
+   "old": {
+    "apple": 67,
+    "dark chocolate": 65,
+    "chocolate": 63,
+    "cocoa": 58,
+    "black tea": 57,
+    "orange": 44,
+    "tobacco": 32,
+    "burnt": 32,
+    "lemon": 26,
+    "peach": 26,
+    "jasmine": 21,
+    "berry": 17,
+    "grapefruit": 17,
+    "strawberry": 16,
+    "anise": 16,
+    "cherry": 15,
+    "nutty": 15,
+    "rubber": 11,
+    "bitter": 10,
+    "pear": 10,
+    "cinnamon": 10,
+    "raspberry": 9,
+    "woody": 8,
+    "honey": 8,
+    "raw": 8
+   },
+   "new": {
+    "nutty": 128,
+    "caramelized": 128,
+    "brown spice": 94,
+    "berry": 80,
+    "peach": 71,
+    "apple": 63,
+    "chocolate": 60,
+    "dark chocolate": 58,
+    "cocoa": 57,
+    "black tea": 54,
+    "orange": 47,
+    "citrus fruit": 39,
+    "dried fruit": 38,
+    "other fruit": 34,
+    "burnt": 31,
+    "tobacco": 30,
+    "floral": 29,
+    "raisin": 28,
+    "hazelnut": 28,
+    "prune": 23,
+    "lemon": 22,
+    "woody": 20,
+    "jasmine": 19,
+    "grape": 18,
+    "cherry": 18
+   }
+  },
+  "pred_old_truth_old": {
+   "before_text_cues": {
+    "n": 192,
+    "precision": 0.3593,
+    "recall": 0.274,
+    "f1": 0.3109,
+    "category_f1": 0.5635
+   },
+   "shown": {
+    "n": 192,
+    "precision": 0.7286,
+    "recall": 0.8259,
+    "f1": 0.7742,
+    "category_f1": 0.8617
+   },
+   "shown_per_sample": 4.375
+  },
+  "pred_old_truth_new": {
+   "before_text_cues": {
+    "n": 196,
+    "precision": 0.4705,
+    "recall": 0.1852,
+    "f1": 0.2658,
+    "category_f1": 0.5599
+   },
+   "shown": {
+    "n": 196,
+    "precision": 0.7662,
+    "recall": 0.4457,
+    "f1": 0.5635,
+    "category_f1": 0.7691
+   },
+   "shown_per_sample": 4.342
+  },
+  "pred_new_truth_old": {
+   "before_text_cues": {
+    "n": 192,
+    "precision": 0.3569,
+    "recall": 0.2726,
+    "f1": 0.3091,
+    "category_f1": 0.5659
+   },
+   "shown": {
+    "n": 192,
+    "precision": 0.4368,
+    "recall": 0.5601,
+    "f1": 0.4908,
+    "category_f1": 0.693
+   },
+   "shown_per_sample": 4.948
+  },
+  "pred_new_truth_new": {
+   "before_text_cues": {
+    "n": 196,
+    "precision": 0.4602,
+    "recall": 0.1818,
+    "f1": 0.2607,
+    "category_f1": 0.5591
+   },
+   "shown": {
+    "n": 196,
+    "precision": 0.9597,
+    "recall": 0.6343,
+    "f1": 0.7638,
+    "category_f1": 0.8953
+   },
+   "shown_per_sample": 4.934
+  }
+ }
+}

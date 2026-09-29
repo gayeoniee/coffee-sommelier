@@ -6,43 +6,43 @@
   "targets": 200,
   "target_ids_sha1": "2e71772af9015e001777df466337422ba98d386f",
   "neighbor_source_share": {
-    "cqi": 0.919,
-    "shopify_gauged": 0.057,
-    "roasterdb": 0.017,
+    "cqi": 0.913,
+    "shopify_gauged": 0.0635,
+    "roasterdb": 0.0165,
     "roasters_kr": 0.007
   },
-  "predictions_with_tags": 0.05,
+  "predictions_with_tags": 0.065,
   "embedding_model": "nvidia/nemotron-3-embed-1b",
   "acidity": {
     "n": 200,
-    "exact": 0.27,
-    "within1": 0.525,
-    "mae": 1.086
+    "exact": 0.255,
+    "within1": 0.51,
+    "mae": 1.0956
   },
   "body": {
     "n": 8,
     "exact": 0.75,
     "within1": 1.0,
-    "mae": 0.2838
+    "mae": 0.3237
   },
   "sweetness": {
-    "n": 10,
-    "exact": 0.7,
-    "within1": 0.9,
-    "mae": 0.413
+    "n": 11,
+    "exact": 0.6364,
+    "within1": 0.9091,
+    "mae": 0.4164
   },
   "acidity_within1_by_confidence": {
     "low": {
       "n": 69,
-      "within1": 0.3913
+      "within1": 0.3768
     },
     "high": {
-      "n": 39,
-      "within1": 0.7179
+      "n": 43,
+      "within1": 0.7209
     },
     "medium": {
-      "n": 92,
-      "within1": 0.5435
+      "n": 88,
+      "within1": 0.5114
     }
   },
   "tags_query_embeddings": {
@@ -52,9 +52,9 @@
   },
   "tags": {
     "n": 16,
-    "precision": 0.6111,
-    "recall": 0.2895,
-    "f1": 0.3929,
-    "category_f1": 0.6486
+    "precision": 0.4,
+    "recall": 0.2979,
+    "f1": 0.3415,
+    "category_f1": 0.6415
   }
 }
