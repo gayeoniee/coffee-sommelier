@@ -276,3 +276,53 @@ def test_rich_is_not_the_lychee_alias():
     assert ko_rule_tags("리치함", vocab) == []
     assert ko_rule_tags("리치하고 달콤한", vocab) == []
     assert ko_rule_tags("리치, 장미", vocab) == ["other fruit"]
+
+
+# --- English note aliases (docs/adr/0019-english-note-aliases.md) -------------------------------------------------
+EN_VOCAB = ["chocolate", "dark chocolate", "caramelized", "nutty", "hazelnut", "coconut", "berry", "blueberry",
+            "orange", "floral", "musty/earthy", "brown spice", "citrus fruit", "peach", "almonds"]
+
+
+def test_english_aliases_read_everyday_note_words():
+    assert rule_tags("chocolate caramel wet nut", EN_VOCAB) == ["chocolate", "caramelized", "nutty"]
+    assert rule_tags("earthy, spicy, full body", EN_VOCAB) == ["musty/earthy", "brown spice"]
+    assert rule_tags("Citrusy, stone fruit, almond", EN_VOCAB) == ["citrus fruit", "peach", "almonds"]
+    assert rule_tags("chocolatey", EN_VOCAB) == ["chocolate"]
+
+
+def test_english_aliases_keep_longest_match_and_word_boundaries():
+    assert rule_tags("blueberries", EN_VOCAB) == ["blueberry"]                  # not also berry
+    assert rule_tags("red berries", EN_VOCAB) == ["berry"]
+    assert rule_tags("coconut", EN_VOCAB) == ["coconut"]                        # "nut" never inside a word
+    assert rule_tags("walnut", EN_VOCAB) == ["nutty"]                           # walnut maps itself
+    assert rule_tags("hazelnuts and roasted nuts", EN_VOCAB) == ["hazelnut", "nutty"]
+    assert rule_tags("orange blossom, orange", EN_VOCAB) == ["floral", "orange"]
+    assert rule_tags("dark chocolate, chocolatey", EN_VOCAB) == ["dark chocolate"]
+    assert rule_tags("caramel", ["chocolate"]) == []                            # target outside the vocabulary
+
+
+def _wheel_names_only(text, vocab):
+    """The pre-ADR-0019 English rule, verbatim."""
+    import re
+    t, hits = text.lower(), []
+    for term in sorted(vocab, key=len, reverse=True):
+        m = re.search(rf"(?<![a-z]){re.escape(term)}(?![a-z])", t)
+        if m and not any(term in h for _, h in hits):
+            hits.append((m.start(), term))
+    return [term for _, term in sorted(hits)][:6]
+
+
+def test_english_aliases_off_is_the_wheel_name_rule():
+    for text in ("chocolate caramel wet nut", "blueberries, red berries", "Dark chocolate, lemon zest and black tea",
+                 "berry blueberry orange floral peach", "coconut hazelnut nutty musty/earthy"):
+        assert rule_tags(text, EN_VOCAB + VOCAB, en_aliases={}) == _wheel_names_only(text, EN_VOCAB + VOCAB)
+    assert rule_tags("chocolate caramel wet nut", EN_VOCAB, en_aliases={}) == ["chocolate"]
+    assert rule_tags("blueberries, earthy", EN_VOCAB, en_aliases={}) == []
+
+
+def test_english_aliases_stay_off_for_review_prose_sources():
+    from pipeline.enrich import _apply_rules
+    text = "Deep caramel, walnut, cedar-toned wood in the finish."
+    assert _apply_rules(coffee("a", source="shopify_gauged"), text, EN_VOCAB + ["woody"]).flavor_tags == [
+        "caramelized", "nutty", "woody"]
+    assert _apply_rules(coffee("b", source="coffeereview_kaggle"), text, EN_VOCAB + ["woody"]).flavor_tags == []

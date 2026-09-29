@@ -127,14 +127,85 @@ def ko_rule_tags(text: str, ko_vocab: dict[str, str]) -> list[str]:
     return [tag for _, tag in sorted(hits)]
 
 
-def rule_tags(text: str, vocab: list[str], limit: int = 6, ko_vocab: dict[str, str] | None = None) -> list[str]:
+# English note words that are not SCA wheel names -> the wheel tag (docs/adr/0019-english-note-aliases.md). The wheel
+# spells "caramelized", "nutty", "citrus fruit", "musty/earthy"; roasters and guests write "caramel", "nuts",
+# "citrusy", "earthy". Plurals of the wheel names themselves ("berries", "hazelnuts", "cherries") come from
+# _plural_forms. Only aliases whose target is in the vocabulary are used; a wheel name always wins over an alias.
+# Read by pipeline enrichment (rule_tags) and the guest-input cues (app/core/textcues.py text_tags) alike.
+EN_TAG_ALIASES = {
+    # sweet
+    "caramel": "caramelized", "caramels": "caramelized", "caramelly": "caramelized", "toffee": "caramelized",
+    "butterscotch": "caramelized", "dulce de leche": "caramelized", "honeyed": "honey", "maple": "maple syrup",
+    "cane sugar": "brown sugar", "raw sugar": "brown sugar", "panela": "brown sugar", "demerara": "brown sugar",
+    "muscovado": "brown sugar", "treacle": "molasses",
+    # nutty / cocoa
+    "nut": "nutty", "nuts": "nutty", "walnut": "nutty", "walnuts": "nutty", "pecan": "nutty", "pecans": "nutty",
+    "cashew": "nutty", "cashews": "nutty", "macadamia": "nutty", "almond": "almonds", "peanut": "peanuts",
+    "chocolatey": "chocolate", "chocolaty": "chocolate", "cacao": "cocoa",
+    # fruit
+    "currant": "berry", "currants": "berry", "blackcurrant": "berry", "blackcurrants": "berry",
+    "redcurrant": "berry", "cranberry": "berry", "cranberries": "berry", "boysenberry": "berry",
+    "citrus": "citrus fruit", "citrusy": "citrus fruit", "bergamot": "citrus fruit", "yuzu": "citrus fruit",
+    "tangerine": "orange", "tangerines": "orange", "mandarin": "orange", "clementine": "orange",
+    "stone fruit": "peach", "stone fruits": "peach", "stonefruit": "peach", "apricot": "peach", "apricots": "peach",
+    "nectarine": "peach", "peachy": "peach",
+    "tropical": "other fruit", "mango": "other fruit", "papaya": "other fruit", "lychee": "other fruit",
+    "passion fruit": "other fruit", "passionfruit": "other fruit", "guava": "other fruit", "plum": "other fruit",
+    "plums": "other fruit", "melon": "other fruit", "pineapple": "pinapple", "sultana": "raisin",
+    "sultanas": "raisin",
+    # floral / tea / herb
+    "flowers": "floral", "flowery": "floral", "blossom": "floral", "orange blossom": "floral",
+    "lavender": "floral", "lilac": "floral", "hibiscus": "floral", "honeysuckle": "floral", "elderflower": "floral",
+    "earl grey": "black tea", "herbal": "herb-like", "herbs": "herb-like", "herbaceous": "herb-like",
+    "lemongrass": "herb-like",
+    # fermented / roasted / earthy / spice
+    "wine": "winey", "winy": "winey", "whisky": "whiskey", "malty": "malt",
+    "smoke": "smoky", "smokey": "smoky", "smokiness": "smoky", "wood": "woody", "cedar": "woody",
+    "sandalwood": "woody",
+    "earthy": "musty/earthy", "earth": "musty/earthy", "earthiness": "musty/earthy",
+    "spice": "brown spice", "spices": "brown spice", "spicy": "brown spice", "spiced": "brown spice",
+    "peppery": "pepper",
+}
+
+
+def _plural_forms(term: str) -> tuple[str, ...]:
+    """"berry" -> "berries", "peach" -> "peaches", "hazelnut" -> "hazelnuts" (multi-word: the last word)."""
+    if term.endswith("y") and len(term) > 2 and term[-2] not in "aeiou":
+        return (term[:-1] + "ies",)
+    if term.endswith(("s", "x", "ch", "sh")):
+        return (term + "es",) if not term.endswith("s") else ()
+    return (term + "s",)
+
+
+def _en_terms(vocab: list[str], aliases: dict[str, str]) -> list[tuple[str, str]]:
+    """(surface form, tag), longest surface first. Without aliases: the wheel names only (the pre-ADR-0019 rule)."""
+    pairs = {t: t for t in vocab}
+    if aliases:
+        en = set(vocab)
+        for t in vocab:
+            for p in _plural_forms(t):
+                pairs.setdefault(p, t)
+        for k, v in aliases.items():
+            if v in en:
+                pairs.setdefault(k, v)
+    return sorted(pairs.items(), key=lambda kv: -len(kv[0]))
+
+
+def rule_tags(text: str, vocab: list[str], limit: int = 6, ko_vocab: dict[str, str] | None = None,
+              en_aliases: dict[str, str] | None = None) -> list[str]:
+    """Wheel names (and EN_TAG_ALIASES / plurals, `en_aliases={}` to switch them off) matched as whole words,
+    longest first: a hit whose tag is contained in an earlier hit's tag is skipped ("berry" after "blueberry"),
+    and so is one inside an earlier hit's span ("orange" inside "orange blossom")."""
     t = (text or "").lower()
-    hits: list[tuple[int, str]] = []
-    for term in sorted(vocab, key=len, reverse=True):
-        m = re.search(rf"(?<![a-z]){re.escape(term)}(?![a-z])", t)
-        if m and not any(term in h for _, h in hits):
-            hits.append((m.start(), term))
-    tags = [term for _, term in sorted(hits)]
+    hits: list[tuple[int, int, str]] = []
+    for term, tag in _en_terms(vocab, EN_TAG_ALIASES if en_aliases is None else en_aliases):
+        if any(tag in h for *_, h in hits):
+            continue
+        for m in re.finditer(rf"(?<![a-z]){re.escape(term)}(?![a-z])", t):
+            if not any(s <= m.start() and m.end() <= e for s, e, _ in hits):
+                hits.append((m.start(), m.end(), tag))
+                break
+    tags = [tag for *_, tag in sorted(hits)]
     if ko_vocab and is_note_list(text):
         for tag in ko_rule_tags(text, ko_vocab):
             if not any(tag in h for h in tags):        # same rule as above: "berry" is covered by "blueberry"
@@ -153,10 +224,17 @@ def needs_llm(c: CoffeeRecord, text: str) -> bool:
     return bool(text) and (not c.flavor_tags or c.acidity is None or c.body is None)
 
 
+# Sources whose text is long review prose, not a note list: the English aliases ("wood", "earth", "spice", "nut")
+# stay off there, so the full variant's coffeereview labels -- and the tag model trained on them -- do not move
+# (docs/adr/0019-english-note-aliases.md).
+EN_ALIASES_OFF_SOURCES = ("coffeereview_kaggle",)
+
+
 def _apply_rules(c: CoffeeRecord, text: str, vocab: list[str], ko_vocab: dict[str, str] | None = None) -> CoffeeRecord:
     update: dict = {}
     if not c.flavor_tags and text:
-        update["flavor_tags"] = rule_tags(text, vocab, ko_vocab=ko_vocab)
+        update["flavor_tags"] = rule_tags(text, vocab, ko_vocab=ko_vocab,
+                                          en_aliases={} if c.source in EN_ALIASES_OFF_SOURCES else None)
     if not c.is_decaf:
         is_decaf, process = detect_decaf(c.name, text)
         if is_decaf:

@@ -125,3 +125,11 @@ def test_text_tags_reads_common_korean_note_words_guests_type():
     assert text_tags("살구, 자두, 갈색설탕, 히비스커스", t2c, ko) == ["peach", "other fruit", "brown sugar", "floral"]
     assert text_tags("브라질 산토스 고소한 맛", t2c, ko, free_text=True) == ["nutty"]
     assert text_tags("건자두, 커피나무", {**t2c, "prune": "fruity"}, {**ko, "prune": "말린 자두"}) == ["prune"]
+
+
+def test_text_tags_reads_english_aliases_in_guest_input():
+    # docs/adr/0019-english-note-aliases.md: the guest-side cues use the same alias table as enrichment
+    t2c = {"chocolate": "nutty/cocoa", "caramelized": "sweet", "nutty": "nutty/cocoa", "musty/earthy": "other"}
+    assert text_tags("chocolate caramel wet nut", t2c, {}, free_text=True) == ["chocolate", "caramelized", "nutty"]
+    assert text_tags("브라질 세라도 caramel nuts", t2c, {}, free_text=True) == ["caramelized", "nutty"]
+    assert text_tags("Sumatra earthy", t2c, {}, free_text=True) == ["musty/earthy"]
