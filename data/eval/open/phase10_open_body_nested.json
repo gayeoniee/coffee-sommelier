@@ -1,0 +1,161 @@
+{
+ "generated_at": "2026-09-29T15:31:09.687718+00:00",
+ "roasters": [
+  "1킬로커피",
+  "G로스팅",
+  "내일의커피"
+ ],
+ "naive_same_fold_selection": {
+  "wA=0.25": {
+   "n": 64,
+   "mae": 0.7116,
+   "within1": 0.7344,
+   "spearman": 0.3534,
+   "mean_truth": 3.398,
+   "mean_pred": 3.49
+  },
+  "wA=0.5": {
+   "n": 64,
+   "mae": 0.6993,
+   "within1": 0.7344,
+   "spearman": 0.3324,
+   "mean_truth": 3.398,
+   "mean_pred": 3.435
+  },
+  "wA=1 (shipped)": {
+   "n": 64,
+   "mae": 0.696,
+   "within1": 0.7812,
+   "spearman": 0.2691,
+   "mean_truth": 3.398,
+   "mean_pred": 3.366
+  }
+ },
+ "nested_selection_by_fold": {
+  "1킬로커피": {
+   "chosen": "wA=0.25",
+   "inner_scores": {
+    "wA=0.25": {
+     "n": 27,
+     "mae": 0.7935,
+     "within1": 0.7407,
+     "spearman": 0.2972,
+     "mean_truth": 3.593,
+     "mean_pred": 3.355
+    },
+    "wA=0.5": {
+     "n": 27,
+     "mae": 0.8242,
+     "within1": 0.6667,
+     "spearman": 0.2529,
+     "mean_truth": 3.593,
+     "mean_pred": 3.203
+    },
+    "wA=1 (shipped)": {
+     "n": 27,
+     "mae": 0.8561,
+     "within1": 0.6296,
+     "spearman": 0.2836,
+     "mean_truth": 3.593,
+     "mean_pred": 3.026
+    }
+   }
+  },
+  "G로스팅": {
+   "chosen": "wA=0.25",
+   "inner_scores": {
+    "wA=0.25": {
+     "n": 47,
+     "mae": 0.6893,
+     "within1": 0.8085,
+     "spearman": -0.0708,
+     "mean_truth": 3.309,
+     "mean_pred": 3.309
+    },
+    "wA=0.5": {
+     "n": 47,
+     "mae": 0.7117,
+     "within1": 0.7447,
+     "spearman": -0.1342,
+     "mean_truth": 3.309,
+     "mean_pred": 3.274
+    },
+    "wA=1 (shipped)": {
+     "n": 47,
+     "mae": 0.7516,
+     "within1": 0.7234,
+     "spearman": -0.1237,
+     "mean_truth": 3.309,
+     "mean_pred": 3.238
+    }
+   }
+  },
+  "내일의커피": {
+   "chosen": "wA=0.25",
+   "inner_scores": {
+    "wA=0.25": {
+     "n": 54,
+     "mae": 0.6773,
+     "within1": 0.7593,
+     "spearman": 0.4132,
+     "mean_truth": 3.38,
+     "mean_pred": 3.262
+    },
+    "wA=0.5": {
+     "n": 54,
+     "mae": 0.7201,
+     "within1": 0.7407,
+     "spearman": 0.3214,
+     "mean_truth": 3.38,
+     "mean_pred": 3.159
+    },
+    "wA=1 (shipped)": {
+     "n": 54,
+     "mae": 0.7994,
+     "within1": 0.7037,
+     "spearman": 0.2485,
+     "mean_truth": 3.38,
+     "mean_pred": 3.07
+    }
+   }
+  }
+ },
+ "nested_unbiased_e1": {
+  "n": 64,
+  "mae": 0.7116,
+  "within1": 0.7344,
+  "spearman": 0.3534,
+  "mean_truth": 3.398,
+  "mean_pred": 3.49
+ },
+ "reported_adr0020_e1": {
+  "within1": 0.781,
+  "mae": 0.693
+ },
+ "e2_by_candidate": {
+  "wA=0.25": {
+   "n": 195,
+   "mae": 0.7264,
+   "within1": 0.7231,
+   "spearman": -0.0079,
+   "mean_truth": 2.948,
+   "mean_pred": 3.309
+  },
+  "wA=0.5": {
+   "n": 195,
+   "mae": 0.6687,
+   "within1": 0.7795,
+   "spearman": 0.0101,
+   "mean_truth": 2.948,
+   "mean_pred": 3.345
+  },
+  "wA=1 (shipped)": {
+   "n": 195,
+   "mae": 0.5933,
+   "within1": 0.8308,
+   "spearman": 0.0429,
+   "mean_truth": 2.948,
+   "mean_pred": 3.409
+  }
+ }
+}

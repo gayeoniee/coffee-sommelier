@@ -41,10 +41,16 @@ def _load_here_or_parent(eval_dir: Path, name: str) -> dict | None:
     return None
 
 
-def render_headline(labels: dict | None, v3: dict | None, zen: dict | None) -> list[str]:
+SWEET_ABSTAIN_RULE = "cue or weighted count >= 1.4 (SHIPPED, ADR 0021)"      # phase10_open_sweetness.json key
+
+
+def render_headline(labels: dict | None, v3: dict | None, zen: dict | None, sweet10: dict | None = None
+                    ) -> list[str]:
     """The two accuracy numbers the draft leads with: E1 = leave-one-roaster-out CV on the public roaster gauges
     (phase4_open_labels.json baselines, phase5_open_v3.json shipped model), E2 = the Zenodo external panel
-    (phase2_zenodo_external.json, evaluation only)."""
+    (phase2_zenodo_external.json, evaluation only). `sweet10` (phase10_open_sweetness.json, ADR 0021) is the
+    shipped sweetness-abstention rule when present; without it the sweetness line falls back to phase5_open_v3.json's
+    older "cue or neighbour value" rule (ADR 0016), for a data dir that predates ADR 0021."""
     def pct(x) -> str:
         return "-" if x is None else f"{x:.1%}"
 
@@ -64,7 +70,10 @@ def render_headline(labels: dict | None, v3: dict | None, zen: dict | None) -> l
                      f"{pct(nb['within1'])} · {nb['mae']:.2f} (n={nb['n']}) | 항상 3 {pct(c['within1'])} · {c['mae']:.2f} | "
                      f"{m['n']} |")
         b, bc = zen["variants"]["open"]["body"], zen["baseline_constant_3"]["body"]
-        sw = v3["abstention"]["sweetness"]["cue or neighbour value"]["e2"] if v3 else None
+        if sweet10:
+            sw = sweet10["e2"][SWEET_ABSTAIN_RULE]
+        else:
+            sw = v3["abstention"]["sweetness"]["cue or neighbour value"]["e2"] if v3 else None
         lines += ["", f"- 바디(외부 패널): 제출본 ±1 {pct(b['within1'])}·순위상관 {b['spearman']:.2f} vs 항상 3 "
                       f"{pct(bc['within1'])} — 패널 바디가 거의 3에 몰려 있어 이기지 못함"]
         if sw:
@@ -184,9 +193,11 @@ def render_explain_quality(eq: dict) -> list[str]:
     ]
 
 
-def render_open_v3(tags: dict | None, v3: dict | None) -> list[str]:
+def render_open_v3(tags: dict | None, v3: dict | None, sweet10: dict | None = None) -> list[str]:
     """Open variant v3 (docs/adr/0016-open-variant-v3.md): E1 = grouped leave-one-roaster-out CV on our own labels,
-    E2 = the Zenodo external panel (evaluation only)."""
+    E2 = the Zenodo external panel (evaluation only). The sweetness rows prefer `sweet10`
+    (phase10_open_sweetness.json, ADR 0021's shipped weighted-count abstention rule); without it they fall back to
+    phase5_open_v3.json's older "cue or neighbour value" rule (ADR 0016)."""
     def _f3(x) -> str:
         return "-" if x is None else f"{x:.3f}"
 
@@ -198,13 +209,16 @@ def render_open_v3(tags: dict | None, v3: dict | None) -> list[str]:
                           ("└ 노트 없는 특징 태그 모델 (탑재)", "feat")):
             lines.append(f"| {name} | {_f3(t1[key]['f1'])} / {_f3(t1[key]['category_f1'])} (n={t1[key]['n']}) "
                          f"| {_f3(t2[key]['f1'])} / {_f3(t2[key]['category_f1'])} (n={t2[key]['n']}) |")
-    if v3:
-        for rule, label in (("answer all (shipped)", "단맛 — 항상 답함 (이전)"),
-                            ("cue or neighbour value", "단맛 — 근거 없으면 기권 (탑재)")):
-            r = v3["abstention"]["sweetness"][rule]
+    if sweet10 or v3:
+        always = "answer all" if sweet10 else "answer all (shipped)"
+        shipped = SWEET_ABSTAIN_RULE if sweet10 else "cue or neighbour value"
+        for rule, label in ((always, "단맛 — 항상 답함 (이전)"), (shipped, "단맛 — 근거 없으면 기권 (탑재)")):
+            r = ({"e1": sweet10["e1"][rule], "e2": sweet10["e2"][rule]} if sweet10
+                else v3["abstention"]["sweetness"][rule])
             lines.append(f"| {label}: 답한 비율 · ±1 · MAE | {_f3(r['e1']['coverage'])} · {_f3(r['e1']['within1'])} · "
                          f"{_f3(r['e1']['mae'])} | {_f3(r['e2']['coverage'])} · {_f3(r['e2']['within1'])} · "
                          f"{_f3(r['e2']['mae'])} |")
+    if v3:
         b1 = v3["body_e1"]
         shipped = v3.get("body_shipped")
         if shipped in b1:           # ADR 0020: a body recipe ships -> show it, not the best candidate
@@ -257,8 +271,9 @@ def main(eval_dir: str | Path) -> str:
 
     labels, v3z = _load(eval_dir, "phase4_open_labels.json"), _load(eval_dir, "phase5_open_v3.json")
     zen = _load_here_or_parent(eval_dir, "phase2_zenodo_external.json")
+    sweet10 = _load(eval_dir, "phase10_open_sweetness.json")            # ADR 0021 shipped abstention rule
     if (labels and v3z) or zen:
-        parts += render_headline(labels, v3z, zen) + [""]
+        parts += render_headline(labels, v3z, zen, sweet10) + [""]
 
     violations = _load(eval_dir, "phase2_violations.json")
     if violations is not None:
@@ -294,7 +309,7 @@ def main(eval_dir: str | Path) -> str:
 
     open_tags, open_v3 = _load(eval_dir, "phase5_open_tags.json"), _load(eval_dir, "phase5_open_v3.json")
     if open_tags is not None or open_v3 is not None:
-        parts += render_open_v3(open_tags, open_v3) + [""]
+        parts += render_open_v3(open_tags, open_v3, sweet10) + [""]
 
     fill = _load(eval_dir, "phase6_open_tag_fill.json")
     if fill is not None and fill.get("summary"):

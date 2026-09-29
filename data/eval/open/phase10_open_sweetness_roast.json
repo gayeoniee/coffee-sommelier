@@ -1,0 +1,53 @@
+{
+ "generated_at": "2026-09-29T15:29:01.163434+00:00",
+ "roaster_gauge_means_by_roast": {
+  "dark": 4.13,
+  "medium": 2.94,
+  "medium-dark": 2.87,
+  "light": 3.75,
+  "medium-light": 4.15
+ },
+ "ship_margin": 0.03,
+ "variants": {
+  "shipped (5-way one-hot)": {
+   "n": 72,
+   "mae": 1.0353,
+   "within1": 0.5972,
+   "spearman": -0.3344,
+   "mean_truth": 3.062,
+   "mean_pred": 3.608,
+   "within1_gain_vs_shipped": 0.0,
+   "would_replace_shipped": false
+  },
+  "drop roast entirely": {
+   "n": 72,
+   "mae": 1.119,
+   "within1": 0.4167,
+   "spearman": -0.6691,
+   "mean_truth": 3.062,
+   "mean_pred": 3.415,
+   "within1_gain_vs_shipped": -0.1805,
+   "would_replace_shipped": false
+  },
+  "dark-roast indicator only": {
+   "n": 72,
+   "mae": 1.1185,
+   "within1": 0.4444,
+   "spearman": -0.6565,
+   "mean_truth": 3.062,
+   "mean_pred": 3.415,
+   "within1_gain_vs_shipped": -0.1528,
+   "would_replace_shipped": false
+  },
+  "dark or medium-light indicator": {
+   "n": 72,
+   "mae": 1.1185,
+   "within1": 0.4444,
+   "spearman": -0.6565,
+   "mean_truth": 3.062,
+   "mean_pred": 3.415,
+   "within1_gain_vs_shipped": -0.1528,
+   "would_replace_shipped": false
+  }
+ }
+}
