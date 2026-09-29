@@ -38,9 +38,9 @@
         "embedding_model": "nvidia/nemotron-3-embed-1b",
         "acidity": {
           "n": 200,
-          "exact": 0.24,
-          "within1": 0.5,
-          "mae": 1.1332
+          "exact": 0.245,
+          "within1": 0.49,
+          "mae": 1.1379
         },
         "body": {
           "n": 0,
@@ -56,16 +56,16 @@
         },
         "acidity_within1_by_confidence": {
           "low": {
-            "n": 76,
-            "within1": 0.4079
+            "n": 75,
+            "within1": 0.4
           },
           "high": {
             "n": 28,
             "within1": 0.6429
           },
           "medium": {
-            "n": 96,
-            "within1": 0.5312
+            "n": 97,
+            "within1": 0.5155
           }
         },
         "tags_query_embeddings": {
@@ -91,8 +91,9 @@
         "targets": 200,
         "target_ids_sha1": "58701e82522192d993afee4405b80ffaef33b9bc",
         "neighbor_source_share": {
-          "coffeereview_kaggle": 0.9995,
-          "shopify_gauged": 0.0005
+          "coffeereview_kaggle": 0.999,
+          "shopify_gauged": 0.0005,
+          "roasters_kr": 0.0005
         },
         "predictions_with_tags": 0.985,
         "embedding_model": "nvidia/nemotron-3-embed-1b",
@@ -100,13 +101,13 @@
           "n": 173,
           "exact": 0.4104,
           "within1": 0.7861,
-          "mae": 0.6679
+          "mae": 0.6686
         },
         "body": {
           "n": 200,
           "exact": 0.32,
           "within1": 0.64,
-          "mae": 0.8803
+          "mae": 0.8804
         },
         "sweetness": {
           "n": 123,
@@ -204,16 +205,18 @@
             ]
           },
           {
-            "name": "Organic Ethiopian Water-Processed Half Caf - Roasted Coffee",
-            "roaster": "Fresh Roasted Coffee",
-            "source": "shopify_gauged",
-            "score": 0.8786,
-            "acidity": null,
-            "body": 2,
-            "sweetness": null,
+            "name": "[골드문트] [디카페인] 에티오피아 예가체프 할로 베리티 내추럴",
+            "roaster": "커피 리브레",
+            "source": "roasters_kr",
+            "score": 0.8777,
+            "acidity": 4,
+            "body": 3,
+            "sweetness": 4,
             "tags": [
-              "blueberry",
-              "cherry"
+              "floral",
+              "peach",
+              "grape",
+              "caramelized"
             ]
           }
         ]
@@ -318,39 +321,39 @@
         "targets": 200,
         "target_ids_sha1": "58701e82522192d993afee4405b80ffaef33b9bc",
         "neighbor_source_share": {
-          "shopify_gauged": 0.581,
-          "roasterdb": 0.2655,
-          "shopify": 0.097,
-          "cqi": 0.0565
+          "shopify_gauged": 0.6125,
+          "roasterdb": 0.2465,
+          "shopify": 0.0905,
+          "cqi": 0.0505
         },
-        "predictions_with_tags": 0.93,
+        "predictions_with_tags": 0.965,
         "embedding_model": "nvidia/nemotron-3-embed-1b",
         "acidity": {
           "n": 174,
           "exact": 0.3103,
-          "within1": 0.6897,
-          "mae": 0.8336
+          "within1": 0.6724,
+          "mae": 0.857
         },
         "body": {
-          "n": 185,
-          "exact": 0.3297,
-          "within1": 0.6595,
-          "mae": 0.9462
+          "n": 187,
+          "exact": 0.3422,
+          "within1": 0.6578,
+          "mae": 0.9458
         },
         "sweetness": {
-          "n": 115,
-          "exact": 0.4957,
-          "within1": 0.8522,
-          "mae": 0.5789
+          "n": 111,
+          "exact": 0.4955,
+          "within1": 0.8378,
+          "mae": 0.5969
         },
         "acidity_within1_by_confidence": {
           "high": {
-            "n": 154,
-            "within1": 0.7013
+            "n": 145,
+            "within1": 0.669
           },
           "medium": {
-            "n": 20,
-            "within1": 0.6
+            "n": 29,
+            "within1": 0.6897
           }
         },
         "tags_query_embeddings": {
@@ -360,10 +363,10 @@
         },
         "tags": {
           "n": 200,
-          "precision": 0.2013,
-          "recall": 0.1627,
-          "f1": 0.1799,
-          "category_f1": 0.533
+          "precision": 0.1916,
+          "recall": 0.1847,
+          "f1": 0.1881,
+          "category_f1": 0.5339
         }
       },
       "decaf_probe": {
@@ -392,13 +395,14 @@
             "name": "Organic Ethiopian Water-Processed Half Caf - Roasted Coffee",
             "roaster": "Fresh Roasted Coffee",
             "source": "shopify_gauged",
-            "score": 0.8786,
+            "score": 0.8624,
             "acidity": null,
             "body": 2,
             "sweetness": null,
             "tags": [
               "blueberry",
-              "cherry"
+              "cherry",
+              "musty/earthy"
             ]
           },
           {
@@ -542,40 +546,40 @@
         "targets": 200,
         "target_ids_sha1": "58701e82522192d993afee4405b80ffaef33b9bc",
         "neighbor_source_share": {
-          "shopify_gauged": 0.465,
-          "roasters_kr": 0.2155,
-          "roasterdb": 0.2145,
-          "shopify": 0.071,
-          "cqi": 0.034
+          "shopify_gauged": 0.4915,
+          "roasters_kr": 0.2075,
+          "roasterdb": 0.2015,
+          "shopify": 0.066,
+          "cqi": 0.0335
         },
-        "predictions_with_tags": 0.925,
+        "predictions_with_tags": 0.99,
         "embedding_model": "nvidia/nemotron-3-embed-1b",
         "acidity": {
           "n": 174,
-          "exact": 0.3218,
+          "exact": 0.3161,
           "within1": 0.6149,
-          "mae": 0.8946
+          "mae": 0.9169
         },
         "body": {
-          "n": 191,
-          "exact": 0.2984,
-          "within1": 0.6073,
-          "mae": 0.9987
+          "n": 193,
+          "exact": 0.3161,
+          "within1": 0.6114,
+          "mae": 0.9946
         },
         "sweetness": {
-          "n": 118,
-          "exact": 0.5085,
-          "within1": 0.8305,
-          "mae": 0.6125
+          "n": 117,
+          "exact": 0.4786,
+          "within1": 0.812,
+          "mae": 0.6266
         },
         "acidity_within1_by_confidence": {
           "high": {
-            "n": 131,
-            "within1": 0.6336
+            "n": 130,
+            "within1": 0.6462
           },
           "medium": {
-            "n": 43,
-            "within1": 0.5581
+            "n": 44,
+            "within1": 0.5227
           }
         },
         "tags_query_embeddings": {
@@ -585,10 +589,10 @@
         },
         "tags": {
           "n": 200,
-          "precision": 0.2104,
-          "recall": 0.1712,
-          "f1": 0.1888,
-          "category_f1": 0.5086
+          "precision": 0.1792,
+          "recall": 0.1932,
+          "f1": 0.186,
+          "category_f1": 0.5213
         }
       },
       "decaf_probe": {
@@ -631,19 +635,6 @@
             ]
           },
           {
-            "name": "Organic Ethiopian Water-Processed Half Caf - Roasted Coffee",
-            "roaster": "Fresh Roasted Coffee",
-            "source": "shopify_gauged",
-            "score": 0.8786,
-            "acidity": null,
-            "body": 2,
-            "sweetness": null,
-            "tags": [
-              "blueberry",
-              "cherry"
-            ]
-          },
-          {
             "name": "[골드문트] [디카페인] 에티오피아 예가체프 할로 베리티 내추럴",
             "roaster": "커피 리브레",
             "source": "roasters_kr",
@@ -656,6 +647,20 @@
               "peach",
               "grape",
               "caramelized"
+            ]
+          },
+          {
+            "name": "Organic Ethiopian Water-Processed Half Caf - Roasted Coffee",
+            "roaster": "Fresh Roasted Coffee",
+            "source": "shopify_gauged",
+            "score": 0.8624,
+            "acidity": null,
+            "body": 2,
+            "sweetness": null,
+            "tags": [
+              "blueberry",
+              "cherry",
+              "musty/earthy"
             ]
           },
           {
