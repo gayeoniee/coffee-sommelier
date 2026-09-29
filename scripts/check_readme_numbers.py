@@ -42,6 +42,13 @@ def _loo(d: dict) -> dict:
     return d["phase2_loo.json"]
 
 
+def _design_row(d: dict) -> tuple:
+    """README "핵심 설계" table, current row: 모순 없음 full·open, then 지어낸 내용 없음 full·open (value, judged)."""
+    full, open_ = d["phase2_explain_quality.json"]["summary"], d["open/phase2_explain_quality.json"]["summary"]
+    return (full["no_contradiction_both"], full["judged_both"], open_["no_contradiction_both"], open_["judged_both"],
+            full["no_hallucination_both"], full["judged_both"], open_["no_hallucination_both"], open_["judged_both"])
+
+
 def _checks() -> list[Check]:
     cov, loo, c3 = ("phase2_coverage.json",), ("phase2_loo.json",), ("phase2_compare3.json",)
     v3 = lambda d, k: [d["phase2_compare3.json"]["variants"][x]["loo"][k]["within1"]  # noqa: E731
@@ -95,6 +102,11 @@ def _checks() -> list[Check]:
                          # scored over LLM-generated texts; template fallbacks are counted, not scored
                          d["phase2_explain_quality.json"]["summary"].get(
                              "generated", d["phase2_explain_quality.json"]["summary"]["n"]))),
+        Check("explain_design_table",
+              (r"\| \*\*5차 \(지금\)\*\* \|[^|\n]*\| \*\*(\d+)/(\d+) · (\d+)/(\d+)\*\* \| "
+               r"\*\*(\d+)/(\d+) · (\d+)/(\d+)\*\*",),
+              ("phase2_explain_quality.json", "open/phase2_explain_quality.json"),
+              _design_row, required=True),
         Check("explain_agreement", (r"판정자 2명 합의 (\d+)/(\d+)",), ("phase2_explain_quality.json",),
               lambda d: (d["phase2_explain_quality.json"]["summary"]["no_contradiction_both"],
                          d["phase2_explain_quality.json"]["summary"]["judged_both"])),
@@ -112,7 +124,7 @@ def _checks() -> list[Check]:
 # Optional checks tied to a headline claim: if their pattern isn't found in the README at
 # all (the check is "skipped"), that's not just a stale-README warning — the headline claim
 # itself may have silently disappeared, so treat it as a failure.
-HEADLINE_CHECKS = frozenset({"explain_rule_pass", "bench", "loo_tag_f1", "compare3_acidity", "compare3_body",
+HEADLINE_CHECKS = frozenset({"explain_rule_pass", "explain_design_table", "bench", "loo_tag_f1", "compare3_acidity", "compare3_body",
                               "convergence"})
 
 

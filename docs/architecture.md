@@ -85,7 +85,7 @@ flowchart LR
 |---|---|
 | recommend `load` | 브랜드 메뉴·원두 후보(`Repo.brand_items`) |
 | recommend `rank` | 하드 조건 필터(`passes`: 카페인·우유) → 취향 점수(`score_item`, 속성 0.6 + 향미 0.4) → MMR top3 → `cards` 이벤트 |
-| recommend `explain` | 카드마다 `Send`로 병렬 실행, 토큰 스트리밍, 실패·12초 마감 초과 시 템플릿 |
+| recommend `explain` | 카드마다 `Send`로 병렬 실행. 코드가 사실을 문장 조각(맛 비교·맞는 점/아쉬운 점·맛 한 줄·추천 문구)으로 만들어 넘기고 LLM은 잇기만 한다 → 토큰 스트리밍 → 규칙 검사(방향·결론·필드명·문장 수), 어긋나거나 실패·12초 마감 초과 시 템플릿. 맞는 점이 없는 카드는 LLM 없이 코드가 쓴다 — [설계 결정 21](design-decisions.md#21-rag인데-왜-llm에게-검색-결과를-그대로-주지-않나) |
 | analyze_bean `parse` | 규칙 파싱, 불확실하면 LLM(`parse_bean`) |
 | analyze_bean `match` → `score` / `predict` | DB에 있으면 실측값, 없으면 이웃 10개(`Repo.neighbors`, 동점은 id로 고정 — [ADR 0006](adr/0006-deterministic-neighbors.md)) 가중 평균 + 신뢰도. 임베딩 실패 시 산지·가공 평균(신뢰도 낮음) |
 | log_tasting `parse_note` → `update` → `persist` → `summarize` | 한 줄 후기 신호 추출 → 별점·신호로 프로필 갱신(학습률 1/(n+2)) → 저장 → "산미 −0.5" 같은 요약 |
