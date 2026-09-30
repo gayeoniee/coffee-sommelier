@@ -26,13 +26,13 @@
   4. GitHub·배포 URL을 레시피 본문에 넣어도 되는지
 
 ## 데이터·코드 정리 (10.1 ~ 10.10)
-- [x] **coffeereview 없는 DB 재구축** — 평가만이 아니라 앱이 실제로 쓰는 DB에서도 빠져 있어야 한다(지금은 평가 코드의 `exclude_sources`로만 빠짐). 초안 6장의 명령으로 깨끗한 RAW_DIR에서 다시 만든다. `scripts/competition/build_open_db.sh`로 로컬 docker Postgres에 `coffee_open` 구축 완료(2026-09-28): coffees 2,063(cqi 1,546·roasterdb 100·roasters_kr 209·shopify 9·shopify_gauged 199), coffeereview 0, menu_items 512, violations 0/108.
+- [x] **coffeereview 없는 DB 재구축** — 평가만이 아니라 앱이 실제로 쓰는 DB에서도 빠져 있어야 한다(지금은 평가 코드의 `exclude_sources`로만 빠짐). 초안 6장의 명령으로 깨끗한 RAW_DIR에서 다시 만든다. `scripts/competition/build_open_db.sh`로 로컬 docker Postgres에 `coffee_open` 구축 완료(2026-09-28): coffees 2,063(cqi 1,546·roasterdb 100·roasters_kr 209·shopify 9·shopify_gauged 199), coffeereview 0, menu_items 512, violations 0/108. **ADR 0023(2026-09-30)으로 갱신**: 식약처 음식 DB 메뉴 390종을 더해 menu_items 902, violations 0/169(사람 라벨 121 + MFDS 단백질 신호 48).
+- [x] (권장) 공공데이터 1순위: 식약처_식품영양성분DB정보 API — 실제로 반영함([ADR 0023](../adr/0023-mfds-food-db.md), 2026-09-30): 투썸플레이스 메뉴 29종 + 신규 브랜드 7곳 메뉴 361종·카페인·디카페인을 추가하고, 사람 라벨이 없는 새 메뉴는 단백질 실측으로 우유 여부를 판정.
 - [x] `violations`·`loo`·`coverage`·`convergence`·`bench`·`explain_quality` 결과가 모두 `data/eval/open/*.json`에 있다(더는 보류 아님). 재구축한 DB로 다시 실행했고, 초안(1장 수치 표, B-6)의 수치를 이 JSON 값으로 맞췄다 — `uv run python scripts/competition/render_numbers.py data/eval/open`으로 재현 가능. 예전 초안에 남아 있던 옛 수치(위반 0/78, LOO 0.49~0.505, 수렴 0.7792→0.7117, 지연 13.95→11.59초 등)는 모두 현재 값으로 교체했다.
 - [ ] 향미 태깅 정답셋을 오픈 데이터에서 다시 뽑아 평가(지금 정답셋은 coffeereview가 섞인 표본이라 제출본 결과로 쓸 수 없음) — 선택
-- [ ] (권장) 공공데이터 1순위: 공공데이터포털에서 **식약처_식품영양성분DB정보 API 활용신청**(개발계정 자동승인) → 프랜차이즈 음료의 `카페인(㎎)`(AMT_NUM100) 값이 실제로 있는지 확인 → 있으면 나머지 7개 브랜드의 카페인 보강과 교차검증 수치를 레시피에 추가
 - [ ] (선택) 소상공인 상가(상권)정보 CSV, 관세청 HS 0901.12/0901.22 수입 통계 — 넣는다면 실제 수치를 받아서 넣기
-- [x] 포털에 올릴 CSV 3종 만들기(CSV만 가능): 컬럼정의 파일, 데이터 템플릿 예시, 데이터셋 파일. **coffeereview·RoasterDB·SCA 휠 파생 행은 넣지 않는다.** 업로드 세트는 `data/competition/01_컬럼정의.csv` ~ `06_데이터셋_milk_labels.csv` 6개 파일(UTF-8 BOM, `scripts/competition/export_csv.py`로 생성)이다 — 행 수 31 / 23 / 1,963 / 512 / 10 / 453(2026-09-28 재생성, 초안 B-4). 소스 이름은 bluebottle_kr·shopify_intl로 바꿨고, 메뉴는 사실 필드 5개만, RoasterDB 100행은 올리지 않는다. SCA 휠 파생 한국어 매핑(CC BY-NC-ND)은 업로드 세트에 넣지 않고 `data/competition/reference/07_sca_ko_참고.csv`(README.md에 "업로드 금지 — 참고용" 명시)에 참고용으로만 둔다.
-- [x] 결과 이미지 5장 교체(2026-09-28): 01 카페인 분포·02 필터 전후·03 국내 디카페인·04 외부 검증은 `scripts/competition/figures.py data/eval/open docs/competition/images`, 05 실서비스 카드는 `node web/scripts/card-shot.mjs` + `scripts/competition/card_composite.py`. 초안 B-6에 이미지마다 해석 문단.
+- [x] 포털에 올릴 CSV 3종 만들기(CSV만 가능): 컬럼정의 파일, 데이터 템플릿 예시, 데이터셋 파일. **coffeereview·RoasterDB·SCA 휠 파생 행은 넣지 않는다.** 업로드 세트는 `data/competition/01_컬럼정의.csv` ~ `06_데이터셋_milk_labels.csv` 6개 파일(UTF-8 BOM, `scripts/competition/export_csv.py`로 생성)이다 — 행 수 31 / 23 / 1,963 / 902 / 17 / 453(2026-09-30 ADR 0023 반영 재생성, 초안 B-4). 소스 이름은 bluebottle_kr·shopify_intl로 바꿨고, 메뉴는 사실 필드 5개만, RoasterDB 100행은 올리지 않는다. SCA 휠 파생 한국어 매핑(CC BY-NC-ND)은 업로드 세트에 넣지 않고 `data/competition/reference/07_sca_ko_참고.csv`(README.md에 "업로드 금지 — 참고용" 명시)에 참고용으로만 둔다.
+- [x] 결과 이미지 5장 교체(2026-09-28, ADR 0023 반영해 2026-09-30 재생성): 01 카페인 분포·02 필터 전후·03 국내 디카페인·04 외부 검증은 `scripts/competition/figures.py data/eval/open docs/competition/images data/competition`(01은 브랜드 16곳 라벨이 겹치지 않도록 회전 표시로 손봄), 05 실서비스 카드는 `node web/scripts/card-shot.mjs` + `scripts/competition/card_composite.py`(그대로 둠). 초안 B-6에 이미지마다 해석 문단.
 - [x] 05 카드 스크린샷을 설명 문장 수정 배포 뒤 다시 찍어 설명 포함본으로 교체(2026-09-28)
 - [x] 키 없이 CSV만으로 최소 재현: `uv run python scripts/competition/min_repro.py`(초안 6-1)
 - [x] 본선 발표 개요·60초 시연 대본·예상 질문: [`presentation.md`](presentation.md)
@@ -50,7 +50,7 @@
 ### 본인이 확인하면 좋은 【확인 필요】 (제출 전)
 - **디카페인 수입 수치**(A-3): 초안은 관세청 통계 인용 보도(2025년 1만 40톤, 2021년 4,755톤)를 중량으로, 트릿지 집계(1억 500만 달러, +66.2%)를 금액으로 따로 쓴다. 원자료로 확정하려면 <https://tradedata.go.kr> → 수출입 통계 → 품목별 수출입실적(HS 10단위) → 수입, 2021·2025년 연간, HS **0901.12**(생두 디카페인)와 **0901.22**(볶은 디카페인)의 중량(kg)·금액(USD)을 더한다(로그인 없이 조회 가능, 화면 조회라 자동 수집은 못 함). 값이 보도와 다르면 A-3 ⓑ와 발표 3번 슬라이드를 고친다.
 - **K-DATA 전화 확인**(위 "지금 바로" 1~4번)의 답을 초안 0장에 적기 — 특히 브랜드 메뉴 사실 필드 업로드 가능 여부(없으면 04 CSV를 빼고 식약처 DB로 대체).
-- 식약처 식품영양성분DB에 프랜차이즈 음료 카페인 값이 실제로 있는지(4장 1순위), 상권업종 코드, 표준데이터 이용허락범위.
+- 상권업종 코드, 표준데이터 이용허락범위(식약처 식품영양성분DB는 [ADR 0023](../adr/0023-mfds-food-db.md)으로 이미 반영 완료).
 
 ## 포털 입력 (10.12 ~ 10.19)
 - [ ] ① **데이터 레시피 생성하기**(7단계)를 먼저 작성·저장 — 초안 B장. 분류 드롭다운(활용목적, 표준산업분류, 산업분야, 기업유형, 등급, 레시피 유형, 분석모델, 알고리즘)은 화면에서 골라야 함. 레시피 선택은 "AI 레시피" 권장
@@ -69,7 +69,7 @@
 ## 예선 통과 시 (11.6 ~ 11.19)
 - [ ] 발표 자료 준비 — 본선 평가: 문제해결력·성과이해도·의사결정 설명력·전달력/논리성·태도/질의응답 각 20점
 - [ ] 시연 시나리오: [`presentation.md`](presentation.md) 2절의 60초 대본(디카페인만 + 과일 → 메가MGC커피 → 스타벅스 +300원 → 원두 분석 → 기록)
-- [ ] 예상 질문 답변 준비: [`presentation.md`](presentation.md) 3절의 10문항
+- [ ] 예상 질문 답변 준비: [`presentation.md`](presentation.md) 3절의 11문항
 
 ## 주의
 - 동일 아이템으로 다른 공모전에서 이미 입상한 결과물은 낼 수 없음. 앞으로 다른 공모전에 낼 때도 이 대회 결과를 확인할 것

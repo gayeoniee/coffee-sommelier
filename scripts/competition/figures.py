@@ -110,7 +110,7 @@ def fig_caffeine_strip(csv_dir: Path, out_path: Path, korean: bool) -> dict:
     brands = sorted(by_brand, key=lambda b: -max(float(r["caffeine_mg"]) for r in by_brand[b]))
 
     rng = random.Random(0)
-    fig, ax = plt.subplots(figsize=(11, 5.6))
+    fig, ax = plt.subplots(figsize=(13, 5.6))
     over_300 = decaf_over = 0
     decaf_worst = None
     for x, b in enumerate(brands):
@@ -148,7 +148,9 @@ def fig_caffeine_strip(csv_dir: Path, out_path: Path, korean: bool) -> dict:
                     xytext=(decaf_worst["_x"] - 0.2, mg + 75), fontsize=9, color=INK, ha="right",
                     arrowprops={"arrowstyle": "-", "color": MUTED, "lw": 0.8})
     ax.set_xticks(range(len(brands)))
-    ax.set_xticklabels([brand_names.get(b, b) if korean else b.split(":")[-1] for b in brands])
+    ax.set_xticklabels([brand_names.get(b, b) if korean else b.split(":")[-1] for b in brands],
+                        rotation=40, ha="right", fontsize=9)
+    ax.set_xlim(-0.6, len(brands) - 0.4)
     ax.set_ylabel("1잔 카페인 (mg)" if korean else "caffeine per cup (mg)")
     ax.set_ylim(0, None)
     ax.grid(axis="y", color="#e4e7eb", lw=0.6)
@@ -193,8 +195,8 @@ def fig_filter_before_after(eval_dir: Path, out_path: Path, korean: bool) -> Non
     ax.set_xlabel("조건 위반 비율 (%)" if korean else "violation rate (%)")
     ax.set_title("같은 독립 판정(사람이 붙인 우유 라벨·원본 디카페인 필드)으로 잰 조건 위반" if korean
                  else "Condition violations, same independent check", loc="left")
-    fig.text(0.01, -0.06, ("지금: 페르소나 4 × 브랜드 10, 추천 최대 3개씩 = %d건" % now["checked"]) if korean
-             else "now: 4 personas x 10 brands, up to 3 picks = %d" % now["checked"], fontsize=8, color=MUTED)
+    fig.text(0.01, -0.06, ("지금: 페르소나 4 × 브랜드 17, 추천 최대 3개씩 = %d건" % now["checked"]) if korean
+             else "now: 4 personas x 17 brands, up to 3 picks = %d" % now["checked"], fontsize=8, color=MUTED)
     _save(fig, out_path)
 
 
