@@ -19,6 +19,7 @@ from pipeline.collect.roasters_kr import (
     flavor_notes_from_ld_description,
     is_decaf,
     ko_prefix,
+    momos_chart_image_url,
     parse_anthracite_product,
     parse_beanbrothers_product,
     parse_bluebottle_product,
@@ -528,6 +529,55 @@ def test_momos_collector_extracts_ids_from_shop_listing(tmp_path):
     records = c.collect(FakeHttp(), tmp_path, "2026-09-27")
     assert len(records) == 1
     assert records[0].key == "momos:7375"
+    # FakeHttp has no .download(): a chart-image fetch failure must degrade to no
+    # gauge rather than raise -- see MomosCollector._read_chart's "never guess" contract.
+    assert records[0].gauge_acidity is None
+    assert records[0].gauge_image_url is None
+
+
+def test_momos_chart_image_url_extracts_prod_detail_src():
+    html_text = read_fixture("momos_product.html")
+    assert (momos_chart_image_url(html_text)
+            == "https://cdn.imweb.me/upload/S2026022396690869a4918/bb3487253a1d8.png")
+
+
+def test_momos_chart_image_url_absent_without_prod_detail_template():
+    assert momos_chart_image_url("<html><body>no template here</body></html>") is None
+
+
+def test_momos_collector_reads_gauges_from_downloaded_chart_image(tmp_path):
+    listing = '<a href="/shop/?idx=7375">a</a>'
+    product_html = read_fixture("momos_product.html")
+    chart_fixture = FIXTURES / "momos_chart_crop.png"
+
+    class FakeResp:
+        def __init__(self, text):
+            self.text = text
+
+    class FakeHttp:
+        def get(self, url):
+            if url.endswith("/shop"):
+                return FakeResp(listing)
+            return FakeResp(product_html)
+
+        def download(self, url, dest):
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes(chart_fixture.read_bytes())
+            return dest
+
+    c = MomosCollector()
+    records = c.collect(FakeHttp(), tmp_path, "2026-09-27")
+    assert len(records) == 1
+    r = records[0]
+    assert (r.gauge_acidity, r.gauge_body) == (4.0, 3.0)
+    assert r.gauge_scale == "momos: image bar chart, pixel-measured"
+    assert r.gauge_image_url == "https://cdn.imweb.me/upload/S2026022396690869a4918/bb3487253a1d8.png"
+    # re-running from the same cache dir must not re-download (fetch_cached-style caching)
+    calls = []
+    real_download = FakeHttp.download
+    FakeHttp.download = lambda self, url, dest: calls.append(url) or real_download(self, url, dest)
+    c.collect(FakeHttp(), tmp_path, "2026-09-27")
+    assert calls == []
 
 
 def test_felt_collector_extracts_ids_from_category_listing(tmp_path):

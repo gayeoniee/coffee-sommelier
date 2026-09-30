@@ -50,15 +50,23 @@ Site notes / scope decisions:
     left ``None`` for them, same as elsewhere in this module.
   * Taste-intensity gauges (``gauge_*`` fields, docs/adr/0011-roaster-gauges-feature-model.md): a
     roaster's own published 산미/바디/단맛(/쓴맛) gauge is a human label, so it is kept as a fact when the
-    page shows it as markup or text (never read from an image). Surveyed 2026-09: Coffee Libre (5 dots,
-    half dots, acidity+sweetness), 1kg Coffee ("SENSORY CHART" 5-segment bars in markup: acidity,
-    sweetness, bitterness, body), G Roasting (groasting.com, Cafe24; "산미 4.5│바디감 2│단맛 3" numbers in
-    og:description) and Naeil Coffee (naeilcoffee.co.kr, imweb; "Acidity ●●●◐○ / Body ●●●○○") carry
-    one. Fritz, Namusairo, Blue Bottle, Anthracite, Felt, Bean Brothers, Momos and Manufact show none
-    (prose or images only). Every gauge seen is a 0-5 scale in half steps and is mapped onto our 1-5
-    scale by ``normalize_gauge`` (``gauge_scale`` names the site's scale on each record). Also sampled
-    for gauges and skipped (no text/markup gauge on their product pages): Brown Cherry, Coffeelec,
-    Roasting Tiger, Wondoo Banjeom, Wannabean, Pourr, Coffee Gdero.
+    page shows it as text/markup, or as a fixed-template chart read by a deterministic pixel reader
+    with the image URL kept for audit (``gauge_image_url``) -- never an image read by OCR/LLM, and
+    never a one-off/irregular image. Surveyed 2026-09: Coffee Libre (5 dots, half dots, acidity+
+    sweetness), 1kg Coffee ("SENSORY CHART" 5-segment bars in markup: acidity, sweetness, bitterness,
+    body), G Roasting (groasting.com, Cafe24; "산미 4.5│바디감 2│단맛 3" numbers in og:description) and
+    Naeil Coffee (naeilcoffee.co.kr, imweb; "Acidity ●●●◐○ / Body ●●●○○") carry a text/markup gauge.
+    Momos (momos.co.kr, imweb) publishes no text/markup gauge, but every product's detail image
+    (``<template id="prodDetailPC">``'s single ``img.fr-dib``) is rendered from the same fixed
+    template: a 산미/무게감 pair of identical 5-segment horizontal bars at a constant x-position and
+    width on the (always 1000px-wide) canvas, solid fill vs. track colors, no OCR needed -- see
+    ``pipeline.collect.momos_taste_chart`` for the pixel reader and ADR 0022 for the acidity/body
+    accuracy check that shipped it (docs/adr/0022-momos-taste-chart-pixel-gauges.md). Fritz, Namusairo,
+    Blue Bottle, Anthracite, Felt, Bean Brothers and Manufact show no gauge at all (prose or unstructured
+    images only). Every gauge seen is a 0-5 scale in half steps and is mapped onto our 1-5 scale by
+    ``normalize_gauge`` (``gauge_scale`` names the site's scale on each record). Also sampled for gauges
+    and skipped (no text/markup gauge on their product pages): Brown Cherry, Coffeelec, Roasting Tiger,
+    Wondoo Banjeom, Wannabean, Pourr, Coffee Gdero.
   * Deca Coffee Lab, Center Coffee, Hell Cafe, Leesar, Lowkey Coffee, Coffee
     Montage and three guessed domains (Mesh Coffee, Pastel Coffee Works,
     Coffee Graffiti) were evaluated and skipped -- see the collector
@@ -74,10 +82,12 @@ import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 from bs4 import BeautifulSoup
 from pydantic import BaseModel, Field
 
+from pipeline.collect.momos_taste_chart import ChartReading, read_chart
 from pipeline.http import RobotsDisallowed
 from pipeline.rules import parse_altitude_m  # noqa: F401 (re-exported for tests)
 
@@ -113,6 +123,9 @@ class BeanFactRecord(BaseModel):
     gauge_sweetness: float | None = None
     gauge_bitterness: float | None = None
     gauge_scale: str | None = None
+    # Audit trail for a gauge read off a fixed-template image (e.g. Momos) rather than text/markup;
+    # None for every text/markup gauge and for records with no gauge at all.
+    gauge_image_url: str | None = None
     product_url: str
     collected_at: str
 
@@ -1181,6 +1194,22 @@ def momos_disclosure_map(soup: BeautifulSoup) -> dict[str, str]:
     return result
 
 
+_MOMOS_CHART_IMG_RE = re.compile(
+    r'<template id="prodDetailPC"><p data-gallery><img class="fr-dib" src="([^"]+)"')
+
+
+def momos_chart_image_url(html_text: str) -> str | None:
+    """URL of the single detail-page PNG that carries the 산미/무게감 taste-chart
+    bars (see ``pipeline.collect.momos_taste_chart``). Momos always renders the
+    detail description as one ``<template id="prodDetailPC">`` whose only child
+    is ``<p data-gallery><img class="fr-dib" src="...">`` for ordinary bean
+    products; multi-image/accessory-style pages (variety packs, drip bags --
+    already excluded by ``is_excluded`` before this matters) use a different,
+    richer template and are correctly not matched here."""
+    m = _MOMOS_CHART_IMG_RE.search(html_text)
+    return m.group(1) if m else None
+
+
 def parse_momos_product(html_text: str, url: str) -> dict | None:
     ld = first_product_ld(html_text)
     if ld is None:
@@ -1235,11 +1264,33 @@ class MomosCollector:
             facts = parse_momos_product(page, url)
             if facts is None:
                 continue
+            chart_url, reading = self._read_chart(http, page, cache_dir, pid)
+            if reading is not None and reading.acidity is not None and reading.body is not None:
+                facts.update(gauge_fields({"acidity": reading.acidity, "body": reading.body},
+                                           scale="momos: image bar chart, pixel-measured"))
+                facts["gauge_image_url"] = chart_url
             records.append(BeanFactRecord(
                 key=f"{self.name}:{pid}", site=self.name, roaster=self.roaster,
                 collected_at=collected_at, **facts,
             ))
         return records
+
+    def _read_chart(self, http, page: str, cache_dir: Path, pid: str) -> tuple[str | None, ChartReading | None]:
+        """Download (cached) and pixel-read the product's taste-chart image.
+        Never raises: a robots.txt block, network error, missing image URL, or
+        unreadable/non-matching image all just mean "no gauge for this record"
+        (see ``pipeline.collect.momos_taste_chart``'s "never guess" contract)."""
+        chart_url = momos_chart_image_url(page)
+        if not chart_url:
+            return None, None
+        ext = Path(urlsplit(chart_url).path).suffix or ".png"
+        chart_path = cache_dir / f"chart_{pid}{ext}"
+        try:
+            if not chart_path.exists():
+                http.download(chart_url, chart_path)
+            return chart_url, read_chart(chart_path)
+        except Exception:
+            return chart_url, None
 
 
 # --------------------------------------------------------------------------- #
