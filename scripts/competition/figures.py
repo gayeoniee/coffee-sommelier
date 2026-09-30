@@ -47,7 +47,8 @@ BEFORE = {"violations": 3, "checked": 78, "examples": "마키아또 · 콘 파�
           "examples_en": "macchiato, con panna, flat white (to a no-milk guest)"}
 
 DOMESTIC_SOURCES = {"roasters_kr", "shopify"}  # DB names: shopify = Blue Bottle Korea (bluebottle_kr in the CSV)
-KCA_CREDIT = "메뉴 카페인: 각 브랜드 공식 공시값(2026-09 수집)"
+KCA_CREDIT = ("메뉴 카페인: 브랜드 공식 공시값(8곳, 2026-09 수집) · 출처: 식품의약품안전처 식품영양성분 데이터베이스"
+              "(음식 DB, 2026-08-28 — 투썸·더벤티 등 8곳)")
 
 
 def _korean_font_available() -> bool:
@@ -164,7 +165,7 @@ def fig_caffeine_strip(csv_dir: Path, out_path: Path, korean: bool) -> dict:
     ax.legend(handles=handles, loc="upper right", frameon=False, fontsize=9)
     ax.set_title(("같은 커피도 한 잔 카페인이 브랜드·메뉴마다 크게 다르다 (메뉴 %d종)" % len(rows)) if korean
                  else "Caffeine per cup varies widely (%d drinks)" % len(rows), loc="left")
-    fig.text(0.01, -0.02, KCA_CREDIT if korean else "Caffeine: each brand's published values (collected 2026-09)",
+    fig.text(0.01, -0.09, KCA_CREDIT if korean else "Caffeine: each brand's published values (collected 2026-09)",
              fontsize=8, color=MUTED)
     _save(fig, out_path)
     return {"drinks": len(rows), "over_300": over_300, "decaf_over_30": decaf_over}
