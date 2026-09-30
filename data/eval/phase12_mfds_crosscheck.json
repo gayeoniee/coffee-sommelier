@@ -1,0 +1,1519 @@
+{
+  "source_xlsx": "data/raw/mfds_food/20260828_음식DB.xlsx",
+  "n_mfds_coffee_rows": 1823,
+  "n_mfds_rows_no_brand": 6,
+  "cross_check_by_brand": {
+    "brand:starbucks": {
+      "matched_n": 28,
+      "median_ratio_public_over_ours": 1.0,
+      "share_within_10pct": 1.0,
+      "share_within_25pct": 1.0,
+      "top5_disagreements": [
+        {
+          "name": "에스프레소 콘 파나",
+          "temp": "UNK",
+          "is_decaf": false,
+          "our_caffeine_mg": 75.0,
+          "public_caffeine_mg_median": 75.0,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 1.0,
+          "sizes_seen": [
+            "Solo"
+          ],
+          "temp_fallback_match": false
+        },
+        {
+          "name": "에스프레소 마키아또",
+          "temp": "UNK",
+          "is_decaf": false,
+          "our_caffeine_mg": 75.0,
+          "public_caffeine_mg_median": 75.0,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 1.0,
+          "sizes_seen": [
+            "Solo"
+          ],
+          "temp_fallback_match": false
+        },
+        {
+          "name": "아이스 카페 아메리카노",
+          "temp": "ICED",
+          "is_decaf": false,
+          "our_caffeine_mg": 150.0,
+          "public_caffeine_mg_median": 150.0,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 1.0,
+          "sizes_seen": [
+            "Tall"
+          ],
+          "temp_fallback_match": false
+        },
+        {
+          "name": "카페 아메리카노",
+          "temp": "UNK",
+          "is_decaf": false,
+          "our_caffeine_mg": 150.0,
+          "public_caffeine_mg_median": 150.0,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 1.0,
+          "sizes_seen": [
+            "Tall"
+          ],
+          "temp_fallback_match": true
+        },
+        {
+          "name": "아이스 카라멜 마키아또",
+          "temp": "ICED",
+          "is_decaf": false,
+          "our_caffeine_mg": 75.0,
+          "public_caffeine_mg_median": 75.0,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 1.0,
+          "sizes_seen": [
+            "Tall"
+          ],
+          "temp_fallback_match": false
+        }
+      ],
+      "decaf_menu_items": 0,
+      "decaf_matched": 0
+    },
+    "brand:mega": {
+      "matched_n": 23,
+      "median_ratio_public_over_ours": 1.0,
+      "share_within_10pct": 0.913,
+      "share_within_25pct": 0.913,
+      "top5_disagreements": [
+        {
+          "name": "콜드브루라떼",
+          "temp": "UNK",
+          "is_decaf": false,
+          "our_caffeine_mg": 131.7,
+          "public_caffeine_mg_median": 216.7,
+          "n_public_rows": 2,
+          "ratio_public_over_ours": 1.645,
+          "sizes_seen": null,
+          "temp_fallback_match": true
+        },
+        {
+          "name": "콜드브루오리지널",
+          "temp": "UNK",
+          "is_decaf": false,
+          "our_caffeine_mg": 156.4,
+          "public_caffeine_mg_median": 217.0,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 1.388,
+          "sizes_seen": null,
+          "temp_fallback_match": true
+        },
+        {
+          "name": "헤이즐넛아메리카노",
+          "temp": "UNK",
+          "is_decaf": false,
+          "our_caffeine_mg": 196.7,
+          "public_caffeine_mg_median": 209.8,
+          "n_public_rows": 2,
+          "ratio_public_over_ours": 1.067,
+          "sizes_seen": null,
+          "temp_fallback_match": true
+        },
+        {
+          "name": "헤이즐넛라떼",
+          "temp": "UNK",
+          "is_decaf": false,
+          "our_caffeine_mg": 216.9,
+          "public_caffeine_mg_median": 204.5,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 0.943,
+          "sizes_seen": null,
+          "temp_fallback_match": true
+        },
+        {
+          "name": "카푸치노",
+          "temp": "UNK",
+          "is_decaf": false,
+          "our_caffeine_mg": 192.3,
+          "public_caffeine_mg_median": 201.4,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 1.047,
+          "sizes_seen": null,
+          "temp_fallback_match": true
+        }
+      ],
+      "decaf_menu_items": 20,
+      "decaf_matched": 2
+    },
+    "brand:paik": {
+      "matched_n": 36,
+      "median_ratio_public_over_ours": 1.206,
+      "share_within_10pct": 0.139,
+      "share_within_25pct": 0.583,
+      "top5_disagreements": [
+        {
+          "name": "카페라떼(HOT)",
+          "temp": "HOT",
+          "is_decaf": false,
+          "our_caffeine_mg": 152.0,
+          "public_caffeine_mg_median": 237.0,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 1.559,
+          "sizes_seen": null,
+          "temp_fallback_match": false
+        },
+        {
+          "name": "바나나 카페라떼(ICED)",
+          "temp": "ICED",
+          "is_decaf": false,
+          "our_caffeine_mg": 78.0,
+          "public_caffeine_mg_median": 119.0,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 1.525,
+          "sizes_seen": null,
+          "temp_fallback_match": false
+        },
+        {
+          "name": "바닐라라떼(ICED)",
+          "temp": "ICED",
+          "is_decaf": false,
+          "our_caffeine_mg": 156.0,
+          "public_caffeine_mg_median": 236.9,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 1.519,
+          "sizes_seen": null,
+          "temp_fallback_match": false
+        },
+        {
+          "name": "카페라떼(ICED)",
+          "temp": "ICED",
+          "is_decaf": false,
+          "our_caffeine_mg": 163.0,
+          "public_caffeine_mg_median": 236.9,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 1.454,
+          "sizes_seen": null,
+          "temp_fallback_match": false
+        },
+        {
+          "name": "달달연유라떼(ICED)",
+          "temp": "ICED",
+          "is_decaf": false,
+          "our_caffeine_mg": 164.0,
+          "public_caffeine_mg_median": 236.9,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 1.445,
+          "sizes_seen": null,
+          "temp_fallback_match": false
+        }
+      ],
+      "decaf_menu_items": 54,
+      "decaf_matched": 8
+    },
+    "brand:hollys": {
+      "matched_n": 14,
+      "median_ratio_public_over_ours": 1.0,
+      "share_within_10pct": 1.0,
+      "share_within_25pct": 1.0,
+      "top5_disagreements": [
+        {
+          "name": "바닐라 딜라이트",
+          "temp": "UNK",
+          "is_decaf": false,
+          "our_caffeine_mg": 83.0,
+          "public_caffeine_mg_median": 81.5,
+          "n_public_rows": 2,
+          "ratio_public_over_ours": 0.982,
+          "sizes_seen": null,
+          "temp_fallback_match": true
+        },
+        {
+          "name": "카푸치노",
+          "temp": "UNK",
+          "is_decaf": false,
+          "our_caffeine_mg": 127.0,
+          "public_caffeine_mg_median": 127.0,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 1.0,
+          "sizes_seen": null,
+          "temp_fallback_match": true
+        },
+        {
+          "name": "블랙아리아 아메리카노",
+          "temp": "UNK",
+          "is_decaf": false,
+          "our_caffeine_mg": 153.0,
+          "public_caffeine_mg_median": 153.0,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 1.0,
+          "sizes_seen": null,
+          "temp_fallback_match": true
+        },
+        {
+          "name": "블랙아리아 딥라떼",
+          "temp": "UNK",
+          "is_decaf": false,
+          "our_caffeine_mg": 153.0,
+          "public_caffeine_mg_median": 153.0,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 1.0,
+          "sizes_seen": null,
+          "temp_fallback_match": true
+        },
+        {
+          "name": "돌체 라떼",
+          "temp": "UNK",
+          "is_decaf": false,
+          "our_caffeine_mg": 93.0,
+          "public_caffeine_mg_median": 93.0,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 1.0,
+          "sizes_seen": null,
+          "temp_fallback_match": true
+        }
+      ],
+      "decaf_menu_items": 5,
+      "decaf_matched": 0
+    },
+    "brand:compose": {
+      "matched_n": 10,
+      "median_ratio_public_over_ours": 0.839,
+      "share_within_10pct": 0.0,
+      "share_within_25pct": 1.0,
+      "top5_disagreements": [
+        {
+          "name": "카페모카",
+          "temp": "UNK",
+          "is_decaf": false,
+          "our_caffeine_mg": 253.56,
+          "public_caffeine_mg_median": 208.0,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 0.82,
+          "sizes_seen": null,
+          "temp_fallback_match": true
+        },
+        {
+          "name": "카페라떼",
+          "temp": "UNK",
+          "is_decaf": false,
+          "our_caffeine_mg": 247.75,
+          "public_caffeine_mg_median": 208.0,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 0.839,
+          "sizes_seen": null,
+          "temp_fallback_match": true
+        },
+        {
+          "name": "카푸치노",
+          "temp": "UNK",
+          "is_decaf": false,
+          "our_caffeine_mg": 247.75,
+          "public_caffeine_mg_median": 208.0,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 0.839,
+          "sizes_seen": null,
+          "temp_fallback_match": true
+        },
+        {
+          "name": "헤이즐넛라떼",
+          "temp": "UNK",
+          "is_decaf": false,
+          "our_caffeine_mg": 247.75,
+          "public_caffeine_mg_median": 208.0,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 0.839,
+          "sizes_seen": null,
+          "temp_fallback_match": true
+        },
+        {
+          "name": "돌체라떼",
+          "temp": "UNK",
+          "is_decaf": false,
+          "our_caffeine_mg": 247.75,
+          "public_caffeine_mg_median": 208.0,
+          "n_public_rows": 1,
+          "ratio_public_over_ours": 0.839,
+          "sizes_seen": null,
+          "temp_fallback_match": true
+        }
+      ],
+      "decaf_menu_items": 10,
+      "decaf_matched": 0
+    },
+    "brand:ediya": {
+      "matched_n": 28,
+      "median_ratio_public_over_ours": 0.978,
+      "share_within_10pct": 0.214,
+      "share_within_25pct": 0.393,
+      "top5_disagreements": [
+        {
+          "name": "디카페인 바닐라 라떼",
+          "temp": "UNK",
+          "is_decaf": true,
+          "our_caffeine_mg": 7.0,
+          "public_caffeine_mg_median": 21.5,
+          "n_public_rows": 2,
+          "ratio_public_over_ours": 3.071,
+          "sizes_seen": [
+            "EX",
+            "L"
+          ],
+          "temp_fallback_match": true
+        },
+        {
+          "name": "디카페인 흑당 콜드브루",
+          "temp": "UNK",
+          "is_decaf": true,
+          "our_caffeine_mg": 12.0,
+          "public_caffeine_mg_median": 3.0,
+          "n_public_rows": 2,
+          "ratio_public_over_ours": 0.25,
+          "sizes_seen": [
+            "EX"
+          ],
+          "temp_fallback_match": false
+        },
+        {
+          "name": "디카페인 연유 콜드브루",
+          "temp": "UNK",
+          "is_decaf": true,
+          "our_caffeine_mg": 12.0,
+          "public_caffeine_mg_median": 4.5,
+          "n_public_rows": 2,
+          "ratio_public_over_ours": 0.375,
+          "sizes_seen": [
+            "EX"
+          ],
+          "temp_fallback_match": false
+        },
+        {
+          "name": "디카페인 콜드브루 라떼",
+          "temp": "UNK",
+          "is_decaf": true,
+          "our_caffeine_mg": 12.0,
+          "public_caffeine_mg_median": 4.5,
+          "n_public_rows": 2,
+          "ratio_public_over_ours": 0.375,
+          "sizes_seen": [
+            "EX"
+          ],
+          "temp_fallback_match": false
+        },
+        {
+          "name": "달달커피",
+          "temp": "UNK",
+          "is_decaf": false,
+          "our_caffeine_mg": 162.0,
+          "public_caffeine_mg_median": 256.1,
+          "n_public_rows": 2,
+          "ratio_public_over_ours": 1.581,
+          "sizes_seen": [
+            "EX",
+            "L"
+          ],
+          "temp_fallback_match": false
+        }
+      ],
+      "decaf_menu_items": 19,
+      "decaf_matched": 13
+    }
+  },
+  "milk_threshold": {
+    "n_matched": 154,
+    "n_milk_true": 120,
+    "n_milk_false": 34,
+    "best": {
+      "threshold_g_per_100": 0.32,
+      "accuracy": 0.981,
+      "precision": 0.983,
+      "recall": 0.992,
+      "tp": 119,
+      "fp": 2,
+      "fn": 1,
+      "tn": 32
+    },
+    "sample_points": [
+      {
+        "name": "에스프레소 콘 파나",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 0.0,
+        "milk_label": true
+      },
+      {
+        "name": "스파클링 시트러스 에스프레소",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 0.0,
+        "milk_label": false
+      },
+      {
+        "name": "에스프레소",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 0.0,
+        "milk_label": false
+      },
+      {
+        "name": "아메리카노(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 0.0,
+        "milk_label": false
+      },
+      {
+        "name": "아메리카노(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 0.0,
+        "milk_label": false
+      },
+      {
+        "name": "디카페인 아메리카노(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 0.0,
+        "milk_label": false
+      },
+      {
+        "name": "디카페인 아메리카노(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 0.0,
+        "milk_label": false
+      },
+      {
+        "name": "블랙아리아 아메리카노",
+        "brand": "brand:hollys",
+        "protein_g_per_100": 0.0,
+        "milk_label": false
+      },
+      {
+        "name": "빅포즈 아메리카노",
+        "brand": "brand:compose",
+        "protein_g_per_100": 0.0,
+        "milk_label": false
+      },
+      {
+        "name": "빅포즈 디카페인 아메리카노",
+        "brand": "brand:compose",
+        "protein_g_per_100": 0.0,
+        "milk_label": false
+      },
+      {
+        "name": "디카페인 에스프레소",
+        "brand": "brand:mega",
+        "protein_g_per_100": 0.09,
+        "milk_label": false
+      },
+      {
+        "name": "콜드브루디카페인",
+        "brand": "brand:mega",
+        "protein_g_per_100": 0.1,
+        "milk_label": false
+      },
+      {
+        "name": "디카페인 꿀아메리카노",
+        "brand": "brand:mega",
+        "protein_g_per_100": 0.14,
+        "milk_label": false
+      },
+      {
+        "name": "꿀아메리카노",
+        "brand": "brand:mega",
+        "protein_g_per_100": 0.14,
+        "milk_label": false
+      },
+      {
+        "name": "디카페인 아메리카노",
+        "brand": "brand:mega",
+        "protein_g_per_100": 0.15,
+        "milk_label": false
+      },
+      {
+        "name": "디카페인 헤이즐넛 아메리카노",
+        "brand": "brand:mega",
+        "protein_g_per_100": 0.15,
+        "milk_label": false
+      },
+      {
+        "name": "아메리카노",
+        "brand": "brand:mega",
+        "protein_g_per_100": 0.15,
+        "milk_label": false
+      },
+      {
+        "name": "헤이즐넛아메리카노",
+        "brand": "brand:mega",
+        "protein_g_per_100": 0.15,
+        "milk_label": false
+      },
+      {
+        "name": "디카페인 카페 아메리카노",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 0.15,
+        "milk_label": false
+      },
+      {
+        "name": "디카페인 바닐라 아메리카노",
+        "brand": "brand:mega",
+        "protein_g_per_100": 0.15,
+        "milk_label": false
+      },
+      {
+        "name": "바닐라아메리카노",
+        "brand": "brand:mega",
+        "protein_g_per_100": 0.15,
+        "milk_label": false
+      },
+      {
+        "name": "콜드브루오리지널",
+        "brand": "brand:mega",
+        "protein_g_per_100": 0.16,
+        "milk_label": false
+      },
+      {
+        "name": "디카페인 메가리카노",
+        "brand": "brand:mega",
+        "protein_g_per_100": 0.16,
+        "milk_label": false
+      },
+      {
+        "name": "메가리카노",
+        "brand": "brand:mega",
+        "protein_g_per_100": 0.16,
+        "milk_label": false
+      },
+      {
+        "name": "에스프레소 도피오",
+        "brand": "brand:mega",
+        "protein_g_per_100": 0.17,
+        "milk_label": false
+      },
+      {
+        "name": "콜드브루(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 0.17,
+        "milk_label": false
+      },
+      {
+        "name": "콜드브루(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 0.17,
+        "milk_label": false
+      },
+      {
+        "name": "디카페인 콜드브루(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 0.17,
+        "milk_label": false
+      },
+      {
+        "name": "디카페인 콜드브루(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 0.17,
+        "milk_label": false
+      },
+      {
+        "name": "아이스 카페 아메리카노",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 0.28,
+        "milk_label": false
+      },
+      {
+        "name": "카페 아메리카노",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 0.28,
+        "milk_label": false
+      },
+      {
+        "name": "디카페인 콜드브루",
+        "brand": "brand:hollys",
+        "protein_g_per_100": 0.28,
+        "milk_label": false
+      },
+      {
+        "name": "콜드브루",
+        "brand": "brand:hollys",
+        "protein_g_per_100": 0.28,
+        "milk_label": false
+      },
+      {
+        "name": "할메가커피",
+        "brand": "brand:mega",
+        "protein_g_per_100": 0.32,
+        "milk_label": true
+      },
+      {
+        "name": "왕할메가커피",
+        "brand": "brand:mega",
+        "protein_g_per_100": 0.32,
+        "milk_label": true
+      },
+      {
+        "name": "달달커피",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 0.33,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 라이트 바닐라 아몬드라떼",
+        "brand": "brand:mega",
+        "protein_g_per_100": 0.36,
+        "milk_label": true
+      },
+      {
+        "name": "라이트 바닐라 아몬드라떼",
+        "brand": "brand:mega",
+        "protein_g_per_100": 0.36,
+        "milk_label": true
+      },
+      {
+        "name": "원조커피(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 0.53,
+        "milk_label": true
+      },
+      {
+        "name": "원조커피(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 0.53,
+        "milk_label": true
+      },
+      {
+        "name": "사케라또 비안코 오버 아이스",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 0.85,
+        "milk_label": true
+      },
+      {
+        "name": "바닐라 스타벅스 더블 샷",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 0.97,
+        "milk_label": true
+      },
+      {
+        "name": "아인슈페너라떼",
+        "brand": "brand:compose",
+        "protein_g_per_100": 1.01,
+        "milk_label": true
+      },
+      {
+        "name": "흑당 카페라떼",
+        "brand": "brand:compose",
+        "protein_g_per_100": 1.02,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 헤이즐넛라떼",
+        "brand": "brand:compose",
+        "protein_g_per_100": 1.06,
+        "milk_label": true
+      },
+      {
+        "name": "할메가미숫커피",
+        "brand": "brand:mega",
+        "protein_g_per_100": 1.08,
+        "milk_label": true
+      },
+      {
+        "name": "사케라또 아포가토",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 1.13,
+        "milk_label": true
+      },
+      {
+        "name": "클래식 아포가토",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 1.13,
+        "milk_label": true
+      },
+      {
+        "name": "콜드브루 흑당라떼(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.13,
+        "milk_label": true
+      },
+      {
+        "name": "콜드브루 흑당라떼(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.13,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 콜드브루 흑당라떼(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.13,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 콜드브루 흑당라떼(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.13,
+        "milk_label": true
+      },
+      {
+        "name": "흑당 콜드브루",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 1.27,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 흑당 콜드브루",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 1.27,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 카푸치노",
+        "brand": "brand:mega",
+        "protein_g_per_100": 1.28,
+        "milk_label": true
+      },
+      {
+        "name": "시그니처 라떼",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 1.32,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 시그니처 라떼",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 1.32,
+        "milk_label": true
+      },
+      {
+        "name": "콜드브루라떼(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.33,
+        "milk_label": true
+      },
+      {
+        "name": "콜드브루라떼(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.33,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 콜드브루라떼(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.33,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 콜드브루라떼(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.33,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 바닐라라떼",
+        "brand": "brand:mega",
+        "protein_g_per_100": 1.33,
+        "milk_label": true
+      },
+      {
+        "name": "바닐라라떼",
+        "brand": "brand:mega",
+        "protein_g_per_100": 1.33,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 카라멜마끼아또",
+        "brand": "brand:mega",
+        "protein_g_per_100": 1.35,
+        "milk_label": true
+      },
+      {
+        "name": "카라멜마끼아또",
+        "brand": "brand:mega",
+        "protein_g_per_100": 1.35,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 헤이즐넛 라떼",
+        "brand": "brand:mega",
+        "protein_g_per_100": 1.39,
+        "milk_label": true
+      },
+      {
+        "name": "헤이즐넛라떼",
+        "brand": "brand:mega",
+        "protein_g_per_100": 1.39,
+        "milk_label": true
+      },
+      {
+        "name": "콜드브루디카페인라떼",
+        "brand": "brand:mega",
+        "protein_g_per_100": 1.4,
+        "milk_label": true
+      },
+      {
+        "name": "콜드브루라떼",
+        "brand": "brand:mega",
+        "protein_g_per_100": 1.4,
+        "milk_label": true
+      },
+      {
+        "name": "돌체라떼",
+        "brand": "brand:compose",
+        "protein_g_per_100": 1.41,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 돌체라떼",
+        "brand": "brand:compose",
+        "protein_g_per_100": 1.41,
+        "milk_label": true
+      },
+      {
+        "name": "커피 스타벅스 더블 샷",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 1.45,
+        "milk_label": true
+      },
+      {
+        "name": "헤이즐넛 스타벅스 더블 샷",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 1.45,
+        "milk_label": true
+      },
+      {
+        "name": "카라멜마키아또(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.48,
+        "milk_label": true
+      },
+      {
+        "name": "카라멜마키아또(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.48,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 카라멜 마키아또(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.48,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 카라멜 마키아또(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.48,
+        "milk_label": true
+      },
+      {
+        "name": "카라멜 마끼아또",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 1.5,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 카라멜 마끼아또",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 1.5,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 카페 라떼",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 1.5,
+        "milk_label": true
+      },
+      {
+        "name": "카페라떼(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.55,
+        "milk_label": true
+      },
+      {
+        "name": "카페라떼(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.55,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 카페라떼(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.55,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 카페라떼(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.55,
+        "milk_label": true
+      },
+      {
+        "name": "아이스크림카페라떼(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.55,
+        "milk_label": true
+      },
+      {
+        "name": "아이스크림바닐라라떼(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.55,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 아이스크림 카페라떼",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.55,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 아이스크림 바닐라라떼",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.55,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 카페라떼",
+        "brand": "brand:mega",
+        "protein_g_per_100": 1.56,
+        "milk_label": true
+      },
+      {
+        "name": "카페라떼",
+        "brand": "brand:mega",
+        "protein_g_per_100": 1.56,
+        "milk_label": true
+      },
+      {
+        "name": "바닐라라떼(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.58,
+        "milk_label": true
+      },
+      {
+        "name": "바닐라라떼(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.58,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 바닐라라떼(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.58,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 바닐라라떼(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.58,
+        "milk_label": true
+      },
+      {
+        "name": "바나나 카페라떼(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.65,
+        "milk_label": true
+      },
+      {
+        "name": "바나나 카페라떼(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.65,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 바나나카페라떼(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.65,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 바나나카페라떼(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.65,
+        "milk_label": true
+      },
+      {
+        "name": "아포가토 오리지널",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 1.66,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 아포가토 오리지널",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 1.66,
+        "milk_label": true
+      },
+      {
+        "name": "더블에스프레소",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.67,
+        "milk_label": false
+      },
+      {
+        "name": "디카페인 더블에스프레소",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.67,
+        "milk_label": false
+      },
+      {
+        "name": "아이스 카푸치노",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 1.69,
+        "milk_label": true
+      },
+      {
+        "name": "카푸치노",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 1.69,
+        "milk_label": true
+      },
+      {
+        "name": "바닐라 라떼",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 1.69,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 바닐라 라떼",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 1.69,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 카페 모카",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 1.69,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 콜드브루 라떼",
+        "brand": "brand:hollys",
+        "protein_g_per_100": 1.7,
+        "milk_label": true
+      },
+      {
+        "name": "콜드브루 라떼",
+        "brand": "brand:hollys",
+        "protein_g_per_100": 1.7,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 카페모카",
+        "brand": "brand:mega",
+        "protein_g_per_100": 1.74,
+        "milk_label": true
+      },
+      {
+        "name": "카페모카",
+        "brand": "brand:mega",
+        "protein_g_per_100": 1.74,
+        "milk_label": true
+      },
+      {
+        "name": "민트 모카",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 1.76,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 민트 모카",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 1.76,
+        "milk_label": true
+      },
+      {
+        "name": "콜드브루 연유라떼(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.83,
+        "milk_label": true
+      },
+      {
+        "name": "콜드브루 연유라떼(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.83,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 콜드브루 연유라떼(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.83,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 콜드브루 연유라떼(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 1.83,
+        "milk_label": true
+      },
+      {
+        "name": "블랙아리아 딥라떼",
+        "brand": "brand:hollys",
+        "protein_g_per_100": 1.83,
+        "milk_label": true
+      },
+      {
+        "name": "큐브라떼",
+        "brand": "brand:mega",
+        "protein_g_per_100": 1.9,
+        "milk_label": true
+      },
+      {
+        "name": "연유 콜드브루",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 1.93,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 연유 콜드브루",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 1.93,
+        "milk_label": true
+      },
+      {
+        "name": "아이스 카라멜 마키아또",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 1.97,
+        "milk_label": true
+      },
+      {
+        "name": "카라멜 마키아또",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 1.97,
+        "milk_label": true
+      },
+      {
+        "name": "라벤더 카페 브레베",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 1.97,
+        "milk_label": true
+      },
+      {
+        "name": "아이스 라벤더 카페 브레베",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 1.97,
+        "milk_label": true
+      },
+      {
+        "name": "바닐라 빈 라떼",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 1.98,
+        "milk_label": true
+      },
+      {
+        "name": "아이스 바닐라 빈 라떼",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 1.98,
+        "milk_label": true
+      },
+      {
+        "name": "콜드브루 딜라이트",
+        "brand": "brand:hollys",
+        "protein_g_per_100": 1.98,
+        "milk_label": true
+      },
+      {
+        "name": "연유라떼",
+        "brand": "brand:mega",
+        "protein_g_per_100": 2.1,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 연유라떼",
+        "brand": "brand:mega",
+        "protein_g_per_100": 2.1,
+        "milk_label": true
+      },
+      {
+        "name": "연유 카페 라떼",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 2.12,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 연유 카페 라떼",
+        "brand": "brand:ediya",
+        "protein_g_per_100": 2.12,
+        "milk_label": true
+      },
+      {
+        "name": "아이스크림카페모카(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 2.25,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 아이스크림카페모카(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 2.25,
+        "milk_label": true
+      },
+      {
+        "name": "아이스 카페 라떼",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 2.25,
+        "milk_label": true
+      },
+      {
+        "name": "카페 라떼",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 2.25,
+        "milk_label": true
+      },
+      {
+        "name": "바닐라 딜라이트",
+        "brand": "brand:hollys",
+        "protein_g_per_100": 2.26,
+        "milk_label": true
+      },
+      {
+        "name": "카페모카(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 2.29,
+        "milk_label": true
+      },
+      {
+        "name": "카페모카(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 2.29,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 카페모카(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 2.29,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 카페모카(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 2.29,
+        "milk_label": true
+      },
+      {
+        "name": "아이스 카페 모카",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 2.4,
+        "milk_label": true
+      },
+      {
+        "name": "카페 모카",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 2.4,
+        "milk_label": true
+      },
+      {
+        "name": "돌체 라떼",
+        "brand": "brand:hollys",
+        "protein_g_per_100": 2.4,
+        "milk_label": true
+      },
+      {
+        "name": "아이스 화이트 초콜릿 모카",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 2.54,
+        "milk_label": true
+      },
+      {
+        "name": "화이트 초콜릿 모카",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 2.54,
+        "milk_label": true
+      },
+      {
+        "name": "아포가토",
+        "brand": "brand:hollys",
+        "protein_g_per_100": 2.67,
+        "milk_label": true
+      },
+      {
+        "name": "달달연유라떼(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 2.78,
+        "milk_label": true
+      },
+      {
+        "name": "달달연유라떼(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 2.78,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 달달연유라떼(HOT)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 2.78,
+        "milk_label": true
+      },
+      {
+        "name": "디카페인 달달연유라떼(ICED)",
+        "brand": "brand:paik",
+        "protein_g_per_100": 2.78,
+        "milk_label": true
+      },
+      {
+        "name": "스타벅스 돌체 라떼",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 3.1,
+        "milk_label": true
+      },
+      {
+        "name": "아이스 스타벅스 돌체 라떼",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 3.1,
+        "milk_label": true
+      },
+      {
+        "name": "에스프레소 마키아또",
+        "brand": "brand:starbucks",
+        "protein_g_per_100": 4.55,
+        "milk_label": true
+      }
+    ]
+  },
+  "new_brand_inventory_top15": [
+    {
+      "company": "커피에반하다",
+      "brand_key": "brand:coffeeinlove",
+      "n_drinks": 129,
+      "n_with_caffeine": 129,
+      "n_decaf": 0,
+      "sizes": [
+        "Grande",
+        "Tall",
+        "Venti"
+      ]
+    },
+    {
+      "company": "달콤",
+      "brand_key": "brand:dalkomm",
+      "n_drinks": 105,
+      "n_with_caffeine": 105,
+      "n_decaf": 19,
+      "sizes": [
+        "L",
+        "R"
+      ]
+    },
+    {
+      "company": "바나프레소",
+      "brand_key": "brand:banapresso",
+      "n_drinks": 94,
+      "n_with_caffeine": 82,
+      "n_decaf": 40,
+      "sizes": []
+    },
+    {
+      "company": "더벤티",
+      "brand_key": "brand:theventi",
+      "n_drinks": 93,
+      "n_with_caffeine": 93,
+      "n_decaf": 22,
+      "sizes": []
+    },
+    {
+      "company": "파스쿠찌",
+      "brand_key": "brand:pascucci",
+      "n_drinks": 82,
+      "n_with_caffeine": 52,
+      "n_decaf": 9,
+      "sizes": [
+        "L",
+        "R",
+        "S",
+        "Solo",
+        "V"
+      ]
+    },
+    {
+      "company": "카페베네",
+      "brand_key": "brand:caffebene",
+      "n_drinks": 80,
+      "n_with_caffeine": 0,
+      "n_decaf": 19,
+      "sizes": [
+        "L",
+        "R",
+        "S"
+      ]
+    },
+    {
+      "company": "아임일리터",
+      "brand_key": "brand:imaliter",
+      "n_drinks": 77,
+      "n_with_caffeine": 77,
+      "n_decaf": 12,
+      "sizes": [
+        "L",
+        "M"
+      ]
+    },
+    {
+      "company": "매머드익스프레스",
+      "brand_key": "brand:kr-1da85f9e",
+      "n_drinks": 70,
+      "n_with_caffeine": 70,
+      "n_decaf": 34,
+      "sizes": []
+    },
+    {
+      "company": "매머드 익스프레스",
+      "brand_key": "brand:kr-1da85f9e",
+      "n_drinks": 58,
+      "n_with_caffeine": 58,
+      "n_decaf": 28,
+      "sizes": []
+    },
+    {
+      "company": "공차",
+      "brand_key": "brand:gongcha",
+      "n_drinks": 58,
+      "n_with_caffeine": 58,
+      "n_decaf": 0,
+      "sizes": [
+        "J",
+        "L"
+      ]
+    },
+    {
+      "company": "커피마마",
+      "brand_key": "brand:coffeemama",
+      "n_drinks": 55,
+      "n_with_caffeine": 0,
+      "n_decaf": 0,
+      "sizes": [
+        "L",
+        "R"
+      ]
+    },
+    {
+      "company": "드롭탑",
+      "brand_key": "brand:droptop",
+      "n_drinks": 52,
+      "n_with_caffeine": 39,
+      "n_decaf": 0,
+      "sizes": [
+        "L",
+        "R",
+        "V"
+      ]
+    },
+    {
+      "company": "더리터",
+      "brand_key": "brand:theliter",
+      "n_drinks": 50,
+      "n_with_caffeine": 0,
+      "n_decaf": 7,
+      "sizes": [
+        "L",
+        "ML"
+      ]
+    },
+    {
+      "company": "커피:니",
+      "brand_key": "brand:kr-723815fd",
+      "n_drinks": 42,
+      "n_with_caffeine": 42,
+      "n_decaf": 0,
+      "sizes": [
+        "L",
+        "R"
+      ]
+    },
+    {
+      "company": "탐앤탐스",
+      "brand_key": "brand:tomntoms",
+      "n_drinks": 42,
+      "n_with_caffeine": 42,
+      "n_decaf": 2,
+      "sizes": []
+    }
+  ],
+  "n_distinct_new_brands": 29
+}
