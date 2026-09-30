@@ -209,3 +209,9 @@ def test_menu_items_from_mfds_protein_label_above_and_below_threshold():
     ]
     _, labels = menu_items_from_mfds(normalize_rows(rows), "2026-08-28", frozenset({"brand:theventi"}))
     assert labels == {"카페 라떼(HOT)": True, "아메리카노(HOT)": False}
+
+
+def test_protein_near_the_threshold_gets_no_milk_label():
+    from pipeline.normalize.mfds_food import MFDS_MILK_PROTEIN_THRESHOLD, MFDS_MILK_UNSURE_BAND
+    lo, hi = MFDS_MILK_UNSURE_BAND
+    assert lo < MFDS_MILK_PROTEIN_THRESHOLD < hi       # 0.32 (탐앤탐스 싱글오리진) is never labelled

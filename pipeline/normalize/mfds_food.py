@@ -257,6 +257,9 @@ def normalize_mfds_food(xlsx_path: Path) -> list[MfdsCoffeeDrink]:
 MFDS_SOURCE = "mfds_food"
 MFDS_SOURCE_URL = "https://various.foodsafetykorea.go.kr/nutrient/"  # 식품안전나라 "음식 DB" (수동 다운로드, ADR 0023)
 MFDS_MILK_PROTEIN_THRESHOLD = 0.32  # g protein per 100g/100ml basis -- ADR 0023 phase-1 fit (acc 98.1%)
+# Too close to the threshold to call: no label, so the menu stays needs_review (never recommended) until a person
+# labels it -- the condition guarantee (0 violations) outranks coverage. 탐앤탐스 black 싱글오리진 drinks sit at 0.32.
+MFDS_MILK_UNSURE_BAND = (0.25, 0.45)
 
 PHASE2_MENU_BRAND_KEYS = frozenset({
     "brand:twosome",       # gap-fill: collector blocked (CloudFront 403), 0 menu rows without this
@@ -338,6 +341,6 @@ def menu_items_from_mfds(drinks: list[MfdsCoffeeDrink], collected_at: str,
             source_url=MFDS_SOURCE_URL, collected_at=collected_at,
         )
         density = _protein_density(chosen)
-        if density is not None:
+        if density is not None and not (MFDS_MILK_UNSURE_BAND[0] <= density < MFDS_MILK_UNSURE_BAND[1]):
             protein_labels[name] = density >= MFDS_MILK_PROTEIN_THRESHOLD
     return list(items.values()), protein_labels

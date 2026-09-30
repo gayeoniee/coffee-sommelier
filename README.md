@@ -38,7 +38,7 @@ flowchart LR
 2. **LLM이 받는 것은 그대로 옮겨도 맞는 문장 조각뿐이다.** "산미: 강함" 같은 라벨·true/false·날 숫자는 넘기지 않는다 — 넘겼더니 그대로 베꼈다. 대신 "재스민·레몬 향에 산미가 선호보다 조금 강하고 바디가 중간 정도인 음료"처럼 베끼면 곧 맞는 문장이 되는 조각을 준다.
 3. **조각 밖으로 나가면 잡는다.** 숫자와 반대 방향("선호보다 높아" — 실제로는 낮음), 차이를 이유로 든 결론("조금 강해서 잘 맞아요"), 내부 필드명 복사를 규칙으로 걸러 정해진 틀 문장으로 바꾼다. 댈 이유가 없는 카드(맞는 점이 하나도 없음)는 LLM을 부르지 않는다.
 
-조건 판정·카페인 수치·추가요금은 처음부터 LLM을 거치지 않는다(조건 위반 2/165, 사람이 라벨링한 우유 여부만 기준으로 하면 0/114 — [ADR 0023](docs/adr/0023-mfds-food-db.md) Phase 2).
+조건 판정·카페인 수치·추가요금은 처음부터 LLM을 거치지 않는다(조건 위반 0/161 — 사람이 라벨링한 우유 0/115, 식약처 단백질 신호 0/46, [ADR 0023](docs/adr/0023-mfds-food-db.md) Phase 2).
 
 **단계별 결과** (고정 24케이스, 판정 모델 2개가 모두 동의한 비율, 전체판 · 오픈판 — [ADR 0005](docs/adr/0005-explain-quality-eval.md))
 
@@ -57,7 +57,7 @@ LLM이 쓴 원문이 검사 전에 이미 규칙을 지킨 비율도 3차 17/24 
 
 | 무엇을 쟀나 | 결과 | 원자료 |
 |---|---|---|
-| 조건 위반율 (페르소나 4 × 브랜드 17, top3) | **1.2% — 2/165건**, 사람이 라벨링한 우유 여부 기준으로는 **0.0% — 0/114건**(나머지 51건은 MFDS 단백질 신호로 라벨 — 우유 기준 2건 위반, [ADR 0023](docs/adr/0023-mfds-food-db.md) Phase 2) (메뉴 실측 16개 브랜드) | [phase2_violations.json](data/eval/phase2_violations.json) |
+| 조건 위반율 (페르소나 4 × 브랜드 17, top3) | **0.0% — 0/161건** — 사람이 라벨링한 우유 여부 0/115, 나머지 46건은 MFDS 단백질 신호로 라벨(0건 위반 — 임계값 0.32 근처 0.25~0.45는 라벨 없이 추천 제외, [ADR 0023](docs/adr/0023-mfds-food-db.md) Phase 2) (메뉴 실측 16개 브랜드) | [phase2_violations.json](data/eval/phase2_violations.json) |
 | 지식베이스 원두 수 | 9,456 (디카페인 199, 향미 태그 7,763) · 오픈 라이선스판 2,063(해외 Shopify 강도 표기 199 포함, [ADR 0013](docs/adr/0013-open-labels-weak-supervision.md)) | [phase2_coverage.json](data/eval/phase2_coverage.json), [open/phase2_coverage.json](data/eval/open/phase2_coverage.json) |
 | 원두 예측 leave-one-out, 산미 ±1 이내 | **0.745 (n=200)** · 오픈 라이선스판 0.5126 (n=199) — 재라벨 전과 같은 대상([ADR 0010](docs/adr/0010-body-heaviness.md)) | [phase2_loo.json](data/eval/phase2_loo.json) |
 | 원두 예측 leave-one-out, 바디 ±1 이내 | 0.6536 (n=153) — 200개 대상 중 텍스트에 무게감 언급이 없는 원두는 결측이라 제외([ADR 0010](docs/adr/0010-body-heaviness.md)) | [phase2_loo.json](data/eval/phase2_loo.json) |
@@ -305,7 +305,7 @@ $ python -m pipeline query "bright citrus floral Ethiopia washed" -k 5 --decaf
 
 | 평가 (`python -m app.eval`) | 결과 |
 |---|---|
-| 조건 위반율 (페르소나 4 × 브랜드 17, top3) | 1.2% — 2/165건, 사람이 라벨링한 우유 여부 기준(메뉴 453종 수기 라벨)으로는 0.0% — 0/114건 — 나머지 51건은 MFDS 단백질 신호로 라벨(2건 위반, [ADR 0023](docs/adr/0023-mfds-food-db.md) Phase 2), 메뉴 실측 16개 브랜드 |
+| 조건 위반율 (페르소나 4 × 브랜드 17, top3) | 0.0% — 0/161건, 사람이 라벨링한 우유 여부 기준(메뉴 453종 수기 라벨) 0/115 — 나머지 46건은 MFDS 단백질 신호로 라벨(0건 위반, 임계값 근처는 추천 제외, [ADR 0023](docs/adr/0023-mfds-food-db.md) Phase 2), 메뉴 실측 16개 브랜드 |
 | 원두 예측 leave-one-out, 산미 ±1 이내 | 0.745 (n=200) |
 | 원두 예측 leave-one-out, 바디 ±1 이내 | 0.6536 (n=153/200) |
 | 학습 수렴: 모의 사용자 10회 기록 후 프로필 오차 | 0.7792 → 0.7117 |
