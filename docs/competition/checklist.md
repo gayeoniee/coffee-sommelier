@@ -21,12 +21,12 @@
 - [ ] 포털에서 가이드 3종 다운로드(이미 읽고 초안에 반영함): [신청서 작성 가이드](https://kdata.or.kr/datahub/static/files/contest_2026_etc1.pdf) · [레시피 작성 참고 가이드](https://kdata.or.kr/datahub/static/files/contest_2026_etc2.pdf) · [분석도구 활용 가이드](https://kdata.or.kr/datahub/static/files/contest_2026_etc3.pdf)
 - [ ] **K-DATA(1899-0247, 연결 후 4번)에 전화로 확인**
   1. 서식3의 "워크스튜디오 분석도구를 활용하여 제출" 문장이 **레시피 제안 부문에도 적용되는지**
-  2. RoasterDB(CC BY-NC 4.0)처럼 비영리 조건이 있는 데이터를 분석에 쓰고 **CSV로는 올리지 않아도 되는지**(서약서 제6조의 게시·생성형 AI 학습 활용과 충돌 여부)
+  2. ~~RoasterDB(CC BY-NC 4.0)처럼 비영리 조건이 있는 데이터를 분석에 쓰고 **CSV로는 올리지 않아도 되는지**(서약서 제6조의 게시·생성형 AI 학습 활용과 충돌 여부)~~ — **전화 없이 해결**: RoasterDB를 제출본 분석·DB·이웃 탐색·학습 라벨 어디에도 안 쓰는 쪽으로 결정해 질문 자체가 없어졌다(2026-09-30, [ADR 0024](../adr/0024-exclude-roasterdb-open.md)). 전체(포트폴리오)판에만 남아 있고 그 판은 제출 대상이 아니다.
   3. 브랜드 공식 사이트에서 모은 사실정보(메뉴명·카페인 mg)를 써도 되는지, 증빙이 필요한지(서약서 제7조④)
   4. GitHub·배포 URL을 레시피 본문에 넣어도 되는지
 
 ## 데이터·코드 정리 (10.1 ~ 10.10)
-- [x] **coffeereview 없는 DB 재구축** — 평가만이 아니라 앱이 실제로 쓰는 DB에서도 빠져 있어야 한다(지금은 평가 코드의 `exclude_sources`로만 빠짐). 초안 6장의 명령으로 깨끗한 RAW_DIR에서 다시 만든다. `scripts/competition/build_open_db.sh`로 로컬 docker Postgres에 `coffee_open` 구축 완료(2026-09-28): coffees 2,063(cqi 1,546·roasterdb 100·roasters_kr 209·shopify 9·shopify_gauged 199), coffeereview 0, menu_items 512, violations 0/108. **ADR 0023(2026-09-30)으로 갱신**: 식약처 음식 DB 메뉴 390종을 더해 menu_items 902, violations 0/169(사람 라벨 121 + MFDS 단백질 신호 48).
+- [x] **coffeereview 없는 DB 재구축** — 평가만이 아니라 앱이 실제로 쓰는 DB에서도 빠져 있어야 한다(지금은 평가 코드의 `exclude_sources`로만 빠짐). 초안 6장의 명령으로 깨끗한 RAW_DIR에서 다시 만든다. `scripts/competition/build_open_db.sh`로 로컬 docker Postgres에 `coffee_open` 구축 완료(2026-09-28): coffees 2,063(cqi 1,546·roasterdb 100·roasters_kr 209·shopify 9·shopify_gauged 199), coffeereview 0, menu_items 512, violations 0/108. **ADR 0023(2026-09-30)으로 갱신**: 식약처 음식 DB 메뉴 390종을 더해 menu_items 902, violations 0/169(사람 라벨 121 + MFDS 단백질 신호 48). **ADR 0024(2026-09-30)로 재갱신**: RoasterDB(CC BY-NC 4.0) 100건을 coffee_open에서 완전히 제외 — coffees 1,963(cqi 1,546·roasters_kr 209·shopify 9·shopify_gauged 199), roasterdb 0, violations 0/169(변화 없음), 디카페인 후보 44→39개(국내 구매 가능 20개는 그대로).
 - [x] (권장) 공공데이터 1순위: 식약처_식품영양성분DB정보 API — 실제로 반영함([ADR 0023](../adr/0023-mfds-food-db.md), 2026-09-30): 투썸플레이스 메뉴 29종 + 신규 브랜드 7곳 메뉴 361종·카페인·디카페인을 추가하고, 사람 라벨이 없는 새 메뉴는 단백질 실측으로 우유 여부를 판정.
 - [x] `violations`·`loo`·`coverage`·`convergence`·`bench`·`explain_quality` 결과가 모두 `data/eval/open/*.json`에 있다(더는 보류 아님). 재구축한 DB로 다시 실행했고, 초안(1장 수치 표, B-6)의 수치를 이 JSON 값으로 맞췄다 — `uv run python scripts/competition/render_numbers.py data/eval/open`으로 재현 가능. 예전 초안에 남아 있던 옛 수치(위반 0/78, LOO 0.49~0.505, 수렴 0.7792→0.7117, 지연 13.95→11.59초 등)는 모두 현재 값으로 교체했다.
 - [ ] 향미 태깅 정답셋을 오픈 데이터에서 다시 뽑아 평가(지금 정답셋은 coffeereview가 섞인 표본이라 제출본 결과로 쓸 수 없음) — 선택

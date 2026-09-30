@@ -6,18 +6,26 @@
         "total": 9456,
         "with_embedding": 9456,
         "with_flavor_tags": 7763,
-        "with_acidity": 8141,
+        "with_acidity": 8149,
         "decaf": 199,
         "decaf_with_flavor_tags": 188,
         "menu_items_by_brand": {
           "brand:coffeebean": 42,
+          "brand:coffeeinlove": 35,
           "brand:compose": 42,
+          "brand:dalkomm": 42,
           "brand:ediya": 41,
+          "brand:gongcha": 30,
           "brand:hollys": 27,
+          "brand:imaliter": 39,
+          "brand:mammothexpress": 69,
           "brand:mega": 119,
           "brand:paik": 114,
           "brand:paulbassett": 56,
-          "brand:starbucks": 71
+          "brand:starbucks": 71,
+          "brand:theventi": 82,
+          "brand:tomntoms": 30,
+          "brand:twosome": 26
         }
       },
       "loo": {
@@ -39,8 +47,8 @@
         "acidity": {
           "n": 200,
           "exact": 0.245,
-          "within1": 0.49,
-          "mae": 1.1379
+          "within1": 0.505,
+          "mae": 1.1298
         },
         "body": {
           "n": 0,
@@ -57,7 +65,7 @@
         "acidity_within1_by_confidence": {
           "low": {
             "n": 75,
-            "within1": 0.4
+            "within1": 0.44
           },
           "high": {
             "n": 28,
@@ -163,22 +171,6 @@
             ]
           },
           {
-            "name": "원두 에티오피아 구지 우라가 시코 내추럴 디카페인",
-            "roaster": "모모스커피",
-            "source": "roasters_kr",
-            "score": 0.9113,
-            "acidity": null,
-            "body": null,
-            "sweetness": null,
-            "tags": [
-              "cherry",
-              "raspberry",
-              "black tea",
-              "vanilla",
-              "chocolate"
-            ]
-          },
-          {
             "name": "Decaf EA Ethiopia",
             "roaster": "Ceremony Coffee Roasters",
             "source": "roasterdb",
@@ -218,6 +210,20 @@
               "grape",
               "caramelized"
             ]
+          },
+          {
+            "name": "Ethiopia Sidamo Decaffeinated",
+            "roaster": "Capricorn Coffees",
+            "source": "coffeereview_kaggle",
+            "score": 0.8626,
+            "acidity": 4,
+            "body": 3,
+            "sweetness": 4,
+            "tags": [
+              "floral",
+              "lemon",
+              "pungent"
+            ]
           }
         ]
       }
@@ -225,24 +231,33 @@
     "open": {
       "exclude_sources": [
         "coffeereview_kaggle",
-        "roasters_kr"
+        "roasters_kr",
+        "roasterdb"
       ],
       "coverage": {
-        "total": 1854,
-        "with_embedding": 1854,
-        "with_flavor_tags": 256,
-        "with_acidity": 1757,
-        "decaf": 25,
-        "decaf_with_flavor_tags": 21,
+        "total": 1754,
+        "with_embedding": 1754,
+        "with_flavor_tags": 156,
+        "with_acidity": 1727,
+        "decaf": 20,
+        "decaf_with_flavor_tags": 16,
         "menu_items_by_brand": {
           "brand:coffeebean": 42,
+          "brand:coffeeinlove": 35,
           "brand:compose": 42,
+          "brand:dalkomm": 42,
           "brand:ediya": 41,
+          "brand:gongcha": 30,
           "brand:hollys": 27,
+          "brand:imaliter": 39,
+          "brand:mammothexpress": 69,
           "brand:mega": 119,
           "brand:paik": 114,
           "brand:paulbassett": 56,
-          "brand:starbucks": 71
+          "brand:starbucks": 71,
+          "brand:theventi": 82,
+          "brand:tomntoms": 30,
+          "brand:twosome": 26
         }
       },
       "loo": {
@@ -250,7 +265,8 @@
         "seed": 42,
         "exclude_sources": [
           "coffeereview_kaggle",
-          "roasters_kr"
+          "roasters_kr",
+          "roasterdb"
         ],
         "target_sources": [
           "cqi"
@@ -313,7 +329,8 @@
         "seed": 42,
         "exclude_sources": [
           "coffeereview_kaggle",
-          "roasters_kr"
+          "roasters_kr",
+          "roasterdb"
         ],
         "target_sources": [
           "coffeereview_kaggle"
@@ -321,39 +338,38 @@
         "targets": 200,
         "target_ids_sha1": "58701e82522192d993afee4405b80ffaef33b9bc",
         "neighbor_source_share": {
-          "shopify_gauged": 0.6125,
-          "roasterdb": 0.2465,
-          "shopify": 0.0905,
-          "cqi": 0.0505
+          "shopify_gauged": 0.808,
+          "shopify": 0.118,
+          "cqi": 0.074
         },
-        "predictions_with_tags": 0.965,
+        "predictions_with_tags": 0.96,
         "embedding_model": "nvidia/nemotron-3-embed-1b",
         "acidity": {
-          "n": 174,
-          "exact": 0.3103,
-          "within1": 0.6724,
-          "mae": 0.857
+          "n": 175,
+          "exact": 0.2514,
+          "within1": 0.6171,
+          "mae": 0.938
         },
         "body": {
-          "n": 187,
-          "exact": 0.3422,
-          "within1": 0.6578,
-          "mae": 0.9458
+          "n": 194,
+          "exact": 0.3402,
+          "within1": 0.6546,
+          "mae": 0.9526
         },
         "sweetness": {
           "n": 111,
-          "exact": 0.4955,
-          "within1": 0.8378,
-          "mae": 0.5969
+          "exact": 0.5045,
+          "within1": 0.8288,
+          "mae": 0.6022
         },
         "acidity_within1_by_confidence": {
           "high": {
-            "n": 145,
-            "within1": 0.669
+            "n": 124,
+            "within1": 0.6129
           },
           "medium": {
-            "n": 29,
-            "within1": 0.6897
+            "n": 51,
+            "within1": 0.6275
           }
         },
         "tags_query_embeddings": {
@@ -363,34 +379,21 @@
         },
         "tags": {
           "n": 200,
-          "precision": 0.1916,
-          "recall": 0.1847,
-          "f1": 0.1881,
-          "category_f1": 0.5339
+          "precision": 0.1394,
+          "recall": 0.1356,
+          "f1": 0.1375,
+          "category_f1": 0.4862
         }
       },
       "decaf_probe": {
         "persona": "디카페인+산미",
-        "candidates": 25,
-        "with_evidence": 25,
+        "candidates": 20,
+        "with_evidence": 20,
         "by_source": {
           "shopify_gauged": 19,
-          "roasterdb": 5,
           "shopify": 1
         },
         "top": [
-          {
-            "name": "Decaf EA Ethiopia",
-            "roaster": "Ceremony Coffee Roasters",
-            "source": "roasterdb",
-            "score": 0.9036,
-            "acidity": 4,
-            "body": 3,
-            "sweetness": 3,
-            "tags": [
-              "cherry"
-            ]
-          },
           {
             "name": "Organic Ethiopian Water-Processed Half Caf - Roasted Coffee",
             "roaster": "Fresh Roasted Coffee",
@@ -419,31 +422,43 @@
             ]
           },
           {
-            "name": "Deco Decaf Blend",
-            "roaster": "Victrola Coffee Roasters",
-            "source": "roasterdb",
-            "score": 0.7716,
-            "acidity": null,
-            "body": null,
-            "sweetness": null,
+            "name": "Don Pablo Colombian Swiss Water Decaf",
+            "roaster": "Café Don Pablo",
+            "source": "shopify_gauged",
+            "score": 0.7387,
+            "acidity": 3,
+            "body": 3,
+            "sweetness": 4,
             "tags": [
-              "strawberry",
-              "milk chocolate",
-              "chocolate",
-              "graham cracker"
+              "caramelized",
+              "citrus fruit",
+              "chocolate"
             ]
           },
           {
-            "name": "Sans Decaf",
-            "roaster": "Mission Coffee Works",
-            "source": "roasterdb",
-            "score": 0.7716,
+            "name": "Colombian Water-Processed Half Caf - Roasted Coffee",
+            "roaster": "Fresh Roasted Coffee",
+            "source": "shopify_gauged",
+            "score": 0.6875,
             "acidity": null,
-            "body": null,
-            "sweetness": null,
+            "body": 4,
+            "sweetness": 3,
             "tags": [
-              "peach",
-              "hazelnut"
+              "honey",
+              "nutty"
+            ]
+          },
+          {
+            "name": "Half Caff",
+            "roaster": "Ozone Coffee",
+            "source": "shopify_gauged",
+            "score": 0.6125,
+            "acidity": 3,
+            "body": null,
+            "sweetness": 4,
+            "tags": [
+              "chocolate",
+              "brown sugar"
             ]
           }
         ]
@@ -451,31 +466,41 @@
     },
     "open_plus": {
       "exclude_sources": [
-        "coffeereview_kaggle"
+        "coffeereview_kaggle",
+        "roasterdb"
       ],
       "coverage": {
-        "total": 2063,
-        "with_embedding": 2063,
-        "with_flavor_tags": 377,
-        "with_acidity": 1876,
-        "decaf": 44,
-        "decaf_with_flavor_tags": 33,
+        "total": 1963,
+        "with_embedding": 1963,
+        "with_flavor_tags": 277,
+        "with_acidity": 1854,
+        "decaf": 39,
+        "decaf_with_flavor_tags": 28,
         "menu_items_by_brand": {
           "brand:coffeebean": 42,
+          "brand:coffeeinlove": 35,
           "brand:compose": 42,
+          "brand:dalkomm": 42,
           "brand:ediya": 41,
+          "brand:gongcha": 30,
           "brand:hollys": 27,
+          "brand:imaliter": 39,
+          "brand:mammothexpress": 69,
           "brand:mega": 119,
           "brand:paik": 114,
           "brand:paulbassett": 56,
-          "brand:starbucks": 71
+          "brand:starbucks": 71,
+          "brand:theventi": 82,
+          "brand:tomntoms": 30,
+          "brand:twosome": 26
         }
       },
       "loo": {
         "n": 200,
         "seed": 42,
         "exclude_sources": [
-          "coffeereview_kaggle"
+          "coffeereview_kaggle",
+          "roasterdb"
         ],
         "target_sources": [
           "cqi"
@@ -538,7 +563,8 @@
         "n": 200,
         "seed": 42,
         "exclude_sources": [
-          "coffeereview_kaggle"
+          "coffeereview_kaggle",
+          "roasterdb"
         ],
         "target_sources": [
           "coffeereview_kaggle"
@@ -546,40 +572,39 @@
         "targets": 200,
         "target_ids_sha1": "58701e82522192d993afee4405b80ffaef33b9bc",
         "neighbor_source_share": {
-          "shopify_gauged": 0.4915,
-          "roasters_kr": 0.2075,
-          "roasterdb": 0.2015,
-          "shopify": 0.066,
-          "cqi": 0.0335
+          "shopify_gauged": 0.6145,
+          "roasters_kr": 0.2635,
+          "shopify": 0.0825,
+          "cqi": 0.0395
         },
         "predictions_with_tags": 0.99,
         "embedding_model": "nvidia/nemotron-3-embed-1b",
         "acidity": {
-          "n": 174,
-          "exact": 0.3161,
-          "within1": 0.6149,
-          "mae": 0.9169
+          "n": 175,
+          "exact": 0.2914,
+          "within1": 0.5657,
+          "mae": 0.9686
         },
         "body": {
-          "n": 193,
-          "exact": 0.3161,
-          "within1": 0.6114,
-          "mae": 0.9946
+          "n": 198,
+          "exact": 0.3182,
+          "within1": 0.5859,
+          "mae": 0.9966
         },
         "sweetness": {
           "n": 117,
           "exact": 0.4786,
-          "within1": 0.812,
-          "mae": 0.6266
+          "within1": 0.8034,
+          "mae": 0.6321
         },
         "acidity_within1_by_confidence": {
           "high": {
-            "n": 130,
-            "within1": 0.6462
+            "n": 126,
+            "within1": 0.5714
           },
           "medium": {
-            "n": 44,
-            "within1": 0.5227
+            "n": 49,
+            "within1": 0.551
           }
         },
         "tags_query_embeddings": {
@@ -589,51 +614,22 @@
         },
         "tags": {
           "n": 200,
-          "precision": 0.1792,
-          "recall": 0.1932,
-          "f1": 0.186,
-          "category_f1": 0.5213
+          "precision": 0.1372,
+          "recall": 0.1458,
+          "f1": 0.1413,
+          "category_f1": 0.5022
         }
       },
       "decaf_probe": {
         "persona": "디카페인+산미",
-        "candidates": 44,
-        "with_evidence": 41,
+        "candidates": 39,
+        "with_evidence": 36,
         "by_source": {
           "roasters_kr": 19,
           "shopify_gauged": 19,
-          "roasterdb": 5,
           "shopify": 1
         },
         "top": [
-          {
-            "name": "원두 에티오피아 구지 우라가 시코 내추럴 디카페인",
-            "roaster": "모모스커피",
-            "source": "roasters_kr",
-            "score": 0.9113,
-            "acidity": null,
-            "body": null,
-            "sweetness": null,
-            "tags": [
-              "cherry",
-              "raspberry",
-              "black tea",
-              "vanilla",
-              "chocolate"
-            ]
-          },
-          {
-            "name": "Decaf EA Ethiopia",
-            "roaster": "Ceremony Coffee Roasters",
-            "source": "roasterdb",
-            "score": 0.9036,
-            "acidity": 4,
-            "body": 3,
-            "sweetness": 3,
-            "tags": [
-              "cherry"
-            ]
-          },
           {
             "name": "[골드문트] [디카페인] 에티오피아 예가체프 할로 베리티 내추럴",
             "roaster": "커피 리브레",
@@ -674,6 +670,34 @@
             "tags": [
               "cocoa",
               "cherry"
+            ]
+          },
+          {
+            "name": "원두 에티오피아 구지 우라가 시코 내추럴 디카페인",
+            "roaster": "모모스커피",
+            "source": "roasters_kr",
+            "score": 0.8145,
+            "acidity": 3,
+            "body": 3,
+            "sweetness": null,
+            "tags": [
+              "cherry",
+              "raspberry",
+              "black tea",
+              "vanilla",
+              "chocolate"
+            ]
+          },
+          {
+            "name": "에티오피아 짐마 디카페인 Ethiopia Djimmah Decaffeine",
+            "roaster": "앤트러사이트",
+            "source": "roasters_kr",
+            "score": 0.8036,
+            "acidity": 3,
+            "body": 3,
+            "sweetness": 4,
+            "tags": [
+              "orange"
             ]
           }
         ]

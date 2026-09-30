@@ -38,7 +38,7 @@ from pipeline.records import CoffeeRecord, ReviewRecord, TaxonomyNode, read_json
 
 OUT = settings.DATA_DIR / "eval" / "open" / "phase8_en_aliases.json"
 OPEN_URL = "postgresql://coffee:coffee@localhost:5432/coffee_open"
-OPEN_SOURCES = ("roasters_kr", "shopify", "shopify_gauged", "roasterdb", "cqi")
+OPEN_SOURCES = ("roasters_kr", "shopify", "shopify_gauged", "cqi")  # roasterdb excluded, ADR 0024
 
 # (text, the tags a reader expects) -- written for this ADR
 GUEST = [

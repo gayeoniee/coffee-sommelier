@@ -64,8 +64,9 @@ def test_decaf_only_needs_decaf_or_order_decaf_flag():
 
 def test_variants_keep_open_comparable_and_targets_out_of_every_exclusion():
     assert VARIANTS["full"] == ()
-    assert set(VARIANTS["open"]) == {"coffeereview_kaggle", "roasters_kr"} and OPEN_LICENSE_EXCLUDE == VARIANTS["open"]
-    assert VARIANTS["open_plus"] == ("coffeereview_kaggle",)
+    assert (set(VARIANTS["open"]) == {"coffeereview_kaggle", "roasters_kr", "roasterdb"}
+            and OPEN_LICENSE_EXCLUDE == VARIANTS["open"])
+    assert set(VARIANTS["open_plus"]) == {"coffeereview_kaggle", "roasterdb"}
     assert not any(set(LOO_TARGET_SOURCES) & set(xs) for xs in VARIANTS.values())   # same targets everywhere
     assert "roasters_kr" not in LOO_TARGET_SOURCES and "roasters_kr" in NEVER_LOO_TARGETS
 

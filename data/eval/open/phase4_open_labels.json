@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T09:12:03.390039+00:00",
+  "generated_at": "2026-09-30T13:21:53.923011+00:00",
   "k": 10,
   "w_a": 0.5,
   "w_b": 0.3,
@@ -10,8 +10,8 @@
     "sweetness": false
   },
   "rows": {
-    "B": 192,
-    "gauge": 82,
+    "B": 79,
+    "gauge": 95,
     "A": 199
   },
   "a_labels_by_store": {
@@ -60,56 +60,56 @@
     "sweetness": 2
   },
   "b_labels_per_attr": {
-    "acidity": 187,
-    "body": 189,
-    "sweetness": 191
+    "acidity": 74,
+    "body": 76,
+    "sweetness": 78
   },
   "weak_agreement": {
     "acidity": {
-      "n": 33,
-      "of": 82,
+      "n": 46,
+      "of": 95,
       "weak": {
-        "n": 33,
-        "mae": 0.8036,
-        "within1": 0.6061,
-        "spearman": 0.6969
+        "n": 46,
+        "mae": 0.8215,
+        "within1": 0.6304,
+        "spearman": 0.7439
       },
       "weak_centred": {
-        "n": 33,
-        "mae": 0.7589,
-        "within1": 0.6667,
-        "spearman": 0.6855
+        "n": 46,
+        "mae": 0.66,
+        "within1": 0.7391,
+        "spearman": 0.7358
       },
       "origin_mean": {
-        "n": 33,
-        "mae": 1.103,
-        "within1": 0.4545,
-        "spearman": 0.2196
+        "n": 46,
+        "mae": 1.0403,
+        "within1": 0.4783,
+        "spearman": 0.1552
       },
       "beats_origin_mean": true
     },
     "body": {
-      "n": 26,
-      "of": 64,
+      "n": 39,
+      "of": 77,
       "weak": {
-        "n": 26,
-        "mae": 0.615,
-        "within1": 0.7692,
-        "spearman": 0.6219
+        "n": 39,
+        "mae": 0.5495,
+        "within1": 0.8205,
+        "spearman": 0.6221
       },
       "weak_centred": {
-        "n": 26,
-        "mae": 0.5994,
-        "within1": 0.7308,
-        "spearman": 0.6274
+        "n": 39,
+        "mae": 0.5757,
+        "within1": 0.7436,
+        "spearman": 0.5767
       },
       "origin_mean": {
-        "n": 26,
-        "mae": 0.7879,
-        "within1": 0.6538,
-        "spearman": 0.334
+        "n": 39,
+        "mae": 0.7225,
+        "within1": 0.8205,
+        "spearman": 0.0887
       },
-      "beats_origin_mean": true
+      "beats_origin_mean": false
     },
     "sweetness": {
       "n": 23,
@@ -122,8 +122,8 @@
       },
       "weak_centred": {
         "n": 23,
-        "mae": 0.8797,
-        "within1": 0.5217,
+        "mae": 0.8672,
+        "within1": 0.5652,
         "spearman": 0.2223
       },
       "origin_mean": {
@@ -139,51 +139,51 @@
     "acidity": {
       "all": {
         "n": 170,
-        "mae": 0.7153,
-        "within1": 0.7353,
-        "spearman": 0.6949
+        "mae": 0.7138,
+        "within1": 0.7235,
+        "spearman": 0.6988
       },
       "by_store": {
         "Café Britt": {
           "n": 17,
-          "mae": 1.0229,
+          "mae": 1.0091,
           "within1": 0.5882,
-          "spearman": 0.8848
+          "spearman": 0.8775
         },
         "Café Don Pablo": {
           "n": 5,
-          "mae": 0.4136,
+          "mae": 0.4586,
           "within1": 1.0,
           "spearman": null
         },
         "Coffee Supreme": {
           "n": 6,
-          "mae": 0.6629,
+          "mae": 0.69,
           "within1": 0.8333,
-          "spearman": 0.9429
+          "spearman": 1.0
         },
         "Intelligentsia": {
           "n": 28,
-          "mae": 0.5186,
+          "mae": 0.5388,
           "within1": 0.8214,
-          "spearman": 0.4395
+          "spearman": 0.4236
         },
         "Kiss the Hippo": {
           "n": 62,
-          "mae": 0.7519,
-          "within1": 0.7097,
-          "spearman": 0.5081
+          "mae": 0.744,
+          "within1": 0.6935,
+          "spearman": 0.4631
         },
         "Ozone Coffee": {
           "n": 23,
-          "mae": 0.8525,
-          "within1": 0.6522,
-          "spearman": 0.3508
+          "mae": 0.8359,
+          "within1": 0.5652,
+          "spearman": 0.3666
         },
         "Volcanica Coffee": {
           "n": 29,
-          "mae": 0.6004,
-          "within1": 0.7931,
+          "mae": 0.5969,
+          "within1": 0.8276,
           "spearman": null
         }
       }
@@ -191,39 +191,39 @@
     "body": {
       "all": {
         "n": 46,
-        "mae": 0.6555,
-        "within1": 0.8261,
-        "spearman": 0.35
+        "mae": 0.5562,
+        "within1": 0.8043,
+        "spearman": 0.3792
       },
       "by_store": {
         "Café Britt": {
           "n": 8,
-          "mae": 0.4751,
+          "mae": 0.3171,
           "within1": 1.0,
           "spearman": null
         },
         "Café Don Pablo": {
           "n": 13,
-          "mae": 0.654,
-          "within1": 0.8462,
-          "spearman": 0.7088
+          "mae": 0.4505,
+          "within1": 0.9231,
+          "spearman": 0.6154
         },
         "Coffee Supreme": {
           "n": 5,
-          "mae": 0.6961,
-          "within1": 0.8,
-          "spearman": 0.7
+          "mae": 0.7244,
+          "within1": 0.6,
+          "spearman": 0.4
         },
         "Fresh Roasted Coffee": {
           "n": 13,
-          "mae": 0.9021,
+          "mae": 0.7384,
           "within1": 0.6154,
-          "spearman": 0.7637
+          "spearman": 0.7308
         },
         "Ozone Coffee": {
           "n": 7,
-          "mae": 0.3775,
-          "within1": 1.0,
+          "mae": 0.5674,
+          "within1": 0.8571,
           "spearman": null
         }
       }
@@ -231,1075 +231,1311 @@
   },
   "cv": {
     "acidity": {
-      "n": 82,
+      "n": 95,
       "roasters": {
         "1킬로커피": 37,
         "G로스팅": 17,
         "내일의커피": 10,
+        "모모스커피": 13,
         "커피 리브레": 18
       },
       "table": {
         "global_mean": {
-          "n": 82,
-          "mae": 1.0327,
-          "within1": 0.5244
+          "n": 95,
+          "mae": 1.0254,
+          "within1": 0.5158
         },
         "origin_mean": {
-          "n": 82,
-          "mae": 1.0216,
-          "within1": 0.5122
+          "n": 95,
+          "mae": 0.9941,
+          "within1": 0.5474
         },
         "neighbor_avg_old": {
-          "n": 82,
-          "mae": 1.1596,
-          "within1": 0.5244
+          "n": 95,
+          "mae": 1.0986,
+          "within1": 0.5158
         },
         "neighbor_avg_new": {
-          "n": 82,
-          "mae": 1.0698,
-          "within1": 0.561
+          "n": 95,
+          "mae": 1.0322,
+          "within1": 0.5368
         },
         "base": {
-          "n": 82,
-          "mae": 0.8899,
-          "within1": 0.6829
+          "n": 95,
+          "mae": 0.7745,
+          "within1": 0.7263
         },
         "+A": {
-          "n": 82,
-          "mae": 0.7987,
-          "within1": 0.5976
+          "n": 95,
+          "mae": 0.7683,
+          "within1": 0.6421
         },
         "+B": {
-          "n": 82,
-          "mae": 0.7383,
-          "within1": 0.7073
+          "n": 95,
+          "mae": 0.7518,
+          "within1": 0.7263
         },
         "+Bf": {
-          "n": 82,
-          "mae": 0.958,
-          "within1": 0.6098
+          "n": 95,
+          "mae": 0.7489,
+          "within1": 0.7263
         },
         "+C": {
-          "n": 82,
-          "mae": 0.9837,
-          "within1": 0.5854
+          "n": 95,
+          "mae": 0.7458,
+          "within1": 0.7263
         },
         "+A+B": {
-          "n": 82,
-          "mae": 0.7697,
-          "within1": 0.6098
+          "n": 95,
+          "mae": 0.7567,
+          "within1": 0.6526
         },
         "+A+C": {
-          "n": 82,
-          "mae": 0.8516,
-          "within1": 0.5732
+          "n": 95,
+          "mae": 0.8029,
+          "within1": 0.6211
         },
         "+B+C": {
-          "n": 82,
-          "mae": 0.7475,
-          "within1": 0.7195
+          "n": 95,
+          "mae": 0.7689,
+          "within1": 0.7263
         },
         "+A+B+C": {
-          "n": 82,
-          "mae": 0.752,
-          "within1": 0.6829
+          "n": 95,
+          "mae": 0.7688,
+          "within1": 0.6632
         },
         "+A wA=1": {
-          "n": 82,
-          "mae": 0.8201,
-          "within1": 0.6098
+          "n": 95,
+          "mae": 0.7652,
+          "within1": 0.6526
         },
         "~base (new pool)": {
-          "n": 82,
-          "mae": 0.9637,
-          "within1": 0.5976
+          "n": 95,
+          "mae": 0.7521,
+          "within1": 0.7368
         },
         "~B (old pool)": {
-          "n": 82,
-          "mae": 0.7465,
-          "within1": 0.7195
+          "n": 95,
+          "mae": 0.7631,
+          "within1": 0.7263
         },
         "~A with altitude": {
-          "n": 82,
-          "mae": 0.6477,
-          "within1": 0.7439
+          "n": 95,
+          "mae": 0.6599,
+          "within1": 0.7053
         },
         "~B uncentred": {
-          "n": 82,
-          "mae": 0.851,
-          "within1": 0.6341
+          "n": 95,
+          "mae": 0.8574,
+          "within1": 0.6421
         },
         "~A wA=0.25": {
-          "n": 82,
-          "mae": 0.7744,
-          "within1": 0.5976
+          "n": 95,
+          "mae": 0.7667,
+          "within1": 0.6737
         },
         "~A wA=1": {
-          "n": 82,
-          "mae": 0.8201,
-          "within1": 0.6098
+          "n": 95,
+          "mae": 0.7652,
+          "within1": 0.6526
         },
         "~B wB=0.15": {
-          "n": 82,
-          "mae": 0.7374,
-          "within1": 0.7195
+          "n": 95,
+          "mae": 0.7459,
+          "within1": 0.7263
         },
         "~B wB=0.6": {
-          "n": 82,
-          "mae": 0.7255,
-          "within1": 0.7073
+          "n": 95,
+          "mae": 0.7567,
+          "within1": 0.7263
         },
         "~B ext": {
-          "n": 82,
-          "mae": 0.7377,
-          "within1": 0.7073
+          "n": 95,
+          "mae": 0.7505,
+          "within1": 0.7263
         }
       },
       "per_roaster": {
         "1킬로커피": {
           "global_mean": {
             "n": 37,
-            "mae": 0.8393,
+            "mae": 0.8595,
             "within1": 0.6757
           },
           "origin_mean": {
             "n": 37,
-            "mae": 0.9561,
-            "within1": 0.5405
+            "mae": 0.926,
+            "within1": 0.6216
           },
           "neighbor_avg_old": {
             "n": 37,
-            "mae": 1.3186,
+            "mae": 1.3122,
             "within1": 0.4324
           },
           "neighbor_avg_new": {
             "n": 37,
-            "mae": 1.2419,
+            "mae": 1.2403,
             "within1": 0.4324
           },
           "base": {
             "n": 37,
-            "mae": 0.9822,
-            "within1": 0.5946
+            "mae": 0.8229,
+            "within1": 0.6486
           },
           "+A": {
             "n": 37,
-            "mae": 0.7528,
+            "mae": 0.7543,
             "within1": 0.6486
           },
           "+B": {
             "n": 37,
-            "mae": 0.7377,
-            "within1": 0.6757
+            "mae": 0.8242,
+            "within1": 0.6486
           },
           "+Bf": {
             "n": 37,
-            "mae": 1.1693,
-            "within1": 0.4054
+            "mae": 0.8351,
+            "within1": 0.6216
           },
           "+C": {
             "n": 37,
-            "mae": 1.1933,
-            "within1": 0.3514
+            "mae": 0.8151,
+            "within1": 0.6486
           },
           "+A+B": {
             "n": 37,
-            "mae": 0.7377,
-            "within1": 0.6757
+            "mae": 0.7559,
+            "within1": 0.6486
           },
           "+A+C": {
             "n": 37,
-            "mae": 0.8395,
-            "within1": 0.5946
+            "mae": 0.8206,
+            "within1": 0.6216
           },
           "+B+C": {
             "n": 37,
-            "mae": 0.7422,
-            "within1": 0.6757
+            "mae": 0.8514,
+            "within1": 0.6486
           },
           "+A+B+C": {
             "n": 37,
-            "mae": 0.7395,
-            "within1": 0.6486
+            "mae": 0.7964,
+            "within1": 0.6216
           },
           "+A wA=1": {
             "n": 37,
-            "mae": 0.7833,
-            "within1": 0.6486
+            "mae": 0.7183,
+            "within1": 0.6757
           },
           "~base (new pool)": {
             "n": 37,
-            "mae": 1.1631,
-            "within1": 0.4054
+            "mae": 0.8032,
+            "within1": 0.6486
           },
           "~B (old pool)": {
             "n": 37,
-            "mae": 0.7449,
-            "within1": 0.6757
+            "mae": 0.8398,
+            "within1": 0.6486
           },
           "~A with altitude": {
             "n": 37,
-            "mae": 0.6078,
-            "within1": 0.8108
+            "mae": 0.6264,
+            "within1": 0.7027
           },
           "~B uncentred": {
             "n": 37,
-            "mae": 0.9366,
-            "within1": 0.6216
+            "mae": 1.0014,
+            "within1": 0.5135
           },
           "~A wA=0.25": {
             "n": 37,
-            "mae": 0.7318,
+            "mae": 0.7807,
             "within1": 0.6486
           },
           "~A wA=1": {
             "n": 37,
-            "mae": 0.7833,
-            "within1": 0.6486
+            "mae": 0.7183,
+            "within1": 0.6757
           },
           "~B wB=0.15": {
             "n": 37,
-            "mae": 0.762,
+            "mae": 0.8096,
             "within1": 0.6486
           },
           "~B wB=0.6": {
             "n": 37,
-            "mae": 0.7268,
-            "within1": 0.6757
+            "mae": 0.8497,
+            "within1": 0.6486
           },
           "~B ext": {
             "n": 37,
-            "mae": 0.7357,
-            "within1": 0.6757
+            "mae": 0.8196,
+            "within1": 0.6486
           }
         },
         "G로스팅": {
           "global_mean": {
             "n": 17,
-            "mae": 1.2077,
+            "mae": 1.233,
             "within1": 0.4118
           },
           "origin_mean": {
             "n": 17,
-            "mae": 1.1025,
+            "mae": 1.1134,
             "within1": 0.4118
           },
           "neighbor_avg_old": {
             "n": 17,
-            "mae": 1.2588,
-            "within1": 0.4706
+            "mae": 1.2365,
+            "within1": 0.4118
           },
           "neighbor_avg_new": {
             "n": 17,
-            "mae": 1.2271,
-            "within1": 0.5294
+            "mae": 1.2206,
+            "within1": 0.4118
           },
           "base": {
             "n": 17,
-            "mae": 0.7785,
+            "mae": 0.681,
             "within1": 0.7647
           },
           "+A": {
             "n": 17,
-            "mae": 0.7954,
-            "within1": 0.5882
+            "mae": 0.7702,
+            "within1": 0.7647
           },
           "+B": {
             "n": 17,
-            "mae": 0.6117,
-            "within1": 0.7059
+            "mae": 0.5966,
+            "within1": 0.8235
           },
           "+Bf": {
             "n": 17,
-            "mae": 0.7553,
+            "mae": 0.7064,
             "within1": 0.8235
           },
           "+C": {
             "n": 17,
-            "mae": 0.7709,
+            "mae": 0.6499,
             "within1": 0.8235
           },
           "+A+B": {
             "n": 17,
-            "mae": 0.7117,
-            "within1": 0.6471
+            "mae": 0.7477,
+            "within1": 0.7647
           },
           "+A+C": {
             "n": 17,
-            "mae": 0.8331,
-            "within1": 0.5882
+            "mae": 0.7633,
+            "within1": 0.6471
           },
           "+B+C": {
             "n": 17,
-            "mae": 0.6131,
-            "within1": 0.7647
+            "mae": 0.6019,
+            "within1": 0.8235
           },
           "+A+B+C": {
             "n": 17,
-            "mae": 0.6737,
-            "within1": 0.7059
+            "mae": 0.7211,
+            "within1": 0.7647
           },
           "+A wA=1": {
             "n": 17,
-            "mae": 0.8343,
-            "within1": 0.5882
+            "mae": 0.8246,
+            "within1": 0.6471
           },
           "~base (new pool)": {
             "n": 17,
-            "mae": 0.7697,
-            "within1": 0.7647
+            "mae": 0.6529,
+            "within1": 0.8235
           },
           "~B (old pool)": {
             "n": 17,
-            "mae": 0.6149,
-            "within1": 0.7647
+            "mae": 0.5947,
+            "within1": 0.8235
           },
           "~A with altitude": {
             "n": 17,
-            "mae": 0.6037,
-            "within1": 0.7647
+            "mae": 0.577,
+            "within1": 0.7059
           },
           "~B uncentred": {
             "n": 17,
-            "mae": 0.8215,
+            "mae": 0.8459,
             "within1": 0.5882
           },
           "~A wA=0.25": {
             "n": 17,
-            "mae": 0.7972,
-            "within1": 0.5882
+            "mae": 0.7439,
+            "within1": 0.7647
           },
           "~A wA=1": {
             "n": 17,
-            "mae": 0.8343,
-            "within1": 0.5882
+            "mae": 0.8246,
+            "within1": 0.6471
           },
           "~B wB=0.15": {
             "n": 17,
-            "mae": 0.6296,
+            "mae": 0.6093,
             "within1": 0.8235
           },
           "~B wB=0.6": {
             "n": 17,
-            "mae": 0.5859,
-            "within1": 0.7059
+            "mae": 0.5729,
+            "within1": 0.8235
           },
           "~B ext": {
             "n": 17,
-            "mae": 0.6117,
-            "within1": 0.7059
+            "mae": 0.5966,
+            "within1": 0.8235
           }
         },
         "내일의커피": {
           "global_mean": {
             "n": 10,
-            "mae": 1.2514,
+            "mae": 1.2365,
             "within1": 0.2
           },
           "origin_mean": {
             "n": 10,
-            "mae": 1.0857,
+            "mae": 1.1015,
             "within1": 0.4
           },
           "neighbor_avg_old": {
             "n": 10,
-            "mae": 0.894,
-            "within1": 0.6
+            "mae": 0.6438,
+            "within1": 0.7
           },
           "neighbor_avg_new": {
             "n": 10,
-            "mae": 0.6103,
-            "within1": 0.8
+            "mae": 0.4258,
+            "within1": 0.9
           },
           "base": {
             "n": 10,
-            "mae": 0.8592,
+            "mae": 0.8735,
             "within1": 0.6
           },
           "+A": {
             "n": 10,
-            "mae": 0.8491,
-            "within1": 0.6
+            "mae": 0.8104,
+            "within1": 0.5
           },
           "+B": {
             "n": 10,
-            "mae": 0.9114,
+            "mae": 0.8559,
             "within1": 0.6
           },
           "+Bf": {
             "n": 10,
-            "mae": 0.8506,
+            "mae": 0.7928,
             "within1": 0.6
           },
           "+C": {
             "n": 10,
-            "mae": 0.8778,
+            "mae": 0.8282,
             "within1": 0.6
           },
           "+A+B": {
             "n": 10,
-            "mae": 0.8,
-            "within1": 0.6
+            "mae": 0.7912,
+            "within1": 0.5
           },
           "+A+C": {
             "n": 10,
-            "mae": 0.8103,
+            "mae": 0.7522,
             "within1": 0.6
           },
           "+B+C": {
             "n": 10,
-            "mae": 0.9347,
+            "mae": 0.8737,
             "within1": 0.6
           },
           "+A+B+C": {
             "n": 10,
-            "mae": 0.813,
-            "within1": 0.6
+            "mae": 0.7148,
+            "within1": 0.7
           },
           "+A wA=1": {
             "n": 10,
-            "mae": 0.8989,
+            "mae": 0.8683,
             "within1": 0.6
           },
           "~base (new pool)": {
             "n": 10,
-            "mae": 0.8398,
+            "mae": 0.8109,
             "within1": 0.6
           },
           "~B (old pool)": {
             "n": 10,
-            "mae": 0.9246,
+            "mae": 0.8809,
             "within1": 0.6
           },
           "~A with altitude": {
             "n": 10,
-            "mae": 0.6507,
-            "within1": 0.7
+            "mae": 0.6902,
+            "within1": 0.8
           },
           "~B uncentred": {
             "n": 10,
-            "mae": 0.8423,
-            "within1": 0.5
+            "mae": 0.869,
+            "within1": 0.6
           },
           "~A wA=0.25": {
             "n": 10,
-            "mae": 0.812,
+            "mae": 0.7711,
             "within1": 0.6
           },
           "~A wA=1": {
             "n": 10,
-            "mae": 0.8989,
+            "mae": 0.8683,
             "within1": 0.6
           },
           "~B wB=0.15": {
             "n": 10,
-            "mae": 0.9071,
+            "mae": 0.8186,
             "within1": 0.6
           },
           "~B wB=0.6": {
             "n": 10,
-            "mae": 0.9133,
+            "mae": 0.8691,
             "within1": 0.6
           },
           "~B ext": {
             "n": 10,
-            "mae": 0.9124,
+            "mae": 0.8572,
             "within1": 0.6
+          }
+        },
+        "모모스커피": {
+          "global_mean": {
+            "n": 13,
+            "mae": 0.9142,
+            "within1": 0.4615
+          },
+          "origin_mean": {
+            "n": 13,
+            "mae": 0.8679,
+            "within1": 0.5385
+          },
+          "neighbor_avg_old": {
+            "n": 13,
+            "mae": 0.9246,
+            "within1": 0.4615
+          },
+          "neighbor_avg_new": {
+            "n": 13,
+            "mae": 0.9246,
+            "within1": 0.4615
+          },
+          "base": {
+            "n": 13,
+            "mae": 0.649,
+            "within1": 0.8462
+          },
+          "+A": {
+            "n": 13,
+            "mae": 0.6489,
+            "within1": 0.7692
+          },
+          "+B": {
+            "n": 13,
+            "mae": 0.6409,
+            "within1": 0.7692
+          },
+          "+Bf": {
+            "n": 13,
+            "mae": 0.5055,
+            "within1": 0.8462
+          },
+          "+C": {
+            "n": 13,
+            "mae": 0.644,
+            "within1": 0.7692
+          },
+          "+A+B": {
+            "n": 13,
+            "mae": 0.6622,
+            "within1": 0.7692
+          },
+          "+A+C": {
+            "n": 13,
+            "mae": 0.6965,
+            "within1": 0.7692
+          },
+          "+B+C": {
+            "n": 13,
+            "mae": 0.6432,
+            "within1": 0.7692
+          },
+          "+A+B+C": {
+            "n": 13,
+            "mae": 0.7056,
+            "within1": 0.7692
+          },
+          "+A wA=1": {
+            "n": 13,
+            "mae": 0.6449,
+            "within1": 0.7692
+          },
+          "~base (new pool)": {
+            "n": 13,
+            "mae": 0.6403,
+            "within1": 0.8462
+          },
+          "~B (old pool)": {
+            "n": 13,
+            "mae": 0.651,
+            "within1": 0.7692
+          },
+          "~A with altitude": {
+            "n": 13,
+            "mae": 0.7125,
+            "within1": 0.6923
+          },
+          "~B uncentred": {
+            "n": 13,
+            "mae": 0.6362,
+            "within1": 0.9231
+          },
+          "~A wA=0.25": {
+            "n": 13,
+            "mae": 0.6767,
+            "within1": 0.8462
+          },
+          "~A wA=1": {
+            "n": 13,
+            "mae": 0.6449,
+            "within1": 0.7692
+          },
+          "~B wB=0.15": {
+            "n": 13,
+            "mae": 0.6414,
+            "within1": 0.7692
+          },
+          "~B wB=0.6": {
+            "n": 13,
+            "mae": 0.6386,
+            "within1": 0.7692
+          },
+          "~B ext": {
+            "n": 13,
+            "mae": 0.6415,
+            "within1": 0.7692
           }
         },
         "커피 리브레": {
           "global_mean": {
             "n": 18,
-            "mae": 1.1432,
+            "mae": 1.1335,
             "within1": 0.5
           },
           "origin_mean": {
             "n": 18,
-            "mae": 1.0441,
+            "mae": 1.0527,
             "within1": 0.6111
           },
           "neighbor_avg_old": {
             "n": 18,
-            "mae": 0.8867,
+            "mae": 0.9078,
             "within1": 0.7222
           },
           "neighbor_avg_new": {
             "n": 18,
-            "mae": 0.8228,
+            "mae": 0.8411,
             "within1": 0.7222
           },
           "base": {
             "n": 18,
-            "mae": 0.8224,
+            "mae": 0.7989,
             "within1": 0.8333
           },
           "+A": {
             "n": 18,
-            "mae": 0.8681,
+            "mae": 0.858,
             "within1": 0.5
           },
           "+B": {
             "n": 18,
-            "mae": 0.7631,
+            "mae": 0.7718,
             "within1": 0.8333
           },
           "+Bf": {
             "n": 18,
-            "mae": 0.7747,
+            "mae": 0.7634,
             "within1": 0.8333
           },
           "+C": {
             "n": 18,
-            "mae": 0.8126,
+            "mae": 0.7215,
             "within1": 0.8333
           },
           "+A+B": {
             "n": 18,
-            "mae": 0.8735,
-            "within1": 0.4444
+            "mae": 0.8162,
+            "within1": 0.5556
           },
           "+A+C": {
             "n": 18,
-            "mae": 0.917,
+            "mae": 0.9088,
             "within1": 0.5
           },
           "+B+C": {
             "n": 18,
-            "mae": 0.781,
+            "mae": 0.7895,
             "within1": 0.8333
           },
           "+A+B+C": {
             "n": 18,
-            "mae": 0.8177,
-            "within1": 0.7778
+            "mae": 0.8329,
+            "within1": 0.5556
           },
           "+A wA=1": {
             "n": 18,
-            "mae": 0.8387,
+            "mae": 0.835,
             "within1": 0.5556
           },
           "~base (new pool)": {
             "n": 18,
-            "mae": 0.806,
+            "mae": 0.7889,
             "within1": 0.8333
           },
           "~B (old pool)": {
             "n": 18,
-            "mae": 0.7752,
+            "mae": 0.7803,
             "within1": 0.8333
           },
           "~A with altitude": {
             "n": 18,
-            "mae": 0.7695,
-            "within1": 0.6111
+            "mae": 0.7524,
+            "within1": 0.6667
           },
           "~B uncentred": {
             "n": 18,
-            "mae": 0.7078,
+            "mae": 0.7256,
             "within1": 0.7778
           },
           "~A wA=0.25": {
             "n": 18,
-            "mae": 0.8195,
-            "within1": 0.5
+            "mae": 0.8222,
+            "within1": 0.5556
           },
           "~A wA=1": {
             "n": 18,
-            "mae": 0.8387,
+            "mae": 0.835,
             "within1": 0.5556
           },
           "~B wB=0.15": {
             "n": 18,
-            "mae": 0.6943,
+            "mae": 0.7789,
             "within1": 0.8333
           },
           "~B wB=0.6": {
             "n": 18,
-            "mae": 0.7501,
+            "mae": 0.7623,
             "within1": 0.8333
           },
           "~B ext": {
             "n": 18,
-            "mae": 0.7639,
+            "mae": 0.7731,
             "within1": 0.8333
           }
         }
       }
     },
     "body": {
-      "n": 64,
+      "n": 77,
       "roasters": {
         "1킬로커피": 37,
         "G로스팅": 17,
-        "내일의커피": 10
+        "내일의커피": 10,
+        "모모스커피": 13
       },
       "table": {
         "global_mean": {
-          "n": 64,
-          "mae": 0.7553,
-          "within1": 0.7031
+          "n": 77,
+          "mae": 0.7257,
+          "within1": 0.7662
         },
         "origin_mean": {
-          "n": 64,
-          "mae": 0.7439,
-          "within1": 0.7344
+          "n": 77,
+          "mae": 0.7137,
+          "within1": 0.8052
         },
         "neighbor_avg_old": {
-          "n": 64,
-          "mae": 0.7876,
-          "within1": 0.7031
+          "n": 77,
+          "mae": 0.7198,
+          "within1": 0.7662
         },
         "neighbor_avg_new": {
-          "n": 64,
-          "mae": 0.7865,
-          "within1": 0.7188
+          "n": 77,
+          "mae": 0.7197,
+          "within1": 0.7922
         },
         "base": {
-          "n": 64,
-          "mae": 0.767,
-          "within1": 0.7656
+          "n": 77,
+          "mae": 0.6736,
+          "within1": 0.7532
         },
         "+A": {
-          "n": 64,
-          "mae": 0.6969,
-          "within1": 0.75
+          "n": 77,
+          "mae": 0.6463,
+          "within1": 0.7792
         },
         "+B": {
-          "n": 64,
-          "mae": 0.7122,
-          "within1": 0.7812
+          "n": 77,
+          "mae": 0.6597,
+          "within1": 0.7403
         },
         "+Bf": {
-          "n": 64,
-          "mae": 0.7225,
-          "within1": 0.7812
+          "n": 77,
+          "mae": 0.6658,
+          "within1": 0.7532
         },
         "+C": {
-          "n": 64,
-          "mae": 0.7258,
-          "within1": 0.7812
+          "n": 77,
+          "mae": 0.714,
+          "within1": 0.7273
         },
         "+A+B": {
-          "n": 64,
-          "mae": 0.673,
-          "within1": 0.7812
+          "n": 77,
+          "mae": 0.6481,
+          "within1": 0.7662
         },
         "+A+C": {
-          "n": 64,
-          "mae": 0.6996,
-          "within1": 0.7656
+          "n": 77,
+          "mae": 0.6295,
+          "within1": 0.8052
         },
         "+B+C": {
-          "n": 64,
-          "mae": 0.7136,
-          "within1": 0.7969
+          "n": 77,
+          "mae": 0.6517,
+          "within1": 0.7403
         },
         "+A+B+C": {
-          "n": 64,
-          "mae": 0.6829,
-          "within1": 0.7969
+          "n": 77,
+          "mae": 0.6417,
+          "within1": 0.7792
         },
         "+A wA=1": {
-          "n": 64,
-          "mae": 0.6928,
-          "within1": 0.7812
+          "n": 77,
+          "mae": 0.6497,
+          "within1": 0.7922
         },
         "~base (new pool)": {
-          "n": 64,
-          "mae": 0.726,
-          "within1": 0.7812
+          "n": 77,
+          "mae": 0.6781,
+          "within1": 0.7532
         },
         "~B (old pool)": {
-          "n": 64,
-          "mae": 0.7104,
-          "within1": 0.7812
+          "n": 77,
+          "mae": 0.6681,
+          "within1": 0.7403
         },
         "~A with altitude": {
-          "n": 64,
-          "mae": 0.6975,
-          "within1": 0.75
+          "n": 77,
+          "mae": 0.6492,
+          "within1": 0.7792
         },
         "~B uncentred": {
-          "n": 64,
-          "mae": 0.5699,
-          "within1": 0.8281
+          "n": 77,
+          "mae": 0.652,
+          "within1": 0.7403
         },
         "~A wA=0.25": {
-          "n": 64,
-          "mae": 0.7062,
-          "within1": 0.7344
+          "n": 77,
+          "mae": 0.6648,
+          "within1": 0.7403
         },
         "~A wA=1": {
-          "n": 64,
-          "mae": 0.6928,
-          "within1": 0.7812
+          "n": 77,
+          "mae": 0.6497,
+          "within1": 0.7922
         },
         "~B wB=0.15": {
-          "n": 64,
-          "mae": 0.6728,
-          "within1": 0.8125
+          "n": 77,
+          "mae": 0.6713,
+          "within1": 0.7403
         },
         "~B wB=0.6": {
-          "n": 64,
-          "mae": 0.6975,
-          "within1": 0.6875
+          "n": 77,
+          "mae": 0.644,
+          "within1": 0.7273
         },
         "~B ext": {
-          "n": 64,
-          "mae": 0.711,
-          "within1": 0.7969
+          "n": 77,
+          "mae": 0.6604,
+          "within1": 0.7403
         }
       },
       "per_roaster": {
         "1킬로커피": {
           "global_mean": {
             "n": 37,
-            "mae": 0.7302,
-            "within1": 0.7838
+            "mae": 0.6655,
+            "within1": 0.8108
           },
           "origin_mean": {
             "n": 37,
-            "mae": 0.701,
+            "mae": 0.6892,
             "within1": 0.8108
           },
           "neighbor_avg_old": {
             "n": 37,
-            "mae": 0.7827,
-            "within1": 0.7297
+            "mae": 0.7085,
+            "within1": 0.7838
           },
           "neighbor_avg_new": {
             "n": 37,
-            "mae": 0.7989,
-            "within1": 0.7297
+            "mae": 0.7305,
+            "within1": 0.7838
           },
           "base": {
             "n": 37,
-            "mae": 0.7194,
+            "mae": 0.6609,
             "within1": 0.7838
           },
           "+A": {
             "n": 37,
-            "mae": 0.6797,
-            "within1": 0.7838
+            "mae": 0.6458,
+            "within1": 0.8108
           },
           "+B": {
             "n": 37,
-            "mae": 0.7768,
-            "within1": 0.7568
+            "mae": 0.6467,
+            "within1": 0.7838
           },
           "+Bf": {
             "n": 37,
-            "mae": 0.7133,
+            "mae": 0.645,
             "within1": 0.7838
           },
           "+C": {
             "n": 37,
-            "mae": 0.7199,
+            "mae": 0.6573,
             "within1": 0.7838
           },
           "+A+B": {
             "n": 37,
-            "mae": 0.7038,
-            "within1": 0.7838
+            "mae": 0.6448,
+            "within1": 0.8108
           },
           "+A+C": {
             "n": 37,
-            "mae": 0.6835,
-            "within1": 0.7838
+            "mae": 0.6493,
+            "within1": 0.8108
           },
           "+B+C": {
             "n": 37,
-            "mae": 0.7773,
+            "mae": 0.6488,
             "within1": 0.7838
           },
           "+A+B+C": {
             "n": 37,
-            "mae": 0.7177,
-            "within1": 0.7838
+            "mae": 0.6534,
+            "within1": 0.8108
           },
           "+A wA=1": {
             "n": 37,
-            "mae": 0.6701,
+            "mae": 0.6651,
             "within1": 0.8108
           },
           "~base (new pool)": {
             "n": 37,
-            "mae": 0.7194,
+            "mae": 0.6594,
             "within1": 0.7838
           },
           "~B (old pool)": {
             "n": 37,
-            "mae": 0.7694,
+            "mae": 0.6486,
             "within1": 0.7838
           },
           "~A with altitude": {
             "n": 37,
-            "mae": 0.6823,
-            "within1": 0.7838
+            "mae": 0.6493,
+            "within1": 0.8108
           },
           "~B uncentred": {
             "n": 37,
-            "mae": 0.6064,
+            "mae": 0.6293,
             "within1": 0.7838
           },
           "~A wA=0.25": {
             "n": 37,
-            "mae": 0.6911,
+            "mae": 0.6473,
             "within1": 0.7838
           },
           "~A wA=1": {
             "n": 37,
-            "mae": 0.6701,
+            "mae": 0.6651,
             "within1": 0.8108
           },
           "~B wB=0.15": {
             "n": 37,
-            "mae": 0.7834,
-            "within1": 0.7027
+            "mae": 0.6513,
+            "within1": 0.7838
           },
           "~B wB=0.6": {
             "n": 37,
-            "mae": 0.7653,
-            "within1": 0.6216
+            "mae": 0.6413,
+            "within1": 0.7838
           },
           "~B ext": {
             "n": 37,
-            "mae": 0.775,
+            "mae": 0.649,
             "within1": 0.7838
           }
         },
         "G로스팅": {
           "global_mean": {
             "n": 17,
-            "mae": 0.9318,
+            "mae": 0.9662,
             "within1": 0.5294
           },
           "origin_mean": {
             "n": 17,
-            "mae": 0.8469,
+            "mae": 0.8581,
             "within1": 0.7059
           },
           "neighbor_avg_old": {
             "n": 17,
-            "mae": 0.9175,
+            "mae": 0.9144,
             "within1": 0.6471
           },
           "neighbor_avg_new": {
             "n": 17,
-            "mae": 0.8198,
+            "mae": 0.8138,
             "within1": 0.7059
           },
           "base": {
             "n": 17,
-            "mae": 0.9046,
+            "mae": 0.7789,
             "within1": 0.7059
           },
           "+A": {
             "n": 17,
-            "mae": 0.7855,
+            "mae": 0.762,
             "within1": 0.5882
           },
           "+B": {
             "n": 17,
-            "mae": 0.6124,
+            "mae": 0.6668,
             "within1": 0.7647
           },
           "+Bf": {
             "n": 17,
-            "mae": 0.7824,
-            "within1": 0.7647
+            "mae": 0.7595,
+            "within1": 0.6471
           },
           "+C": {
             "n": 17,
-            "mae": 0.7812,
-            "within1": 0.7647
+            "mae": 0.7905,
+            "within1": 0.7059
           },
           "+A+B": {
             "n": 17,
-            "mae": 0.62,
-            "within1": 0.7647
+            "mae": 0.6681,
+            "within1": 0.7059
           },
           "+A+C": {
             "n": 17,
-            "mae": 0.7748,
+            "mae": 0.7397,
             "within1": 0.6471
           },
           "+B+C": {
             "n": 17,
-            "mae": 0.6147,
+            "mae": 0.6699,
             "within1": 0.7647
           },
           "+A+B+C": {
             "n": 17,
-            "mae": 0.6158,
-            "within1": 0.8235
+            "mae": 0.6666,
+            "within1": 0.7059
           },
           "+A wA=1": {
             "n": 17,
-            "mae": 0.7827,
+            "mae": 0.7675,
             "within1": 0.6471
           },
           "~base (new pool)": {
             "n": 17,
-            "mae": 0.7813,
-            "within1": 0.7647
+            "mae": 0.782,
+            "within1": 0.7059
           },
           "~B (old pool)": {
             "n": 17,
-            "mae": 0.6132,
+            "mae": 0.6649,
             "within1": 0.7647
           },
           "~A with altitude": {
             "n": 17,
-            "mae": 0.784,
+            "mae": 0.7551,
             "within1": 0.5882
           },
           "~B uncentred": {
             "n": 17,
-            "mae": 0.4539,
-            "within1": 0.9412
+            "mae": 0.6582,
+            "within1": 0.7647
           },
           "~A wA=0.25": {
             "n": 17,
-            "mae": 0.7909,
-            "within1": 0.5882
+            "mae": 0.7644,
+            "within1": 0.6471
           },
           "~A wA=1": {
             "n": 17,
-            "mae": 0.7827,
+            "mae": 0.7675,
             "within1": 0.6471
           },
           "~B wB=0.15": {
             "n": 17,
-            "mae": 0.4589,
-            "within1": 1.0
+            "mae": 0.7045,
+            "within1": 0.7647
           },
           "~B wB=0.6": {
             "n": 17,
-            "mae": 0.5744,
+            "mae": 0.6271,
             "within1": 0.7647
           },
           "~B ext": {
             "n": 17,
-            "mae": 0.6124,
+            "mae": 0.6668,
             "within1": 0.7647
           }
         },
         "내일의커피": {
           "global_mean": {
             "n": 10,
-            "mae": 0.5481,
+            "mae": 0.5836,
             "within1": 0.7
           },
           "origin_mean": {
             "n": 10,
-            "mae": 0.7279,
-            "within1": 0.5
+            "mae": 0.7445,
+            "within1": 0.7
           },
           "neighbor_avg_old": {
             "n": 10,
-            "mae": 0.585,
+            "mae": 0.6707,
             "within1": 0.7
           },
           "neighbor_avg_new": {
             "n": 10,
-            "mae": 0.6841,
+            "mae": 0.7596,
             "within1": 0.7
           },
           "base": {
             "n": 10,
-            "mae": 0.7093,
-            "within1": 0.8
+            "mae": 0.6794,
+            "within1": 0.7
           },
           "+A": {
             "n": 10,
-            "mae": 0.6097,
-            "within1": 0.9
+            "mae": 0.6338,
+            "within1": 0.8
           },
           "+B": {
             "n": 10,
-            "mae": 0.6429,
-            "within1": 0.9
+            "mae": 0.6545,
+            "within1": 0.7
           },
           "+Bf": {
             "n": 10,
-            "mae": 0.6544,
-            "within1": 0.8
+            "mae": 0.673,
+            "within1": 0.7
           },
           "+C": {
             "n": 10,
-            "mae": 0.6531,
-            "within1": 0.8
+            "mae": 0.6547,
+            "within1": 0.7
           },
           "+A+B": {
             "n": 10,
-            "mae": 0.649,
+            "mae": 0.6397,
             "within1": 0.8
           },
           "+A+C": {
             "n": 10,
-            "mae": 0.6311,
-            "within1": 0.9
+            "mae": 0.6322,
+            "within1": 0.8
           },
           "+B+C": {
             "n": 10,
-            "mae": 0.6457,
-            "within1": 0.9
+            "mae": 0.6127,
+            "within1": 0.7
           },
           "+A+B+C": {
             "n": 10,
-            "mae": 0.6684,
+            "mae": 0.6237,
             "within1": 0.8
           },
           "+A wA=1": {
             "n": 10,
-            "mae": 0.6236,
-            "within1": 0.9
+            "mae": 0.6209,
+            "within1": 0.8
           },
           "~base (new pool)": {
             "n": 10,
-            "mae": 0.6567,
-            "within1": 0.8
+            "mae": 0.6889,
+            "within1": 0.7
           },
           "~B (old pool)": {
             "n": 10,
-            "mae": 0.6572,
-            "within1": 0.8
+            "mae": 0.6457,
+            "within1": 0.7
           },
           "~A with altitude": {
             "n": 10,
-            "mae": 0.6066,
-            "within1": 0.9
+            "mae": 0.6322,
+            "within1": 0.8
           },
           "~B uncentred": {
             "n": 10,
-            "mae": 0.6321,
-            "within1": 0.8
+            "mae": 0.6545,
+            "within1": 0.7
           },
           "~A wA=0.25": {
             "n": 10,
-            "mae": 0.6182,
-            "within1": 0.8
+            "mae": 0.6437,
+            "within1": 0.7
           },
           "~A wA=1": {
             "n": 10,
-            "mae": 0.6236,
-            "within1": 0.9
+            "mae": 0.6209,
+            "within1": 0.8
           },
           "~B wB=0.15": {
             "n": 10,
-            "mae": 0.6273,
-            "within1": 0.9
+            "mae": 0.6503,
+            "within1": 0.7
           },
           "~B wB=0.6": {
             "n": 10,
-            "mae": 0.6559,
-            "within1": 0.8
+            "mae": 0.6511,
+            "within1": 0.6
           },
           "~B ext": {
             "n": 10,
-            "mae": 0.6419,
-            "within1": 0.9
+            "mae": 0.6557,
+            "within1": 0.7
+          }
+        },
+        "모모스커피": {
+          "global_mean": {
+            "n": 13,
+            "mae": 0.6917,
+            "within1": 1.0
+          },
+          "origin_mean": {
+            "n": 13,
+            "mae": 0.5709,
+            "within1": 1.0
+          },
+          "neighbor_avg_old": {
+            "n": 13,
+            "mae": 0.5353,
+            "within1": 0.9231
+          },
+          "neighbor_avg_new": {
+            "n": 13,
+            "mae": 0.5353,
+            "within1": 1.0
+          },
+          "base": {
+            "n": 13,
+            "mae": 0.5679,
+            "within1": 0.7692
+          },
+          "+A": {
+            "n": 13,
+            "mae": 0.5058,
+            "within1": 0.9231
+          },
+          "+B": {
+            "n": 13,
+            "mae": 0.6913,
+            "within1": 0.6154
+          },
+          "+Bf": {
+            "n": 13,
+            "mae": 0.597,
+            "within1": 0.8462
+          },
+          "+C": {
+            "n": 13,
+            "mae": 0.8211,
+            "within1": 0.6154
+          },
+          "+A+B": {
+            "n": 13,
+            "mae": 0.6381,
+            "within1": 0.6923
+          },
+          "+A+C": {
+            "n": 13,
+            "mae": 0.4271,
+            "within1": 1.0
+          },
+          "+B+C": {
+            "n": 13,
+            "mae": 0.6659,
+            "within1": 0.6154
+          },
+          "+A+B+C": {
+            "n": 13,
+            "mae": 0.5899,
+            "within1": 0.7692
+          },
+          "+A wA=1": {
+            "n": 13,
+            "mae": 0.4743,
+            "within1": 0.9231
+          },
+          "~base (new pool)": {
+            "n": 13,
+            "mae": 0.5872,
+            "within1": 0.7692
+          },
+          "~B (old pool)": {
+            "n": 13,
+            "mae": 0.7451,
+            "within1": 0.6154
+          },
+          "~A with altitude": {
+            "n": 13,
+            "mae": 0.5238,
+            "within1": 0.9231
+          },
+          "~B uncentred": {
+            "n": 13,
+            "mae": 0.7065,
+            "within1": 0.6154
+          },
+          "~A wA=0.25": {
+            "n": 13,
+            "mae": 0.6009,
+            "within1": 0.7692
+          },
+          "~A wA=1": {
+            "n": 13,
+            "mae": 0.4743,
+            "within1": 0.9231
+          },
+          "~B wB=0.15": {
+            "n": 13,
+            "mae": 0.7009,
+            "within1": 0.6154
+          },
+          "~B wB=0.6": {
+            "n": 13,
+            "mae": 0.6686,
+            "within1": 0.6154
+          },
+          "~B ext": {
+            "n": 13,
+            "mae": 0.6885,
+            "within1": 0.6154
           }
         }
       }
@@ -1324,13 +1560,13 @@
         },
         "neighbor_avg_old": {
           "n": 72,
-          "mae": 1.0566,
-          "within1": 0.5417
+          "mae": 1.0741,
+          "within1": 0.5
         },
         "neighbor_avg_new": {
           "n": 72,
-          "mae": 1.0553,
-          "within1": 0.5833
+          "mae": 1.0648,
+          "within1": 0.5556
         },
         "base": {
           "n": 72,
@@ -1344,8 +1580,8 @@
         },
         "+B": {
           "n": 72,
-          "mae": 1.1155,
-          "within1": 0.4722
+          "mae": 1.0842,
+          "within1": 0.5
         },
         "+Bf": {
           "n": 72,
@@ -1359,8 +1595,8 @@
         },
         "+A+B": {
           "n": 72,
-          "mae": 1.0902,
-          "within1": 0.4722
+          "mae": 1.0578,
+          "within1": 0.5
         },
         "+A+C": {
           "n": 72,
@@ -1369,13 +1605,13 @@
         },
         "+B+C": {
           "n": 72,
-          "mae": 1.1099,
-          "within1": 0.4722
+          "mae": 1.0844,
+          "within1": 0.4861
         },
         "+A+B+C": {
           "n": 72,
-          "mae": 1.0845,
-          "within1": 0.4722
+          "mae": 1.0509,
+          "within1": 0.4861
         },
         "+A wA=1": {
           "n": 72,
@@ -1389,8 +1625,8 @@
         },
         "~B (old pool)": {
           "n": 72,
-          "mae": 1.1155,
-          "within1": 0.4722
+          "mae": 1.0842,
+          "within1": 0.5
         },
         "~A with altitude": {
           "n": 72,
@@ -1399,8 +1635,8 @@
         },
         "~B uncentred": {
           "n": 72,
-          "mae": 0.998,
-          "within1": 0.6667
+          "mae": 1.0042,
+          "within1": 0.6528
         },
         "~A wA=0.25": {
           "n": 72,
@@ -1414,18 +1650,18 @@
         },
         "~B wB=0.15": {
           "n": 72,
-          "mae": 1.0977,
-          "within1": 0.4722
+          "mae": 1.0726,
+          "within1": 0.5972
         },
         "~B wB=0.6": {
           "n": 72,
-          "mae": 1.1127,
-          "within1": 0.4722
+          "mae": 1.0708,
+          "within1": 0.4861
         },
         "~B ext": {
           "n": 72,
-          "mae": 1.1158,
-          "within1": 0.4722
+          "mae": 1.0843,
+          "within1": 0.5
         }
       },
       "per_roaster": {
@@ -1442,12 +1678,12 @@
           },
           "neighbor_avg_old": {
             "n": 37,
-            "mae": 1.3439,
+            "mae": 1.3555,
             "within1": 0.4595
           },
           "neighbor_avg_new": {
             "n": 37,
-            "mae": 1.3728,
+            "mae": 1.3817,
             "within1": 0.4595
           },
           "base": {
@@ -1462,7 +1698,7 @@
           },
           "+B": {
             "n": 37,
-            "mae": 1.3194,
+            "mae": 1.3056,
             "within1": 0.4595
           },
           "+Bf": {
@@ -1477,7 +1713,7 @@
           },
           "+A+B": {
             "n": 37,
-            "mae": 1.2816,
+            "mae": 1.2582,
             "within1": 0.4595
           },
           "+A+C": {
@@ -1487,12 +1723,12 @@
           },
           "+B+C": {
             "n": 37,
-            "mae": 1.329,
+            "mae": 1.2993,
             "within1": 0.4595
           },
           "+A+B+C": {
             "n": 37,
-            "mae": 1.2838,
+            "mae": 1.2355,
             "within1": 0.4595
           },
           "+A wA=1": {
@@ -1507,7 +1743,7 @@
           },
           "~B (old pool)": {
             "n": 37,
-            "mae": 1.3194,
+            "mae": 1.3056,
             "within1": 0.4595
           },
           "~A with altitude": {
@@ -1517,7 +1753,7 @@
           },
           "~B uncentred": {
             "n": 37,
-            "mae": 1.3216,
+            "mae": 1.3022,
             "within1": 0.4595
           },
           "~A wA=0.25": {
@@ -1532,17 +1768,17 @@
           },
           "~B wB=0.15": {
             "n": 37,
-            "mae": 1.325,
+            "mae": 1.3189,
             "within1": 0.4595
           },
           "~B wB=0.6": {
             "n": 37,
-            "mae": 1.3119,
+            "mae": 1.2873,
             "within1": 0.4595
           },
           "~B ext": {
             "n": 37,
-            "mae": 1.3202,
+            "mae": 1.3064,
             "within1": 0.4595
           }
         },
@@ -1559,12 +1795,12 @@
           },
           "neighbor_avg_old": {
             "n": 17,
-            "mae": 0.8142,
+            "mae": 0.7664,
             "within1": 0.5294
           },
           "neighbor_avg_new": {
             "n": 17,
-            "mae": 0.7827,
+            "mae": 0.7172,
             "within1": 0.7059
           },
           "base": {
@@ -1579,8 +1815,8 @@
           },
           "+B": {
             "n": 17,
-            "mae": 0.8958,
-            "within1": 0.5882
+            "mae": 0.8277,
+            "within1": 0.6471
           },
           "+Bf": {
             "n": 17,
@@ -1594,8 +1830,8 @@
           },
           "+A+B": {
             "n": 17,
-            "mae": 0.8703,
-            "within1": 0.5882
+            "mae": 0.8135,
+            "within1": 0.6471
           },
           "+A+C": {
             "n": 17,
@@ -1604,13 +1840,13 @@
           },
           "+B+C": {
             "n": 17,
-            "mae": 0.8767,
-            "within1": 0.5882
+            "mae": 0.8416,
+            "within1": 0.6471
           },
           "+A+B+C": {
             "n": 17,
-            "mae": 0.8607,
-            "within1": 0.5882
+            "mae": 0.8315,
+            "within1": 0.6471
           },
           "+A wA=1": {
             "n": 17,
@@ -1624,8 +1860,8 @@
           },
           "~B (old pool)": {
             "n": 17,
-            "mae": 0.8958,
-            "within1": 0.5882
+            "mae": 0.8277,
+            "within1": 0.6471
           },
           "~A with altitude": {
             "n": 17,
@@ -1634,8 +1870,8 @@
           },
           "~B uncentred": {
             "n": 17,
-            "mae": 0.7372,
-            "within1": 0.7647
+            "mae": 0.7673,
+            "within1": 0.7059
           },
           "~A wA=0.25": {
             "n": 17,
@@ -1649,18 +1885,18 @@
           },
           "~B wB=0.15": {
             "n": 17,
-            "mae": 0.8952,
-            "within1": 0.5882
+            "mae": 0.8797,
+            "within1": 0.6471
           },
           "~B wB=0.6": {
             "n": 17,
-            "mae": 0.8886,
-            "within1": 0.5882
+            "mae": 0.7714,
+            "within1": 0.6471
           },
           "~B ext": {
             "n": 17,
-            "mae": 0.8958,
-            "within1": 0.5882
+            "mae": 0.8277,
+            "within1": 0.6471
           }
         },
         "커피 리브레": {
@@ -1676,13 +1912,13 @@
           },
           "neighbor_avg_old": {
             "n": 18,
-            "mae": 0.6951,
-            "within1": 0.7222
+            "mae": 0.7863,
+            "within1": 0.5556
           },
           "neighbor_avg_new": {
             "n": 18,
-            "mae": 0.6602,
-            "within1": 0.7222
+            "mae": 0.7416,
+            "within1": 0.6111
           },
           "base": {
             "n": 18,
@@ -1696,8 +1932,8 @@
           },
           "+B": {
             "n": 18,
-            "mae": 0.904,
-            "within1": 0.3889
+            "mae": 0.8713,
+            "within1": 0.4444
           },
           "+Bf": {
             "n": 18,
@@ -1711,8 +1947,8 @@
           },
           "+A+B": {
             "n": 18,
-            "mae": 0.9046,
-            "within1": 0.3889
+            "mae": 0.8767,
+            "within1": 0.4444
           },
           "+A+C": {
             "n": 18,
@@ -1721,12 +1957,12 @@
           },
           "+B+C": {
             "n": 18,
-            "mae": 0.8797,
+            "mae": 0.8718,
             "within1": 0.3889
           },
           "+A+B+C": {
             "n": 18,
-            "mae": 0.8864,
+            "mae": 0.8785,
             "within1": 0.3889
           },
           "+A wA=1": {
@@ -1741,8 +1977,8 @@
           },
           "~B (old pool)": {
             "n": 18,
-            "mae": 0.904,
-            "within1": 0.3889
+            "mae": 0.8713,
+            "within1": 0.4444
           },
           "~A with altitude": {
             "n": 18,
@@ -1751,7 +1987,7 @@
           },
           "~B uncentred": {
             "n": 18,
-            "mae": 0.5792,
+            "mae": 0.6152,
             "within1": 1.0
           },
           "~A wA=0.25": {
@@ -1766,18 +2002,18 @@
           },
           "~B wB=0.15": {
             "n": 18,
-            "mae": 0.8217,
-            "within1": 0.3889
+            "mae": 0.7483,
+            "within1": 0.8333
           },
           "~B wB=0.6": {
             "n": 18,
-            "mae": 0.9148,
+            "mae": 0.9087,
             "within1": 0.3889
           },
           "~B ext": {
             "n": 18,
-            "mae": 0.9033,
-            "within1": 0.3889
+            "mae": 0.87,
+            "within1": 0.4444
           }
         }
       }
@@ -1785,20 +2021,20 @@
   },
   "ship": {
     "acidity": {
-      "best": "+B+C",
+      "best": "+C",
       "vs": "shipped (base)",
-      "within1_gain": 0.0366,
+      "within1_gain": 0.0,
       "margin": 0.03,
-      "would_replace": true,
+      "would_replace": false,
       "shipped_recipe": [
         "ablation",
         "+B"
       ]
     },
     "body": {
-      "best": "+A+B+C",
+      "best": "+A+C",
       "vs": "shipped (base)",
-      "within1_gain": 0.0313,
+      "within1_gain": 0.052,
       "margin": 0.03,
       "would_replace": true,
       "shipped_recipe": [

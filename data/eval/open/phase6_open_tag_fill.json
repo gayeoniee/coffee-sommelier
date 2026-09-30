@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T08:09:17.316461+00:00",
+  "generated_at": "2026-09-30T13:31:06.065622+00:00",
   "k": 10,
   "max_tags": 5,
   "shipped_fill": "vote_all+vote_tagged_clean^2",
@@ -25,19 +25,19 @@
     },
     "e1_notes": {
       "current": {
-        "precision": 0.134,
-        "recall": 0.0642,
-        "f1": 0.0868,
-        "category_f1": 0.3158,
-        "tags_shown": 2.095,
+        "precision": 0.1256,
+        "recall": 0.0596,
+        "f1": 0.0809,
+        "category_f1": 0.3483,
+        "tags_shown": 2.085,
         "share_tagged": 1.0
       },
       "shipped": {
-        "precision": 0.1283,
-        "recall": 0.1124,
-        "f1": 0.1198,
-        "category_f1": 0.5089,
-        "tags_shown": 2.915,
+        "precision": 0.125,
+        "recall": 0.1078,
+        "f1": 0.1158,
+        "category_f1": 0.5141,
+        "tags_shown": 2.886,
         "share_tagged": 1.0
       }
     },
@@ -61,19 +61,19 @@
     },
     "e2_notes": {
       "current": {
-        "precision": 0.3978,
-        "recall": 0.1151,
-        "f1": 0.1785,
-        "category_f1": 0.4356,
-        "tags_shown": 3.0,
+        "precision": 0.3792,
+        "recall": 0.1215,
+        "f1": 0.184,
+        "category_f1": 0.4447,
+        "tags_shown": 3.201,
         "share_tagged": 1.0
       },
       "shipped": {
-        "precision": 0.3851,
-        "recall": 0.1226,
-        "f1": 0.186,
-        "category_f1": 0.4709,
-        "tags_shown": 3.188,
+        "precision": 0.375,
+        "recall": 0.1258,
+        "f1": 0.1884,
+        "category_f1": 0.4577,
+        "tags_shown": 3.299,
         "share_tagged": 1.0
       }
     }
@@ -148,93 +148,93 @@
       },
       "vote_all": {
         "n": 277,
-        "precision": 0.1791,
-        "recall": 0.043,
-        "f1": 0.0694,
-        "category_f1": 0.2545,
-        "tags_shown": 0.726,
-        "share_tagged": 0.4152,
-        "fill_per_bean": 0.726
+        "precision": 0.1401,
+        "recall": 0.0263,
+        "f1": 0.0443,
+        "category_f1": 0.2228,
+        "tags_shown": 0.567,
+        "share_tagged": 0.3357,
+        "fill_per_bean": 0.567
       },
       "vote_tagged": {
         "n": 277,
-        "precision": 0.1976,
-        "recall": 0.1577,
-        "f1": 0.1754,
-        "category_f1": 0.5666,
-        "tags_shown": 2.412,
-        "share_tagged": 0.9531,
-        "fill_per_bean": 2.412
+        "precision": 0.1947,
+        "recall": 0.1756,
+        "f1": 0.1847,
+        "category_f1": 0.5892,
+        "tags_shown": 2.726,
+        "share_tagged": 0.9495,
+        "fill_per_bean": 2.726
       },
       "vote_tagged@s0.3l2.0": {
         "n": 277,
-        "precision": 0.1622,
-        "recall": 0.1016,
-        "f1": 0.1249,
-        "category_f1": 0.5067,
-        "tags_shown": 1.892,
-        "share_tagged": 0.8628,
-        "fill_per_bean": 1.892
+        "precision": 0.1782,
+        "recall": 0.1171,
+        "f1": 0.1413,
+        "category_f1": 0.5415,
+        "tags_shown": 1.986,
+        "share_tagged": 0.8592,
+        "fill_per_bean": 1.986
       },
       "vote_tagged@s0.4l1.2": {
         "n": 277,
-        "precision": 0.2284,
-        "recall": 0.0884,
-        "f1": 0.1275,
-        "category_f1": 0.417,
-        "tags_shown": 1.17,
-        "share_tagged": 0.7329,
-        "fill_per_bean": 1.17
+        "precision": 0.2204,
+        "recall": 0.1135,
+        "f1": 0.1498,
+        "category_f1": 0.4744,
+        "tags_shown": 1.556,
+        "share_tagged": 0.8267,
+        "fill_per_bean": 1.556
       },
       "vote_tagged@s0.4l2.0": {
         "n": 277,
-        "precision": 0.2042,
-        "recall": 0.0585,
-        "f1": 0.091,
-        "category_f1": 0.3596,
-        "tags_shown": 0.866,
-        "share_tagged": 0.5957,
-        "fill_per_bean": 0.866
+        "precision": 0.2078,
+        "recall": 0.0765,
+        "f1": 0.1118,
+        "category_f1": 0.4307,
+        "tags_shown": 1.112,
+        "share_tagged": 0.6895,
+        "fill_per_bean": 1.112
       },
       "vote_tagged@s0.5l1.2": {
         "n": 277,
-        "precision": 0.2639,
-        "recall": 0.0454,
-        "f1": 0.0775,
-        "category_f1": 0.2436,
-        "tags_shown": 0.52,
-        "share_tagged": 0.4332,
-        "fill_per_bean": 0.52
+        "precision": 0.25,
+        "recall": 0.0514,
+        "f1": 0.0852,
+        "category_f1": 0.2762,
+        "tags_shown": 0.621,
+        "share_tagged": 0.4549,
+        "fill_per_bean": 0.621
       },
       "vote_tagged@s0.5l2.0": {
         "n": 277,
-        "precision": 0.2371,
-        "recall": 0.0275,
-        "f1": 0.0493,
-        "category_f1": 0.2037,
-        "tags_shown": 0.35,
-        "share_tagged": 0.2996,
-        "fill_per_bean": 0.35
+        "precision": 0.2537,
+        "recall": 0.0406,
+        "f1": 0.07,
+        "category_f1": 0.2517,
+        "tags_shown": 0.484,
+        "share_tagged": 0.3646,
+        "fill_per_bean": 0.484
       },
       "vote_tagged_clean": {
         "n": 277,
-        "precision": 0.2048,
-        "recall": 0.1924,
-        "f1": 0.1984,
-        "category_f1": 0.6031,
-        "tags_shown": 2.838,
-        "share_tagged": 0.9603,
-        "fill_per_bean": 2.838
+        "precision": 0.1947,
+        "recall": 0.1756,
+        "f1": 0.1847,
+        "category_f1": 0.5892,
+        "tags_shown": 2.726,
+        "share_tagged": 0.9495,
+        "fill_per_bean": 2.726
       },
       "vote_tagged_clean@s0.3l2.0": {
         "n": 277,
-        "precision": 0.1813,
-        "recall": 0.141,
-        "f1": 0.1586,
-        "category_f1": 0.5682,
-        "tags_shown": 2.35,
-        "share_tagged": 0.9458,
-        "fill_per_bean": 2.35
+        "precision": 0.1782,
+        "recall": 0.1171,
+        "f1": 0.1413,
+        "category_f1": 0.5415,
+        "tags_shown": 1.986,
+        "share_tagged": 0.8592,
+        "fill_per_bean": 1.986
       },
       "vote_tagged_clean@s0.4l1.2": {
         "n": 277,
@@ -248,13 +248,13 @@
       },
       "vote_tagged_clean@s0.4l2.0": {
         "n": 277,
-        "precision": 0.1994,
-        "recall": 0.0848,
-        "f1": 0.119,
-        "category_f1": 0.4466,
-        "tags_shown": 1.285,
-        "share_tagged": 0.7762,
-        "fill_per_bean": 1.285
+        "precision": 0.2078,
+        "recall": 0.0765,
+        "f1": 0.1118,
+        "category_f1": 0.4307,
+        "tags_shown": 1.112,
+        "share_tagged": 0.6895,
+        "fill_per_bean": 1.112
       },
       "vote_tagged_clean@s0.5l1.2": {
         "n": 277,
@@ -268,43 +268,43 @@
       },
       "vote_tagged_clean@s0.5l2.0": {
         "n": 277,
-        "precision": 0.2246,
-        "recall": 0.037,
-        "f1": 0.0636,
-        "category_f1": 0.2575,
-        "tags_shown": 0.498,
-        "share_tagged": 0.3935,
-        "fill_per_bean": 0.498
+        "precision": 0.2537,
+        "recall": 0.0406,
+        "f1": 0.07,
+        "category_f1": 0.2517,
+        "tags_shown": 0.484,
+        "share_tagged": 0.3646,
+        "fill_per_bean": 0.484
       },
       "vote_tagged_k5": {
         "n": 277,
-        "precision": 0.1928,
-        "recall": 0.1732,
-        "f1": 0.1825,
-        "category_f1": 0.5898,
-        "tags_shown": 2.715,
-        "share_tagged": 0.9711,
-        "fill_per_bean": 2.715
+        "precision": 0.1851,
+        "recall": 0.1959,
+        "f1": 0.1904,
+        "category_f1": 0.6283,
+        "tags_shown": 3.199,
+        "share_tagged": 0.9964,
+        "fill_per_bean": 3.199
       },
       "vote_tagged_k20": {
         "n": 277,
-        "precision": 0.2104,
-        "recall": 0.0968,
-        "f1": 0.1326,
-        "category_f1": 0.4469,
-        "tags_shown": 1.39,
-        "share_tagged": 0.7509,
-        "fill_per_bean": 1.39
+        "precision": 0.2065,
+        "recall": 0.1362,
+        "f1": 0.1641,
+        "category_f1": 0.5184,
+        "tags_shown": 1.993,
+        "share_tagged": 0.87,
+        "fill_per_bean": 1.993
       },
       "feat+vote_tagged": {
         "n": 277,
-        "precision": 0.2159,
-        "recall": 0.3501,
-        "f1": 0.2671,
-        "category_f1": 0.6642,
-        "tags_shown": 4.899,
+        "precision": 0.2194,
+        "recall": 0.3548,
+        "f1": 0.2711,
+        "category_f1": 0.6623,
+        "tags_shown": 4.888,
         "share_tagged": 1.0,
-        "fill_per_bean": 4.899
+        "fill_per_bean": 4.888
       },
       "feat|vote_tagged": {
         "n": 277,
@@ -338,123 +338,123 @@
       },
       "vote_tagged+feat": {
         "n": 277,
-        "precision": 0.2041,
-        "recall": 0.3309,
-        "f1": 0.2525,
-        "category_f1": 0.6721,
-        "tags_shown": 4.899,
+        "precision": 0.212,
+        "recall": 0.3429,
+        "f1": 0.262,
+        "category_f1": 0.6705,
+        "tags_shown": 4.888,
         "share_tagged": 1.0,
-        "fill_per_bean": 4.899
+        "fill_per_bean": 4.888
       },
       "vote_tagged|feat": {
         "n": 277,
-        "precision": 0.2019,
-        "recall": 0.1768,
-        "f1": 0.1885,
-        "category_f1": 0.5855,
-        "tags_shown": 2.646,
+        "precision": 0.2,
+        "recall": 0.1959,
+        "f1": 0.1979,
+        "category_f1": 0.6059,
+        "tags_shown": 2.96,
         "share_tagged": 1.0,
-        "fill_per_bean": 2.646
+        "fill_per_bean": 2.96
       },
       "vote_tagged_clean+feat": {
         "n": 277,
         "precision": 0.212,
         "recall": 0.3429,
         "f1": 0.262,
-        "category_f1": 0.6681,
+        "category_f1": 0.6705,
         "tags_shown": 4.888,
         "share_tagged": 1.0,
         "fill_per_bean": 4.888
       },
       "vote_tagged_clean|feat": {
         "n": 277,
-        "precision": 0.2093,
-        "recall": 0.2091,
-        "f1": 0.2092,
-        "category_f1": 0.6158,
-        "tags_shown": 3.018,
+        "precision": 0.2,
+        "recall": 0.1959,
+        "f1": 0.1979,
+        "category_f1": 0.6059,
+        "tags_shown": 2.96,
         "share_tagged": 1.0,
-        "fill_per_bean": 3.018
+        "fill_per_bean": 2.96
       },
       "vote_tagged^1": {
         "n": 277,
-        "precision": 0.1629,
+        "precision": 0.1635,
         "recall": 0.0514,
-        "f1": 0.0781,
-        "category_f1": 0.4226,
-        "tags_shown": 0.953,
-        "share_tagged": 0.9531,
-        "fill_per_bean": 0.953
+        "f1": 0.0782,
+        "category_f1": 0.4396,
+        "tags_shown": 0.949,
+        "share_tagged": 0.9495,
+        "fill_per_bean": 0.949
       },
       "vote_tagged^2": {
         "n": 277,
-        "precision": 0.1919,
-        "recall": 0.1075,
-        "f1": 0.1378,
-        "category_f1": 0.5316,
-        "tags_shown": 1.693,
-        "share_tagged": 0.9531,
-        "fill_per_bean": 1.693
+        "precision": 0.1738,
+        "recall": 0.1016,
+        "f1": 0.1282,
+        "category_f1": 0.5493,
+        "tags_shown": 1.765,
+        "share_tagged": 0.9495,
+        "fill_per_bean": 1.765
       },
       "vote_tagged^3": {
         "n": 277,
-        "precision": 0.1987,
-        "recall": 0.1434,
-        "f1": 0.1666,
-        "category_f1": 0.5572,
-        "tags_shown": 2.181,
-        "share_tagged": 0.9531,
-        "fill_per_bean": 2.181
+        "precision": 0.1984,
+        "recall": 0.1517,
+        "f1": 0.172,
+        "category_f1": 0.578,
+        "tags_shown": 2.31,
+        "share_tagged": 0.9495,
+        "fill_per_bean": 2.31
       },
       "vote_all+vote_tagged^2": {
         "n": 277,
-        "precision": 0.1941,
-        "recall": 0.1171,
-        "f1": 0.1461,
-        "category_f1": 0.5385,
-        "tags_shown": 1.823,
-        "share_tagged": 0.9531,
-        "fill_per_bean": 1.823
+        "precision": 0.1712,
+        "recall": 0.1051,
+        "f1": 0.1303,
+        "category_f1": 0.5524,
+        "tags_shown": 1.856,
+        "share_tagged": 0.9495,
+        "fill_per_bean": 1.856
       },
       "vote_tagged_clean^1": {
         "n": 277,
-        "precision": 0.1729,
-        "recall": 0.055,
-        "f1": 0.0834,
-        "category_f1": 0.4335,
-        "tags_shown": 0.96,
-        "share_tagged": 0.9603,
-        "fill_per_bean": 0.96
+        "precision": 0.1635,
+        "recall": 0.0514,
+        "f1": 0.0782,
+        "category_f1": 0.4396,
+        "tags_shown": 0.949,
+        "share_tagged": 0.9495,
+        "fill_per_bean": 0.949
       },
       "vote_tagged_clean^2": {
         "n": 277,
-        "precision": 0.1804,
-        "recall": 0.1075,
-        "f1": 0.1347,
-        "category_f1": 0.5526,
-        "tags_shown": 1.801,
-        "share_tagged": 0.9603,
-        "fill_per_bean": 1.801
+        "precision": 0.1738,
+        "recall": 0.1016,
+        "f1": 0.1282,
+        "category_f1": 0.5493,
+        "tags_shown": 1.765,
+        "share_tagged": 0.9495,
+        "fill_per_bean": 1.765
       },
       "vote_tagged_clean^3": {
         "n": 277,
-        "precision": 0.2087,
-        "recall": 0.1661,
-        "f1": 0.185,
-        "category_f1": 0.5951,
-        "tags_shown": 2.404,
-        "share_tagged": 0.9603,
-        "fill_per_bean": 2.404
+        "precision": 0.1984,
+        "recall": 0.1517,
+        "f1": 0.172,
+        "category_f1": 0.578,
+        "tags_shown": 2.31,
+        "share_tagged": 0.9495,
+        "fill_per_bean": 2.31
       },
       "vote_all+vote_tagged_clean^2": {
         "n": 277,
-        "precision": 0.1858,
-        "recall": 0.1219,
-        "f1": 0.1472,
-        "category_f1": 0.5687,
-        "tags_shown": 1.982,
-        "share_tagged": 0.9639,
-        "fill_per_bean": 1.982
+        "precision": 0.1712,
+        "recall": 0.1051,
+        "f1": 0.1303,
+        "category_f1": 0.5524,
+        "tags_shown": 1.856,
+        "share_tagged": 0.9495,
+        "fill_per_bean": 1.856
       },
       "current": {
         "n": 277,
@@ -533,93 +533,93 @@
         },
         "vote_all": {
           "n": 211,
-          "precision": 0.134,
-          "recall": 0.0642,
-          "f1": 0.0868,
-          "category_f1": 0.3158,
-          "tags_shown": 2.095,
+          "precision": 0.1256,
+          "recall": 0.0596,
+          "f1": 0.0809,
+          "category_f1": 0.3483,
+          "tags_shown": 2.085,
           "share_tagged": 1.0,
-          "fill_per_bean": 0.991
+          "fill_per_bean": 0.981
         },
         "vote_tagged": {
           "n": 211,
-          "precision": 0.1438,
-          "recall": 0.1468,
-          "f1": 0.1453,
-          "category_f1": 0.5103,
-          "tags_shown": 3.213,
+          "precision": 0.1344,
+          "recall": 0.1606,
+          "f1": 0.1463,
+          "category_f1": 0.5413,
+          "tags_shown": 3.573,
           "share_tagged": 1.0,
-          "fill_per_bean": 2.109
+          "fill_per_bean": 2.469
         },
         "vote_tagged@s0.3l2.0": {
           "n": 211,
-          "precision": 0.1217,
-          "recall": 0.0963,
-          "f1": 0.1076,
-          "category_f1": 0.4668,
-          "tags_shown": 2.739,
+          "precision": 0.1233,
+          "recall": 0.1055,
+          "f1": 0.1137,
+          "category_f1": 0.5,
+          "tags_shown": 2.872,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.635
+          "fill_per_bean": 1.768
         },
         "vote_tagged@s0.4l1.2": {
           "n": 211,
-          "precision": 0.1633,
-          "recall": 0.0734,
-          "f1": 0.1013,
-          "category_f1": 0.3602,
-          "tags_shown": 2.033,
+          "precision": 0.159,
+          "recall": 0.1032,
+          "f1": 0.1252,
+          "category_f1": 0.4224,
+          "tags_shown": 2.445,
           "share_tagged": 1.0,
-          "fill_per_bean": 0.929
+          "fill_per_bean": 1.341
         },
         "vote_tagged@s0.4l2.0": {
           "n": 211,
-          "precision": 0.1594,
-          "recall": 0.0505,
-          "f1": 0.0767,
-          "category_f1": 0.319,
-          "tags_shown": 1.758,
+          "precision": 0.1333,
+          "recall": 0.0596,
+          "f1": 0.0824,
+          "category_f1": 0.3925,
+          "tags_shown": 2.028,
           "share_tagged": 1.0,
-          "fill_per_bean": 0.654
+          "fill_per_bean": 0.924
         },
         "vote_tagged@s0.5l1.2": {
           "n": 211,
-          "precision": 0.2174,
-          "recall": 0.0459,
-          "f1": 0.0758,
-          "category_f1": 0.2374,
-          "tags_shown": 1.54,
+          "precision": 0.1721,
+          "recall": 0.0482,
+          "f1": 0.0753,
+          "category_f1": 0.2547,
+          "tags_shown": 1.682,
           "share_tagged": 1.0,
-          "fill_per_bean": 0.436
+          "fill_per_bean": 0.578
         },
         "vote_tagged@s0.5l2.0": {
           "n": 211,
-          "precision": 0.2281,
-          "recall": 0.0298,
-          "f1": 0.0527,
-          "category_f1": 0.1925,
-          "tags_shown": 1.374,
+          "precision": 0.1591,
+          "recall": 0.0321,
+          "f1": 0.0534,
+          "category_f1": 0.2379,
+          "tags_shown": 1.521,
           "share_tagged": 1.0,
-          "fill_per_bean": 0.27
+          "fill_per_bean": 0.417
         },
         "vote_tagged_clean": {
           "n": 211,
-          "precision": 0.1402,
-          "recall": 0.1743,
-          "f1": 0.1554,
-          "category_f1": 0.554,
-          "tags_shown": 3.673,
+          "precision": 0.1344,
+          "recall": 0.1606,
+          "f1": 0.1463,
+          "category_f1": 0.5413,
+          "tags_shown": 3.573,
           "share_tagged": 1.0,
-          "fill_per_bean": 2.569
+          "fill_per_bean": 2.469
         },
         "vote_tagged_clean@s0.3l2.0": {
           "n": 211,
-          "precision": 0.1261,
-          "recall": 0.1307,
-          "f1": 0.1284,
-          "category_f1": 0.5184,
-          "tags_shown": 3.246,
+          "precision": 0.1233,
+          "recall": 0.1055,
+          "f1": 0.1137,
+          "category_f1": 0.5,
+          "tags_shown": 2.872,
           "share_tagged": 1.0,
-          "fill_per_bean": 2.142
+          "fill_per_bean": 1.768
         },
         "vote_tagged_clean@s0.4l1.2": {
           "n": 211,
@@ -633,13 +633,13 @@
         },
         "vote_tagged_clean@s0.4l2.0": {
           "n": 211,
-          "precision": 0.1391,
-          "recall": 0.0734,
-          "f1": 0.0961,
-          "category_f1": 0.3958,
-          "tags_shown": 2.194,
+          "precision": 0.1333,
+          "recall": 0.0596,
+          "f1": 0.0824,
+          "category_f1": 0.3925,
+          "tags_shown": 2.028,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.09
+          "fill_per_bean": 0.924
         },
         "vote_tagged_clean@s0.5l1.2": {
           "n": 211,
@@ -653,23 +653,23 @@
         },
         "vote_tagged_clean@s0.5l2.0": {
           "n": 211,
-          "precision": 0.1398,
-          "recall": 0.0298,
-          "f1": 0.0491,
-          "category_f1": 0.2402,
-          "tags_shown": 1.545,
+          "precision": 0.1591,
+          "recall": 0.0321,
+          "f1": 0.0534,
+          "category_f1": 0.2379,
+          "tags_shown": 1.521,
           "share_tagged": 1.0,
-          "fill_per_bean": 0.441
+          "fill_per_bean": 0.417
         },
         "feat+vote_tagged": {
           "n": 211,
-          "precision": 0.1613,
-          "recall": 0.3005,
-          "f1": 0.2099,
-          "category_f1": 0.5867,
-          "tags_shown": 4.953,
+          "precision": 0.1644,
+          "recall": 0.3073,
+          "f1": 0.2142,
+          "category_f1": 0.5898,
+          "tags_shown": 4.967,
           "share_tagged": 1.0,
-          "fill_per_bean": 3.848
+          "fill_per_bean": 3.863
         },
         "feat|vote_tagged": {
           "n": 211,
@@ -683,10 +683,10 @@
         },
         "feat+vote_tagged_clean": {
           "n": 211,
-          "precision": 0.1632,
-          "recall": 0.305,
-          "f1": 0.2126,
-          "category_f1": 0.5891,
+          "precision": 0.1644,
+          "recall": 0.3073,
+          "f1": 0.2142,
+          "category_f1": 0.5898,
           "tags_shown": 4.967,
           "share_tagged": 1.0,
           "fill_per_bean": 3.863
@@ -703,143 +703,143 @@
         },
         "vote_tagged+feat": {
           "n": 211,
-          "precision": 0.149,
-          "recall": 0.2775,
-          "f1": 0.1939,
-          "category_f1": 0.5993,
-          "tags_shown": 4.953,
+          "precision": 0.1448,
+          "recall": 0.2706,
+          "f1": 0.1886,
+          "category_f1": 0.5929,
+          "tags_shown": 4.967,
           "share_tagged": 1.0,
-          "fill_per_bean": 3.848
+          "fill_per_bean": 3.863
         },
         "vote_tagged|feat": {
           "n": 211,
-          "precision": 0.1432,
-          "recall": 0.1537,
-          "f1": 0.1482,
-          "category_f1": 0.52,
-          "tags_shown": 3.322,
+          "precision": 0.1359,
+          "recall": 0.1674,
+          "f1": 0.1501,
+          "category_f1": 0.5488,
+          "tags_shown": 3.649,
           "share_tagged": 1.0,
-          "fill_per_bean": 2.218
+          "fill_per_bean": 2.545
         },
         "vote_tagged_clean+feat": {
           "n": 211,
-          "precision": 0.1497,
-          "recall": 0.2798,
-          "f1": 0.195,
-          "category_f1": 0.5982,
+          "precision": 0.1448,
+          "recall": 0.2706,
+          "f1": 0.1886,
+          "category_f1": 0.5929,
           "tags_shown": 4.967,
           "share_tagged": 1.0,
           "fill_per_bean": 3.863
         },
         "vote_tagged_clean|feat": {
           "n": 211,
-          "precision": 0.1416,
-          "recall": 0.1812,
-          "f1": 0.159,
-          "category_f1": 0.5611,
-          "tags_shown": 3.749,
+          "precision": 0.1359,
+          "recall": 0.1674,
+          "f1": 0.1501,
+          "category_f1": 0.5488,
+          "tags_shown": 3.649,
           "share_tagged": 1.0,
-          "fill_per_bean": 2.645
+          "fill_per_bean": 2.545
         },
         "vote_tagged^1": {
           "n": 211,
-          "precision": 0.1133,
-          "recall": 0.039,
-          "f1": 0.058,
-          "category_f1": 0.3217,
-          "tags_shown": 1.815,
+          "precision": 0.1166,
+          "recall": 0.0436,
+          "f1": 0.0634,
+          "category_f1": 0.3925,
+          "tags_shown": 1.877,
           "share_tagged": 1.0,
-          "fill_per_bean": 0.711
+          "fill_per_bean": 0.773
         },
         "vote_tagged^2": {
           "n": 211,
-          "precision": 0.1376,
-          "recall": 0.094,
-          "f1": 0.1117,
-          "category_f1": 0.4495,
-          "tags_shown": 2.517,
+          "precision": 0.1182,
+          "recall": 0.0894,
+          "f1": 0.1018,
+          "category_f1": 0.4783,
+          "tags_shown": 2.668,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.412
+          "fill_per_bean": 1.564
         },
         "vote_tagged^3": {
           "n": 211,
-          "precision": 0.1447,
-          "recall": 0.1307,
-          "f1": 0.1373,
-          "category_f1": 0.497,
-          "tags_shown": 2.972,
+          "precision": 0.1342,
+          "recall": 0.1376,
+          "f1": 0.1359,
+          "category_f1": 0.5203,
+          "tags_shown": 3.223,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.867
+          "fill_per_bean": 2.118
         },
         "vote_all+vote_tagged^2": {
           "n": 211,
-          "precision": 0.1368,
-          "recall": 0.1101,
-          "f1": 0.122,
-          "category_f1": 0.4752,
-          "tags_shown": 2.768,
+          "precision": 0.125,
+          "recall": 0.1078,
+          "f1": 0.1158,
+          "category_f1": 0.5141,
+          "tags_shown": 2.886,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.664
+          "fill_per_bean": 1.782
         },
         "vote_tagged_clean^1": {
           "n": 211,
-          "precision": 0.1138,
+          "precision": 0.1166,
           "recall": 0.0436,
-          "f1": 0.063,
-          "category_f1": 0.3562,
-          "tags_shown": 1.896,
+          "f1": 0.0634,
+          "category_f1": 0.3925,
+          "tags_shown": 1.877,
           "share_tagged": 1.0,
-          "fill_per_bean": 0.791
+          "fill_per_bean": 0.773
         },
         "vote_tagged_clean^2": {
           "n": 211,
-          "precision": 0.1121,
-          "recall": 0.0872,
-          "f1": 0.0981,
-          "category_f1": 0.4832,
-          "tags_shown": 2.711,
+          "precision": 0.1182,
+          "recall": 0.0894,
+          "f1": 0.1018,
+          "category_f1": 0.4783,
+          "tags_shown": 2.668,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.607
+          "fill_per_bean": 1.564
         },
         "vote_tagged_clean^3": {
           "n": 211,
-          "precision": 0.1398,
-          "recall": 0.1491,
-          "f1": 0.1443,
-          "category_f1": 0.5425,
-          "tags_shown": 3.308,
+          "precision": 0.1342,
+          "recall": 0.1376,
+          "f1": 0.1359,
+          "category_f1": 0.5203,
+          "tags_shown": 3.223,
           "share_tagged": 1.0,
-          "fill_per_bean": 2.204
+          "fill_per_bean": 2.118
         },
         "vote_all+vote_tagged_clean^2": {
           "n": 211,
-          "precision": 0.1283,
-          "recall": 0.1124,
-          "f1": 0.1198,
-          "category_f1": 0.5089,
-          "tags_shown": 2.915,
+          "precision": 0.125,
+          "recall": 0.1078,
+          "f1": 0.1158,
+          "category_f1": 0.5141,
+          "tags_shown": 2.886,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.81
+          "fill_per_bean": 1.782
         },
         "current": {
           "n": 211,
-          "precision": 0.134,
-          "recall": 0.0642,
-          "f1": 0.0868,
-          "category_f1": 0.3158,
-          "tags_shown": 2.095,
+          "precision": 0.1256,
+          "recall": 0.0596,
+          "f1": 0.0809,
+          "category_f1": 0.3483,
+          "tags_shown": 2.085,
           "share_tagged": 1.0,
-          "fill_per_bean": 0.991
+          "fill_per_bean": 0.981
         },
         "shipped": {
           "n": 211,
-          "precision": 0.1283,
-          "recall": 0.1124,
-          "f1": 0.1198,
-          "category_f1": 0.5089,
-          "tags_shown": 2.915,
+          "precision": 0.125,
+          "recall": 0.1078,
+          "f1": 0.1158,
+          "category_f1": 0.5141,
+          "tags_shown": 2.886,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.81
+          "fill_per_bean": 1.782
         }
       }
     },
@@ -847,92 +847,92 @@
       "Blue Bottle Coffee": {
         "current": 0.2588,
         "feat+vote_tagged": 0.2588,
-        "vote_tagged": 0.1
+        "vote_tagged": 0.0984
       },
       "Café Britt": {
         "current": 0.4,
         "feat+vote_tagged": 0.4,
-        "vote_tagged": 0.1429
+        "vote_tagged": 0.1818
       },
       "Café Don Pablo": {
         "current": 0.4604,
         "feat+vote_tagged": 0.4604,
-        "vote_tagged": 0.4565
+        "vote_tagged": 0.382
       },
       "Coffee Supreme": {
         "current": 0.4091,
         "feat+vote_tagged": 0.4091,
-        "vote_tagged": 0.3529
+        "vote_tagged": 0.4211
       },
       "Fresh Roasted Coffee": {
         "current": 0.2143,
         "feat+vote_tagged": 0.2143,
-        "vote_tagged": 0.0351
+        "vote_tagged": 0.0345
       },
       "G로스팅": {
         "current": 0.3165,
         "feat+vote_tagged": 0.3165,
-        "vote_tagged": 0.1525
+        "vote_tagged": 0.1322
       },
       "Kiss the Hippo": {
         "current": 0.217,
-        "feat+vote_tagged": 0.2262,
-        "vote_tagged": 0.1338
+        "feat+vote_tagged": 0.2405,
+        "vote_tagged": 0.1625
       },
       "Ozone Coffee": {
         "current": 0.2105,
-        "feat+vote_tagged": 0.2105,
-        "vote_tagged": 0.1468
+        "feat+vote_tagged": 0.2209,
+        "vote_tagged": 0.2162
       },
       "Volcanica Coffee": {
         "current": 0.2949,
         "feat+vote_tagged": 0.2949,
-        "vote_tagged": 0.1987
+        "vote_tagged": 0.2025
       },
       "나무사이로": {
         "current": 0.2512,
         "feat+vote_tagged": 0.2466,
-        "vote_tagged": 0.1183
+        "vote_tagged": 0.1243
       },
       "내일의커피": {
         "current": 0.3684,
         "feat+vote_tagged": 0.3684,
-        "vote_tagged": 0.2182
+        "vote_tagged": 0.25
       },
       "매뉴팩트": {
         "current": 0.2353,
         "feat+vote_tagged": 0.2353,
-        "vote_tagged": 0.0816
+        "vote_tagged": 0.1154
       },
       "모모스커피": {
         "current": 0.2778,
         "feat+vote_tagged": 0.2778,
-        "vote_tagged": 0.2195
+        "vote_tagged": 0.2022
       },
       "빈브라더스": {
         "current": 0.069,
         "feat+vote_tagged": 0.129,
-        "vote_tagged": 0.087
+        "vote_tagged": 0.08
       },
       "앤트러사이트": {
         "current": 0.1951,
-        "feat+vote_tagged": 0.1935,
-        "vote_tagged": 0.175
+        "feat+vote_tagged": 0.1951,
+        "vote_tagged": 0.2222
       },
       "커피 리브레": {
         "current": 0.2951,
         "feat+vote_tagged": 0.2951,
-        "vote_tagged": 0.3182
+        "vote_tagged": 0.3043
       },
       "펠트": {
         "current": 0.2549,
         "feat+vote_tagged": 0.2549,
-        "vote_tagged": 0.1493
+        "vote_tagged": 0.2
       },
       "프릳츠": {
         "current": 0.1026,
-        "feat+vote_tagged": 0.1463,
-        "vote_tagged": 0.1875
+        "feat+vote_tagged": 0.15,
+        "vote_tagged": 0.069
       }
     },
     "thresholds": {
@@ -1074,93 +1074,93 @@
         },
         "vote_all": {
           "n": 112,
-          "precision": 0.4912,
-          "recall": 0.1137,
-          "f1": 0.1847,
-          "category_f1": 0.4364,
-          "tags_shown": 2.036,
-          "share_tagged": 0.8214,
-          "fill_per_bean": 2.036
+          "precision": 0.4125,
+          "recall": 0.1005,
+          "f1": 0.1616,
+          "category_f1": 0.4518,
+          "tags_shown": 2.143,
+          "share_tagged": 0.8661,
+          "fill_per_bean": 2.143
         },
         "vote_tagged": {
           "n": 112,
-          "precision": 0.4938,
+          "precision": 0.4492,
           "recall": 0.1614,
-          "f1": 0.2433,
-          "category_f1": 0.5226,
-          "tags_shown": 2.875,
-          "share_tagged": 0.9286,
-          "fill_per_bean": 2.875
+          "f1": 0.2375,
+          "category_f1": 0.5429,
+          "tags_shown": 3.161,
+          "share_tagged": 1.0,
+          "fill_per_bean": 3.161
         },
         "vote_tagged@s0.3l2.0": {
           "n": 112,
-          "precision": 0.4921,
-          "recall": 0.1259,
-          "f1": 0.2005,
-          "category_f1": 0.4533,
-          "tags_shown": 2.25,
-          "share_tagged": 0.9107,
-          "fill_per_bean": 2.25
+          "precision": 0.444,
+          "recall": 0.1208,
+          "f1": 0.1899,
+          "category_f1": 0.4495,
+          "tags_shown": 2.393,
+          "share_tagged": 0.9554,
+          "fill_per_bean": 2.393
         },
         "vote_tagged@s0.4l1.2": {
           "n": 112,
-          "precision": 0.5594,
-          "recall": 0.1147,
-          "f1": 0.1904,
-          "category_f1": 0.4347,
-          "tags_shown": 1.804,
-          "share_tagged": 0.8661,
-          "fill_per_bean": 1.804
+          "precision": 0.5365,
+          "recall": 0.1269,
+          "f1": 0.2053,
+          "category_f1": 0.4521,
+          "tags_shown": 2.08,
+          "share_tagged": 0.9107,
+          "fill_per_bean": 2.08
         },
         "vote_tagged@s0.4l2.0": {
           "n": 112,
-          "precision": 0.619,
+          "precision": 0.5417,
           "recall": 0.0924,
-          "f1": 0.1608,
-          "category_f1": 0.3631,
-          "tags_shown": 1.312,
-          "share_tagged": 0.75,
-          "fill_per_bean": 1.312
+          "f1": 0.1578,
+          "category_f1": 0.3671,
+          "tags_shown": 1.5,
+          "share_tagged": 0.8036,
+          "fill_per_bean": 1.5
         },
         "vote_tagged@s0.5l1.2": {
           "n": 112,
-          "precision": 0.5614,
-          "recall": 0.065,
-          "f1": 0.1165,
-          "category_f1": 0.2833,
-          "tags_shown": 1.018,
-          "share_tagged": 0.5893,
-          "fill_per_bean": 1.018
+          "precision": 0.5496,
+          "recall": 0.0731,
+          "f1": 0.129,
+          "category_f1": 0.299,
+          "tags_shown": 1.17,
+          "share_tagged": 0.625,
+          "fill_per_bean": 1.17
         },
         "vote_tagged@s0.5l2.0": {
           "n": 112,
-          "precision": 0.6353,
+          "precision": 0.5625,
           "recall": 0.0548,
-          "f1": 0.1009,
-          "category_f1": 0.233,
-          "tags_shown": 0.759,
-          "share_tagged": 0.4554,
-          "fill_per_bean": 0.759
+          "f1": 0.0999,
+          "category_f1": 0.2339,
+          "tags_shown": 0.857,
+          "share_tagged": 0.4911,
+          "fill_per_bean": 0.857
         },
         "vote_tagged_clean": {
           "n": 112,
-          "precision": 0.4578,
-          "recall": 0.1706,
-          "f1": 0.2485,
-          "category_f1": 0.5581,
-          "tags_shown": 3.277,
+          "precision": 0.4492,
+          "recall": 0.1614,
+          "f1": 0.2375,
+          "category_f1": 0.5429,
+          "tags_shown": 3.161,
           "share_tagged": 1.0,
-          "fill_per_bean": 3.277
+          "fill_per_bean": 3.161
         },
         "vote_tagged_clean@s0.3l2.0": {
           "n": 112,
-          "precision": 0.4763,
-          "recall": 0.1533,
-          "f1": 0.232,
-          "category_f1": 0.5232,
-          "tags_shown": 2.83,
-          "share_tagged": 1.0,
-          "fill_per_bean": 2.83
+          "precision": 0.444,
+          "recall": 0.1208,
+          "f1": 0.1899,
+          "category_f1": 0.4495,
+          "tags_shown": 2.393,
+          "share_tagged": 0.9554,
+          "fill_per_bean": 2.393
         },
         "vote_tagged_clean@s0.4l1.2": {
           "n": 112,
@@ -1174,13 +1174,13 @@
         },
         "vote_tagged_clean@s0.4l2.0": {
           "n": 112,
-          "precision": 0.595,
-          "recall": 0.1208,
-          "f1": 0.2008,
-          "category_f1": 0.434,
-          "tags_shown": 1.786,
-          "share_tagged": 0.8929,
-          "fill_per_bean": 1.786
+          "precision": 0.5417,
+          "recall": 0.0924,
+          "f1": 0.1578,
+          "category_f1": 0.3671,
+          "tags_shown": 1.5,
+          "share_tagged": 0.8036,
+          "fill_per_bean": 1.5
         },
         "vote_tagged_clean@s0.5l1.2": {
           "n": 112,
@@ -1194,23 +1194,23 @@
         },
         "vote_tagged_clean@s0.5l2.0": {
           "n": 112,
-          "precision": 0.6182,
-          "recall": 0.069,
-          "f1": 0.1242,
-          "category_f1": 0.2736,
-          "tags_shown": 0.982,
-          "share_tagged": 0.5804,
-          "fill_per_bean": 0.982
+          "precision": 0.5625,
+          "recall": 0.0548,
+          "f1": 0.0999,
+          "category_f1": 0.2339,
+          "tags_shown": 0.857,
+          "share_tagged": 0.4911,
+          "fill_per_bean": 0.857
         },
         "feat+vote_tagged": {
           "n": 112,
-          "precision": 0.4449,
-          "recall": 0.2335,
+          "precision": 0.4377,
+          "recall": 0.2355,
           "f1": 0.3063,
-          "category_f1": 0.6419,
-          "tags_shown": 4.616,
+          "category_f1": 0.6527,
+          "tags_shown": 4.732,
           "share_tagged": 1.0,
-          "fill_per_bean": 4.616
+          "fill_per_bean": 4.732
         },
         "feat|vote_tagged": {
           "n": 112,
@@ -1224,13 +1224,13 @@
         },
         "feat+vote_tagged_clean": {
           "n": 112,
-          "precision": 0.4388,
-          "recall": 0.2365,
-          "f1": 0.3074,
-          "category_f1": 0.6544,
-          "tags_shown": 4.741,
+          "precision": 0.4377,
+          "recall": 0.2355,
+          "f1": 0.3063,
+          "category_f1": 0.6527,
+          "tags_shown": 4.732,
           "share_tagged": 1.0,
-          "fill_per_bean": 4.741
+          "fill_per_bean": 4.732
         },
         "feat|vote_tagged_clean": {
           "n": 112,
@@ -1244,123 +1244,123 @@
         },
         "vote_tagged+feat": {
           "n": 112,
-          "precision": 0.4352,
-          "recall": 0.2284,
-          "f1": 0.2996,
-          "category_f1": 0.6442,
-          "tags_shown": 4.616,
+          "precision": 0.4226,
+          "recall": 0.2274,
+          "f1": 0.2957,
+          "category_f1": 0.6493,
+          "tags_shown": 4.732,
           "share_tagged": 1.0,
-          "fill_per_bean": 4.616
+          "fill_per_bean": 4.732
         },
         "vote_tagged|feat": {
           "n": 112,
-          "precision": 0.4858,
-          "recall": 0.1736,
-          "f1": 0.2558,
-          "category_f1": 0.5616,
-          "tags_shown": 3.143,
+          "precision": 0.4492,
+          "recall": 0.1614,
+          "f1": 0.2375,
+          "category_f1": 0.5429,
+          "tags_shown": 3.161,
           "share_tagged": 1.0,
-          "fill_per_bean": 3.143
+          "fill_per_bean": 3.161
         },
         "vote_tagged_clean+feat": {
           "n": 112,
-          "precision": 0.4218,
+          "precision": 0.4226,
           "recall": 0.2274,
-          "f1": 0.2955,
-          "category_f1": 0.6526,
-          "tags_shown": 4.741,
+          "f1": 0.2957,
+          "category_f1": 0.6493,
+          "tags_shown": 4.732,
           "share_tagged": 1.0,
-          "fill_per_bean": 4.741
+          "fill_per_bean": 4.732
         },
         "vote_tagged_clean|feat": {
           "n": 112,
-          "precision": 0.4578,
-          "recall": 0.1706,
-          "f1": 0.2485,
-          "category_f1": 0.5581,
-          "tags_shown": 3.277,
+          "precision": 0.4492,
+          "recall": 0.1614,
+          "f1": 0.2375,
+          "category_f1": 0.5429,
+          "tags_shown": 3.161,
           "share_tagged": 1.0,
-          "fill_per_bean": 3.277
+          "fill_per_bean": 3.161
         },
         "vote_tagged^1": {
           "n": 112,
-          "precision": 0.4231,
-          "recall": 0.0447,
-          "f1": 0.0808,
-          "category_f1": 0.2943,
-          "tags_shown": 0.929,
-          "share_tagged": 0.9286,
-          "fill_per_bean": 0.929
+          "precision": 0.4018,
+          "recall": 0.0457,
+          "f1": 0.082,
+          "category_f1": 0.3383,
+          "tags_shown": 1.0,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.0
         },
         "vote_tagged^2": {
           "n": 112,
-          "precision": 0.4774,
-          "recall": 0.0964,
-          "f1": 0.1605,
-          "category_f1": 0.4262,
-          "tags_shown": 1.777,
-          "share_tagged": 0.9286,
-          "fill_per_bean": 1.777
+          "precision": 0.4507,
+          "recall": 0.0975,
+          "f1": 0.1603,
+          "category_f1": 0.4428,
+          "tags_shown": 1.902,
+          "share_tagged": 1.0,
+          "fill_per_bean": 1.902
         },
         "vote_tagged^3": {
           "n": 112,
-          "precision": 0.4803,
-          "recall": 0.136,
-          "f1": 0.212,
-          "category_f1": 0.481,
-          "tags_shown": 2.491,
-          "share_tagged": 0.9286,
-          "fill_per_bean": 2.491
+          "precision": 0.4433,
+          "recall": 0.135,
+          "f1": 0.207,
+          "category_f1": 0.5072,
+          "tags_shown": 2.679,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.679
         },
         "vote_all+vote_tagged^2": {
           "n": 112,
-          "precision": 0.5019,
-          "recall": 0.136,
-          "f1": 0.2141,
-          "category_f1": 0.4935,
-          "tags_shown": 2.384,
-          "share_tagged": 0.9286,
-          "fill_per_bean": 2.384
+          "precision": 0.4401,
+          "recall": 0.1269,
+          "f1": 0.197,
+          "category_f1": 0.5136,
+          "tags_shown": 2.536,
+          "share_tagged": 1.0,
+          "fill_per_bean": 2.536
         },
         "vote_tagged_clean^1": {
           "n": 112,
-          "precision": 0.4375,
-          "recall": 0.0497,
-          "f1": 0.0893,
-          "category_f1": 0.3284,
+          "precision": 0.4018,
+          "recall": 0.0457,
+          "f1": 0.082,
+          "category_f1": 0.3383,
           "tags_shown": 1.0,
           "share_tagged": 1.0,
           "fill_per_bean": 1.0
         },
         "vote_tagged_clean^2": {
           "n": 112,
-          "precision": 0.4907,
-          "recall": 0.1076,
-          "f1": 0.1765,
-          "category_f1": 0.4816,
-          "tags_shown": 1.929,
+          "precision": 0.4507,
+          "recall": 0.0975,
+          "f1": 0.1603,
+          "category_f1": 0.4428,
+          "tags_shown": 1.902,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.929
+          "fill_per_bean": 1.902
         },
         "vote_tagged_clean^3": {
           "n": 112,
-          "precision": 0.4641,
-          "recall": 0.1442,
-          "f1": 0.22,
-          "category_f1": 0.5149,
-          "tags_shown": 2.732,
+          "precision": 0.4433,
+          "recall": 0.135,
+          "f1": 0.207,
+          "category_f1": 0.5072,
+          "tags_shown": 2.679,
           "share_tagged": 1.0,
-          "fill_per_bean": 2.732
+          "fill_per_bean": 2.679
         },
         "vote_all+vote_tagged_clean^2": {
           "n": 112,
-          "precision": 0.474,
-          "recall": 0.1391,
-          "f1": 0.2151,
-          "category_f1": 0.5297,
-          "tags_shown": 2.58,
+          "precision": 0.4401,
+          "recall": 0.1269,
+          "f1": 0.197,
+          "category_f1": 0.5136,
+          "tags_shown": 2.536,
           "share_tagged": 1.0,
-          "fill_per_bean": 2.58
+          "fill_per_bean": 2.536
         },
         "current": {
           "n": 112,
@@ -1430,93 +1430,93 @@
         },
         "vote_all": {
           "n": 144,
-          "precision": 0.3978,
-          "recall": 0.1151,
-          "f1": 0.1785,
-          "category_f1": 0.4356,
-          "tags_shown": 3.0,
+          "precision": 0.3792,
+          "recall": 0.1215,
+          "f1": 0.184,
+          "category_f1": 0.4447,
+          "tags_shown": 3.201,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.868
+          "fill_per_bean": 2.069
         },
         "vote_tagged": {
           "n": 144,
-          "precision": 0.3854,
-          "recall": 0.1247,
-          "f1": 0.1885,
-          "category_f1": 0.4552,
-          "tags_shown": 3.222,
+          "precision": 0.3701,
+          "recall": 0.1333,
+          "f1": 0.196,
+          "category_f1": 0.4619,
+          "tags_shown": 3.458,
           "share_tagged": 1.0,
-          "fill_per_bean": 2.09
+          "fill_per_bean": 2.326
         },
         "vote_tagged@s0.3l2.0": {
           "n": 144,
-          "precision": 0.3716,
+          "precision": 0.3506,
           "recall": 0.0871,
-          "f1": 0.1411,
-          "category_f1": 0.3725,
-          "tags_shown": 2.646,
+          "f1": 0.1395,
+          "category_f1": 0.3852,
+          "tags_shown": 2.736,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.514
+          "fill_per_bean": 1.604
         },
         "vote_tagged@s0.4l1.2": {
           "n": 144,
-          "precision": 0.3785,
-          "recall": 0.072,
-          "f1": 0.121,
-          "category_f1": 0.3338,
-          "tags_shown": 2.361,
+          "precision": 0.4444,
+          "recall": 0.0989,
+          "f1": 0.1618,
+          "category_f1": 0.3781,
+          "tags_shown": 2.569,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.229
+          "fill_per_bean": 1.438
         },
         "vote_tagged@s0.4l2.0": {
           "n": 144,
-          "precision": 0.4215,
-          "recall": 0.0548,
-          "f1": 0.0971,
-          "category_f1": 0.2637,
-          "tags_shown": 1.972,
+          "precision": 0.4286,
+          "recall": 0.0613,
+          "f1": 0.1072,
+          "category_f1": 0.2981,
+          "tags_shown": 2.056,
           "share_tagged": 1.0,
-          "fill_per_bean": 0.84
+          "fill_per_bean": 0.924
         },
         "vote_tagged@s0.5l1.2": {
           "n": 144,
-          "precision": 0.3659,
-          "recall": 0.0323,
-          "f1": 0.0593,
-          "category_f1": 0.1706,
-          "tags_shown": 1.701,
+          "precision": 0.4494,
+          "recall": 0.043,
+          "f1": 0.0785,
+          "category_f1": 0.2175,
+          "tags_shown": 1.75,
           "share_tagged": 1.0,
-          "fill_per_bean": 0.569
+          "fill_per_bean": 0.618
         },
         "vote_tagged@s0.5l2.0": {
           "n": 144,
-          "precision": 0.4,
-          "recall": 0.0237,
-          "f1": 0.0447,
-          "category_f1": 0.1333,
-          "tags_shown": 1.514,
+          "precision": 0.4815,
+          "recall": 0.028,
+          "f1": 0.0528,
+          "category_f1": 0.1377,
+          "tags_shown": 1.507,
           "share_tagged": 1.0,
-          "fill_per_bean": 0.382
+          "fill_per_bean": 0.375
         },
         "vote_tagged_clean": {
           "n": 144,
-          "precision": 0.3824,
-          "recall": 0.1452,
-          "f1": 0.2104,
-          "category_f1": 0.478,
-          "tags_shown": 3.583,
+          "precision": 0.3701,
+          "recall": 0.1333,
+          "f1": 0.196,
+          "category_f1": 0.4619,
+          "tags_shown": 3.458,
           "share_tagged": 1.0,
-          "fill_per_bean": 2.451
+          "fill_per_bean": 2.326
         },
         "vote_tagged_clean@s0.3l2.0": {
           "n": 144,
-          "precision": 0.3798,
-          "recall": 0.1172,
-          "f1": 0.1791,
-          "category_f1": 0.4421,
-          "tags_shown": 3.125,
+          "precision": 0.3506,
+          "recall": 0.0871,
+          "f1": 0.1395,
+          "category_f1": 0.3852,
+          "tags_shown": 2.736,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.993
+          "fill_per_bean": 1.604
         },
         "vote_tagged_clean@s0.4l1.2": {
           "n": 144,
@@ -1530,13 +1530,13 @@
         },
         "vote_tagged_clean@s0.4l2.0": {
           "n": 144,
-          "precision": 0.485,
-          "recall": 0.0871,
-          "f1": 0.1477,
-          "category_f1": 0.3554,
-          "tags_shown": 2.292,
+          "precision": 0.4286,
+          "recall": 0.0613,
+          "f1": 0.1072,
+          "category_f1": 0.2981,
+          "tags_shown": 2.056,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.16
+          "fill_per_bean": 0.924
         },
         "vote_tagged_clean@s0.5l1.2": {
           "n": 144,
@@ -1550,23 +1550,23 @@
         },
         "vote_tagged_clean@s0.5l2.0": {
           "n": 144,
-          "precision": 0.5167,
-          "recall": 0.0333,
-          "f1": 0.0626,
-          "category_f1": 0.1528,
-          "tags_shown": 1.549,
+          "precision": 0.4815,
+          "recall": 0.028,
+          "f1": 0.0528,
+          "category_f1": 0.1377,
+          "tags_shown": 1.507,
           "share_tagged": 1.0,
-          "fill_per_bean": 0.417
+          "fill_per_bean": 0.375
         },
         "feat+vote_tagged": {
           "n": 144,
-          "precision": 0.3778,
-          "recall": 0.2161,
-          "f1": 0.275,
-          "category_f1": 0.5395,
-          "tags_shown": 4.826,
+          "precision": 0.3656,
+          "recall": 0.2151,
+          "f1": 0.2708,
+          "category_f1": 0.5461,
+          "tags_shown": 4.931,
           "share_tagged": 1.0,
-          "fill_per_bean": 3.694
+          "fill_per_bean": 3.799
         },
         "feat|vote_tagged": {
           "n": 144,
@@ -1600,143 +1600,143 @@
         },
         "vote_tagged+feat": {
           "n": 144,
-          "precision": 0.359,
-          "recall": 0.2054,
-          "f1": 0.2613,
-          "category_f1": 0.5678,
-          "tags_shown": 4.826,
+          "precision": 0.3437,
+          "recall": 0.2022,
+          "f1": 0.2546,
+          "category_f1": 0.5744,
+          "tags_shown": 4.931,
           "share_tagged": 1.0,
-          "fill_per_bean": 3.694
+          "fill_per_bean": 3.799
         },
         "vote_tagged|feat": {
           "n": 144,
-          "precision": 0.391,
-          "recall": 0.1312,
-          "f1": 0.1965,
-          "category_f1": 0.4715,
-          "tags_shown": 3.299,
+          "precision": 0.3701,
+          "recall": 0.1333,
+          "f1": 0.196,
+          "category_f1": 0.4619,
+          "tags_shown": 3.458,
           "share_tagged": 1.0,
-          "fill_per_bean": 2.167
+          "fill_per_bean": 2.326
         },
         "vote_tagged_clean+feat": {
           "n": 144,
-          "precision": 0.351,
-          "recall": 0.2065,
-          "f1": 0.26,
-          "category_f1": 0.5777,
+          "precision": 0.3437,
+          "recall": 0.2022,
+          "f1": 0.2546,
+          "category_f1": 0.5744,
           "tags_shown": 4.931,
           "share_tagged": 1.0,
           "fill_per_bean": 3.799
         },
         "vote_tagged_clean|feat": {
           "n": 144,
-          "precision": 0.3824,
-          "recall": 0.1452,
-          "f1": 0.2104,
-          "category_f1": 0.478,
-          "tags_shown": 3.583,
+          "precision": 0.3701,
+          "recall": 0.1333,
+          "f1": 0.196,
+          "category_f1": 0.4619,
+          "tags_shown": 3.458,
           "share_tagged": 1.0,
-          "fill_per_bean": 2.451
+          "fill_per_bean": 2.326
         },
         "vote_tagged^1": {
           "n": 144,
-          "precision": 0.3077,
-          "recall": 0.0258,
-          "f1": 0.0476,
-          "category_f1": 0.195,
-          "tags_shown": 1.674,
+          "precision": 0.2857,
+          "recall": 0.0237,
+          "f1": 0.0437,
+          "category_f1": 0.2131,
+          "tags_shown": 1.667,
           "share_tagged": 1.0,
-          "fill_per_bean": 0.542
+          "fill_per_bean": 0.535
         },
         "vote_tagged^2": {
           "n": 144,
-          "precision": 0.3314,
-          "recall": 0.0624,
-          "f1": 0.105,
-          "category_f1": 0.3529,
-          "tags_shown": 2.347,
+          "precision": 0.3167,
+          "recall": 0.0613,
+          "f1": 0.1027,
+          "category_f1": 0.3584,
+          "tags_shown": 2.382,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.215
+          "fill_per_bean": 1.25
         },
         "vote_tagged^3": {
           "n": 144,
-          "precision": 0.3608,
-          "recall": 0.0989,
-          "f1": 0.1553,
-          "category_f1": 0.4183,
-          "tags_shown": 2.903,
+          "precision": 0.3235,
+          "recall": 0.0946,
+          "f1": 0.1464,
+          "category_f1": 0.4293,
+          "tags_shown": 3.021,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.771
+          "fill_per_bean": 1.889
         },
         "vote_all+vote_tagged^2": {
           "n": 144,
-          "precision": 0.3943,
-          "recall": 0.1183,
-          "f1": 0.182,
-          "category_f1": 0.4472,
-          "tags_shown": 3.069,
+          "precision": 0.375,
+          "recall": 0.1258,
+          "f1": 0.1884,
+          "category_f1": 0.4577,
+          "tags_shown": 3.299,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.938
+          "fill_per_bean": 2.167
         },
         "vote_tagged_clean^1": {
           "n": 144,
-          "precision": 0.3333,
+          "precision": 0.2857,
           "recall": 0.0237,
-          "f1": 0.0442,
-          "category_f1": 0.187,
-          "tags_shown": 1.59,
+          "f1": 0.0437,
+          "category_f1": 0.2131,
+          "tags_shown": 1.667,
           "share_tagged": 1.0,
-          "fill_per_bean": 0.458
+          "fill_per_bean": 0.535
         },
         "vote_tagged_clean^2": {
           "n": 144,
-          "precision": 0.3204,
-          "recall": 0.0624,
-          "f1": 0.1044,
-          "category_f1": 0.3615,
-          "tags_shown": 2.389,
+          "precision": 0.3167,
+          "recall": 0.0613,
+          "f1": 0.1027,
+          "category_f1": 0.3584,
+          "tags_shown": 2.382,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.257
+          "fill_per_bean": 1.25
         },
         "vote_tagged_clean^3": {
           "n": 144,
-          "precision": 0.3566,
-          "recall": 0.1097,
-          "f1": 0.1678,
-          "category_f1": 0.4538,
-          "tags_shown": 3.118,
+          "precision": 0.3235,
+          "recall": 0.0946,
+          "f1": 0.1464,
+          "category_f1": 0.4293,
+          "tags_shown": 3.021,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.986
+          "fill_per_bean": 1.889
         },
         "vote_all+vote_tagged_clean^2": {
           "n": 144,
-          "precision": 0.3851,
-          "recall": 0.1226,
-          "f1": 0.186,
-          "category_f1": 0.4709,
-          "tags_shown": 3.188,
+          "precision": 0.375,
+          "recall": 0.1258,
+          "f1": 0.1884,
+          "category_f1": 0.4577,
+          "tags_shown": 3.299,
           "share_tagged": 1.0,
-          "fill_per_bean": 2.056
+          "fill_per_bean": 2.167
         },
         "current": {
           "n": 144,
-          "precision": 0.3978,
-          "recall": 0.1151,
-          "f1": 0.1785,
-          "category_f1": 0.4356,
-          "tags_shown": 3.0,
+          "precision": 0.3792,
+          "recall": 0.1215,
+          "f1": 0.184,
+          "category_f1": 0.4447,
+          "tags_shown": 3.201,
           "share_tagged": 1.0,
-          "fill_per_bean": 1.868
+          "fill_per_bean": 2.069
         },
         "shipped": {
           "n": 144,
-          "precision": 0.3851,
-          "recall": 0.1226,
-          "f1": 0.186,
-          "category_f1": 0.4709,
-          "tags_shown": 3.188,
+          "precision": 0.375,
+          "recall": 0.1258,
+          "f1": 0.1884,
+          "category_f1": 0.4577,
+          "tags_shown": 3.299,
           "share_tagged": 1.0,
-          "fill_per_bean": 2.056
+          "fill_per_bean": 2.167
         }
       }
     },
@@ -1746,6 +1746,6 @@
       "emb_mlp": 0.05
     }
   },
-  "embedding_requests": 136,
+  "embedding_requests": 0,
   "note_cache_sha1": "7285e0933b72"
 }

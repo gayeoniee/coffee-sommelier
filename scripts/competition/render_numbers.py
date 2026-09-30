@@ -41,7 +41,7 @@ def _load_here_or_parent(eval_dir: Path, name: str) -> dict | None:
     return None
 
 
-SWEET_ABSTAIN_RULE = "cue or weighted count >= 1.4 (SHIPPED, ADR 0021)"      # phase10_open_sweetness.json key
+SWEET_ABSTAIN_RULE = "cue or weighted count >= 1.3 (SHIPPED, ADR 0021)"      # phase10_open_sweetness.json key (re-tuned, ADR 0024)
 
 
 def render_headline(labels: dict | None, v3: dict | None, zen: dict | None, sweet10: dict | None = None

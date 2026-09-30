@@ -91,7 +91,12 @@ ABSTAIN = ("sweetness",)
 # the accuracy loss of just lowering the raw count to 2 (scripts/eval_open_sweetness_abstain.py ->
 # data/eval/open/phase10_open_sweetness.json): E1 coverage 51.4% (was 48.6%), +-1 0.676 (was 0.686, within noise),
 # E2 (secondary check) improves 0.497 -> 0.558 answered +-1. Cue text still overrides regardless.
-ABSTAIN_MIN_WEIGHT = {"sweetness": 1.4}
+# ADR 0024: excluding roasterdb from coffee_open thins the neighbour pool further, so t=1.4 alone fell back
+# below the 50% floor (E1 coverage 48.6%). The weight_sweep in phase10_open_sweetness.json is flat from
+# t=1.0 to t=1.3 (coverage 58.3%, +-1 0.667, MAE 0.913 at every one of those thresholds -- the eligible
+# beans' weighted neighbour sums cluster below 1.4), so 1.3 is the tightest threshold that still clears the
+# floor; re-tuned 1.4 -> 1.3.
+ABSTAIN_MIN_WEIGHT = {"sweetness": 1.3}
 CONFIG_PATH = settings.CONFIG_DIR / "feature_model_open.json"
 
 

@@ -113,7 +113,7 @@ def load_rows(conn) -> list[dict]:
     rows = conn.execute(
         "SELECT id, key, name, roaster, source, origin_country, process, roast_level, is_decaf, decaf_process,"
         " variety, altitude_m, flavor_summary, embedding::text AS emb FROM coffees"
-        " WHERE active AND source IN ('roasters_kr', 'roasterdb', 'shopify', 'shopify_gauged') ORDER BY key").fetchall()
+        " WHERE active AND source IN ('roasters_kr', 'shopify', 'shopify_gauged') ORDER BY key").fetchall()
     out = []
     for r in rows:
         tags = text_tags(r["flavor_summary"] or "", tag_to_cat, tag_ko, limit=8)

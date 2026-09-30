@@ -8,10 +8,11 @@ this only tries the coarser 7-way SCA top-level category (app.core.flavors.PREFE
 target -- reusing app/core/tagmodel.py's TagModel class unchanged (it's generic over its label list; "tags"
 here are category names, not flavor words).
 
-Measurement pool (feasibility only, per docs/adr/0009 Goal B2): roasters_kr + shopify + roasterdb, ~150 tagged
-active beans. roasterdb is licence-restricted for shipping (same status as coffeereview_kaggle -- excluded from
-scripts/train_attr_model.py's --variant open too) but included here to give the 5-fold CV enough data to say
-anything at all; the SHIPPED model (if any) is retrained on roasters_kr + shopify only.
+Measurement pool (feasibility only, per docs/adr/0009 Goal B2): roasters_kr + shopify, ~150 tagged active
+beans. roasterdb (CC BY-NC) used to also sit in this pool to give the 5-fold CV a bit more data, but is now
+excluded from coffee_open entirely (docs/adr/0024-exclude-roasterdb-open.md) -- not loaded, not a neighbour,
+not a training/measurement label, so the measurement pool and the SHIPPED model (if any) are now the same
+roasters_kr + shopify beans.
 
 Decision: ship config/tag_model_open.json only if the CV category F1 (over the ~150-bean measurement pool)
 beats the neighbour vote's category F1 on the SAME beans by >=0.05. Otherwise: report the numbers, ship
@@ -44,7 +45,7 @@ from pipeline.embed import embedding_text  # noqa: E402
 from pipeline.llm import embed_model, embedder_for  # noqa: E402
 from pipeline.records import CoffeeRecord  # noqa: E402
 
-MEASURE_SOURCES = ("roasters_kr", "shopify", "roasterdb")   # feasibility measurement pool
+MEASURE_SOURCES = ("roasters_kr", "shopify")   # feasibility measurement pool (roasterdb excluded, ADR 0024)
 SHIP_SOURCES = ("roasters_kr", "shopify")                    # licence-clean: what a shipped model would train on
 MIN_SHIP_MARGIN = 0.05
 THRESHOLDS = (0.25, 0.3, 0.35, 0.4, 0.45, 0.5)
@@ -225,10 +226,9 @@ def main() -> int:
             "categories": cats, "measure_sources": list(MEASURE_SOURCES), "ship_sources": list(SHIP_SOURCES),
             "n_measured": len(rows), "embed_model": model_name, "cv": cv, "neighbor_vote": vote,
             "margin": margin, "min_ship_margin": MIN_SHIP_MARGIN, "shipped": ship,
-            "note": "measurement pool includes roasterdb (licence-restricted for shipping, same status as "
-                    "coffeereview_kaggle) purely to give the 5-fold CV enough data to be meaningful; a shipped "
-                    "model is retrained on ship_sources only. See docs/adr/0009-learned-attribute-model.md "
-                    "Goal B2.",
+            "note": "measurement pool == ship_sources (roasterdb excluded from coffee_open entirely, "
+                    "docs/adr/0024-exclude-roasterdb-open.md); a shipped model is retrained on the same "
+                    "beans it was measured on. See docs/adr/0009-learned-attribute-model.md Goal B2.",
         }
 
         if ship:

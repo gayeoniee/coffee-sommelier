@@ -56,7 +56,7 @@
   "model_files_sha1": {
     "attr_model.json": "fa15cf7ad595",
     "tag_model.json": "57fd105ee18b",
-    "feature_model_open.json": "133862e12ddc",
+    "feature_model_open.json": "65442d513d47",
     "tag_cooc_open.json": "aede1765bd2d"
   },
   "variants": {
@@ -103,75 +103,75 @@
       "parsed_origin": 72,
       "acidity": {
         "n": 196,
-        "mae": 0.5668,
-        "within1": 0.852,
-        "spearman": 0.7092,
+        "mae": 0.575,
+        "within1": 0.8622,
+        "spearman": 0.7186,
         "mean_truth": 2.329,
-        "mean_pred": 2.431,
+        "mean_pred": 2.484,
         "coverage": 1.0
       },
       "body": {
         "n": 195,
-        "mae": 0.5829,
-        "within1": 0.8462,
-        "spearman": 0.0308,
+        "mae": 0.5804,
+        "within1": 0.8513,
+        "spearman": 0.0321,
         "mean_truth": 2.948,
-        "mean_pred": 3.3,
+        "mean_pred": 3.298,
         "coverage": 1.0
       },
       "sweetness": {
-        "n": 167,
-        "mae": 1.2219,
-        "within1": 0.491,
-        "spearman": -0.3097,
-        "mean_truth": 2.577,
-        "mean_pred": 3.723,
-        "coverage": 0.852
+        "n": 173,
+        "mae": 1.2306,
+        "within1": 0.4913,
+        "spearman": -0.3448,
+        "mean_truth": 2.574,
+        "mean_pred": 3.731,
+        "coverage": 0.8827
       },
       "tags_before_text_cues": {
         "n": 196,
-        "precision": 0.5372,
-        "recall": 0.2515,
-        "f1": 0.3426,
-        "category_f1": 0.6183
+        "precision": 0.5781,
+        "recall": 0.2632,
+        "f1": 0.3617,
+        "category_f1": 0.5977
       }
     },
     "open_neighbours": {
       "predictor": "coffee_open DB neighbours → text cues (feature model off)",
       "parsed_origin": 72,
       "acidity": {
-        "n": 182,
-        "mae": 0.8831,
-        "within1": 0.6154,
-        "spearman": 0.5205,
-        "mean_truth": 2.345,
-        "mean_pred": 3.03,
-        "coverage": 0.9286
+        "n": 196,
+        "mae": 0.8279,
+        "within1": 0.6531,
+        "spearman": 0.5424,
+        "mean_truth": 2.329,
+        "mean_pred": 2.934,
+        "coverage": 1.0
       },
       "body": {
-        "n": 162,
-        "mae": 0.6698,
-        "within1": 0.7778,
-        "spearman": -0.0085,
-        "mean_truth": 2.94,
-        "mean_pred": 3.469,
-        "coverage": 0.8308
+        "n": 182,
+        "mae": 0.7246,
+        "within1": 0.7308,
+        "spearman": -0.0422,
+        "mean_truth": 2.946,
+        "mean_pred": 3.549,
+        "coverage": 0.9333
       },
       "sweetness": {
-        "n": 167,
-        "mae": 1.4413,
-        "within1": 0.2994,
-        "spearman": -0.0131,
-        "mean_truth": 2.577,
-        "mean_pred": 3.994,
-        "coverage": 0.852
+        "n": 173,
+        "mae": 1.3945,
+        "within1": 0.3931,
+        "spearman": -0.1053,
+        "mean_truth": 2.574,
+        "mean_pred": 3.943,
+        "coverage": 0.8827
       },
       "tags_before_text_cues": {
         "n": 196,
-        "precision": 0.5372,
-        "recall": 0.2515,
-        "f1": 0.3426,
-        "category_f1": 0.6183
+        "precision": 0.5781,
+        "recall": 0.2632,
+        "f1": 0.3617,
+        "category_f1": 0.5977
       }
     }
   },
@@ -204,53 +204,53 @@
   "open_paired": {
     "acidity": {
       "open_feature_model": {
-        "n": 182,
-        "mae": 0.5598,
-        "within1": 0.8516,
-        "spearman": 0.7026,
-        "mean_truth": 2.345,
-        "mean_pred": 2.433
+        "n": 196,
+        "mae": 0.575,
+        "within1": 0.8622,
+        "spearman": 0.7186,
+        "mean_truth": 2.329,
+        "mean_pred": 2.484
       },
       "open_neighbour_average": {
-        "n": 182,
-        "mae": 0.8831,
-        "within1": 0.6154,
-        "spearman": 0.5205,
-        "mean_truth": 2.345,
-        "mean_pred": 3.03
+        "n": 196,
+        "mae": 0.8279,
+        "within1": 0.6531,
+        "spearman": 0.5424,
+        "mean_truth": 2.329,
+        "mean_pred": 2.934
       },
       "constant_3": {
-        "n": 182,
-        "mae": 0.8961,
-        "within1": 0.6648,
+        "n": 196,
+        "mae": 0.9277,
+        "within1": 0.6531,
         "spearman": null,
-        "mean_truth": 2.345,
+        "mean_truth": 2.329,
         "mean_pred": 3.0
       }
     },
     "sweetness": {
       "open_feature_model": {
-        "n": 167,
-        "mae": 1.2219,
-        "within1": 0.491,
-        "spearman": -0.3097,
-        "mean_truth": 2.577,
-        "mean_pred": 3.723
+        "n": 173,
+        "mae": 1.2306,
+        "within1": 0.4913,
+        "spearman": -0.3448,
+        "mean_truth": 2.574,
+        "mean_pred": 3.731
       },
       "open_neighbour_average": {
-        "n": 167,
-        "mae": 1.4413,
-        "within1": 0.2994,
-        "spearman": -0.0131,
-        "mean_truth": 2.577,
-        "mean_pred": 3.994
+        "n": 173,
+        "mae": 1.3945,
+        "within1": 0.3931,
+        "spearman": -0.1053,
+        "mean_truth": 2.574,
+        "mean_pred": 3.943
       },
       "constant_3": {
-        "n": 167,
-        "mae": 0.5938,
-        "within1": 0.8024,
+        "n": 173,
+        "mae": 0.5882,
+        "within1": 0.8035,
         "spearman": null,
-        "mean_truth": 2.577,
+        "mean_truth": 2.574,
         "mean_pred": 3.0
       }
     }

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T07:57:29.435408+00:00",
+  "generated_at": "2026-09-30T13:23:10.036431+00:00",
   "sources": [
     "roasters_kr",
     "shopify",
@@ -32,10 +32,10 @@
     "table": {
       "neighbour_vote": {
         "n": 277,
-        "precision": 0.1791,
-        "recall": 0.043,
-        "f1": 0.0694,
-        "category_f1": 0.2545
+        "precision": 0.1401,
+        "recall": 0.0263,
+        "f1": 0.0443,
+        "category_f1": 0.2228
       },
       "prior_top2": {
         "n": 277,
@@ -130,42 +130,42 @@
     },
     "per_roaster_f1": {
       "Blue Bottle Coffee": {
-        "neighbour_vote": 0.0426,
+        "neighbour_vote": 0.0,
         "prior_top2": 0.3793,
         "feat": 0.2588,
         "emb": 0.3765,
         "both": 0.2588
       },
       "Café Britt": {
-        "neighbour_vote": 0.1667,
+        "neighbour_vote": 0.2,
         "prior_top2": 0.2222,
         "feat": 0.4,
         "emb": 0.2857,
         "both": 0.4
       },
       "Café Don Pablo": {
-        "neighbour_vote": 0.3291,
+        "neighbour_vote": 0.2286,
         "prior_top2": 0.5,
         "feat": 0.4604,
         "emb": 0.4604,
         "both": 0.4478
       },
       "Coffee Supreme": {
-        "neighbour_vote": 0.1,
+        "neighbour_vote": 0.0,
         "prior_top2": 0.4138,
         "feat": 0.4091,
         "emb": 0.4091,
         "both": 0.4091
       },
       "Fresh Roasted Coffee": {
-        "neighbour_vote": 0.037,
+        "neighbour_vote": 0.0377,
         "prior_top2": 0.25,
         "feat": 0.2143,
         "emb": 0.2192,
         "both": 0.2143
       },
       "G로스팅": {
-        "neighbour_vote": 0.0667,
+        "neighbour_vote": 0.0,
         "prior_top2": 0.1495,
         "feat": 0.3165,
         "emb": 0.2676,
@@ -186,21 +186,21 @@
         "both": 0.2339
       },
       "Volcanica Coffee": {
-        "neighbour_vote": 0.1101,
+        "neighbour_vote": 0.0404,
         "prior_top2": 0.25,
         "feat": 0.2949,
         "emb": 0.3226,
         "both": 0.2884
       },
       "나무사이로": {
-        "neighbour_vote": 0.0222,
+        "neighbour_vote": 0.0,
         "prior_top2": 0.1449,
         "feat": 0.2512,
         "emb": 0.2115,
         "both": 0.2358
       },
       "내일의커피": {
-        "neighbour_vote": 0.0,
+        "neighbour_vote": 0.0645,
         "prior_top2": 0.1304,
         "feat": 0.3684,
         "emb": 0.3158,
@@ -214,7 +214,7 @@
         "both": 0.2353
       },
       "모모스커피": {
-        "neighbour_vote": 0.1176,
+        "neighbour_vote": 0.0816,
         "prior_top2": 0.1212,
         "feat": 0.2778,
         "emb": 0.2308,
@@ -228,7 +228,7 @@
         "both": 0.25
       },
       "앤트러사이트": {
-        "neighbour_vote": 0.0909,
+        "neighbour_vote": 0.0952,
         "prior_top2": 0.1039,
         "feat": 0.1951,
         "emb": 0.192,
@@ -242,14 +242,14 @@
         "both": 0.2623
       },
       "펠트": {
-        "neighbour_vote": 0.08,
+        "neighbour_vote": 0.1569,
         "prior_top2": 0.125,
         "feat": 0.2549,
         "emb": 0.2424,
         "both": 0.233
       },
       "프릳츠": {
-        "neighbour_vote": 0.087,
+        "neighbour_vote": 0.0,
         "prior_top2": 0.1481,
         "feat": 0.1026,
         "emb": 0.2381,
@@ -263,10 +263,10 @@
     "example_input": "Tasty coffee Brazil Эдуардо Косте | light roast",
     "neighbour_vote": {
       "n": 112,
-      "precision": 0.528,
-      "recall": 0.0863,
-      "f1": 0.1483,
-      "category_f1": 0.3442
+      "precision": 0.463,
+      "recall": 0.0761,
+      "f1": 0.1308,
+      "category_f1": 0.3399
     },
     "prior_top2": {
       "n": 112,
@@ -368,24 +368,24 @@
   },
   "ship": {
     "feat": {
-      "e1_gain_f1": 0.1957,
-      "e1_gain_category_f1": 0.4029,
-      "e2_gain_f1": 0.1459,
-      "e2_gain_category_f1": 0.2847,
+      "e1_gain_f1": 0.2208,
+      "e1_gain_category_f1": 0.4346,
+      "e2_gain_f1": 0.1634,
+      "e2_gain_category_f1": 0.289,
       "passes": true
     },
     "emb": {
-      "e1_gain_f1": 0.2003,
-      "e1_gain_category_f1": 0.4219,
-      "e2_gain_f1": 0.1986,
-      "e2_gain_category_f1": 0.344,
+      "e1_gain_f1": 0.2254,
+      "e1_gain_category_f1": 0.4536,
+      "e2_gain_f1": 0.2161,
+      "e2_gain_category_f1": 0.3483,
       "passes": true
     },
     "both": {
-      "e1_gain_f1": 0.1962,
-      "e1_gain_category_f1": 0.4102,
-      "e2_gain_f1": 0.1766,
-      "e2_gain_category_f1": 0.3256,
+      "e1_gain_f1": 0.2213,
+      "e1_gain_category_f1": 0.4419,
+      "e2_gain_f1": 0.1941,
+      "e2_gain_category_f1": 0.3299,
       "passes": true
     }
   },

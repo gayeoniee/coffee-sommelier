@@ -18,14 +18,18 @@ from pipeline import settings
 from pipeline.llm import embed_model
 
 # Knowledge-base variants (sources left out) for the open-data comparison.
-#   full      = everything, incl. the licence-restricted coffeereview (Kaggle) data
+#   full      = everything, incl. the licence-restricted coffeereview (Kaggle) data and RoasterDB (CC BY-NC)
 #   open      = open-licence sources only; roasters_kr is left out too, so "open" means exactly what it did
 #               before the Korean roastery data existed and its numbers stay comparable
-#   open_plus = open + Korean roastery facts (roasters_kr)
+#   open_plus = open + Korean roastery facts (roasters_kr) -- this is the actual submitted coffee_open DB
+# ADR 0024: RoasterDB (CC BY-NC 4.0) is excluded from both open variants too (not just coffeereview) -- the
+# competition pledge (submitted results may be used for AI training) would conflict with RoasterDB's
+# non-commercial licence if any of its data reached a variant simulating the submission, including as a
+# neighbour in this comparison's decaf_probe/loo rankings.
 VARIANTS: dict[str, tuple[str, ...]] = {
     "full": (),
-    "open": ("coffeereview_kaggle", "roasters_kr"),
-    "open_plus": ("coffeereview_kaggle",),
+    "open": ("coffeereview_kaggle", "roasters_kr", "roasterdb"),
+    "open_plus": ("coffeereview_kaggle", "roasterdb"),
 }
 OPEN_LICENSE_EXCLUDE = VARIANTS["open"]
 # Fixed LOO targets for compare3: open-licence beans whose acidity/body are human ratings (CQI Q-grader cupping

@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-29T07:51:54.733143+00:00",
+ "generated_at": "2026-09-30T13:34:04.455486+00:00",
  "n_aliases": 96,
  "guest": {
   "rows": [
@@ -254,7 +254,7 @@
    "lost_tags": 4,
    "tags_per_bean_before": 1.756,
    "tags_per_bean_after": 1.852,
-   "enriched_cache_matches_before": 160,
+   "enriched_cache_matches_before": 191,
    "gained": {
     "cocoa": 4,
     "almonds": 4,
@@ -269,8 +269,8 @@
    },
    "lost": {
     "citrus fruit": 2,
-    "sweet aromatics": 1,
-    "maple syrup": 1
+    "maple syrup": 1,
+    "sweet aromatics": 1
    },
    "examples": [
     {
@@ -345,11 +345,11 @@
      ]
     }
    ],
-   "db_matches_before": 160,
-   "db_matches_after": 142,
+   "db_matches_before": 191,
+   "db_matches_after": 209,
    "in_db": 209,
-   "db_changed_by_reenrich": 67,
-   "db_tags_per_bean": 1.45
+   "db_changed_by_reenrich": 0,
+   "db_tags_per_bean": 1.852
   },
   "shopify": {
    "beans": 9,
@@ -379,7 +379,7 @@
    "lost_tags": 20,
    "tags_per_bean_before": 1.523,
    "tags_per_bean_after": 2.06,
-   "enriched_cache_matches_before": 199,
+   "enriched_cache_matches_before": 104,
    "gained": {
     "caramelized": 31,
     "other fruit": 18,
@@ -392,7 +392,7 @@
     "raisin": 4,
     "brown sugar": 4,
     "smoky": 3,
-    "cocoa": 2
+    "citrus fruit": 2
    },
    "lost": {
     "citrus fruit": 4,
@@ -475,30 +475,11 @@
      ]
     }
    ],
-   "db_matches_before": 199,
-   "db_matches_after": 104,
+   "db_matches_before": 104,
+   "db_matches_after": 199,
    "in_db": 199,
-   "db_changed_by_reenrich": 95,
-   "db_tags_per_bean": 1.523
-  },
-  "roasterdb": {
-   "beans": 100,
-   "tagged_before": 100,
-   "tagged_after": 100,
-   "changed": 0,
-   "gained_tags": 0,
-   "lost_tags": 0,
-   "tags_per_bean_before": 2.61,
-   "tags_per_bean_after": 2.61,
-   "enriched_cache_matches_before": 100,
-   "gained": {},
-   "lost": {},
-   "examples": [],
-   "db_matches_before": 100,
-   "db_matches_after": 100,
-   "in_db": 100,
    "db_changed_by_reenrich": 0,
-   "db_tags_per_bean": 2.61
+   "db_tags_per_bean": 2.06
   },
   "cqi": {
    "beans": 1546,
@@ -605,70 +586,70 @@
   "pred_old_truth_old": {
    "before_text_cues": {
     "n": 192,
-    "precision": 0.3593,
-    "recall": 0.274,
-    "f1": 0.3109,
-    "category_f1": 0.5635
+    "precision": 0.2492,
+    "recall": 0.22,
+    "f1": 0.2337,
+    "category_f1": 0.5219
    },
    "shown": {
     "n": 192,
-    "precision": 0.7286,
-    "recall": 0.8259,
-    "f1": 0.7742,
-    "category_f1": 0.8617
+    "precision": 0.6885,
+    "recall": 0.8354,
+    "f1": 0.7549,
+    "category_f1": 0.8364
    },
-   "shown_per_sample": 4.375
+   "shown_per_sample": 4.682
   },
   "pred_old_truth_new": {
    "before_text_cues": {
     "n": 196,
-    "precision": 0.4705,
-    "recall": 0.1852,
-    "f1": 0.2658,
-    "category_f1": 0.5599
+    "precision": 0.5725,
+    "recall": 0.2618,
+    "f1": 0.3593,
+    "category_f1": 0.5972
    },
    "shown": {
     "n": 196,
-    "precision": 0.7662,
-    "recall": 0.4457,
-    "f1": 0.5635,
-    "category_f1": 0.7691
+    "precision": 0.826,
+    "recall": 0.5161,
+    "f1": 0.6353,
+    "category_f1": 0.7852
    },
-   "shown_per_sample": 4.342
+   "shown_per_sample": 4.663
   },
   "pred_new_truth_old": {
    "before_text_cues": {
     "n": 192,
-    "precision": 0.3569,
-    "recall": 0.2726,
-    "f1": 0.3091,
-    "category_f1": 0.5659
+    "precision": 0.2492,
+    "recall": 0.22,
+    "f1": 0.2337,
+    "category_f1": 0.5242
    },
    "shown": {
     "n": 192,
-    "precision": 0.4368,
-    "recall": 0.5601,
-    "f1": 0.4908,
-    "category_f1": 0.693
+    "precision": 0.437,
+    "recall": 0.5614,
+    "f1": 0.4914,
+    "category_f1": 0.6894
    },
-   "shown_per_sample": 4.948
+   "shown_per_sample": 4.958
   },
   "pred_new_truth_new": {
    "before_text_cues": {
     "n": 196,
-    "precision": 0.4602,
-    "recall": 0.1818,
-    "f1": 0.2607,
-    "category_f1": 0.5591
+    "precision": 0.5781,
+    "recall": 0.2632,
+    "f1": 0.3617,
+    "category_f1": 0.5977
    },
    "shown": {
     "n": 196,
-    "precision": 0.9597,
-    "recall": 0.6343,
-    "f1": 0.7638,
-    "category_f1": 0.8953
+    "precision": 0.9577,
+    "recall": 0.635,
+    "f1": 0.7637,
+    "category_f1": 0.891
    },
-   "shown_per_sample": 4.934
+   "shown_per_sample": 4.949
   }
  }
 }
