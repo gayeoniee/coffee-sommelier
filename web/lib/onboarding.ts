@@ -8,14 +8,17 @@ export type OnboardingDraft = {
   body: number;
   sweetness: number;
   likes: string[];
+  dailyCaffeineLimitMg: number | null;
 };
 
-export const defaultDraft: OnboardingDraft = { caffeine_rule: "any", milk_ok: true, acidity: 3, body: 3, sweetness: 3, likes: [] };
+export const defaultDraft: OnboardingDraft = {
+  caffeine_rule: "any", milk_ok: true, acidity: 3, body: 3, sweetness: 3, likes: [], dailyCaffeineLimitMg: null,
+};
 
 export function profileInput(d: OnboardingDraft, nickname?: string): ProfileInput {
   const body: ProfileInput = {
     caffeine_rule: d.caffeine_rule, milk_ok: d.milk_ok, acidity: d.acidity, body: d.body, sweetness: d.sweetness,
-    flavor_likes: d.likes,
+    flavor_likes: d.likes, daily_caffeine_limit_mg: d.dailyCaffeineLimitMg,
   };
   const nick = nickname?.trim();
   if (nick) body.nickname = nick;

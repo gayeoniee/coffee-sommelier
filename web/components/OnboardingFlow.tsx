@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ApiError, api } from "@/lib/api";
 import { defaultDraft, profileInput, sampleAnswers, type OnboardingDraft } from "@/lib/onboarding";
-import { ATTR_KO, RULE_KO, fmt1 } from "@/lib/labels";
+import { ATTR_KO, CAFFEINE_LIMIT_OPTIONS, RULE_KO, fmt1 } from "@/lib/labels";
 import { CHIPS, type CaffeineRule, type Sample } from "@/lib/types";
 
 export function OnboardingFlow({ redo }: { redo: boolean }) {
@@ -33,6 +33,7 @@ export function OnboardingFlow({ redo }: { redo: boolean }) {
           body: p.body,
           sweetness: p.sweetness,
           likes: CHIPS.filter((c) => (p.flavor_weights[c.key] ?? 0) > 0.2).map((c) => c.key),
+          dailyCaffeineLimitMg: p.daily_caffeine_limit_mg,
         });
       })
       .finally(() => alive && setLoadingProfile(false));
@@ -85,6 +86,19 @@ export function OnboardingFlow({ redo }: { redo: boolean }) {
             <span>우유 들어간 음료도 괜찮아요</span>
             <input type="checkbox" checked={draft.milk_ok} onChange={(e) => set("milk_ok", e.target.checked)} className="h-5 w-5" />
           </label>
+          <fieldset className="mt-5">
+            <legend className="mb-2 text-sm text-roast">오늘 카페인 한도</legend>
+            <div role="radiogroup" className="grid grid-cols-3 gap-2">
+              {CAFFEINE_LIMIT_OPTIONS.map((o) => (
+                <button key={o.ko} type="button" role="radio" aria-checked={draft.dailyCaffeineLimitMg === o.value}
+                  onClick={() => set("dailyCaffeineLimitMg", o.value)}
+                  className={`min-h-11 rounded-xl ring-1 ${draft.dailyCaffeineLimitMg === o.value ? "bg-espresso text-cream ring-espresso" : "bg-white/70 ring-crema"}`}>
+                  {o.ko}
+                </button>
+              ))}
+            </div>
+            <p className="mt-1 text-xs text-roast">임신 중이면 300mg, 일반 성인은 400mg을 권해요. 설정하면 오늘 마신 양을 더해 남은 만큼만 추천해요.</p>
+          </fieldset>
         </section>
       )}
       {step === 2 && (

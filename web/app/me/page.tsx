@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import WakeGate from "@/components/WakeGate";
 import { ApiError, api } from "@/lib/api";
-import { ATTR_KO, RULE_KO, fmt1 } from "@/lib/labels";
+import { ATTR_KO, RULE_KO, caffeineLimitLabel, fmt1 } from "@/lib/labels";
 import { CHIPS, type Me } from "@/lib/types";
 
 export default function MePage() {
@@ -65,6 +65,7 @@ function MeBody() {
       {p && (
         <section className="rounded-2xl bg-white/80 p-4 ring-1 ring-crema">
           <p className="text-sm">카페인: <b>{RULE_KO[p.caffeine_rule]}</b> · 우유: <b>{p.milk_ok ? "가능" : "불가"}</b> · 기록 {p.n_updates}회</p>
+          <p className="mt-1 text-sm">오늘 카페인 한도: <b>{caffeineLimitLabel(p.daily_caffeine_limit_mg)}</b></p>
           {(["acidity", "body", "sweetness"] as const).map((k) => (
             <div key={k} className="mt-3 flex items-center gap-2 text-sm">
               <span className="w-10 text-roast">{ATTR_KO[k]}</span>

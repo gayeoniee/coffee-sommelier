@@ -8,6 +8,15 @@ export type Profile = {
   sweetness: number;
   flavor_weights: Record<string, number>;
   n_updates: number;
+  daily_caffeine_limit_mg: number | null;
+};
+
+/** GET /me/today: today's caffeine running total (Asia/Seoul day boundary). */
+export type Today = {
+  today_mg: number;
+  unknown_count: number;
+  limit_mg: number | null;
+  remaining_mg: number | null;
 };
 
 export type Card = {

@@ -1,4 +1,4 @@
-import type { Brand, CaffeineRule, Card, CoffeeHit, Me, Profile, Sample } from "./types";
+import type { Brand, CaffeineRule, Card, CoffeeHit, Me, Profile, Sample, Today } from "./types";
 
 export class ApiError extends Error {
   constructor(public status: number, message: string) {
@@ -45,6 +45,7 @@ export type ProfileInput = {
   sweetness: number;
   flavor_likes: string[];
   nickname?: string | null;
+  daily_caffeine_limit_mg?: number | null;
 };
 
 export type TastingInput = {
@@ -60,6 +61,7 @@ export type TastingInput = {
 export const api = {
   session: () => req<{ user_id: string; new: boolean; has_profile: boolean }>("/session", { method: "POST" }),
   me: () => req<Me>("/me"),
+  today: () => req<Today>("/me/today"),
   putProfile: (body: ProfileInput) => req<{ profile: Profile }>("/me/profile", { method: "PUT", body: JSON.stringify(body) }),
   nickname: (nickname: string) =>
     req<{ nickname: string | null }>("/me/nickname", { method: "PUT", body: JSON.stringify({ nickname }) }),

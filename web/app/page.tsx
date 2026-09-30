@@ -4,12 +4,13 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import BeanInput from "@/components/BeanInput";
 import BrandPicker from "@/components/BrandPicker";
+import CaffeineToday from "@/components/CaffeineToday";
 import LogSheet from "@/components/LogSheet";
 import ResultCard from "@/components/ResultCard";
 import WakeGate from "@/components/WakeGate";
 import { useStream } from "@/hooks/useStream";
 import { api } from "@/lib/api";
-import type { Brand, Card, Profile } from "@/lib/types";
+import type { Brand, Card, Profile, Today } from "@/lib/types";
 
 export default function Home() {
   const router = useRouter();
@@ -23,9 +24,14 @@ function HomeBody() {
   const [brandsError, setBrandsError] = useState(false);
   const [brand, setBrand] = useState<string | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [today, setToday] = useState<Today | null>(null);
   const [logging, setLogging] = useState<Card | null>(null);
   const [brandsAttempt, setBrandsAttempt] = useState(0);
   const { state, start, reset } = useStream();
+
+  const refreshToday = useCallback(() => {
+    api.today().then(setToday).catch(() => setToday(null));
+  }, []);
 
   useEffect(() => {
     api.brands().then(setBrands).catch(() => setBrandsError(true));
@@ -33,7 +39,8 @@ function HomeBody() {
 
   useEffect(() => {
     api.me().then((m) => setProfile(m.profile)).catch(() => setProfile(null));
-  }, []);
+    refreshToday();
+  }, [refreshToday]);
 
   const switchTab = (t: "franchise" | "indie") => { setTab(t); setBrand(null); reset(); };
   const retryBrands = () => { setBrandsError(false); setBrandsAttempt((n) => n + 1); };
@@ -52,6 +59,7 @@ function HomeBody() {
           </button>
         ))}
       </div>
+      <CaffeineToday today={today} />
       {tab === "franchise" ? (
         brandsError ? (
           <div className="rounded-xl bg-warn/10 p-4 text-sm">
@@ -75,7 +83,7 @@ function HomeBody() {
         ))}
       </section>
       {logging && (
-        <LogSheet card={logging} onClose={() => setLogging(null)} onSaved={(p) => setProfile(p)} />
+        <LogSheet card={logging} onClose={() => setLogging(null)} onSaved={(p) => { setProfile(p); refreshToday(); }} />
       )}
     </>
   );

@@ -4,6 +4,17 @@ export const RULE_KO: Record<CaffeineRule, string> = { decaf_only: "디카페인
 export const ATTR_KO = { acidity: "산미", body: "바디", sweetness: "단맛" } as const;
 export const CONFIDENCE_KO = { high: "높음", medium: "보통", low: "낮음" } as const;
 
+// "오늘 마신 카페인" 하루 한도 선택지: 임신 중 300mg, 일반 성인 400mg 권장, 끄면 하루 총량으로 추천을 거르지 않는다.
+export const CAFFEINE_LIMIT_OPTIONS: { value: number | null; ko: string }[] = [
+  { value: null, ko: "끄기" },
+  { value: 300, ko: "300mg" },
+  { value: 400, ko: "400mg" },
+];
+
+export function caffeineLimitLabel(limitMg: number | null): string {
+  return limitMg == null ? "끄기" : (CAFFEINE_LIMIT_OPTIONS.find((o) => o.value === limitMg)?.ko ?? `${limitMg}mg`);
+}
+
 // The backend formats with Python's f"{x:.1f}"; JS's toFixed(1) can round the same float
 // differently at the boundary (e.g. 3.25 → "3.2" vs "3.3"). Round explicitly first so every
 // on-screen number uses one consistent rule (still fine if it edge-differs from the backend).
