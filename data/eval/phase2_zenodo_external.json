@@ -56,7 +56,7 @@
   "model_files_sha1": {
     "attr_model.json": "fa15cf7ad595",
     "tag_model.json": "57fd105ee18b",
-    "feature_model_open.json": "8c70b7f123ab",
+    "feature_model_open.json": "133862e12ddc",
     "tag_cooc_open.json": "aede1765bd2d"
   },
   "variants": {
@@ -103,29 +103,29 @@
       "parsed_origin": 72,
       "acidity": {
         "n": 196,
-        "mae": 0.5425,
-        "within1": 0.8571,
-        "spearman": 0.7141,
+        "mae": 0.5668,
+        "within1": 0.852,
+        "spearman": 0.7092,
         "mean_truth": 2.329,
-        "mean_pred": 2.342,
+        "mean_pred": 2.431,
         "coverage": 1.0
       },
       "body": {
         "n": 195,
-        "mae": 0.5933,
-        "within1": 0.8308,
-        "spearman": 0.0429,
+        "mae": 0.5829,
+        "within1": 0.8462,
+        "spearman": 0.0308,
         "mean_truth": 2.948,
-        "mean_pred": 3.409,
+        "mean_pred": 3.3,
         "coverage": 1.0
       },
       "sweetness": {
         "n": 167,
-        "mae": 1.2252,
-        "within1": 0.497,
-        "spearman": -0.3235,
+        "mae": 1.2219,
+        "within1": 0.491,
+        "spearman": -0.3097,
         "mean_truth": 2.577,
-        "mean_pred": 3.726,
+        "mean_pred": 3.723,
         "coverage": 0.852
       },
       "tags_before_text_cues": {
@@ -141,29 +141,29 @@
       "parsed_origin": 72,
       "acidity": {
         "n": 182,
-        "mae": 0.9175,
-        "within1": 0.5989,
-        "spearman": 0.4916,
+        "mae": 0.8831,
+        "within1": 0.6154,
+        "spearman": 0.5205,
         "mean_truth": 2.345,
-        "mean_pred": 3.067,
+        "mean_pred": 3.03,
         "coverage": 0.9286
       },
       "body": {
-        "n": 156,
-        "mae": 0.6427,
-        "within1": 0.7821,
-        "spearman": -0.009,
+        "n": 162,
+        "mae": 0.6698,
+        "within1": 0.7778,
+        "spearman": -0.0085,
         "mean_truth": 2.94,
-        "mean_pred": 3.435,
-        "coverage": 0.8
+        "mean_pred": 3.469,
+        "coverage": 0.8308
       },
       "sweetness": {
         "n": 167,
-        "mae": 1.4408,
+        "mae": 1.4413,
         "within1": 0.2994,
-        "spearman": -0.0141,
+        "spearman": -0.0131,
         "mean_truth": 2.577,
-        "mean_pred": 3.993,
+        "mean_pred": 3.994,
         "coverage": 0.852
       },
       "tags_before_text_cues": {
@@ -205,19 +205,19 @@
     "acidity": {
       "open_feature_model": {
         "n": 182,
-        "mae": 0.5369,
-        "within1": 0.8571,
-        "spearman": 0.7075,
+        "mae": 0.5598,
+        "within1": 0.8516,
+        "spearman": 0.7026,
         "mean_truth": 2.345,
-        "mean_pred": 2.344
+        "mean_pred": 2.433
       },
       "open_neighbour_average": {
         "n": 182,
-        "mae": 0.9175,
-        "within1": 0.5989,
-        "spearman": 0.4916,
+        "mae": 0.8831,
+        "within1": 0.6154,
+        "spearman": 0.5205,
         "mean_truth": 2.345,
-        "mean_pred": 3.067
+        "mean_pred": 3.03
       },
       "constant_3": {
         "n": 182,
@@ -231,19 +231,19 @@
     "sweetness": {
       "open_feature_model": {
         "n": 167,
-        "mae": 1.2252,
-        "within1": 0.497,
-        "spearman": -0.3235,
+        "mae": 1.2219,
+        "within1": 0.491,
+        "spearman": -0.3097,
         "mean_truth": 2.577,
-        "mean_pred": 3.726
+        "mean_pred": 3.723
       },
       "open_neighbour_average": {
         "n": 167,
-        "mae": 1.4408,
+        "mae": 1.4413,
         "within1": 0.2994,
-        "spearman": -0.0141,
+        "spearman": -0.0131,
         "mean_truth": 2.577,
-        "mean_pred": 3.993
+        "mean_pred": 3.994
       },
       "constant_3": {
         "n": 167,

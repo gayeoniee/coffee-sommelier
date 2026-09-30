@@ -1,69 +1,69 @@
 {
-  "generated_at": "2026-09-29T08:57:00.422062+00:00",
+  "generated_at": "2026-09-30T03:06:58.791815+00:00",
   "w_k": 0.5,
   "k_body_labels": 9,
   "a_body_labels": 46,
   "body_e1": {
     "neighbour_avg": {
-      "n": 64,
-      "mae": 0.7865,
-      "within1": 0.7188,
-      "spearman": -0.0452
+      "n": 77,
+      "mae": 0.7226,
+      "within1": 0.7922,
+      "spearman": 0.059
     },
     "gauges": {
-      "n": 64,
-      "mae": 0.726,
-      "within1": 0.7812,
-      "spearman": 0.2884
+      "n": 77,
+      "mae": 0.6827,
+      "within1": 0.7273,
+      "spearman": 0.3388
     },
     "+A": {
-      "n": 64,
-      "mae": 0.6969,
-      "within1": 0.75,
-      "spearman": 0.3498
+      "n": 77,
+      "mae": 0.6487,
+      "within1": 0.7792,
+      "spearman": 0.42
     },
     "+A wA=1": {
-      "n": 64,
-      "mae": 0.6928,
-      "within1": 0.7812,
-      "spearman": 0.3076
+      "n": 77,
+      "mae": 0.6478,
+      "within1": 0.7922,
+      "spearman": 0.4038
     },
     "+K": {
-      "n": 64,
-      "mae": 0.7152,
-      "within1": 0.75,
-      "spearman": 0.3638
+      "n": 77,
+      "mae": 0.7208,
+      "within1": 0.7403,
+      "spearman": 0.2451
     },
     "+A+K": {
-      "n": 64,
-      "mae": 0.6457,
-      "within1": 0.7656,
-      "spearman": 0.4915
+      "n": 77,
+      "mae": 0.6563,
+      "within1": 0.7662,
+      "spearman": 0.3469
     }
   },
   "body_shipped": "+A wA=1",
   "body_e2": {
     "gauges": {
       "model": {
-        "n": 156,
-        "mae": 0.7477,
-        "within1": 0.7308,
-        "spearman": -0.0663,
+        "n": 162,
+        "mae": 0.688,
+        "within1": 0.7593,
+        "spearman": -0.0714,
         "mean_truth": 2.94,
-        "mean_pred": 3.438
+        "mean_pred": 3.334
       },
       "neighbour": {
-        "n": 156,
-        "mae": 0.6427,
-        "within1": 0.7821,
-        "spearman": -0.009,
+        "n": 162,
+        "mae": 0.6698,
+        "within1": 0.7778,
+        "spearman": -0.0085,
         "mean_truth": 2.94,
-        "mean_pred": 3.435
+        "mean_pred": 3.469
       },
       "constant_3": {
-        "n": 156,
-        "mae": 0.3643,
-        "within1": 0.9872,
+        "n": 162,
+        "mae": 0.3647,
+        "within1": 0.9815,
         "spearman": null,
         "mean_truth": 2.94,
         "mean_pred": 3.0
@@ -71,25 +71,25 @@
     },
     "+A": {
       "model": {
-        "n": 156,
-        "mae": 0.6342,
-        "within1": 0.8013,
-        "spearman": -0.0589,
+        "n": 162,
+        "mae": 0.6436,
+        "within1": 0.821,
+        "spearman": -0.0448,
         "mean_truth": 2.94,
-        "mean_pred": 3.288
+        "mean_pred": 3.262
       },
       "neighbour": {
-        "n": 156,
-        "mae": 0.6427,
-        "within1": 0.7821,
-        "spearman": -0.009,
+        "n": 162,
+        "mae": 0.6698,
+        "within1": 0.7778,
+        "spearman": -0.0085,
         "mean_truth": 2.94,
-        "mean_pred": 3.435
+        "mean_pred": 3.469
       },
       "constant_3": {
-        "n": 156,
-        "mae": 0.3643,
-        "within1": 0.9872,
+        "n": 162,
+        "mae": 0.3647,
+        "within1": 0.9815,
         "spearman": null,
         "mean_truth": 2.94,
         "mean_pred": 3.0
@@ -97,25 +97,25 @@
     },
     "+A wA=1": {
       "model": {
-        "n": 156,
-        "mae": 0.579,
-        "within1": 0.8269,
-        "spearman": -0.0155,
+        "n": 162,
+        "mae": 0.5799,
+        "within1": 0.8457,
+        "spearman": -0.0207,
         "mean_truth": 2.94,
-        "mean_pred": 3.377
+        "mean_pred": 3.276
       },
       "neighbour": {
-        "n": 156,
-        "mae": 0.6427,
-        "within1": 0.7821,
-        "spearman": -0.009,
+        "n": 162,
+        "mae": 0.6698,
+        "within1": 0.7778,
+        "spearman": -0.0085,
         "mean_truth": 2.94,
-        "mean_pred": 3.435
+        "mean_pred": 3.469
       },
       "constant_3": {
-        "n": 156,
-        "mae": 0.3643,
-        "within1": 0.9872,
+        "n": 162,
+        "mae": 0.3647,
+        "within1": 0.9815,
         "spearman": null,
         "mean_truth": 2.94,
         "mean_pred": 3.0
@@ -123,25 +123,25 @@
     },
     "+K": {
       "model": {
-        "n": 156,
-        "mae": 0.9453,
-        "within1": 0.5641,
-        "spearman": -0.02,
+        "n": 162,
+        "mae": 0.7359,
+        "within1": 0.7346,
+        "spearman": -0.0694,
         "mean_truth": 2.94,
-        "mean_pred": 3.079
+        "mean_pred": 3.23
       },
       "neighbour": {
-        "n": 156,
-        "mae": 0.6427,
-        "within1": 0.7821,
-        "spearman": -0.009,
+        "n": 162,
+        "mae": 0.6698,
+        "within1": 0.7778,
+        "spearman": -0.0085,
         "mean_truth": 2.94,
-        "mean_pred": 3.435
+        "mean_pred": 3.469
       },
       "constant_3": {
-        "n": 156,
-        "mae": 0.3643,
-        "within1": 0.9872,
+        "n": 162,
+        "mae": 0.3647,
+        "within1": 0.9815,
         "spearman": null,
         "mean_truth": 2.94,
         "mean_pred": 3.0
@@ -149,25 +149,25 @@
     },
     "+A+K": {
       "model": {
-        "n": 156,
-        "mae": 0.6757,
-        "within1": 0.7756,
-        "spearman": -0.0602,
+        "n": 162,
+        "mae": 0.6475,
+        "within1": 0.7901,
+        "spearman": -0.0496,
         "mean_truth": 2.94,
-        "mean_pred": 3.127
+        "mean_pred": 3.143
       },
       "neighbour": {
-        "n": 156,
-        "mae": 0.6427,
-        "within1": 0.7821,
-        "spearman": -0.009,
+        "n": 162,
+        "mae": 0.6698,
+        "within1": 0.7778,
+        "spearman": -0.0085,
         "mean_truth": 2.94,
-        "mean_pred": 3.435
+        "mean_pred": 3.469
       },
       "constant_3": {
-        "n": 156,
-        "mae": 0.3643,
-        "within1": 0.9872,
+        "n": 162,
+        "mae": 0.3647,
+        "within1": 0.9815,
         "spearman": null,
         "mean_truth": 2.94,
         "mean_pred": 3.0
@@ -177,220 +177,230 @@
   "body_specs": {
     "gauges": {
       "type": "ridge",
-      "alpha": 3.0,
-      "intercept": 3.6511,
+      "alpha": 10.0,
+      "intercept": 3.4677,
       "weights": {
-        "region_east_africa": -0.0049,
-        "region_central_america": -0.1256,
-        "region_south_america": -0.2457,
-        "region_asia_pacific": 0.0933,
-        "region_yemen": 0.0564,
-        "blend_or_unknown_origin": 0.2265,
-        "country_Ethiopia": -0.4291,
-        "country_Kenya": 0.2384,
-        "country_Colombia": -0.2225,
-        "country_Brazil": -0.0232,
-        "country_Guatemala": 0.1407,
-        "alt_lt1200": -0.0818,
-        "alt_1600_2000": -0.1376,
-        "alt_ge2000": 0.1519,
-        "process_washed": 0.1718,
-        "process_natural": -0.0105,
-        "process_honey": 0.1916,
-        "roast_light": -0.3882,
-        "roast_medium": -0.4452,
-        "roast_medium-dark": 0.0594,
-        "roast_dark": 0.6225,
-        "decaf": -0.3195,
-        "decaf_water": -0.2396,
-        "decaf_sugarcane": -0.0328,
-        "notes_fruity": -0.2045,
-        "notes_floral": 0.0129,
-        "notes_sweet": 0.0591,
-        "notes_nutty/cocoa": 0.2834,
-        "notes_roasted": 0.0991,
-        "notes_spices": -0.1312,
-        "notes_sour/fermented": -0.3523,
-        "notes_green/vegetative": -0.264,
-        "nbr": -0.1559
+        "region_east_africa": 0.0023,
+        "region_central_america": -0.1048,
+        "region_south_america": -0.1417,
+        "region_asia_pacific": 0.1168,
+        "region_yemen": 0.0571,
+        "blend_or_unknown_origin": 0.0702,
+        "country_Ethiopia": -0.2647,
+        "country_Kenya": 0.1679,
+        "country_Colombia": -0.1056,
+        "country_Brazil": -0.0362,
+        "country_Guatemala": 0.0806,
+        "alt_lt1200": -0.0277,
+        "alt_1600_2000": -0.0291,
+        "alt_ge2000": 0.0697,
+        "process_washed": 0.05,
+        "process_natural": -0.0494,
+        "process_honey": 0.0597,
+        "process_anaerobic": 0.0035,
+        "roast_light": -0.1125,
+        "roast_medium": -0.2741,
+        "roast_medium-dark": 0.1388,
+        "roast_dark": 0.3127,
+        "variety_geisha": -0.0275,
+        "decaf": -0.2102,
+        "decaf_water": -0.1353,
+        "decaf_sugarcane": -0.0532,
+        "notes_fruity": -0.276,
+        "notes_floral": 0.0472,
+        "notes_sweet": 0.0321,
+        "notes_nutty/cocoa": 0.3393,
+        "notes_roasted": 0.0799,
+        "notes_spices": -0.0339,
+        "notes_sour/fermented": -0.1013,
+        "notes_green/vegetative": -0.0905,
+        "nbr": -0.0565
       },
-      "n_train": 64,
-      "n_gauge": 64,
+      "n_train": 77,
+      "n_gauge": 77,
       "uses_nbr": true
     },
     "+A": {
       "type": "ridge",
-      "alpha": 3.0,
-      "intercept": 3.5416,
+      "alpha": 10.0,
+      "intercept": 3.458,
       "weights": {
-        "region_east_africa": -0.1059,
-        "region_central_america": 0.0057,
-        "region_south_america": -0.2132,
-        "region_asia_pacific": 0.084,
-        "region_yemen": 0.1074,
-        "blend_or_unknown_origin": 0.122,
-        "country_Ethiopia": -0.369,
-        "country_Kenya": 0.3414,
-        "country_Colombia": -0.2357,
-        "country_Brazil": 0.0225,
-        "country_Guatemala": 0.1366,
-        "alt_lt1200": -0.0619,
-        "alt_1600_2000": -0.0746,
-        "alt_ge2000": 0.1939,
-        "process_washed": -0.0326,
-        "process_natural": 0.0752,
-        "process_honey": 0.0816,
-        "roast_light": -0.3714,
-        "roast_medium": -0.3386,
-        "roast_medium-dark": 0.0928,
-        "roast_dark": 0.5608,
-        "decaf": -0.2763,
-        "decaf_water": -0.2928,
-        "decaf_sugarcane": -0.0561,
-        "notes_fruity": -0.1728,
-        "notes_floral": 0.0189,
-        "notes_sweet": 0.0502,
-        "notes_nutty/cocoa": 0.2984,
-        "notes_roasted": 0.1461,
-        "notes_spices": -0.2224,
-        "notes_sour/fermented": -0.3341,
-        "notes_green/vegetative": -0.1544,
-        "notes_other": -0.094,
-        "nbr": -0.2663
+        "region_east_africa": -0.0576,
+        "region_central_america": -0.0317,
+        "region_south_america": -0.1251,
+        "region_asia_pacific": 0.0866,
+        "region_yemen": 0.0628,
+        "blend_or_unknown_origin": 0.065,
+        "country_Ethiopia": -0.2545,
+        "country_Kenya": 0.2038,
+        "country_Colombia": -0.123,
+        "country_Brazil": -0.002,
+        "country_Guatemala": 0.0807,
+        "alt_lt1200": -0.0273,
+        "alt_1600_2000": -0.0167,
+        "alt_ge2000": 0.078,
+        "process_washed": -0.0171,
+        "process_natural": 0.0061,
+        "process_honey": 0.0395,
+        "process_anaerobic": 0.0101,
+        "roast_light": -0.1252,
+        "roast_medium": -0.2523,
+        "roast_medium-dark": 0.0932,
+        "roast_dark": 0.3818,
+        "variety_geisha": -0.0303,
+        "decaf": -0.2115,
+        "decaf_water": -0.1688,
+        "decaf_sugarcane": -0.0569,
+        "notes_fruity": -0.2594,
+        "notes_floral": 0.0258,
+        "notes_sweet": 0.002,
+        "notes_nutty/cocoa": 0.32,
+        "notes_roasted": 0.0931,
+        "notes_spices": -0.07,
+        "notes_sour/fermented": -0.0996,
+        "notes_green/vegetative": -0.0592,
+        "notes_other": -0.0282,
+        "nbr": -0.1067
       },
-      "n_train": 110,
-      "n_gauge": 64,
+      "n_train": 123,
+      "n_gauge": 77,
       "uses_nbr": true
     },
     "+A wA=1": {
       "type": "ridge",
       "alpha": 30.0,
-      "intercept": 3.4347,
+      "intercept": 3.4133,
       "weights": {
-        "region_east_africa": -0.1106,
-        "region_central_america": 0.0373,
-        "region_south_america": -0.0566,
-        "region_asia_pacific": 0.0334,
-        "region_yemen": 0.0194,
-        "blend_or_unknown_origin": 0.0771,
-        "country_Ethiopia": -0.1607,
-        "country_Kenya": 0.0905,
-        "country_Colombia": -0.0635,
-        "country_Brazil": 0.007,
-        "country_Guatemala": 0.0214,
-        "alt_lt1200": -0.0141,
-        "alt_1600_2000": -0.0086,
-        "alt_ge2000": 0.0243,
-        "process_washed": -0.0048,
-        "process_natural": 0.0066,
-        "process_honey": -0.0031,
-        "roast_light": -0.0983,
-        "roast_medium": -0.1615,
-        "roast_medium-dark": 0.0275,
-        "roast_dark": 0.2329,
-        "decaf": -0.1276,
-        "decaf_water": -0.1122,
-        "decaf_sugarcane": -0.0375,
-        "notes_fruity": -0.1402,
-        "notes_floral": -0.0172,
-        "notes_sweet": -0.0048,
-        "notes_nutty/cocoa": 0.2166,
-        "notes_roasted": 0.0361,
-        "notes_spices": -0.0359,
-        "notes_sour/fermented": -0.0433,
-        "notes_green/vegetative": -0.0285,
-        "notes_other": -0.0317,
-        "nbr": -0.0294
+        "region_east_africa": -0.0926,
+        "region_central_america": 0.0156,
+        "region_south_america": -0.0522,
+        "region_asia_pacific": 0.0396,
+        "region_yemen": 0.0239,
+        "blend_or_unknown_origin": 0.0657,
+        "country_Ethiopia": -0.1554,
+        "country_Kenya": 0.0972,
+        "country_Colombia": -0.0627,
+        "country_Brazil": 0.0105,
+        "country_Guatemala": 0.0306,
+        "alt_lt1200": -0.0124,
+        "alt_1600_2000": -0.0034,
+        "alt_ge2000": 0.0278,
+        "process_washed": -0.0187,
+        "process_natural": 0.0049,
+        "process_honey": 0.0072,
+        "process_anaerobic": 0.0019,
+        "roast_light": -0.0743,
+        "roast_medium": -0.1521,
+        "roast_medium-dark": 0.0365,
+        "roast_dark": 0.2439,
+        "variety_geisha": -0.0145,
+        "decaf": -0.1272,
+        "decaf_water": -0.1047,
+        "decaf_sugarcane": -0.0366,
+        "notes_fruity": -0.2071,
+        "notes_floral": -0.0102,
+        "notes_sweet": -0.0183,
+        "notes_nutty/cocoa": 0.2422,
+        "notes_roasted": 0.042,
+        "notes_spices": -0.0329,
+        "notes_sour/fermented": -0.0392,
+        "notes_green/vegetative": -0.028,
+        "notes_other": -0.0266,
+        "nbr": -0.0276
       },
-      "n_train": 110,
-      "n_gauge": 64,
+      "n_train": 123,
+      "n_gauge": 77,
       "uses_nbr": true
     },
     "+K": {
       "type": "ridge",
-      "alpha": 0.3,
-      "intercept": 3.7256,
+      "alpha": 3.0,
+      "intercept": 3.5231,
       "weights": {
-        "region_east_africa": 0.086,
-        "region_central_america": -0.209,
-        "region_south_america": -0.3603,
-        "region_asia_pacific": 0.1528,
-        "region_yemen": -0.4146,
-        "blend_or_unknown_origin": 0.745,
-        "country_Ethiopia": -0.6872,
-        "country_Kenya": 0.1738,
-        "country_Colombia": -0.4881,
-        "country_Brazil": 0.1279,
-        "country_Guatemala": 0.3797,
-        "alt_lt1200": -0.0568,
-        "alt_1600_2000": -0.21,
-        "alt_ge2000": 0.1443,
-        "process_washed": 0.7534,
-        "process_natural": 0.6205,
-        "process_honey": 0.8947,
-        "roast_light": -0.906,
-        "roast_medium": -0.5885,
-        "roast_medium-dark": -0.0077,
-        "roast_dark": 1.1569,
-        "decaf": -0.8391,
-        "decaf_water": 0.2888,
-        "decaf_sugarcane": 0.6784,
-        "notes_fruity": -0.2132,
-        "notes_floral": -0.1732,
-        "notes_sweet": 0.0535,
-        "notes_nutty/cocoa": 0.2057,
-        "notes_roasted": 0.3478,
-        "notes_spices": -0.7189,
-        "notes_sour/fermented": -1.2536,
-        "notes_green/vegetative": -0.6277,
-        "nbr": -0.4788
+        "region_east_africa": 0.0327,
+        "region_central_america": -0.2635,
+        "region_south_america": -0.2509,
+        "region_asia_pacific": 0.1741,
+        "region_yemen": 0.1074,
+        "blend_or_unknown_origin": 0.2002,
+        "country_Ethiopia": -0.4339,
+        "country_Kenya": 0.2417,
+        "country_Colombia": -0.2399,
+        "country_Brazil": -0.0111,
+        "country_Guatemala": 0.2548,
+        "alt_lt1200": -0.0256,
+        "alt_1600_2000": -0.0394,
+        "alt_ge2000": 0.1855,
+        "process_washed": 0.2931,
+        "process_natural": 0.0524,
+        "process_honey": 0.2166,
+        "process_anaerobic": 0.033,
+        "roast_light": -0.1711,
+        "roast_medium": -0.3059,
+        "roast_medium-dark": 0.1816,
+        "roast_dark": 0.7209,
+        "variety_geisha": -0.0531,
+        "decaf": -0.3523,
+        "decaf_water": -0.1006,
+        "decaf_sugarcane": -0.016,
+        "notes_fruity": -0.3472,
+        "notes_floral": 0.0773,
+        "notes_sweet": 0.0932,
+        "notes_nutty/cocoa": 0.3179,
+        "notes_roasted": 0.1667,
+        "notes_spices": -0.1562,
+        "notes_sour/fermented": -0.2459,
+        "notes_green/vegetative": -0.239,
+        "nbr": -0.1503
       },
-      "n_train": 73,
-      "n_gauge": 64,
+      "n_train": 84,
+      "n_gauge": 77,
       "uses_nbr": true
     },
     "+A+K": {
       "type": "ridge",
-      "alpha": 1.0,
-      "intercept": 3.5188,
+      "alpha": 3.0,
+      "intercept": 3.4617,
       "weights": {
-        "region_east_africa": -0.1794,
-        "region_central_america": -0.0705,
-        "region_south_america": -0.2963,
-        "region_asia_pacific": 0.1441,
-        "region_yemen": 0.1177,
-        "blend_or_unknown_origin": 0.2844,
-        "country_Ethiopia": -0.4573,
-        "country_Kenya": 0.4004,
-        "country_Colombia": -0.3538,
-        "country_Brazil": 0.0575,
-        "country_Guatemala": 0.2844,
-        "alt_lt1200": -0.0257,
-        "alt_1600_2000": -0.0546,
-        "alt_ge2000": 0.3814,
-        "process_washed": 0.1616,
-        "process_natural": 0.2866,
-        "process_honey": 0.2166,
-        "roast_light": -0.5466,
-        "roast_medium": -0.2434,
-        "roast_medium-dark": 0.1681,
-        "roast_dark": 0.6635,
-        "decaf": -0.4401,
-        "decaf_water": -0.1462,
-        "decaf_sugarcane": 0.0498,
-        "notes_fruity": -0.1576,
-        "notes_floral": -0.0362,
-        "notes_sweet": 0.1325,
-        "notes_nutty/cocoa": 0.2591,
-        "notes_roasted": 0.194,
-        "notes_spices": -0.488,
-        "notes_sour/fermented": -0.6637,
-        "notes_green/vegetative": -0.3183,
-        "notes_other": -0.2571,
-        "nbr": -0.3839
+        "region_east_africa": -0.0949,
+        "region_central_america": -0.1172,
+        "region_south_america": -0.223,
+        "region_asia_pacific": 0.1577,
+        "region_yemen": 0.1385,
+        "blend_or_unknown_origin": 0.139,
+        "country_Ethiopia": -0.3889,
+        "country_Kenya": 0.3426,
+        "country_Colombia": -0.2529,
+        "country_Brazil": 0.0299,
+        "country_Guatemala": 0.2357,
+        "alt_lt1200": -0.0218,
+        "alt_1600_2000": -0.0023,
+        "alt_ge2000": 0.2251,
+        "process_washed": 0.1088,
+        "process_natural": 0.141,
+        "process_honey": 0.1421,
+        "process_anaerobic": 0.0588,
+        "roast_light": -0.2008,
+        "roast_medium": -0.2153,
+        "roast_medium-dark": 0.172,
+        "roast_dark": 0.6262,
+        "variety_geisha": -0.079,
+        "decaf": -0.3233,
+        "decaf_water": -0.1482,
+        "decaf_sugarcane": -0.0491,
+        "notes_fruity": -0.2874,
+        "notes_floral": 0.0311,
+        "notes_sweet": 0.0745,
+        "notes_nutty/cocoa": 0.3152,
+        "notes_roasted": 0.1934,
+        "notes_spices": -0.237,
+        "notes_sour/fermented": -0.2321,
+        "notes_green/vegetative": -0.1369,
+        "notes_other": -0.0691,
+        "nbr": -0.2432
       },
-      "n_train": 119,
-      "n_gauge": 64,
+      "n_train": 130,
+      "n_gauge": 77,
       "uses_nbr": true
     }
   },
@@ -418,13 +428,13 @@
       },
       "cue or neighbour value": {
         "e1": {
-          "coverage": 0.4861,
-          "n": 35,
-          "mae": 0.8425,
-          "within1": 0.6857,
-          "spearman": -0.3804,
-          "mean_truth": 3.414,
-          "mean_pred": 3.575
+          "coverage": 0.4583,
+          "n": 33,
+          "mae": 0.8769,
+          "within1": 0.6667,
+          "spearman": -0.4088,
+          "mean_truth": 3.379,
+          "mean_pred": 3.566
         },
         "e2": {
           "coverage": 0.852,
@@ -458,13 +468,13 @@
       },
       "cue or |model - neighbour| <= 1": {
         "e1": {
-          "coverage": 0.4722,
-          "n": 34,
-          "mae": 0.8519,
-          "within1": 0.6765,
-          "spearman": -0.3626,
-          "mean_truth": 3.397,
-          "mean_pred": 3.578
+          "coverage": 0.4306,
+          "n": 31,
+          "mae": 0.8932,
+          "within1": 0.6452,
+          "spearman": -0.3902,
+          "mean_truth": 3.371,
+          "mean_pred": 3.563
         },
         "e2": {
           "coverage": 0.8316,
@@ -481,81 +491,81 @@
       "answer all (shipped)": {
         "e1": {
           "coverage": 1.0,
-          "n": 82,
-          "mae": 0.7383,
-          "within1": 0.7073,
-          "spearman": 0.5439,
-          "mean_truth": 2.323,
-          "mean_pred": 2.386
+          "n": 95,
+          "mae": 0.7108,
+          "within1": 0.7053,
+          "spearman": 0.6002,
+          "mean_truth": 2.379,
+          "mean_pred": 2.478
         },
         "e2": {
           "coverage": 1.0,
           "n": 196,
-          "mae": 0.5425,
-          "within1": 0.8571,
-          "spearman": 0.7141,
+          "mae": 0.5668,
+          "within1": 0.852,
+          "spearman": 0.7092,
           "mean_truth": 2.329,
-          "mean_pred": 2.342
+          "mean_pred": 2.431
         }
       },
       "cue or neighbour value": {
         "e1": {
-          "coverage": 0.9634,
-          "n": 79,
-          "mae": 0.7422,
-          "within1": 0.7089,
-          "spearman": 0.5281,
-          "mean_truth": 2.323,
-          "mean_pred": 2.4
+          "coverage": 0.9895,
+          "n": 94,
+          "mae": 0.7145,
+          "within1": 0.7021,
+          "spearman": 0.6011,
+          "mean_truth": 2.383,
+          "mean_pred": 2.479
         },
         "e2": {
           "coverage": 0.9286,
           "n": 182,
-          "mae": 0.5369,
-          "within1": 0.8571,
-          "spearman": 0.7075,
+          "mae": 0.5598,
+          "within1": 0.8516,
+          "spearman": 0.7026,
           "mean_truth": 2.345,
-          "mean_pred": 2.344
+          "mean_pred": 2.433
         }
       },
       "cue or note words": {
         "e1": {
-          "coverage": 0.3049,
-          "n": 25,
-          "mae": 0.7064,
-          "within1": 0.72,
-          "spearman": 0.7276,
-          "mean_truth": 3.16,
-          "mean_pred": 2.653
+          "coverage": 0.4,
+          "n": 38,
+          "mae": 0.6235,
+          "within1": 0.7632,
+          "spearman": 0.7489,
+          "mean_truth": 3.013,
+          "mean_pred": 2.731
         },
         "e2": {
           "coverage": 1.0,
           "n": 196,
-          "mae": 0.5425,
-          "within1": 0.8571,
-          "spearman": 0.7141,
+          "mae": 0.5668,
+          "within1": 0.852,
+          "spearman": 0.7092,
           "mean_truth": 2.329,
-          "mean_pred": 2.342
+          "mean_pred": 2.431
         }
       },
       "cue or |model - neighbour| <= 1": {
         "e1": {
-          "coverage": 0.6341,
-          "n": 52,
-          "mae": 0.6833,
-          "within1": 0.75,
-          "spearman": 0.601,
-          "mean_truth": 2.269,
-          "mean_pred": 2.415
+          "coverage": 0.6947,
+          "n": 66,
+          "mae": 0.6686,
+          "within1": 0.7576,
+          "spearman": 0.7013,
+          "mean_truth": 2.348,
+          "mean_pred": 2.494
         },
         "e2": {
-          "coverage": 0.5918,
-          "n": 116,
-          "mae": 0.4968,
-          "within1": 0.8621,
-          "spearman": 0.7139,
-          "mean_truth": 2.582,
-          "mean_pred": 2.683
+          "coverage": 0.6684,
+          "n": 131,
+          "mae": 0.5449,
+          "within1": 0.8702,
+          "spearman": 0.729,
+          "mean_truth": 2.495,
+          "mean_pred": 2.649
         }
       }
     }
@@ -565,54 +575,54 @@
     "e1": {
       "acidity": {
         "*": {
-          "n": 82,
-          "mae": 0.7383,
-          "within1": 0.7073,
-          "spearman": 0.5439,
-          "mean_truth": 2.323,
-          "mean_pred": 2.386
+          "n": 95,
+          "mae": 0.7108,
+          "within1": 0.7053,
+          "spearman": 0.6002,
+          "mean_truth": 2.379,
+          "mean_pred": 2.478
         },
         "cue": {
           "n": 5,
-          "mae": 0.5031,
-          "within1": 0.8,
-          "spearman": 0.527,
+          "mae": 0.4151,
+          "within1": 1.0,
+          "spearman": 0.9487,
           "mean_truth": 3.6,
-          "mean_pred": 3.203
+          "mean_pred": 3.231
         },
         "facts": {
           "n": 45,
-          "mae": 0.7154,
-          "within1": 0.6889,
-          "spearman": 0.4606,
+          "mae": 0.7281,
+          "within1": 0.6667,
+          "spearman": 0.4381,
           "mean_truth": 1.922,
-          "mean_pred": 2.346
+          "mean_pred": 2.369
         },
         "notes": {
-          "n": 20,
-          "mae": 0.7572,
-          "within1": 0.7,
-          "spearman": 0.7258,
-          "mean_truth": 3.05,
-          "mean_pred": 2.516
+          "n": 33,
+          "mae": 0.6551,
+          "within1": 0.7273,
+          "spearman": 0.7214,
+          "mean_truth": 2.924,
+          "mean_pred": 2.655
         },
         "sparse": {
           "n": 12,
-          "mae": 0.8909,
-          "within1": 0.75,
-          "spearman": 0.3057,
+          "mae": 0.922,
+          "within1": 0.6667,
+          "spearman": 0.4966,
           "mean_truth": 2.083,
-          "mean_pred": 1.978
+          "mean_pred": 2.088
         }
       },
       "sweetness": {
         "*": {
-          "n": 35,
-          "mae": 0.8425,
-          "within1": 0.6857,
-          "spearman": -0.3804,
-          "mean_truth": 3.414,
-          "mean_pred": 3.575
+          "n": 33,
+          "mae": 0.8769,
+          "within1": 0.6667,
+          "spearman": -0.4088,
+          "mean_truth": 3.379,
+          "mean_pred": 3.566
         },
         "cue": {
           "n": 5,
@@ -639,46 +649,54 @@
           "mean_pred": 3.394
         },
         "sparse": {
-          "n": 9,
-          "mae": 0.4723,
+          "n": 7,
+          "mae": 0.5288,
           "within1": 1.0,
-          "spearman": -0.25,
-          "mean_truth": 3.667,
-          "mean_pred": 3.678
+          "spearman": -0.3536,
+          "mean_truth": 3.571,
+          "mean_pred": 3.664
         }
       },
       "body": {
         "*": {
-          "n": 64,
-          "mae": 0.6928,
-          "within1": 0.7812,
-          "spearman": 0.2897,
-          "mean_truth": 3.398,
-          "mean_pred": 3.368
+          "n": 77,
+          "mae": 0.6478,
+          "within1": 0.7922,
+          "spearman": 0.3768,
+          "mean_truth": 3.318,
+          "mean_pred": 3.313
+        },
+        "cue": {
+          "n": 2,
+          "mae": 0.2469,
+          "within1": 1.0,
+          "spearman": null,
+          "mean_truth": 4.0,
+          "mean_pred": 3.753
         },
         "facts": {
           "n": 49,
-          "mae": 0.7104,
+          "mae": 0.7043,
           "within1": 0.7551,
-          "spearman": 0.2305,
+          "spearman": 0.2074,
           "mean_truth": 3.378,
-          "mean_pred": 3.386
+          "mean_pred": 3.342
         },
         "notes": {
-          "n": 14,
-          "mae": 0.6084,
-          "within1": 0.9286,
-          "spearman": 0.4771,
-          "mean_truth": 3.393,
-          "mean_pred": 3.298
+          "n": 25,
+          "mae": 0.5541,
+          "within1": 0.88,
+          "spearman": 0.4665,
+          "mean_truth": 3.1,
+          "mean_pred": 3.214
         },
         "sparse": {
           "n": 1,
-          "mae": 1.0085,
+          "mae": 1.0236,
           "within1": 0.0,
           "spearman": null,
           "mean_truth": 4.5,
-          "mean_pred": 3.491
+          "mean_pred": 3.476
         }
       }
     },
@@ -687,14 +705,14 @@
         "*": "medium",
         "facts": "medium",
         "notes": "medium",
-        "sparse": "high"
+        "sparse": "medium"
       },
       "sweetness": {
         "*": "low",
         "facts": "low"
       },
       "body": {
-        "*": "medium",
+        "*": "high",
         "facts": "medium",
         "notes": "high"
       }
@@ -703,21 +721,21 @@
       "acidity": {
         "notes": {
           "n": 196,
-          "mae": 0.5425,
-          "within1": 0.8571,
-          "spearman": 0.7141,
+          "mae": 0.5668,
+          "within1": 0.852,
+          "spearman": 0.7092,
           "mean_truth": 2.329,
-          "mean_pred": 2.342
+          "mean_pred": 2.431
         }
       },
       "body": {
         "notes": {
           "n": 195,
-          "mae": 0.5933,
-          "within1": 0.8308,
-          "spearman": 0.0429,
+          "mae": 0.5829,
+          "within1": 0.8462,
+          "spearman": 0.0308,
           "mean_truth": 2.948,
-          "mean_pred": 3.409
+          "mean_pred": 3.3
         }
       },
       "sweetness": {
@@ -743,19 +761,19 @@
   "e2_shipped": {
     "acidity": {
       "n": 196,
-      "mae": 0.5425,
-      "within1": 0.8571,
-      "spearman": 0.7141,
+      "mae": 0.5668,
+      "within1": 0.852,
+      "spearman": 0.7092,
       "mean_truth": 2.329,
-      "mean_pred": 2.342
+      "mean_pred": 2.431
     },
     "body": {
       "n": 195,
-      "mae": 0.5933,
-      "within1": 0.8308,
-      "spearman": 0.0429,
+      "mae": 0.5829,
+      "within1": 0.8462,
+      "spearman": 0.0308,
       "mean_truth": 2.948,
-      "mean_pred": 3.409
+      "mean_pred": 3.3
     },
     "sweetness": {
       "n": 196,

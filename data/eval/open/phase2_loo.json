@@ -17,7 +17,7 @@
     "n": 200,
     "exact": 0.255,
     "within1": 0.51,
-    "mae": 1.0956
+    "mae": 1.0961
   },
   "body": {
     "n": 8,
@@ -29,7 +29,7 @@
     "n": 11,
     "exact": 0.6364,
     "within1": 0.9091,
-    "mae": 0.4164
+    "mae": 0.4055
   },
   "acidity_within1_by_confidence": {
     "low": {

@@ -1,104 +1,282 @@
 {
-  "generated_at": "2026-09-29T15:25:15.184255+00:00",
+  "generated_at": "2026-09-30T03:09:07.428494+00:00",
   "k": 10,
   "ship_margin_within1": 0.05,
   "cqi_aux_weight": 0.2,
-  "gauged_beans": 82,
+  "gauged_beans": 95,
   "labels_per_attr": {
-    "acidity": 82,
-    "body": 64,
+    "acidity": 95,
+    "body": 77,
     "sweetness": 72
   },
   "cv": {
     "acidity": {
-      "n": 82,
+      "n": 95,
       "roasters": {
         "1킬로커피": 37,
         "G로스팅": 17,
         "내일의커피": 10,
+        "모모스커피": 13,
         "커피 리브레": 18
       },
-      "neighbor_coverage": 0.9634,
+      "neighbor_coverage": 0.9895,
       "table": {
         "global_mean": {
-          "n": 82,
-          "mae": 1.0327,
-          "within1": 0.5244
+          "n": 95,
+          "mae": 1.0254,
+          "within1": 0.5158
         },
         "origin_mean": {
-          "n": 82,
-          "mae": 1.0216,
-          "within1": 0.5122
+          "n": 95,
+          "mae": 0.9941,
+          "within1": 0.5474
         },
         "neighbor_avg": {
-          "n": 82,
-          "mae": 1.0698,
-          "within1": 0.561
+          "n": 95,
+          "mae": 1.0365,
+          "within1": 0.5368
         },
         "ridge": {
-          "n": 82,
-          "mae": 0.7906,
-          "within1": 0.6951
+          "n": 95,
+          "mae": 0.7113,
+          "within1": 0.7053
         },
         "gbt": {
-          "n": 82,
-          "mae": 0.776,
-          "within1": 0.6585
+          "n": 95,
+          "mae": 0.7225,
+          "within1": 0.7053
         },
         "ridge+cqi": {
-          "n": 82,
-          "mae": 0.9029,
-          "within1": 0.5732
+          "n": 95,
+          "mae": 0.8263,
+          "within1": 0.6526
         },
         "gbt+cqi": {
-          "n": 82,
-          "mae": 1.0499,
-          "within1": 0.5122
+          "n": 95,
+          "mae": 0.9853,
+          "within1": 0.5263
         },
         "ridge+nbr": {
-          "n": 82,
-          "mae": 0.9562,
-          "within1": 0.5732
+          "n": 95,
+          "mae": 0.7108,
+          "within1": 0.7368
         },
         "gbt+nbr": {
-          "n": 82,
-          "mae": 0.8672,
-          "within1": 0.6585
+          "n": 95,
+          "mae": 0.7972,
+          "within1": 0.6737
         },
         "ridge+nbr+cqi": {
-          "n": 82,
-          "mae": 0.9173,
-          "within1": 0.622
+          "n": 95,
+          "mae": 0.8405,
+          "within1": 0.6737
         },
         "gbt+nbr+cqi": {
-          "n": 82,
-          "mae": 0.9384,
-          "within1": 0.5976
+          "n": 95,
+          "mae": 0.8362,
+          "within1": 0.6421
         }
       },
       "alphas": {
         "ridge": [
-          1.0,
+          3.0,
+          3.0,
           3.0,
           3.0,
           10.0
         ],
         "ridge+cqi": [
           3.0,
-          1.0,
-          1.0,
-          10.0
+          0.3,
+          3.0,
+          10.0,
+          3.0
         ],
         "ridge+nbr": [
-          0.3,
-          10.0,
           3.0,
-          30.0
+          3.0,
+          3.0,
+          10.0,
+          10.0
         ],
         "ridge+nbr+cqi": [
           3.0,
+          0.3,
           1.0,
-          1.0,
+          3.0,
+          1.0
+        ]
+      },
+      "per_roaster": {
+        "1킬로커피": {
+          "global_mean": {
+            "n": 37,
+            "mae": 0.8595,
+            "within1": 0.6757
+          },
+          "neighbor_avg": {
+            "n": 37,
+            "mae": 1.2403,
+            "within1": 0.4324
+          },
+          "ridge": {
+            "n": 37,
+            "mae": 0.7348,
+            "within1": 0.6486
+          },
+          "ridge+nbr": {
+            "n": 37,
+            "mae": 0.7762,
+            "within1": 0.6486
+          }
+        },
+        "G로스팅": {
+          "global_mean": {
+            "n": 17,
+            "mae": 1.233,
+            "within1": 0.4118
+          },
+          "neighbor_avg": {
+            "n": 17,
+            "mae": 1.2259,
+            "within1": 0.4706
+          },
+          "ridge": {
+            "n": 17,
+            "mae": 0.6231,
+            "within1": 0.7647
+          },
+          "ridge+nbr": {
+            "n": 17,
+            "mae": 0.6144,
+            "within1": 0.8235
+          }
+        },
+        "내일의커피": {
+          "global_mean": {
+            "n": 10,
+            "mae": 1.2365,
+            "within1": 0.2
+          },
+          "neighbor_avg": {
+            "n": 10,
+            "mae": 0.4488,
+            "within1": 0.9
+          },
+          "ridge": {
+            "n": 10,
+            "mae": 0.8506,
+            "within1": 0.6
+          },
+          "ridge+nbr": {
+            "n": 10,
+            "mae": 0.809,
+            "within1": 0.6
+          }
+        },
+        "모모스커피": {
+          "global_mean": {
+            "n": 13,
+            "mae": 0.9142,
+            "within1": 0.4615
+          },
+          "neighbor_avg": {
+            "n": 13,
+            "mae": 0.9615,
+            "within1": 0.3846
+          },
+          "ridge": {
+            "n": 13,
+            "mae": 0.6934,
+            "within1": 0.7692
+          },
+          "ridge+nbr": {
+            "n": 13,
+            "mae": 0.6221,
+            "within1": 0.8462
+          }
+        },
+        "커피 리브레": {
+          "global_mean": {
+            "n": 18,
+            "mae": 1.1335,
+            "within1": 0.5
+          },
+          "neighbor_avg": {
+            "n": 18,
+            "mae": 0.8194,
+            "within1": 0.7222
+          },
+          "ridge": {
+            "n": 18,
+            "mae": 0.6819,
+            "within1": 0.7778
+          },
+          "ridge+nbr": {
+            "n": 18,
+            "mae": 0.6768,
+            "within1": 0.8333
+          }
+        }
+      }
+    },
+    "body": {
+      "n": 77,
+      "roasters": {
+        "1킬로커피": 37,
+        "G로스팅": 17,
+        "내일의커피": 10,
+        "모모스커피": 13
+      },
+      "neighbor_coverage": 0.4675,
+      "table": {
+        "global_mean": {
+          "n": 77,
+          "mae": 0.7257,
+          "within1": 0.7662
+        },
+        "origin_mean": {
+          "n": 77,
+          "mae": 0.7137,
+          "within1": 0.8052
+        },
+        "neighbor_avg": {
+          "n": 77,
+          "mae": 0.7226,
+          "within1": 0.7922
+        },
+        "ridge": {
+          "n": 77,
+          "mae": 0.665,
+          "within1": 0.7792
+        },
+        "gbt": {
+          "n": 77,
+          "mae": 0.7725,
+          "within1": 0.6494
+        },
+        "ridge+nbr": {
+          "n": 77,
+          "mae": 0.6815,
+          "within1": 0.7403
+        },
+        "gbt+nbr": {
+          "n": 77,
+          "mae": 0.7924,
+          "within1": 0.6364
+        }
+      },
+      "alphas": {
+        "ridge": [
+          10.0,
+          30.0,
+          3.0,
+          3.0
+        ],
+        "ridge+nbr": [
+          10.0,
+          30.0,
+          3.0,
           3.0
         ]
       },
@@ -106,215 +284,89 @@
         "1킬로커피": {
           "global_mean": {
             "n": 37,
-            "mae": 0.8393,
-            "within1": 0.6757
+            "mae": 0.6655,
+            "within1": 0.8108
           },
           "neighbor_avg": {
             "n": 37,
-            "mae": 1.2419,
-            "within1": 0.4324
-          },
-          "ridge": {
-            "n": 37,
-            "mae": 0.8481,
-            "within1": 0.6486
-          },
-          "ridge+nbr": {
-            "n": 37,
-            "mae": 1.1646,
-            "within1": 0.3514
-          }
-        },
-        "G로스팅": {
-          "global_mean": {
-            "n": 17,
-            "mae": 1.2077,
-            "within1": 0.4118
-          },
-          "neighbor_avg": {
-            "n": 17,
-            "mae": 1.2271,
-            "within1": 0.5294
-          },
-          "ridge": {
-            "n": 17,
-            "mae": 0.7115,
-            "within1": 0.7647
-          },
-          "ridge+nbr": {
-            "n": 17,
-            "mae": 0.7406,
-            "within1": 0.7647
-          }
-        },
-        "내일의커피": {
-          "global_mean": {
-            "n": 10,
-            "mae": 1.2514,
-            "within1": 0.2
-          },
-          "neighbor_avg": {
-            "n": 10,
-            "mae": 0.6103,
-            "within1": 0.8
-          },
-          "ridge": {
-            "n": 10,
-            "mae": 0.8516,
-            "within1": 0.6
-          },
-          "ridge+nbr": {
-            "n": 10,
-            "mae": 0.8387,
-            "within1": 0.6
-          }
-        },
-        "커피 리브레": {
-          "global_mean": {
-            "n": 18,
-            "mae": 1.1432,
-            "within1": 0.5
-          },
-          "neighbor_avg": {
-            "n": 18,
-            "mae": 0.8228,
-            "within1": 0.7222
-          },
-          "ridge": {
-            "n": 18,
-            "mae": 0.7133,
-            "within1": 0.7778
-          },
-          "ridge+nbr": {
-            "n": 18,
-            "mae": 0.7966,
-            "within1": 0.8333
-          }
-        }
-      }
-    },
-    "body": {
-      "n": 64,
-      "roasters": {
-        "1킬로커피": 37,
-        "G로스팅": 17,
-        "내일의커피": 10
-      },
-      "neighbor_coverage": 0.4062,
-      "table": {
-        "global_mean": {
-          "n": 64,
-          "mae": 0.7553,
-          "within1": 0.7031
-        },
-        "origin_mean": {
-          "n": 64,
-          "mae": 0.7439,
-          "within1": 0.7344
-        },
-        "neighbor_avg": {
-          "n": 64,
-          "mae": 0.7865,
-          "within1": 0.7188
-        },
-        "ridge": {
-          "n": 64,
-          "mae": 0.7557,
-          "within1": 0.7812
-        },
-        "gbt": {
-          "n": 64,
-          "mae": 0.6927,
-          "within1": 0.7188
-        },
-        "ridge+nbr": {
-          "n": 64,
-          "mae": 0.7239,
-          "within1": 0.7812
-        },
-        "gbt+nbr": {
-          "n": 64,
-          "mae": 0.6972,
-          "within1": 0.7656
-        }
-      },
-      "alphas": {
-        "ridge": [
-          30.0,
-          0.3,
-          1.0
-        ],
-        "ridge+nbr": [
-          30.0,
-          0.3,
-          0.3
-        ]
-      },
-      "per_roaster": {
-        "1킬로커피": {
-          "global_mean": {
-            "n": 37,
-            "mae": 0.7302,
+            "mae": 0.7305,
             "within1": 0.7838
           },
-          "neighbor_avg": {
-            "n": 37,
-            "mae": 0.7989,
-            "within1": 0.7297
-          },
           "ridge": {
             "n": 37,
-            "mae": 0.7219,
+            "mae": 0.6604,
             "within1": 0.7838
           },
           "ridge+nbr": {
             "n": 37,
-            "mae": 0.7217,
+            "mae": 0.6604,
             "within1": 0.7838
           }
         },
         "G로스팅": {
           "global_mean": {
             "n": 17,
-            "mae": 0.9318,
+            "mae": 0.9662,
             "within1": 0.5294
           },
           "neighbor_avg": {
             "n": 17,
-            "mae": 0.8198,
+            "mae": 0.8194,
             "within1": 0.7059
           },
           "ridge": {
             "n": 17,
-            "mae": 0.8531,
-            "within1": 0.7647
+            "mae": 0.7723,
+            "within1": 0.7059
           },
           "ridge+nbr": {
             "n": 17,
-            "mae": 0.7717,
-            "within1": 0.7647
+            "mae": 0.7719,
+            "within1": 0.7059
           }
         },
         "내일의커피": {
           "global_mean": {
             "n": 10,
-            "mae": 0.5481,
+            "mae": 0.5836,
             "within1": 0.7
           },
           "neighbor_avg": {
             "n": 10,
-            "mae": 0.6841,
+            "mae": 0.7616,
             "within1": 0.7
           },
           "ridge": {
             "n": 10,
-            "mae": 0.7151,
-            "within1": 0.8
+            "mae": 0.6739,
+            "within1": 0.7
           },
           "ridge+nbr": {
             "n": 10,
-            "mae": 0.6507,
-            "within1": 0.8
+            "mae": 0.7079,
+            "within1": 0.7
+          }
+        },
+        "모모스커피": {
+          "global_mean": {
+            "n": 13,
+            "mae": 0.6917,
+            "within1": 1.0
+          },
+          "neighbor_avg": {
+            "n": 13,
+            "mae": 0.5435,
+            "within1": 1.0
+          },
+          "ridge": {
+            "n": 13,
+            "mae": 0.531,
+            "within1": 0.9231
+          },
+          "ridge+nbr": {
+            "n": 13,
+            "mae": 0.603,
+            "within1": 0.6923
           }
         }
       }
@@ -326,7 +378,7 @@
         "G로스팅": 17,
         "커피 리브레": 18
       },
-      "neighbor_coverage": 0.4583,
+      "neighbor_coverage": 0.4306,
       "table": {
         "global_mean": {
           "n": 72,
@@ -340,8 +392,8 @@
         },
         "neighbor_avg": {
           "n": 72,
-          "mae": 1.0553,
-          "within1": 0.5833
+          "mae": 1.0851,
+          "within1": 0.5556
         },
         "ridge": {
           "n": 72,
@@ -355,13 +407,13 @@
         },
         "ridge+nbr": {
           "n": 72,
-          "mae": 1.0328,
+          "mae": 1.0285,
           "within1": 0.5833
         },
         "gbt+nbr": {
           "n": 72,
-          "mae": 1.0222,
-          "within1": 0.5972
+          "mae": 1.0632,
+          "within1": 0.5833
         }
       },
       "alphas": {
@@ -385,7 +437,7 @@
           },
           "neighbor_avg": {
             "n": 37,
-            "mae": 1.3728,
+            "mae": 1.3817,
             "within1": 0.4595
           },
           "ridge": {
@@ -395,7 +447,7 @@
           },
           "ridge+nbr": {
             "n": 37,
-            "mae": 1.3414,
+            "mae": 1.3391,
             "within1": 0.4595
           }
         },
@@ -407,7 +459,7 @@
           },
           "neighbor_avg": {
             "n": 17,
-            "mae": 0.7827,
+            "mae": 0.7945,
             "within1": 0.7059
           },
           "ridge": {
@@ -417,7 +469,7 @@
           },
           "ridge+nbr": {
             "n": 17,
-            "mae": 0.7626,
+            "mae": 0.7519,
             "within1": 0.6471
           }
         },
@@ -429,8 +481,8 @@
           },
           "neighbor_avg": {
             "n": 18,
-            "mae": 0.6602,
-            "within1": 0.7222
+            "mae": 0.75,
+            "within1": 0.6111
           },
           "ridge": {
             "n": 18,
@@ -439,7 +491,7 @@
           },
           "ridge+nbr": {
             "n": 18,
-            "mae": 0.6534,
+            "mae": 0.6515,
             "within1": 0.7778
           }
         }
@@ -448,8 +500,8 @@
   },
   "ship": {
     "acidity": {
-      "candidate": "ridge",
-      "within1_gain_vs_neighbor": 0.1341,
+      "candidate": "ridge+nbr",
+      "within1_gain_vs_neighbor": 0.2,
       "passes_gauges_only_rule": true,
       "shipped_recipe": [
         "ablation",
@@ -457,9 +509,9 @@
       ]
     },
     "body": {
-      "candidate": "ridge+nbr",
-      "within1_gain_vs_neighbor": 0.0624,
-      "passes_gauges_only_rule": true,
+      "candidate": "ridge",
+      "within1_gain_vs_neighbor": -0.013,
+      "passes_gauges_only_rule": false,
       "shipped_recipe": [
         "ablation",
         "+A wA=1"
@@ -467,7 +519,7 @@
     },
     "sweetness": {
       "candidate": "ridge",
-      "within1_gain_vs_neighbor": 0.0139,
+      "within1_gain_vs_neighbor": 0.0416,
       "passes_gauges_only_rule": false,
       "shipped_recipe": [
         "ablation",
@@ -478,87 +530,90 @@
   "final": {
     "acidity": {
       "type": "ridge",
-      "alpha": 3.0,
-      "intercept": 2.1455,
+      "alpha": 10.0,
+      "intercept": 2.1416,
       "weights": {
-        "region_east_africa": 0.3175,
-        "region_central_america": -0.0781,
-        "region_south_america": 0.0416,
-        "region_asia_pacific": -0.0306,
-        "region_yemen": -0.1999,
-        "blend_or_unknown_origin": -0.0505,
-        "country_Ethiopia": 0.2638,
-        "country_Kenya": 0.3749,
-        "country_Colombia": 0.1774,
-        "country_Brazil": -0.1193,
-        "country_Guatemala": -0.2329,
-        "alt_lt1200": 0.3078,
-        "alt_1600_2000": 0.5677,
-        "alt_ge2000": 0.2761,
-        "process_washed": -0.2843,
-        "process_natural": 0.1195,
-        "process_honey": -0.0342,
-        "process_anaerobic": -0.0213,
-        "roast_light": 0.3933,
-        "roast_medium": 0.0847,
-        "roast_medium-dark": -0.4944,
-        "roast_dark": -0.453,
-        "decaf": 0.0186,
-        "decaf_water": -0.0906,
-        "decaf_sugarcane": 0.1189,
-        "notes_fruity": 0.4498,
-        "notes_floral": 0.0083,
-        "notes_sweet": -0.2733,
-        "notes_nutty/cocoa": -0.2613,
-        "notes_roasted": -0.1999,
-        "notes_spices": 0.1255,
-        "notes_sour/fermented": 0.2044,
-        "notes_green/vegetative": 0.4187
+        "region_east_africa": 0.1571,
+        "region_central_america": -0.1028,
+        "region_south_america": 0.025,
+        "region_asia_pacific": -0.0412,
+        "region_yemen": -0.1095,
+        "blend_or_unknown_origin": 0.0714,
+        "country_Ethiopia": 0.1449,
+        "country_Kenya": 0.1271,
+        "country_Colombia": 0.0843,
+        "country_Brazil": -0.0339,
+        "country_Guatemala": -0.1522,
+        "alt_lt1200": 0.0983,
+        "alt_1600_2000": 0.2674,
+        "alt_ge2000": 0.143,
+        "process_washed": -0.1394,
+        "process_natural": -0.0007,
+        "process_honey": -0.0035,
+        "process_anaerobic": 0.1021,
+        "roast_light": 0.2132,
+        "roast_medium": 0.0973,
+        "roast_medium-dark": -0.3453,
+        "roast_dark": -0.2261,
+        "variety_geisha": -0.0499,
+        "decaf": 0.016,
+        "decaf_water": -0.0355,
+        "decaf_sugarcane": 0.0835,
+        "notes_fruity": 0.5091,
+        "notes_floral": 0.0256,
+        "notes_sweet": -0.2192,
+        "notes_nutty/cocoa": -0.2849,
+        "notes_roasted": -0.1095,
+        "notes_spices": 0.0275,
+        "notes_sour/fermented": 0.1092,
+        "notes_green/vegetative": 0.1091,
+        "nbr": 0.2026
       },
-      "n_train": 82,
-      "uses_nbr": false
+      "n_train": 95,
+      "uses_nbr": true
     },
     "body": {
       "type": "ridge",
       "alpha": 3.0,
-      "intercept": 3.6683,
+      "intercept": 3.5303,
       "weights": {
-        "region_east_africa": -0.0089,
-        "region_central_america": -0.1257,
-        "region_south_america": -0.2502,
-        "region_asia_pacific": 0.0909,
-        "region_yemen": 0.0702,
-        "blend_or_unknown_origin": 0.2237,
-        "country_Ethiopia": -0.4219,
-        "country_Kenya": 0.2264,
-        "country_Colombia": -0.2251,
-        "country_Brazil": -0.0251,
-        "country_Guatemala": 0.1458,
-        "alt_lt1200": -0.0801,
-        "alt_1600_2000": -0.1336,
-        "alt_ge2000": 0.1555,
-        "process_washed": 0.1591,
-        "process_natural": -0.0104,
-        "process_honey": 0.1907,
-        "roast_light": -0.3803,
-        "roast_medium": -0.4619,
-        "roast_medium-dark": 0.0507,
-        "roast_dark": 0.6145,
-        "decaf": -0.3233,
-        "decaf_water": -0.2407,
-        "decaf_sugarcane": -0.0318,
-        "notes_fruity": -0.215,
-        "notes_floral": -0.0032,
-        "notes_sweet": 0.0787,
-        "notes_nutty/cocoa": 0.2729,
-        "notes_roasted": 0.0702,
-        "notes_spices": -0.138,
-        "notes_sour/fermented": -0.3537,
-        "notes_green/vegetative": -0.2622,
-        "nbr": -0.1517
+        "region_east_africa": 0.0754,
+        "region_central_america": -0.2201,
+        "region_south_america": -0.2218,
+        "region_asia_pacific": 0.1124,
+        "region_yemen": 0.1519,
+        "blend_or_unknown_origin": 0.102,
+        "country_Ethiopia": -0.4118,
+        "country_Kenya": 0.2564,
+        "country_Colombia": -0.2082,
+        "country_Brazil": -0.0136,
+        "country_Guatemala": 0.1761,
+        "alt_lt1200": -0.0655,
+        "alt_1600_2000": -0.0658,
+        "alt_ge2000": 0.1931,
+        "process_washed": 0.0965,
+        "process_natural": -0.0009,
+        "process_honey": 0.2109,
+        "process_anaerobic": 0.0192,
+        "roast_light": -0.1888,
+        "roast_medium": -0.3762,
+        "roast_medium-dark": 0.152,
+        "roast_dark": 0.6429,
+        "variety_geisha": -0.0299,
+        "decaf": -0.3148,
+        "decaf_water": -0.2597,
+        "decaf_sugarcane": -0.041,
+        "notes_fruity": -0.3536,
+        "notes_floral": 0.1003,
+        "notes_sweet": 0.0828,
+        "notes_nutty/cocoa": 0.3206,
+        "notes_roasted": 0.1519,
+        "notes_spices": -0.1126,
+        "notes_sour/fermented": -0.279,
+        "notes_green/vegetative": -0.1627
       },
-      "n_train": 64,
-      "uses_nbr": true
+      "n_train": 77,
+      "uses_nbr": false
     },
     "sweetness": {
       "type": "ridge",
@@ -605,36 +660,39 @@
   },
   "gbt_importance": {
     "acidity": {
-      "notes_fruity": 0.2704,
-      "notes_nutty/cocoa": 0.122,
-      "roast_medium-dark": 0.0918,
-      "region_east_africa": 0.0916,
-      "alt_1600_2000": 0.0748,
-      "country_Kenya": 0.0662,
-      "country_Ethiopia": 0.056,
-      "roast_light": 0.0364,
-      "notes_sweet": 0.0332,
-      "roast_dark": 0.0291,
-      "country_Guatemala": 0.0182,
-      "alt_lt1200": 0.0139,
-      "notes_green/vegetative": 0.0132,
-      "notes_sour/fermented": 0.0115
+      "notes_fruity": 0.2892,
+      "nbr": 0.1681,
+      "notes_nutty/cocoa": 0.1025,
+      "roast_medium-dark": 0.0689,
+      "country_Kenya": 0.0603,
+      "region_east_africa": 0.0528,
+      "alt_1600_2000": 0.045,
+      "notes_sweet": 0.036,
+      "roast_dark": 0.0308,
+      "country_Ethiopia": 0.0265,
+      "roast_light": 0.0198,
+      "process_washed": 0.0188,
+      "country_Guatemala": 0.0174,
+      "roast_medium": 0.0167
     },
     "body": {
-      "roast_dark": 0.1367,
-      "country_Ethiopia": 0.1303,
-      "roast_medium": 0.1216,
-      "notes_nutty/cocoa": 0.1045,
-      "roast_light": 0.0786,
-      "notes_sour/fermented": 0.0669,
-      "nbr": 0.0615,
-      "decaf": 0.0586,
-      "blend_or_unknown_origin": 0.0382,
-      "notes_fruity": 0.0379,
-      "country_Kenya": 0.0288,
-      "region_south_america": 0.0255,
-      "process_honey": 0.0253,
-      "alt_1600_2000": 0.0177
+      "notes_nutty/cocoa": 0.1678,
+      "roast_dark": 0.1589,
+      "notes_fruity": 0.129,
+      "country_Ethiopia": 0.1248,
+      "roast_medium-dark": 0.059,
+      "decaf": 0.0553,
+      "roast_medium": 0.0387,
+      "process_honey": 0.0363,
+      "notes_sour/fermented": 0.028,
+      "country_Kenya": 0.0229,
+      "blend_or_unknown_origin": 0.0227,
+      "alt_ge2000": 0.0193,
+      "notes_sweet": 0.0171,
+      "region_central_america": 0.0165,
+      "alt_1600_2000": 0.0158,
+      "region_south_america": 0.015,
+      "notes_floral": 0.0135
     },
     "sweetness": {
       "notes_nutty/cocoa": 0.1602,
@@ -662,29 +720,29 @@
       "label": "review sub-score quintile",
       "model": {
         "n": 6265,
-        "mae": 0.9819,
-        "within1": 0.5515
+        "mae": 0.9945,
+        "within1": 0.537
       },
       "global_mean": {
         "n": 6265,
         "mae": 0.8151,
         "within1": 0.714
       },
-      "spearman": 0.2839
+      "spearman": 0.2855
     },
     "body": {
       "label": "LLM heaviness (ADR 0010)",
       "model": {
         "n": 6528,
-        "mae": 1.0027,
-        "within1": 0.5732
+        "mae": 1.01,
+        "within1": 0.5656
       },
       "global_mean": {
         "n": 6528,
         "mae": 0.9184,
         "within1": 0.6106
       },
-      "spearman": 0.023
+      "spearman": 0.0156
     }
   }
 }
