@@ -107,8 +107,20 @@ def _size_tag(name_wo_temp: str) -> str | None:
     return tags[-1] if tags else None
 
 
+# Spelling slips in the MFDS source names, fixed for display only (raw_name keeps the original). Picked by hand from
+# words that occur at most twice and are one edit away from a common menu word; brand spellings such as 마끼야또 /
+# 아포가또 and different words (녹차 vs 말차) are left alone.
+NAME_TYPOS = {"에소프레소": "에스프레소", "비닐라": "바닐라", "아포카토": "아포가토"}
+
+
+def _fix_typos(name: str) -> str:
+    for wrong, right in NAME_TYPOS.items():
+        name = name.replace(wrong, right)
+    return name
+
+
 def clean_drink_name(raw_name: str) -> tuple[str, str | None, str | None]:
-    """Strip the "커피_" prefix and pull out (base_name, temperature, size_tag)."""
+    """Strip the "커피_" prefix, fix known spelling slips, and pull out (base_name, temperature, size_tag)."""
     name = clean(raw_name) or ""
     name = re.sub(r"^커피_", "", name)
     temperature = _temperature(name)
@@ -117,7 +129,7 @@ def clean_drink_name(raw_name: str) -> tuple[str, str | None, str | None]:
     if size_tag:
         # Only strip the trailing size parenthetical, not an unrelated one earlier in the name.
         base = re.sub(r"\(" + re.escape(size_tag) + r"\)\s*$", "", base.strip())
-    base = re.sub(r"\s{2,}", " ", base).strip()
+    base = _fix_typos(re.sub(r"\s{2,}", " ", base).strip())
     return base, temperature, size_tag
 
 

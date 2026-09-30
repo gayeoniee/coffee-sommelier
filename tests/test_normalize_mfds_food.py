@@ -215,3 +215,10 @@ def test_protein_near_the_threshold_gets_no_milk_label():
     from pipeline.normalize.mfds_food import MFDS_MILK_PROTEIN_THRESHOLD, MFDS_MILK_UNSURE_BAND
     lo, hi = MFDS_MILK_UNSURE_BAND
     assert lo < MFDS_MILK_PROTEIN_THRESHOLD < hi       # 0.32 (탐앤탐스 싱글오리진) is never labelled
+
+
+def test_known_spelling_slips_are_fixed_for_display():
+    from pipeline.normalize.mfds_food import clean_drink_name
+    assert clean_drink_name("커피_에소프레소 (더블) 핫(HOT)")[0] == "에스프레소 (더블)"
+    assert clean_drink_name("커피_비닐라 라떼 아이스(ICED)")[0] == "바닐라 라떼"
+    assert clean_drink_name("커피_아포가또")[0] == "아포가또"          # a brand spelling, left alone
