@@ -118,6 +118,6 @@ echo "== eval: violations loo coverage convergence -> ${EVAL_DIR} =="
 mkdir -p "${EVAL_DIR}"
 DATA_VARIANT=open uv run python -m app.eval violations loo coverage convergence   # open models only (never the full-variant ones)
 
-echo "== expected: total_coffees 2063, coffeereview_rows 0, menu_items 902, violations 0 of 161 =="
+echo "== expected: total_coffees 2063, coffeereview_rows 0, menu_items 902, violations 0 of 169 =="
 uv run python -c "import json,sys; d=json.load(open(sys.argv[1])); print('violations', d['violations'], 'of', d['checked'])" "${EVAL_DIR}/phase2_violations.json"
 echo "done."

@@ -493,3 +493,12 @@ def test_kca_tea_caffeine_fills_only_missing_values_and_reports_matches():
     out, rep = apply_kca_caffeine(items, drinks)
     assert [m.caffeine_mg for m in out] == [45.0, 118.1, None]   # brand value kept; other brand's drink not matched
     assert rep["filled"] == 1 and [m["kca_mg"] for m in rep["matched"]] == [45, 57]
+
+
+def test_twosome_mfds_coffee_can_be_ordered_decaf():
+    """ADR 0023: 투썸 menus come from the MFDS DB (category "커피"); they keep the brand's decaf-swap option."""
+    from pipeline import settings
+    from pipeline.normalize.menus import brands_by_key, menu_decaf_option
+    twosome = brands_by_key(settings.CURATED_DIR)["brand:twosome"]
+    assert menu_decaf_option(twosome, "커피", False, "카페라떼")
+    assert not menu_decaf_option(twosome, "커피", False, "콜드브루")          # no shot to swap

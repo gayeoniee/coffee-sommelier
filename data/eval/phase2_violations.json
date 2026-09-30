@@ -1,15 +1,15 @@
 {
-  "checked": 161,
+  "checked": 169,
   "violations": 0,
   "rate": 0.0,
   "by_milk_label_source": {
     "note": "human = data/curated/menu_milk_labels.yaml, mfds_protein = ADR 0023 Phase 2 protein-density signal (no hand label yet), marker = neither (keyword fallback only)",
     "human": {
-      "checked": 115,
+      "checked": 121,
       "violations": 0
     },
     "mfds_protein": {
-      "checked": 46,
+      "checked": 48,
       "violations": 0
     },
     "marker": {

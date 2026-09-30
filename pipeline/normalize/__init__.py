@@ -126,6 +126,12 @@ def run_normalize(raw_root: Path, out_dir: Path, curated_dir: Path,
 
             mfds_drinks = normalize_mfds_food(mfds_path)
             mfds_items, mfds_protein_labels = menu_items_from_mfds(mfds_drinks, _mfds_collected_at(mfds_path))
+            # the same "can this be ordered decaf?" rule as the brands' own menus (brands.yaml decaf_option_categories)
+            from pipeline.normalize.menus import menu_decaf_option
+            by_key = {b.key: b for b in total.brands}
+            mfds_items = [m.model_copy(update={"decaf_option": menu_decaf_option(by_key[m.brand_key], m.category,
+                                                                                   m.is_decaf, m.name)})
+                          if m.brand_key in by_key else m for m in mfds_items]
             total.menu_items += mfds_items
             per_source["src:mfds_food"] = len(mfds_items)
 

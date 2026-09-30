@@ -41,6 +41,8 @@
   name: 투썸플레이스
   decaf_available: true
   decaf_surcharge_krw: 200
+  # 식약처 음식 DB 메뉴(ADR 0023)의 카테고리 "커피" — 에스프레소 음료는 디카페인 원두로 바꿔 주문 가능(공식 디카페인 블렌드)
+  decaf_option_categories: [커피]
   notes: >-
     [공식] https://www.twosome.co.kr/mn/coffeeStory.do (2026-09-28, 봇 UA는 CloudFront 403이라 브라우저로 열어 사실만 옮김):
     블렌드 3종 — 블랙그라운드(다크, 콜롬비아·브라질·파푸아뉴기니, 산미 40%·바디 100%), 아로마노트(미디엄, 에티오피아
