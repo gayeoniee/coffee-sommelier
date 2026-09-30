@@ -1,3 +1,4 @@
+import json
 import logging
 from pathlib import Path
 
@@ -77,10 +78,20 @@ def coffee_group(source: str, roaster: str | None) -> str:
     return f"{source}:{roaster or ''}" if source in PER_ROASTER_SOURCES else source
 
 
-def load_milk_labels(curated_dir: Path | None = None) -> dict[str, bool]:
-    """Hand milk labels, menu name -> contains milk (data/curated/menu_milk_labels.yaml)."""
+MFDS_PROTEIN_LABELS_FILENAME = "mfds_protein_milk_labels.json"  # written by run_normalize, see mfds_food.py
+
+
+def load_milk_labels(curated_dir: Path | None = None, norm_dir: Path | None = None) -> dict[str, bool]:
+    """Menu name -> contains milk: hand labels (data/curated/menu_milk_labels.yaml) merged with MFDS
+    protein-derived labels (docs/adr/0023-mfds-food-db.md Phase 2) for names the hand file doesn't
+    cover yet. A hand label always wins; the protein file is a generated pipeline artifact
+    (`norm_dir`/mfds_protein_milk_labels.json, not committed), so it silently contributes nothing when
+    absent (no MFDS raw file this run) -- see menu_items_from_mfds in pipeline/normalize/mfds_food.py."""
     path = (curated_dir or settings.CURATED_DIR) / "menu_milk_labels.yaml"
-    return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    hand_labels = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    protein_path = (norm_dir or settings.NORMALIZED_DIR) / MFDS_PROTEIN_LABELS_FILENAME
+    protein_labels = json.loads(protein_path.read_text(encoding="utf-8")) if protein_path.exists() else {}
+    return {**protein_labels, **hand_labels}
 
 
 def _out_of_scope_keys(cur, sql: str, in_scope) -> list[str]:
@@ -110,7 +121,7 @@ def run_load(conn, norm_dir: Path, enriched_dir: Path, embedded_dir: Path, *,
     A menu item whose name has no hand milk label (`milk_labels`, default data/curated/menu_milk_labels.yaml)
     is loaded with needs_review = true, which keeps it out of recommendations until someone labels it.
     """
-    labels = load_milk_labels() if milk_labels is None else milk_labels
+    labels = load_milk_labels(norm_dir=norm_dir) if milk_labels is None else milk_labels
     coffees = _require_rows(read_jsonl(enriched_dir / "coffees.jsonl", CoffeeRecord), "coffees")
     brands = _require_rows(read_jsonl(norm_dir / "brands.jsonl", BrandRecord), "brands")
     cur = conn.cursor()
@@ -167,10 +178,10 @@ def run_load(conn, norm_dir: Path, enriched_dir: Path, embedded_dir: Path, *,
     # As with reviews above: filter against the current source brands, not the (possibly stale) id map.
     items = [m for m in all_items if m.brand_key in brand_key_set]
     _upsert(cur, "menu_items", ["key", "brand_id", "name", "name_en", "category", "is_decaf", "decaf_option",
-                                "caffeine_mg", "coffee_id", "source_url", "collected_at", "needs_review"],
+                                "caffeine_mg", "coffee_id", "source", "source_url", "collected_at", "needs_review"],
             [(m.key, brand_ids[m.brand_key], m.name, m.name_en, m.category, m.is_decaf, m.decaf_option,
-              m.caffeine_mg, coffee_ids.get(m.coffee_key), m.source_url, m.collected_at, m.name not in labels)
-             for m in items])
+              m.caffeine_mg, coffee_ids.get(m.coffee_key), m.source, m.source_url, m.collected_at,
+              m.name not in labels) for m in items])
 
     review_keys, menu_keys, coffee_keys = [r.key for r in reviews], [m.key for m in items], list(source_keys)
     if coffee_scope is not None:

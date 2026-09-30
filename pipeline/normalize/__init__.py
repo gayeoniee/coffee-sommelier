@@ -22,6 +22,9 @@ class Normalized:
         return len(self.coffees) + len(self.reviews) + len(self.brands) + len(self.menu_items) + len(self.taxonomy)
 
 
+import datetime as dt  # noqa: E402
+import json  # noqa: E402
+import re  # noqa: E402
 from pathlib import Path  # noqa: E402
 
 from pipeline.collect import latest_snapshot  # noqa: E402
@@ -56,6 +59,19 @@ def _source_dir(raw_root: Path, name: str) -> Path | None:
         d = raw_root / name
         return d if (d / FLAT_SOURCES[name]).exists() else None
     return latest_snapshot(raw_root, name)
+
+
+def _mfds_xlsx(raw_root: Path) -> Path | None:
+    """Latest data/raw/mfds_food/*.xlsx (manual download, docs/adr/0023-mfds-food-db.md), or None -- the
+    file is gitignored and not required; a normal run without it just contributes 0 mfds_food items."""
+    d = raw_root / "mfds_food"
+    files = sorted(d.glob("*.xlsx")) if d.exists() else []
+    return files[-1] if files else None
+
+
+def _mfds_collected_at(xlsx_path: Path) -> str:
+    m = re.match(r"(\d{4})(\d{2})(\d{2})", xlsx_path.stem)
+    return f"{m.group(1)}-{m.group(2)}-{m.group(3)}" if m else dt.date.today().isoformat()
 
 
 def _dedupe(records):
@@ -97,6 +113,22 @@ def run_normalize(raw_root: Path, out_dir: Path, curated_dir: Path,
         per_source[f"src:{name}"] = n.size()
     total.brands = normalize_brands(curated_dir)
     brand_keys = {b.key for b in total.brands}
+
+    mfds_protein_labels: dict[str, bool] = {}
+    if "mfds_food" in exclude_sources:
+        per_source["src:mfds_food"] = "excluded"
+    else:
+        mfds_path = _mfds_xlsx(raw_root)
+        if mfds_path is None:
+            per_source["src:mfds_food"] = 0
+        else:
+            from pipeline.normalize.mfds_food import menu_items_from_mfds, normalize_mfds_food
+
+            mfds_drinks = normalize_mfds_food(mfds_path)
+            mfds_items, mfds_protein_labels = menu_items_from_mfds(mfds_drinks, _mfds_collected_at(mfds_path))
+            total.menu_items += mfds_items
+            per_source["src:mfds_food"] = len(mfds_items)
+
     total.menu_items = [m for m in total.menu_items if m.brand_key in brand_keys]
     total.menu_items, kca = apply_kca_caffeine(total.menu_items, kca_tea_drinks(curated_dir))
     total.coffees, dropped = drop_cross_source_url_duplicates(total.coffees)
@@ -105,4 +137,6 @@ def run_normalize(raw_root: Path, out_dir: Path, curated_dir: Path,
     for field_name in ("coffees", "reviews", "brands", "menu_items", "taxonomy"):
         records = _dedupe(getattr(total, field_name))
         counts[field_name] = write_jsonl(out_dir / f"{field_name}.jsonl", records)
+    (out_dir / "mfds_protein_milk_labels.json").write_text(   # pipeline.load.MFDS_PROTEIN_LABELS_FILENAME
+        json.dumps(mfds_protein_labels, ensure_ascii=False, indent=2), encoding="utf-8")
     return {**counts, **per_source}

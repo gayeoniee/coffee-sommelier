@@ -61,13 +61,31 @@ PERSONAS = [
 # DB was labelled by a person), this marker list only for names the labels don't cover.
 MILK_LABELS: dict[str, bool] = yaml.safe_load(
     (settings.CURATED_DIR / "menu_milk_labels.yaml").read_text(encoding="utf-8"))
+# MFDS protein-derived labels (docs/adr/0023-mfds-food-db.md Phase 2): a generated pipeline artifact, not
+# committed (empty when this DATA_VARIANT's normalize hasn't run with the MFDS raw file present).
+_MFDS_PROTEIN_LABELS_PATH = settings.NORMALIZED_DIR / "mfds_protein_milk_labels.json"
+MFDS_PROTEIN_LABELS: dict[str, bool] = (
+    json.loads(_MFDS_PROTEIN_LABELS_PATH.read_text(encoding="utf-8")) if _MFDS_PROTEIN_LABELS_PATH.exists() else {})
 MILK_MARKERS = ("라떼", "우유", "밀크", "크림", "카푸치노", "플랫화이트", "모카", "프라푸치노", "latte", "milk", "cream",
                 "cappuccino", "mocha", "frappuccino")
+
+
+def milk_label_source(name: str) -> str:
+    """Which independent oracle judged this menu name: a hand label, the MFDS protein-density signal
+    (ADR 0023 Phase 2), or (neither) the keyword marker fallback -- reported separately by violation_rate
+    since only the first two are an actual measurement/hand judgement."""
+    if name in MILK_LABELS:
+        return "human"
+    if name in MFDS_PROTEIN_LABELS:
+        return "mfds_protein"
+    return "marker"
 
 
 def has_milk(name: str) -> bool:
     if name in MILK_LABELS:
         return MILK_LABELS[name]
+    if name in MFDS_PROTEIN_LABELS:
+        return MFDS_PROTEIN_LABELS[name]
     n = "".join(name.lower().split())
     return any(m in n for m in MILK_MARKERS)
 
@@ -105,6 +123,7 @@ def caffeine_display_ok(profile: Profile, item: Item) -> bool:
 def violation_rate(repo) -> dict:
     tag_to_cat, _ = repo.taxonomy()
     checked = violations = 0
+    by_source = {src: {"checked": 0, "violations": 0} for src in ("human", "mfds_protein", "marker")}
     details = []
     for label, p in PERSONAS:
         for b in repo.list_brands():
@@ -112,15 +131,25 @@ def violation_rate(repo) -> dict:
             top = mmr_top_k([(i, score_item(p, i, tag_to_cat)) for i in items if passes(p, i)[0]], tag_to_cat)
             for i, _ in top:
                 checked += 1
+                src = milk_label_source(i.name)
+                by_source[src]["checked"] += 1
                 raw = repo.raw_menu(i.menu_item_id) if i.menu_item_id is not None else None
+                bad = False
                 if not independent_ok(p, i, raw, b["decaf_available"]):
-                    violations += 1
+                    bad = True
                     details.append({"persona": label, "brand": b["key"], "item": i.name})
                 elif not caffeine_display_ok(p, i):
-                    violations += 1
+                    bad = True
                     details.append({"persona": label, "brand": b["key"], "item": i.name,
                                     "shown_caffeine_mg": i.caffeine_mg})
+                if bad:
+                    violations += 1
+                    by_source[src]["violations"] += 1
     return {"checked": checked, "violations": violations, "rate": violations / checked if checked else 0.0,
+            "by_milk_label_source": {
+                "note": "human = data/curated/menu_milk_labels.yaml, mfds_protein = ADR 0023 Phase 2 "
+                        "protein-density signal (no hand label yet), marker = neither (keyword fallback only)",
+                **by_source},
             "details": details}
 
 

@@ -4,7 +4,7 @@ Rows are built via `_row(**overrides)` in the exact 0-based column layout the re
 MFDS workbook uses (see COL in the module under test) — only the columns we read are populated.
 """
 from pipeline.normalize.mfds_food import (
-    COL, brand_key_for_company, clean_drink_name, normalize_rows, parse_amount, parse_row,
+    COL, brand_key_for_company, clean_drink_name, menu_items_from_mfds, normalize_rows, parse_amount, parse_row,
 )
 
 N_COLS = 156  # 1 past the highest index we read (company=155)
@@ -133,3 +133,79 @@ def test_normalize_rows_filters_non_drinks():
     out = normalize_rows(rows)
     assert len(out) == 1
     assert out[0].food_code == "A1"
+
+
+# ===== Phase 2: menu_items_from_mfds ========================================================
+
+def _drink(**overrides) -> tuple:
+    """Row for a Phase 2 target brand (theventi) unless overridden."""
+    defaults = {"company": "더벤티", "basis": "100ml", "serving_size": "200ml"}
+    defaults.update(overrides)
+    return _row(**defaults)
+
+
+def test_menu_items_from_mfds_one_row_per_drink_and_temperature():
+    rows = [
+        _drink(name="커피_아메리카노 핫(HOT)", caffeine=50.0),
+        _drink(name="커피_아메리카노 아이스(ICED)", caffeine=80.0),
+    ]
+    items, _ = menu_items_from_mfds(normalize_rows(rows), "2026-08-28", frozenset({"brand:theventi"}))
+    assert {i.name for i in items} == {"아메리카노(HOT)", "아메리카노(ICED)"}
+    assert all(i.brand_key == "brand:theventi" and i.source == "mfds_food" for i in items)
+    assert all(i.source_url == "https://various.foodsafetykorea.go.kr/nutrient/" for i in items)
+
+
+def test_menu_items_from_mfds_no_temperature_tag_keeps_bare_name():
+    rows = [_drink(name="커피_카페 라떼 프리미엄마일드")]
+    items, _ = menu_items_from_mfds(normalize_rows(rows), "2026-08-28", frozenset({"brand:theventi"}))
+    assert [i.name for i in items] == ["카페 라떼 프리미엄마일드"]
+
+
+def test_menu_items_from_mfds_picks_the_regular_size_by_priority_token():
+    # per-serving caffeine = basis mg * serving_ml / 100: (L) -> 200*300/100=600, (R) -> 100*200/100=200.
+    rows = [
+        _drink(name="커피_카페 라떼 핫(HOT) (L)", caffeine=200.0, serving_size="300ml"),
+        _drink(name="커피_카페 라떼 핫(HOT) (R)", caffeine=100.0, serving_size="200ml"),
+    ]
+    [item], _ = menu_items_from_mfds(normalize_rows(rows), "2026-08-28", frozenset({"brand:theventi"}))
+    assert item.caffeine_mg == 200.0    # (R)'s per-serving value, not (L)'s larger 600
+
+
+def test_menu_items_from_mfds_falls_back_to_the_smallest_size_when_no_priority_token():
+    # neither (J) nor (L) is a priority token -> pick the smaller listed serving_size ((L), 200ml).
+    rows = [
+        _drink(name="커피_카페 모카 핫(HOT) (J)", caffeine=200.0, serving_size="300ml"),
+        _drink(name="커피_카페 모카 핫(HOT) (L)", caffeine=100.0, serving_size="200ml"),
+    ]
+    [item], _ = menu_items_from_mfds(normalize_rows(rows), "2026-08-28", frozenset({"brand:theventi"}))
+    assert item.caffeine_mg == 200.0    # (L)'s per-serving value (100*200/100), not (J)'s larger 600
+
+
+def test_menu_items_from_mfds_folds_a_multi_word_size_suffix_into_its_siblings():
+    # "(Mini Venti)" doesn't match clean_drink_name's single-word SIZE_TAG_RE, so it stays on drink_name;
+    # menu_items_from_mfds must still fold it into the same (drink, temperature) group as (Tall)/(Grande)/
+    # (Venti), and pick (Tall) as the default -- never ship "화이트 아메리카노 (Mini Venti)" as a bogus extra item.
+    rows = [
+        _drink(name="커피_화이트 아메리카노 핫(HOT) (Venti)", caffeine=820.0),
+        _drink(name="커피_화이트 아메리카노 핫(HOT) (Tall)", caffeine=205.0),
+        _drink(name="커피_화이트 아메리카노 핫(HOT) (Mini Venti)", caffeine=614.8),
+        _drink(name="커피_화이트 아메리카노 핫(HOT) (Grande)", caffeine=409.9),
+    ]
+    items, _ = menu_items_from_mfds(normalize_rows(rows), "2026-08-28", frozenset({"brand:theventi"}))
+    assert [i.name for i in items] == ["화이트 아메리카노(HOT)"]
+    assert items[0].caffeine_mg == 410.0    # (Tall)'s 205 basis mg, scaled to _drink's 200ml serving
+
+
+def test_menu_items_from_mfds_only_includes_target_brand_keys():
+    rows = [_drink(company="더벤티"), _drink(company="어떤신규브랜드", name="커피_다른 음료")]
+    items, _ = menu_items_from_mfds(normalize_rows(rows), "2026-08-28", frozenset({"brand:theventi"}))
+    assert {i.brand_key for i in items} == {"brand:theventi"}
+
+
+def test_menu_items_from_mfds_protein_label_above_and_below_threshold():
+    rows = [
+        _drink(name="커피_카페 라떼 핫(HOT)", protein=1.0),    # 1.0 g/100ml >= 0.32 -> milk
+        _drink(name="커피_아메리카노 핫(HOT)", protein=0.0),    # < 0.32 -> not milk
+    ]
+    _, labels = menu_items_from_mfds(normalize_rows(rows), "2026-08-28", frozenset({"brand:theventi"}))
+    assert labels == {"카페 라떼(HOT)": True, "아메리카노(HOT)": False}

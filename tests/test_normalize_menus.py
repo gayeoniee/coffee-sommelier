@@ -175,12 +175,22 @@ def _sca_tags() -> set[str]:
     return {node for path in paths for node in path.split(">")}
 
 
+# ADR 0023 Phase 2: new franchise brands sourced from the MFDS food DB have no official bean description
+# (bean/bean_open null throughout, see data/curated/brands.yaml) -- taste matching for them is a neutral 0.5
+# (app/core/scoring.py score_item), never a crash; see test_brand_items_and_scoring_work_without_a_bean_profile.
+NO_BEAN_BRANDS = {"brand:theventi", "brand:imaliter", "brand:gongcha", "brand:dalkomm", "brand:tomntoms",
+                  "brand:coffeeinlove", "brand:mammothexpress"}
+
+
 def test_every_brand_has_bean_profiles():
     from pipeline import settings
     sca = _sca_tags()
     brands = normalize_brands(settings.CURATED_DIR)
-    assert len(brands) == 10
+    assert len(brands) == 17
     for b in brands:
+        if b.key in NO_BEAN_BRANDS:
+            assert b.bean is None and b.decaf_bean is None, b.key
+            continue
         assert b.bean is not None, b.key
         assert set(b.bean.flavor_tags) <= sca, b.key
         if b.decaf_available:

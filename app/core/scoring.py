@@ -11,7 +11,7 @@ ATTR_WEIGHT, FLAVOR_WEIGHT = 0.6, 0.4
 # data/curated/menu_milk_labels.yaml (tests/app/test_milk_labels.py).
 MILK_WORDS = (
     "라떼", "라테", "우유", "밀크", "크림", "크리미", "카푸치노", "플랫화이트", "모카", "프라푸치노", "프라페",
-    "마키아또", "마끼아또", "코르타도", "브레베", "비안코", "아포가토", "콘파나", "아인슈페너", "쉐이크", "셰이크",
+    "마키아또", "마끼아또", "마끼야또", "코르타도", "브레베", "비안코", "아포가토", "콘파나", "콘파냐", "아인슈페너", "쉐이크", "셰이크",
     "초코", "초콜릿", "요거트", "요구르트", "야쿠르트", "퐁크러쉬", "커피스무디",
     "스타벅스더블샷",            # espresso shaken with milk
     "할메가", "원조커피",         # mix-coffee style signatures made with condensed milk / cream

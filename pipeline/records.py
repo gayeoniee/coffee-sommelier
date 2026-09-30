@@ -92,6 +92,7 @@ class MenuItemRecord(BaseModel):
     decaf_option: bool = False
     caffeine_mg: float | None = None
     coffee_key: str | None = None
+    source: str | None = None      # e.g. "mfds_food" (docs/adr/0023); None for the brand's own site collector
     source_url: str | None = None
     collected_at: str
 

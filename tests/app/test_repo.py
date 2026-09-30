@@ -154,6 +154,28 @@ def test_brand_items_decaf_option_and_synthetic_menu(repo):
     assert repo.get_menu_item(am.menu_item_id, "decaf_only").order_decaf is True
 
 
+def test_brand_items_and_scoring_work_without_a_bean_profile(repo, db_conn):
+    """ADR 0023 Phase 2: brands sourced from the MFDS food DB have no official bean description at all
+    (bean/bean_open null, data/curated/brands.yaml) -- cards must still carry caffeine/decaf/milk and
+    score as neutral (0.5), never crash, when there is no taste profile to match against."""
+    from app.core.scoring import attr_fit, score_item
+
+    db_conn.execute("INSERT INTO brands (key, name, decaf_available, verified_at, bean, decaf_bean, bean_open,"
+                    " decaf_bean_open) VALUES ('brand:nb', '노빈', false, '2026-09-30', NULL, NULL, NULL, NULL)")
+    db_conn.execute(
+        "INSERT INTO menu_items (key, brand_id, name, is_decaf, decaf_option, caffeine_mg, source, collected_at)"
+        " VALUES ('nb1', (SELECT id FROM brands WHERE key='brand:nb'), '카페 라떼(HOT)', false, false, 150,"
+        " 'mfds_food', '2026-09-30')")
+    db_conn.commit()
+    tag_to_cat, _ = repo.taxonomy()
+    [item] = repo.brand_items("brand:nb", "any")
+    assert (item.name, item.caffeine_mg, item.is_decaf, item.is_milk) == ("카페 라떼(HOT)", 150, False, True)
+    assert (item.acidity, item.body, item.sweetness, item.tags) == (None, None, None, ())
+    assert item.confidence == "low"
+    assert attr_fit(Profile(caffeine_rule="any", acidity=4, body=4, sweetness=4), item) is None
+    assert score_item(Profile(caffeine_rule="any", acidity=4, body=4, sweetness=4), item, tag_to_cat) == 0.5
+
+
 def _decaf_sku_brand(db_conn):
     """이디야-like brand: official house note only, decaf SKUs of some drinks, plus a drink with no decaf SKU."""
     house = Jsonb({"acidity": 2, "body": 4, "sweetness": 3, "flavor_tags": ["smoky"],

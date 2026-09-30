@@ -302,3 +302,86 @@
     label_source: {acidity: open_feature_model, body: open_feature_model, sweetness: open_feature_model, flavor_tags: estimate}, official_note: "커피빈 공식: 에스프레소 로스트(다크 로스트)"}
   decaf_bean_open: {acidity: 2, body: 3.5, sweetness: 4, flavor_tags: [caramelized],
     label_source: {acidity: open_feature_model, body: open_feature_model, sweetness: official_cue, flavor_tags: official_cue}, official_note: "커피빈 공식: 에스프레소 로스트 디카페인 — 캐러멜 향, 흙 맛, 달콤 쌉사름한 끝 맛"}
+# 아래 7개 브랜드는 ADR 0023(식약처 식품영양성분DB "음식 DB") Phase 2로 새로 추가됐다 — 그 DB의 커피 대표식품명
+# 행에서 카페인 실측이 있는 음료가 90% 이상인 신규 브랜드(twosome은 기존 브랜드의 메뉴만 채움, 별도 항목 아님).
+# 공식 원두 설명을 확인하지 않아 bean/bean_open이 전부 null이다 — 카드는 caffeine/decaf/milk만 보여주고
+# 취향(산미·바디·단맛) 매칭은 중립(0.5)으로 채점된다(app/core/scoring.py score_item, tests/app/test_repo.py
+# test_brand_items_and_scoring_work_without_a_bean_profile). decaf_available/decaf_surcharge_krw은 이 DB의
+# 디카페인 표기 유무로만 추정했다(브랜드 공식 정책 미확인).
+- key: brand:theventi
+  name: 더벤티
+  decaf_available: true
+  decaf_surcharge_krw: null
+  notes: "[MFDS] 식약처 식품영양성분DB(음식 DB, 2026-08-28판) 교차검증 — 공식 원두 설명 미확인, bean/bean_open 없음."
+  source_url: https://various.foodsafetykorea.go.kr/nutrient/
+  verified_at: "2026-09-30"
+  bean: null
+  decaf_bean: null
+  bean_open: null
+  decaf_bean_open: null
+- key: brand:imaliter
+  name: 아임일리터
+  decaf_available: true
+  decaf_surcharge_krw: null
+  notes: "[MFDS] 식약처 식품영양성분DB(음식 DB, 2026-08-28판) 교차검증 — 공식 원두 설명 미확인, bean/bean_open 없음."
+  source_url: https://various.foodsafetykorea.go.kr/nutrient/
+  verified_at: "2026-09-30"
+  bean: null
+  decaf_bean: null
+  bean_open: null
+  decaf_bean_open: null
+- key: brand:gongcha
+  name: 공차
+  decaf_available: false
+  decaf_surcharge_krw: null
+  notes: "[MFDS] 식약처 식품영양성분DB(음식 DB, 2026-08-28판) 교차검증 — 공식 원두 설명 미확인, bean/bean_open 없음."
+  source_url: https://various.foodsafetykorea.go.kr/nutrient/
+  verified_at: "2026-09-30"
+  bean: null
+  decaf_bean: null
+  bean_open: null
+  decaf_bean_open: null
+- key: brand:dalkomm
+  name: 달콤
+  decaf_available: true
+  decaf_surcharge_krw: null
+  notes: "[MFDS] 식약처 식품영양성분DB(음식 DB, 2026-08-28판) 교차검증 — 공식 원두 설명 미확인, bean/bean_open 없음."
+  source_url: https://various.foodsafetykorea.go.kr/nutrient/
+  verified_at: "2026-09-30"
+  bean: null
+  decaf_bean: null
+  bean_open: null
+  decaf_bean_open: null
+- key: brand:tomntoms
+  name: 탐앤탐스
+  decaf_available: true
+  decaf_surcharge_krw: null
+  notes: "[MFDS] 식약처 식품영양성분DB(음식 DB, 2026-08-28판) 교차검증 — 공식 원두 설명 미확인, bean/bean_open 없음."
+  source_url: https://various.foodsafetykorea.go.kr/nutrient/
+  verified_at: "2026-09-30"
+  bean: null
+  decaf_bean: null
+  bean_open: null
+  decaf_bean_open: null
+- key: brand:coffeeinlove
+  name: 커피에반하다
+  decaf_available: false
+  decaf_surcharge_krw: null
+  notes: "[MFDS] 식약처 식품영양성분DB(음식 DB, 2026-08-28판) 교차검증 — 공식 원두 설명 미확인, bean/bean_open 없음."
+  source_url: https://various.foodsafetykorea.go.kr/nutrient/
+  verified_at: "2026-09-30"
+  bean: null
+  decaf_bean: null
+  bean_open: null
+  decaf_bean_open: null
+- key: brand:mammothexpress
+  name: 매머드익스프레스
+  decaf_available: true
+  decaf_surcharge_krw: null
+  notes: "[MFDS] 식약처 식품영양성분DB(음식 DB, 2026-08-28판) 교차검증 — 공식 원두 설명 미확인, bean/bean_open 없음."
+  source_url: https://various.foodsafetykorea.go.kr/nutrient/
+  verified_at: "2026-09-30"
+  bean: null
+  decaf_bean: null
+  bean_open: null
+  decaf_bean_open: null

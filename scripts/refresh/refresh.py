@@ -63,7 +63,11 @@ from scripts.refresh import catalog_sync, gates
 from scripts.refresh.diff import diff_coffees, diff_menus, menu_unchanged, size_check
 from scripts.refresh.report import render_markdown
 
-STATIC_SOURCES = ("coffeereview_kaggle", "cqi", "roasterdb")          # fixed datasets, never re-collected
+STATIC_SOURCES = ("coffeereview_kaggle", "cqi", "roasterdb", "mfds_food")  # fixed datasets, never re-collected
+# mfds_food (docs/adr/0023-mfds-food-db.md) is a manually re-downloaded government dataset, not a live scrape:
+# the weekly refresh must never retire its menu items just because data/raw/mfds_food/*.xlsx (gitignored) is
+# absent in the refresh environment. Updating it is a manual `data/raw/mfds_food/` download + a full
+# `pipeline run --only normalize --only load` (not this script) — see the ADR's update procedure.
 LIVE_COFFEE_SOURCES = ("roasters_kr", "shopify", "shopify_gauged")
 MENU_SOURCES = ("starbucks", "mega", "paik", "coffeebean", "compose", "hollys", "paulbassett", "ediya")
 COLLECT_SOURCES = MENU_SOURCES + ("shopify", "shopify_gauged", "sca_wheel")

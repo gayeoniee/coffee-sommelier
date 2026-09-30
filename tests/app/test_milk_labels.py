@@ -25,3 +25,9 @@ def test_is_milk_drink_matches_every_hand_label():
 def test_is_milk_drink_normalises_case_and_spaces():
     assert is_milk_drink("Flat White") and is_milk_drink("카 페 라 떼") and is_milk_drink("ICED CAFE LATTE")
     assert not is_milk_drink("Cold Brew") and not is_milk_drink("아이스 카페 아메리카노")
+
+
+def test_is_milk_drink_covers_macchiato_and_con_panna_spelling_variants():
+    """ADR 0023 Phase 2 surfaced these two MFDS-brand spellings missing from MILK_WORDS (더벤티 카라멜
+    마끼야또, 탐앤탐스 에스프레소 콘파냐) -- both genuinely contain milk/cream."""
+    assert is_milk_drink("디카페인 카라멜마끼야또(HOT)") and is_milk_drink("에스프레소 콘파냐")

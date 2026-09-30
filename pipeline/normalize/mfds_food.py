@@ -3,20 +3,22 @@
 Source file (not committed — see data/raw/ in .gitignore):
     data/raw/mfds_food/20260828_음식DB.xlsx  (19,617 rows x 160 columns, version 2026-08-28)
 
-Licence: see docs/adr/0023-mfds-food-db.md — verify before shipping any derived data.
+Licence: 이용허락범위 제한 없음(data.go.kr), 출처 표시 의무 — see docs/adr/0023-mfds-food-db.md.
 
 This module is pure/offline: it reads the workbook with openpyxl and returns plain
-MfdsCoffeeDrink records. It does not touch the DB and does not write any shipped config;
-callers (e.g. scripts/eval_mfds_crosscheck.py) decide what to do with the output.
+MfdsCoffeeDrink records. It does not touch the DB; `pipeline.normalize.run_normalize` is the only
+caller that turns the Phase 2 subset (`menu_items_from_mfds` below) into shipped MenuItemRecords.
 """
 from __future__ import annotations
 
 import hashlib
 import re
+from collections import defaultdict
 from pathlib import Path
 
 from pydantic import BaseModel
 
+from pipeline.records import MenuItemRecord
 from pipeline.rules import clean, detect_decaf, num
 
 # 0-based column indices in the 2026-08-28 workbook (row 1 is the header).
@@ -54,6 +56,7 @@ NEW_BRAND_SLUGS = {
     "토프레소": "topresso", "베러댄와플": "betterthanwaffle", "카페봄봄": "cafebombom",
     "디저트39": "dessert39", "청자다방": "cheongjadabang", "스무디킹": "smoothieking",
     "롤링핀": "rollingpin", "팔공티": "palgongtea",
+    "매머드익스프레스": "mammothexpress",  # space variant "매머드 익스프레스" also matches (_norm_company strips spaces)
 }
 
 # 매머드익스프레스 / 매머드 익스프레스 both appear (space variant) — normalize before lookup.
@@ -242,3 +245,99 @@ def load_workbook_rows(xlsx_path: Path) -> list[tuple]:
 
 def normalize_mfds_food(xlsx_path: Path) -> list[MfdsCoffeeDrink]:
     return normalize_rows(load_workbook_rows(xlsx_path))
+
+
+# ===== Phase 2 (docs/adr/0023-mfds-food-db.md): franchise menus sourced from this DB =====
+#
+# twosome fills its collector-blocked gap (ADR 0014, CloudFront 403); the rest are new brands whose
+# coffee rows have a measured caffeine value for >=90% of drinks (phase 1 inventory) among the
+# candidates phase 1 flagged as promising (더벤티·아임일리터·공차·달콤, plus checking 파스쿠찌·탐앤탐스·
+# 커피에반하다·바나프레소·매머드익스프레스·드롭탑): 파스쿠찌(63%)·바나프레소(87%)·드롭탑(75%) fail the
+# bar and are left out.
+MFDS_SOURCE = "mfds_food"
+MFDS_SOURCE_URL = "https://various.foodsafetykorea.go.kr/nutrient/"  # 식품안전나라 "음식 DB" (수동 다운로드, ADR 0023)
+MFDS_MILK_PROTEIN_THRESHOLD = 0.32  # g protein per 100g/100ml basis -- ADR 0023 phase-1 fit (acc 98.1%)
+
+PHASE2_MENU_BRAND_KEYS = frozenset({
+    "brand:twosome",       # gap-fill: collector blocked (CloudFront 403), 0 menu rows without this
+    "brand:theventi", "brand:imaliter", "brand:gongcha", "brand:dalkomm", "brand:tomntoms",
+    "brand:coffeeinlove", "brand:mammothexpress",
+})
+
+# A drink's "default/regular" size, checked in this order; brands with none of these tokens (e.g.
+# gongcha's L/J, or a brand that never tags a size at all) fall back to the smallest listed size.
+_DEFAULT_SIZE_PRIORITY = ("R", "Tall", "M", "레귤러")
+
+
+def _pick_default_size(rows: list[MfdsCoffeeDrink]) -> MfdsCoffeeDrink:
+    for tag in _DEFAULT_SIZE_PRIORITY:
+        matches = [d for d in rows if d.size_tag == tag]
+        if matches:
+            return matches[0]
+    return min(rows, key=lambda d: d.serving_amount if d.serving_amount is not None else float("inf"))
+
+
+def _protein_density(d: MfdsCoffeeDrink) -> float | None:
+    """Protein per 100g/100ml of the row's own basis (normally 100 already; normalized just in case)."""
+    if d.protein_g_per_basis is None or not d.basis_amount:
+        return None
+    return d.protein_g_per_basis / d.basis_amount * 100
+
+
+# A handful of dalkomm rows carry a single store's own submission tacked on as a trailing branch code,
+# e.g. "카페 라떼 (K(코끼리))" alongside the brand-level "카페 라떼" -- clean_drink_name (shared with Phase 1
+# and left untouched there) has no reason to know about this, so it's stripped here, Phase 2-only, before
+# grouping: this folds the branch-specific row into the same (drink, temperature) group as its brand-level
+# counterpart instead of shipping it as a second, oddly-named near-duplicate menu item.
+_BRANCH_CODE_RE = re.compile(r"\s*\([A-Za-z]{1,3}\([^()]+\)\)\s*$")
+
+
+def _strip_branch_code(name: str) -> str:
+    return _BRANCH_CODE_RE.sub("", name).strip()
+
+
+# clean_drink_name's own SIZE_TAG_RE only strips a trailing single-word Latin size tag (e.g. "(Venti)"); a
+# multi-word one such as 커피에반하다's "(Mini Venti)" doesn't match it and is left on the name, which would
+# otherwise ship as a bogus extra "drink" distinct from its "화이트 아메리카노" Tall/Grande/Venti siblings.
+# Stripped here, Phase 2-only, so it joins that same group instead (and, having no recognized size_tag of its
+# own, never wins the default-size pick over an actual R/Tall/M/레귤러 row there). Restricted to known size
+# vocabulary (not "any trailing Latin parenthetical") so an unrelated English aside is never mistaken for one.
+_SIZE_WORDS = r"Mini|Venti|Grande|Tall|Trenta|Short|Solo|Max|Jumbo|Regular|EX"
+_EXTRA_SIZE_RE = re.compile(rf"\s*\((?:{_SIZE_WORDS})(?:\s+(?:{_SIZE_WORDS}))*\)\s*$", re.I)
+
+
+def _strip_extra_size_suffix(name: str) -> str:
+    return _EXTRA_SIZE_RE.sub("", name).strip()
+
+
+def menu_items_from_mfds(drinks: list[MfdsCoffeeDrink], collected_at: str,
+                         brand_keys: frozenset[str] | None = None) -> tuple[list[MenuItemRecord], dict[str, bool]]:
+    """One MenuItemRecord per (brand, drink name, temperature) at the brand's default/regular size.
+
+    Returns (menu items, protein-derived milk labels): the second is name -> bool (protein density >=
+    MFDS_MILK_PROTEIN_THRESHOLD) for every item built here, to be merged into the hand milk labels by
+    a caller (a hand label always wins -- pipeline.load.load_milk_labels) so these menus don't sit
+    needs_review forever just because nobody has hand-labelled the name yet.
+    """
+    target = brand_keys if brand_keys is not None else PHASE2_MENU_BRAND_KEYS
+    groups: dict[tuple[str, str, str | None], list[MfdsCoffeeDrink]] = defaultdict(list)
+    for d in drinks:
+        if d.brand_key in target:
+            name = _strip_extra_size_suffix(_strip_branch_code(d.drink_name))
+            groups[(d.brand_key, name, d.temperature)].append(d)
+
+    items: dict[str, MenuItemRecord] = {}
+    protein_labels: dict[str, bool] = {}
+    for (brand_key, drink_name, temperature), rows in sorted(groups.items(), key=lambda kv: (kv[0][0], kv[0][1], kv[0][2] or "")):
+        chosen = _pick_default_size(rows)
+        name = f"{drink_name}({temperature})" if temperature else drink_name
+        key = f"menu:mfds:{brand_key.split(':', 1)[1]}:{drink_name}:{temperature or 'NA'}"
+        items[key] = MenuItemRecord(
+            key=key, brand_key=brand_key, name=name, category="커피", is_decaf=chosen.is_decaf,
+            decaf_option=False, caffeine_mg=chosen.caffeine_mg_per_serving, source=MFDS_SOURCE,
+            source_url=MFDS_SOURCE_URL, collected_at=collected_at,
+        )
+        density = _protein_density(chosen)
+        if density is not None:
+            protein_labels[name] = density >= MFDS_MILK_PROTEIN_THRESHOLD
+    return list(items.values()), protein_labels
