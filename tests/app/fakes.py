@@ -91,6 +91,14 @@ class FakeRepo:
         self.tastings.append({"id": tid, "user_id": uid, **kw})
         return tid
 
+    def today_caffeine(self, uid):
+        # No day-boundary/timezone in the fake: every saved tasting counts as "today" (tests for that
+        # boundary itself live in tests/app/test_repo.py against the real DB).
+        mine = [t for t in self.tastings if t["user_id"] == uid]
+        mg = sum(t["caffeine_mg"] for t in mine if t.get("caffeine_mg") is not None)
+        unknown = sum(1 for t in mine if t.get("caffeine_mg") is None)
+        return {"today_mg": float(mg), "unknown_count": unknown}
+
     # catalog
     def taxonomy(self):
         return TAG_TO_CAT, TAG_KO

@@ -85,7 +85,10 @@ def decaf_order_caffeine(name: str, twins: dict[str, list[float | None]]) -> tup
     return float(round(median(mgs))), DECAF_ESTIMATE_NOTE
 
 
-def passes(profile: Profile, item: Item) -> tuple[bool, str | None]:
+def passes(profile: Profile, item: Item, remaining_mg: float | None = None) -> tuple[bool, str | None]:
+    """`remaining_mg`: today's remaining caffeine budget (profile.daily_caffeine_limit_mg minus today's total,
+    app.repo.Repo.today_caffeine) -- the caller passes it only when a limit is set, None (the default) otherwise.
+    Same conservative shape as the "low" rule above: unknown caffeine is excluded, not assumed 0mg."""
     decaf_ok = item.is_decaf or item.decaf_option
     if profile.caffeine_rule == "decaf_only" and not decaf_ok:
         return False, "디카페인이 아니에요"
@@ -98,6 +101,11 @@ def passes(profile: Profile, item: Item) -> tuple[bool, str | None]:
     if (profile.caffeine_rule == "low" and item.is_decaf and item.caffeine_mg is not None
             and item.caffeine_mg > LOW_CAFFEINE_MG):
         return False, f"디카페인 메뉴지만 카페인이 {item.caffeine_mg:g}mg이에요(초콜릿·차 등)"
+    if remaining_mg is not None:
+        if item.caffeine_mg is None:
+            return False, "카페인 정보가 없어서 오늘 한도 계산에 넣을 수 없어요"
+        if item.caffeine_mg > remaining_mg:
+            return False, f"오늘 남은 카페인 {max(remaining_mg, 0):g}mg를 넘어요"
     if not profile.milk_ok and item.is_milk:
         return False, "우유가 들어가요"
     return True, None

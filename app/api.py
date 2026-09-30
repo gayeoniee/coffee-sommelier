@@ -28,6 +28,8 @@ class ProfileIn(BaseModel):
     sweetness: float = Field(ge=1, le=5)
     flavor_likes: list[Literal[PREFERENCE_CHIPS]] = Field(default_factory=list)  # type: ignore[valid-type]
     nickname: str | None = Field(default=None, max_length=30)
+    # 오늘 카페인 한도(mg): None = 끄기. 300/400을 권하지만 100-600 사이 값을 직접 받는다 (app.models.Profile).
+    daily_caffeine_limit_mg: int | None = Field(default=None, ge=100, le=600)
 
 
 class NicknameIn(BaseModel):
@@ -179,11 +181,21 @@ def create_app(repo=None, deps=None, cookie_secure: bool | None = None) -> FastA
         weights.update({c: 0.0 for c, w in weights.items() if w > 0 and c not in body.flavor_likes})
         weights.update({c: max(weights.get(c, 0.0), 0.5) for c in body.flavor_likes})
         p = Profile(caffeine_rule=body.caffeine_rule, milk_ok=body.milk_ok, acidity=body.acidity, body=body.body,
-                    sweetness=body.sweetness, flavor_weights=weights, n_updates=old.n_updates if old else 0)
+                    sweetness=body.sweetness, flavor_weights=weights, n_updates=old.n_updates if old else 0,
+                    daily_caffeine_limit_mg=body.daily_caffeine_limit_mg)
         repo.save_profile(uid, p)
         if body.nickname is not None:
             repo.set_nickname(uid, body.nickname.strip() or None)
         return {"profile": p.to_dict()}
+
+    @app.get("/me/today")
+    def me_today(uid: str = Depends(current_user)):
+        p = repo.get_profile(uid)
+        limit = p.daily_caffeine_limit_mg if p else None
+        t = repo.today_caffeine(uid)
+        remaining = None if limit is None else limit - t["today_mg"]
+        return {"today_mg": t["today_mg"], "unknown_count": t["unknown_count"], "limit_mg": limit,
+                "remaining_mg": remaining}
 
     @app.put("/me/nickname")
     def put_nickname(body: NicknameIn, uid: str = Depends(current_user)):
@@ -220,14 +232,16 @@ def create_app(repo=None, deps=None, cookie_secure: bool | None = None) -> FastA
 
     @app.post("/recommend")
     def recommend(body: RecommendIn, uid: str = Depends(current_user)):
-        return stream(graphs["recommend"], {"brand_key": body.brand_key, "profile": profile_of(uid)}, "recommend")
+        return stream(graphs["recommend"], {"brand_key": body.brand_key, "profile": profile_of(uid), "user_id": uid},
+                      "recommend")
 
     @app.post("/analyze")
     async def analyze(body: AnalyzeIn, uid: str = Depends(current_user)):
         p = await asyncio.to_thread(profile_of, uid)
         if body.coffee_id is not None and await asyncio.to_thread(repo.get_coffee, body.coffee_id) is None:
             raise HTTPException(404, f"원두 {body.coffee_id}를 찾을 수 없어요")
-        return stream(graphs["analyze"], {"text": body.text, "coffee_id": body.coffee_id, "profile": p}, "analyze")
+        return stream(graphs["analyze"], {"text": body.text, "coffee_id": body.coffee_id, "profile": p,
+                                          "user_id": uid}, "analyze")
 
     @app.post("/tastings")
     async def tastings(body: TastingIn, uid: str = Depends(current_user)):

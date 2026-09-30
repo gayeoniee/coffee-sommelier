@@ -59,6 +59,45 @@ def test_profile_validation_and_me(client):
     assert len(me["history"]) == 1
 
 
+def test_daily_caffeine_limit_validation(client):
+    client.post("/session")
+    body = {"caffeine_rule": "any", "milk_ok": True, "acidity": 4, "body": 2, "sweetness": 3, "flavor_likes": [],
+            "daily_caffeine_limit_mg": 50}
+    assert client.put("/me/profile", json=body).status_code == 422        # below 100
+    body["daily_caffeine_limit_mg"] = 700
+    assert client.put("/me/profile", json=body).status_code == 422        # above 600
+    body["daily_caffeine_limit_mg"] = 300
+    assert client.put("/me/profile", json=body).status_code == 200
+    assert client.get("/me").json()["profile"]["daily_caffeine_limit_mg"] == 300
+    del body["daily_caffeine_limit_mg"]
+    client.put("/me/profile", json=body)                                  # omitted -> off (None) again
+    assert client.get("/me").json()["profile"]["daily_caffeine_limit_mg"] is None
+
+
+def test_me_today_reflects_logged_caffeine_and_limit(client):
+    onboard(client, daily_caffeine_limit_mg=300)
+    assert client.get("/me/today").json() == {"today_mg": 0.0, "unknown_count": 0, "limit_mg": 300,
+                                               "remaining_mg": 300.0}
+    client.post("/tastings", json={"menu_item_id": 10, "rating": 5})      # 아메리카노, 150mg
+    client.post("/tastings", json={"coffee_id": 1, "rating": 4})          # DB coffee -> caffeine unknown
+    assert client.get("/me/today").json() == {"today_mg": 150.0, "unknown_count": 1, "limit_mg": 300,
+                                               "remaining_mg": 150.0}
+
+
+def test_me_today_without_a_limit_reports_none(client):
+    onboard(client)
+    assert client.get("/me/today").json() == {"today_mg": 0.0, "unknown_count": 0, "limit_mg": None,
+                                               "remaining_mg": None}
+
+
+def test_recommend_filters_drinks_over_daily_caffeine_limit(client):
+    onboard(client, daily_caffeine_limit_mg=160)
+    r = client.post("/recommend", json={"brand_key": "brand:sb"})
+    cards = next(d for t, d in sse_events(r.text) if t == "cards")["cards"]
+    # 블론드 아메리카노 is 170mg -- over the untouched 160mg budget; the rest (150/75/155mg) still fit
+    assert {c["name"] for c in cards} == {"아메리카노", "카페 라떼", "콜드 브루"}
+
+
 def test_recommend_requires_profile_then_streams(client):
     client.post("/session")
     assert client.post("/recommend", json={"brand_key": "brand:sb"}).status_code == 409

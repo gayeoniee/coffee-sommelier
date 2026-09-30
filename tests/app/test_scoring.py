@@ -140,6 +140,22 @@ def test_decaf_order_caffeine_prefers_the_twin_then_the_brand_median():
     assert decaf_order_caffeine("카페 아메리카노", {}) == (None, DECAF_UNKNOWN_NOTE)   # brand sells no decaf SKU
 
 
+def test_daily_caffeine_limit_filters_over_budget_and_unknown():
+    p = Profile(daily_caffeine_limit_mg=300)
+    # no remaining_mg passed (caller only passes it when a limit is active) -> rule not enforced
+    assert passes(p, item(caffeine_mg=1000))[0] is True
+    ok, why = passes(p, item(caffeine_mg=150), remaining_mg=100)
+    assert not ok and why == "오늘 남은 카페인 100mg를 넘어요"
+    assert passes(p, item(caffeine_mg=80), remaining_mg=100)[0] is True
+    assert passes(p, item(caffeine_mg=100), remaining_mg=100)[0] is True    # exactly at the limit is fine
+    # unknown caffeine is excluded (conservative) whenever a limit/remaining budget is active
+    ok, why = passes(p, item(caffeine_mg=None), remaining_mg=100)
+    assert not ok and "카페인 정보가 없어서" in why
+    # already over budget: remaining is negative, everything (even a small mg) is filtered, message clamps to 0
+    ok, why = passes(p, item(caffeine_mg=5), remaining_mg=-20)
+    assert not ok and why == "오늘 남은 카페인 0mg를 넘어요"
+
+
 def test_decaf_only_rejects_high_caffeine_decaf_sku():
     from app.core.scoring import passes
     from app.models import Item, Profile

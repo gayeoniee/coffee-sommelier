@@ -49,7 +49,8 @@ def build_log_graph(deps):
         if state.get("persist_tasting", True):
             tasting_id = await asyncio.to_thread(
                 lambda: deps.repo.save_tasting(state["user_id"], rating=state["rating"], note=state.get("note"),
-                                               parsed_signals=state.get("signals"), **state["target"]))
+                                               parsed_signals=state.get("signals"),
+                                               caffeine_mg=state["item"].caffeine_mg, **state["target"]))
         await asyncio.to_thread(deps.repo.save_profile, state["user_id"], state["new_profile"], tasting_id)
         return {"tasting_id": tasting_id}
 

@@ -99,17 +99,21 @@ class Repo:
         if r is None:
             return None
         return Profile(caffeine_rule=r["caffeine_rule"], milk_ok=r["milk_ok"], acidity=r["acidity"], body=r["body"],
-                       sweetness=r["sweetness"], flavor_weights=r["flavor_weights"], n_updates=r["n_updates"])
+                       sweetness=r["sweetness"], flavor_weights=r["flavor_weights"], n_updates=r["n_updates"],
+                       daily_caffeine_limit_mg=r.get("daily_caffeine_limit_mg"))
 
     def save_profile(self, uid: str, p: Profile, tasting_id: int | None = None) -> None:
         with self.pool.connection() as conn:
             conn.execute(
                 "INSERT INTO taste_profiles (user_id, caffeine_rule, milk_ok, acidity, body, sweetness, flavor_weights,"
-                " n_updates, updated_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s, now()) ON CONFLICT (user_id) DO UPDATE SET"
+                " n_updates, daily_caffeine_limit_mg, updated_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s, now())"
+                " ON CONFLICT (user_id) DO UPDATE SET"
                 " caffeine_rule = EXCLUDED.caffeine_rule, milk_ok = EXCLUDED.milk_ok, acidity = EXCLUDED.acidity,"
                 " body = EXCLUDED.body, sweetness = EXCLUDED.sweetness, flavor_weights = EXCLUDED.flavor_weights,"
-                " n_updates = EXCLUDED.n_updates, updated_at = now()",
-                (uid, p.caffeine_rule, p.milk_ok, p.acidity, p.body, p.sweetness, Jsonb(p.flavor_weights), p.n_updates))
+                " n_updates = EXCLUDED.n_updates, daily_caffeine_limit_mg = EXCLUDED.daily_caffeine_limit_mg,"
+                " updated_at = now()",
+                (uid, p.caffeine_rule, p.milk_ok, p.acidity, p.body, p.sweetness, Jsonb(p.flavor_weights), p.n_updates,
+                 p.daily_caffeine_limit_mg))
             conn.execute("INSERT INTO profile_history (user_id, snapshot, tasting_id) VALUES (%s, %s, %s)",
                          (uid, Jsonb(p.to_dict()), tasting_id))
 
@@ -125,12 +129,26 @@ class Repo:
 
     def save_tasting(self, uid: str, *, coffee_id: int | None = None, menu_item_id: int | None = None,
                      input_text: str | None = None, predicted: dict | None = None, rating: int,
-                     note: str | None = None, parsed_signals: dict | None = None) -> int:
+                     note: str | None = None, parsed_signals: dict | None = None,
+                     caffeine_mg: float | None = None) -> int:
+        """`caffeine_mg` is the item's SHOWN caffeine at logging time (menu caffeine_mg, or the decaf-order
+        estimate when ordered decaf; None for DB coffees / free-text -- unknown, counted separately by
+        `today_caffeine`). Never the regular drink's mg for an order-decaf card (see Item.caffeine_mg)."""
         return self._one(
-            "INSERT INTO tastings (user_id, coffee_id, menu_item_id, input_text, predicted, rating, note, parsed_signals)"
-            " VALUES (%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id",
+            "INSERT INTO tastings (user_id, coffee_id, menu_item_id, input_text, predicted, rating, note,"
+            " parsed_signals, caffeine_mg) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id",
             (uid, coffee_id, menu_item_id, input_text, Jsonb(predicted) if predicted else None, rating, note,
-             Jsonb(parsed_signals) if parsed_signals else None))["id"]
+             Jsonb(parsed_signals) if parsed_signals else None, caffeine_mg))["id"]
+
+    def today_caffeine(self, uid: str) -> dict:
+        """Today's caffeine from this user's tastings, Asia/Seoul day boundary: `today_mg` sums each tasting's
+        shown caffeine (see `save_tasting`), `unknown_count` counts tastings logged today whose caffeine is
+        unknown (kept separate rather than treated as 0mg)."""
+        row = self._one(
+            "SELECT coalesce(sum(caffeine_mg), 0) AS mg, count(*) FILTER (WHERE caffeine_mg IS NULL) AS unknown"
+            " FROM tastings WHERE user_id = %s"
+            " AND (created_at AT TIME ZONE 'Asia/Seoul')::date = (now() AT TIME ZONE 'Asia/Seoul')::date", (uid,))
+        return {"today_mg": float(row["mg"]), "unknown_count": row["unknown"]}
 
     # ---- taxonomy ---------------------------------------------------------
     def taxonomy(self) -> tuple[dict[str, str], dict[str, str]]:

@@ -18,31 +18,41 @@ TOP_K = 3
 class RecommendState(TypedDict, total=False):
     brand_key: str
     profile: Profile
+    user_id: str
     candidates: list[Item]
+    remaining_mg: float | None
     ranked: list[dict]
     explanations: Annotated[list[dict], operator.add]
 
 
-def empty_reason(profile: Profile, candidates: list[Item]) -> str:
+def empty_reason(profile: Profile, candidates: list[Item], remaining_mg: float | None = None) -> str:
     if not candidates:
         return "이 브랜드의 메뉴 정보가 없어요"
     if profile.caffeine_rule == "decaf_only" and not any(i.is_decaf or i.decaf_option for i in candidates):
         return "이 브랜드는 디카페인 메뉴가 없어요"
+    if profile.daily_caffeine_limit_mg is not None and remaining_mg is not None and remaining_mg <= 0:
+        return "오늘 카페인 한도를 이미 채웠어요"
     return "조건에 맞는 메뉴가 없어요"
 
 
 def build_recommend_graph(deps):
     async def load(state: RecommendState) -> dict:
-        return {"candidates": await asyncio.to_thread(deps.repo.brand_items, state["brand_key"],
-                                                      state["profile"].caffeine_rule)}
+        profile = state["profile"]
+        candidates = await asyncio.to_thread(deps.repo.brand_items, state["brand_key"], profile.caffeine_rule)
+        remaining_mg = None
+        if profile.daily_caffeine_limit_mg is not None:
+            today = await asyncio.to_thread(deps.repo.today_caffeine, state["user_id"])
+            remaining_mg = profile.daily_caffeine_limit_mg - today["today_mg"]
+        return {"candidates": candidates, "remaining_mg": remaining_mg}
 
     async def rank(state: RecommendState) -> dict:
         profile, writer = state["profile"], get_stream_writer()
+        remaining_mg = state.get("remaining_mg")
         tag_to_cat, tag_ko = await asyncio.to_thread(deps.repo.taxonomy)
-        passed = [i for i in state["candidates"] if passes(profile, i)[0]]
+        passed = [i for i in state["candidates"] if passes(profile, i, remaining_mg)[0]]
         top = mmr_top_k([(i, score_item(profile, i, tag_to_cat)) for i in passed], tag_to_cat, k=TOP_K)
         if not top:
-            writer({"type": "empty", "reason": empty_reason(profile, state["candidates"])})
+            writer({"type": "empty", "reason": empty_reason(profile, state["candidates"], remaining_mg)})
             return {"ranked": []}
         writer({"type": "cards", "cards": [card(i, s, template_explanation(i, profile, s, tag_ko), tag_ko=tag_ko) for i, s in top]})
         return {"ranked": [{"item": i, "score": s} for i, s in top]}

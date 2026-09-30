@@ -29,6 +29,7 @@ class AnalyzeState(TypedDict, total=False):
     text: str | None
     coffee_id: int | None
     profile: Profile
+    user_id: str
     parsed: ParsedBean
     item: Item | None
     prediction: Prediction | None
@@ -118,7 +119,11 @@ def build_analyze_graph(deps):
     async def score(state: AnalyzeState) -> dict:
         profile, item = state["profile"], state["item"]
         tag_to_cat, tag_ko = await asyncio.to_thread(deps.repo.taxonomy)
-        ok, why = passes(profile, item)
+        remaining_mg = None
+        if profile.daily_caffeine_limit_mg is not None:
+            today = await asyncio.to_thread(deps.repo.today_caffeine, state["user_id"])
+            remaining_mg = profile.daily_caffeine_limit_mg - today["today_mg"]
+        ok, why = passes(profile, item, remaining_mg)
         s = score_item(profile, item, tag_to_cat)
         get_stream_writer()({"type": "cards", "cards": [
             card(item, s, template_explanation(item, profile, s, tag_ko, why), why, state.get("prediction"), tag_ko=tag_ko)]})

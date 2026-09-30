@@ -51,6 +51,9 @@ class Profile:
     sweetness: float = 3.0
     flavor_weights: dict[str, float] = field(default_factory=dict)   # SCA category -> [-1, 1]
     n_updates: int = 0
+    # 오늘 마신 카페인 한도(mg): None = 끄기, 그 외 100-600 (300/400 권장). 권장치를 넘으면 남은 만큼만
+    # 추천하고(app.core.scoring.passes), 카페인을 모르는 메뉴는 보수적으로 제외한다.
+    daily_caffeine_limit_mg: int | None = None
 
     def to_dict(self) -> dict:
         return asdict(self)

@@ -69,6 +69,43 @@ def test_users_profiles_history(repo):
     assert repo.get_nickname(uid) == "가연"
 
 
+def test_daily_caffeine_limit_mg_roundtrips_through_profile(repo):
+    uid = repo.create_user()
+    repo.save_profile(uid, Profile(daily_caffeine_limit_mg=300))
+    assert repo.get_profile(uid).daily_caffeine_limit_mg == 300
+    repo.save_profile(uid, Profile())             # off (None) again
+    assert repo.get_profile(uid).daily_caffeine_limit_mg is None
+
+
+def test_today_caffeine_sums_known_and_counts_unknown_separately(repo):
+    uid = repo.create_user()
+    repo.save_tasting(uid, coffee_id=1, rating=5, caffeine_mg=120)
+    assert repo.today_caffeine(uid) == {"today_mg": 120.0, "unknown_count": 0}
+    repo.save_tasting(uid, coffee_id=1, rating=4, caffeine_mg=80)
+    repo.save_tasting(uid, coffee_id=1, rating=3)          # caffeine_mg unknown -- not counted as 0mg
+    assert repo.today_caffeine(uid) == {"today_mg": 200.0, "unknown_count": 1}
+    other = repo.create_user()
+    assert repo.today_caffeine(other) == {"today_mg": 0.0, "unknown_count": 0}
+
+
+def test_today_caffeine_excludes_older_days(repo, db_conn):
+    uid = repo.create_user()
+    db_conn.execute("INSERT INTO tastings (user_id, input_text, rating, caffeine_mg, created_at) VALUES"
+                    " (%s, 'old', 5, 999, now() - interval '2 days')", (uid,))
+    db_conn.commit()
+    assert repo.today_caffeine(uid) == {"today_mg": 0.0, "unknown_count": 0}
+
+
+def test_seoul_day_boundary_is_kst_midnight_not_utc(db_conn):
+    """The exact expression `today_caffeine` filters on: KST is UTC+9 with no DST, so 23:59:59 and the next
+    00:00:00 in Seoul are one second apart in UTC too, straddling the same UTC calendar day -- only the
+    Asia/Seoul conversion tells them apart."""
+    just_before, just_after = db_conn.execute(
+        "SELECT ('2026-06-14 14:59:59+00'::timestamptz AT TIME ZONE 'Asia/Seoul')::date,"
+        " ('2026-06-14 15:00:00+00'::timestamptz AT TIME ZONE 'Asia/Seoul')::date").fetchone()
+    assert str(just_before) == "2026-06-14" and str(just_after) == "2026-06-15"
+
+
 def test_taxonomy_maps(repo):
     tag_to_cat, tag_ko = repo.taxonomy()
     assert tag_to_cat == {"citrus fruit": "fruity"}

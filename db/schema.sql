@@ -153,3 +153,10 @@ ALTER TABLE menu_items ADD COLUMN IF NOT EXISTS needs_review boolean NOT NULL DE
 -- 식약처 식품영양성분DB(음식 DB) 교차검증/신규 브랜드 메뉴 (docs/adr/0023-mfds-food-db.md): 브랜드 자체 수집기가 만든
 -- 메뉴는 NULL, 이 출처로 채운 메뉴는 'mfds_food'.
 ALTER TABLE menu_items ADD COLUMN IF NOT EXISTS source text;
+
+-- "오늘 마신 카페인" 하루 합계 기능: 사용자가 설정한 하루 한도(끄면 NULL, 300/400 또는 100-600 직접 입력)와,
+-- 각 tasting을 기록한 시점에 카드가 보여준 카페인(mg) -- 메뉴 caffeine_mg, 디카페인 주문이면 그 추정치, 모르면 NULL
+-- (오늘 합계 집계에서 "카페인 모름"으로 따로 센다). 원두(coffees) 기록은 항상 NULL.
+ALTER TABLE taste_profiles ADD COLUMN IF NOT EXISTS daily_caffeine_limit_mg integer
+  CHECK (daily_caffeine_limit_mg IS NULL OR daily_caffeine_limit_mg BETWEEN 100 AND 600);
+ALTER TABLE tastings ADD COLUMN IF NOT EXISTS caffeine_mg real;

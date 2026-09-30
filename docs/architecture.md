@@ -84,7 +84,7 @@ flowchart LR
 | 노드 | 하는 일 |
 |---|---|
 | recommend `load` | 브랜드 메뉴·원두 후보(`Repo.brand_items`) |
-| recommend `rank` | 하드 조건 필터(`passes`: 카페인·우유) → 취향 점수(`score_item`, 속성 0.6 + 향미 0.4) → MMR top3 → `cards` 이벤트 |
+| recommend `rank` | 하드 조건 필터(`passes`: 카페인·우유·오늘 카페인 한도) → 취향 점수(`score_item`, 속성 0.6 + 향미 0.4) → MMR top3 → `cards` 이벤트 |
 | recommend `explain` | 카드마다 `Send`로 병렬 실행. 코드가 사실을 문장 조각(맛 비교·맞는 점/아쉬운 점·맛 한 줄·추천 문구)으로 만들어 넘기고 LLM은 잇기만 한다 → 토큰 스트리밍 → 규칙 검사(방향·결론·필드명·문장 수), 어긋나거나 실패·12초 마감 초과 시 템플릿. 맞는 점이 없는 카드는 LLM 없이 코드가 쓴다 — [설계 결정 21](design-decisions.md#21-rag인데-왜-llm에게-검색-결과를-그대로-주지-않나) |
 | analyze_bean `parse` | 규칙 파싱, 불확실하면 LLM(`parse_bean`) |
 | analyze_bean `match` → `score` / `predict` | DB에 있으면 실측값, 없으면 이웃 10개(`Repo.neighbors`, 동점은 id로 고정 — [ADR 0006](adr/0006-deterministic-neighbors.md)) 가중 평균 + 신뢰도. 임베딩 실패 시 산지·가공 평균(신뢰도 낮음) |
@@ -101,6 +101,8 @@ event: done             항상 마지막
 ```
 
 `/tastings`는 스트리밍 없이 `{summary, changes, profile}` JSON을 돌려준다. 스트림이 끝날 때마다 `app/telemetry.py`가 JSON 한 줄(카드 수·첫 토큰 ms·폴백·에러)을 남기고 `scripts/ops/prod_stats.py`가 이를 집계한다([deploy.md](deploy.md)).
+
+**오늘 마신 카페인:** `log_tasting`이 매 기록마다 카드가 보여준 카페인(`Item.caffeine_mg` — 메뉴 실측값, 또는 디카페인 주문이면 그 추정치, 모르면 NULL)을 `tastings.caffeine_mg`에 같이 저장한다. `Repo.today_caffeine`이 한국시간(`Asia/Seoul`) 기준 오늘 자 합계·미상 건수를 구하고, `GET /me/today`가 `{today_mg, unknown_count, limit_mg, remaining_mg}`로 내려준다. `recommend`/`analyze` 둘 다 프로필에 `daily_caffeine_limit_mg`가 설정돼 있으면 `remaining_mg`를 계산해 `passes`에 넘기고, 남은 한도를 넘는 메뉴와 카페인을 모르는 메뉴(저카페인 조건과 같은 방식으로 보수적으로)를 하드 조건으로 제외한다 — LLM은 이 판정에 관여하지 않는다.
 
 ## 3. 배포
 

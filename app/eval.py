@@ -125,6 +125,14 @@ def caffeine_display_ok(profile: Profile, item: Item) -> bool:
 
 
 def violation_rate(repo) -> dict:
+    """Not modeled here: the "오늘 마신 카페인" daily-limit hard condition (Profile.daily_caffeine_limit_mg,
+    app.core.scoring.passes' remaining_mg param). This sweep checks each PERSONA against every brand's menu in
+    isolation, one call per brand -- there's no real user session or same-day tasting history to compute a
+    remaining budget from, and fabricating one would only be correct for a single brand-persona pairing at a
+    time (a real budget is cumulative across brands in one day, so it can't be reset per call here without
+    being misleading). That rule is covered instead by tests/app/test_scoring.py (the passes() hard filter),
+    tests/app/test_repo.py (Asia/Seoul day-boundary sum), and tests/app/test_api.py (recommend filtering with a
+    logged tasting + a limited profile)."""
     tag_to_cat, _ = repo.taxonomy()
     checked = violations = 0
     by_source = {src: {"checked": 0, "violations": 0} for src in ("human", "mfds_protein", "marker")}
