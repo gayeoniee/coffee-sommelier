@@ -20,6 +20,25 @@ SYNTHETIC_MENU = ("아메리카노", "카페라떼")      # for brands without s
 COFFEE_COLS = "id, name, roaster, origin_country, process, is_decaf, acidity, body, sweetness, flavor_tags"
 
 
+# Fuzzy bean-name matching (match_coffee fallback): generic words dropped, process/roast synonyms unified, so
+# "사포 모스토 애너로빅 내추럴" finds "원두 에티오피아 사포 모스토 무산소 내추럴".
+_NAME_GENERIC = {"원두", "커피", "coffee", "beans", "bean", "whole", "홀빈", "싱글오리진", "single", "origin", "-", "|", "/"}
+_NAME_SYNONYMS = {"애너로빅": "anaerobic", "무산소": "anaerobic", "anaerobic": "anaerobic", "혐기성": "anaerobic",
+                  "내추럴": "natural", "natural": "natural", "워시드": "washed", "washed": "washed", "수세식": "washed",
+                  "허니": "honey", "honey": "honey", "디카페인": "decaf", "decaf": "decaf", "decaffeinated": "decaf",
+                  "게이샤": "geisha", "geisha": "gesha", "gesha": "gesha"}
+_NAME_SPLIT = __import__("re").compile(r"[\s,()\[\]/|·:]+")
+
+
+def _name_tokens(name: str) -> set[str]:
+    out = set()
+    for t in _NAME_SPLIT.split((name or "").lower()):
+        if len(t) < 2 or t in _NAME_GENERIC or t.endswith("g") and t[:-1].isdigit():
+            continue
+        out.add(_NAME_SYNONYMS.get(t, t))
+    return {("gesha" if t == "geisha" else t) for t in out}
+
+
 def _escape_like(q: str) -> str:
     return q.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
 
@@ -220,7 +239,29 @@ class Repo:
             return None
         r = self._one(f"SELECT {COFFEE_COLS} FROM coffees WHERE active AND (lower(name) = %s"
                       " OR lower(coalesce(roaster, '') || ' ' || name) = %s) ORDER BY id LIMIT 1", (t, t))
-        return _coffee_item(r) if r else None
+        if r:
+            return _coffee_item(r)
+        return self._fuzzy_match(t)
+
+    def _fuzzy_match(self, text: str) -> Item | None:
+        """Exactly one active bean whose name tokens (generic words dropped, synonyms unified, at least 3 of
+        them) are all in the input; the input may add words (roaster, a note) but a vaguer input ("케냐 AA")
+        never picks one bean out of many. Candidates come from the input's longest token."""
+        want = _name_tokens(text)
+        if len(want) < 3:
+            return None
+        # search by the longest word as typed (a normalised synonym like "anaerobic" is not in a Korean name)
+        raw = [t for t in _NAME_SPLIT.split(text) if len(t) >= 2 and t not in _NAME_GENERIC and t not in _NAME_SYNONYMS]
+        if not raw:
+            return None
+        rows = self._all(f"SELECT {COFFEE_COLS} FROM coffees WHERE active AND name ILIKE %s LIMIT 200",
+                         (f"%{_escape_like(max(raw, key=len))}%",))
+        # a country word in the bean's name may be left out ("사포 모스토 …" is Ethiopian by itself)
+        hits = [r for r in rows if len(have := _name_tokens(r["name"])) >= 3
+                and {t for t in have if not normalize_country(t)} <= want and len(have & want) >= 3]
+        best = max((len(_name_tokens(r["name"])) for r in hits), default=0)
+        hits = [r for r in hits if len(_name_tokens(r["name"])) == best]
+        return _coffee_item(hits[0]) if len(hits) == 1 else None
 
     def search_coffees(self, q: str, limit: int = 8) -> list[dict]:
         q = (q or "").strip()
