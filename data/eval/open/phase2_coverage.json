@@ -8,12 +8,20 @@
   "decaf_with_flavor_tags": 33,
   "menu_items_by_brand": {
     "brand:coffeebean": 42,
+    "brand:coffeeinlove": 36,
     "brand:compose": 42,
+    "brand:dalkomm": 49,
     "brand:ediya": 41,
+    "brand:gongcha": 30,
     "brand:hollys": 27,
+    "brand:imaliter": 39,
+    "brand:mammothexpress": 72,
     "brand:mega": 119,
     "brand:paik": 114,
     "brand:paulbassett": 56,
-    "brand:starbucks": 71
+    "brand:starbucks": 71,
+    "brand:theventi": 93,
+    "brand:tomntoms": 42,
+    "brand:twosome": 29
   }
 }

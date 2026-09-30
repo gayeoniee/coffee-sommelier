@@ -12,13 +12,19 @@
 #   bash scripts/competition/build_open_db.sh
 #   RESET=1 bash scripts/competition/build_open_db.sh
 #
-# Expected output (2026-09-28 snapshot; the weekly refresh may move these):
+# Expected output (2026-09-30 snapshot, ADR 0023 Phase 2 MFDS food-DB menus; the weekly refresh may move these):
 #   total_coffees 2063 -- cqi 1546 · roasterdb 100 · roasters_kr 209 · shopify 9 (Blue Bottle Korea)
 #                         · shopify_gauged 199 (8 overseas Shopify roasters)
-#   coffeereview_rows 0 · menu_items 512 (8 brands with a menu; bluebottle/twosome have beans only)
-#   data/eval/open/phase2_violations.json -> {"checked": 108, "violations": 0}
-#     (108 = 4 personas x 10 brands, up to 3 picks each: 8 menu brands x 3 x 4 = 96, plus 12 bean-based picks
-#      for the 2 brands without a menu)
+#   coffeereview_rows 0 · menu_items 902 (16 brands with a menu; bluebottle has beans only) -- 8 brand-collected
+#     (starbucks/mega/paik/hollys/coffeebean/compose/paulbassett/ediya, 512) + 8 from data/raw/mfds_food/*.xlsx
+#     (twosome gap-fill + 7 new brands: theventi/imaliter/gongcha/dalkomm/tomntoms/coffeeinlove/mammothexpress,
+#     390 -- docs/adr/0023-mfds-food-db.md)
+#   data/eval/open/phase2_violations.json -> {"checked": 165, "violations": 2}
+#     (4 personas x 16 menu brands, up to 3 picks each, plus bluebottle's synthetic 2-item bean-only menu --
+#      not every brand/persona pair fills all 3 slots, so this is short of the 4x16x3=192 ceiling)
+#     by_milk_label_source: human-labelled 114 checked / 0 violations, MFDS protein-signal 51 checked / 2
+#     violations (both on tomntoms' "싱글오리진" line, whose protein reading sits right at the 0.32g/100
+#     threshold -- consistent with the ADR's phase-1 fit, accuracy 98.1%, not a bug)
 # Then, with no API key at all, the portal CSVs alone reproduce the filter and the neighbour step:
 #   uv run python scripts/competition/export_csv.py --db "$DATABASE_URL"   # 03..06 CSVs
 #   uv run python scripts/competition/min_repro.py                        # < 1 s, prints 0 violations
@@ -112,6 +118,6 @@ echo "== eval: violations loo coverage convergence -> ${EVAL_DIR} =="
 mkdir -p "${EVAL_DIR}"
 DATA_VARIANT=open uv run python -m app.eval violations loo coverage convergence   # open models only (never the full-variant ones)
 
-echo "== expected: total_coffees 2063, coffeereview_rows 0, menu_items 512, violations 0 of 108 =="
+echo "== expected: total_coffees 2063, coffeereview_rows 0, menu_items 902, violations 2 of 165 (0 of 114 on human-labelled milk) =="
 uv run python -c "import json,sys; d=json.load(open(sys.argv[1])); print('violations', d['violations'], 'of', d['checked'])" "${EVAL_DIR}/phase2_violations.json"
 echo "done."

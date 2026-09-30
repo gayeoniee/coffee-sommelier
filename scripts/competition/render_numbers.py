@@ -103,12 +103,20 @@ def render_coverage(cov: dict) -> list[str]:
 def render_violations(v: dict) -> list[str]:
     checked, violations = v.get("checked", 0), v.get("violations", 0)
     rate = v.get("rate", 0.0)
-    return [
+    lines = [
         "**조건 위반** (`phase2_violations.json`)",
         "",
-        f"- 검사 {checked}건 중 위반 {violations}건 ({rate:.1%}) — 페르소나 4명 × 브랜드 10곳, 브랜드마다 추천 최대 3개"
+        f"- 검사 {checked}건 중 위반 {violations}건 ({rate:.1%}) — 페르소나 4명 × 브랜드 17곳, 브랜드마다 추천 최대 3개"
         " (메뉴가 없는 브랜드는 원두 기준 추천이라 1~2개)",
     ]
+    by_src = v.get("by_milk_label_source")
+    if by_src:
+        human, protein = by_src.get("human", {}), by_src.get("mfds_protein", {})
+        lines.append(
+            f"- 우유 판정 근거별(ADR 0023 Phase 2): 사람 라벨 {human.get('checked', 0)}건 중 위반 "
+            f"{human.get('violations', 0)}건, MFDS 단백질 신호(사람 라벨이 없는 이름만) {protein.get('checked', 0)}건 중 위반 "
+            f"{protein.get('violations', 0)}건")
+    return lines
 
 
 def render_loo(loo: dict) -> list[str]:

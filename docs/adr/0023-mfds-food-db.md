@@ -1,7 +1,10 @@
-# ADR 0023 — 식약처 식품영양성분 DB(음식 DB) 교차검증 (Phase 1)
+# ADR 0023 — 식약처 식품영양성분 DB(음식 DB) 교차검증·메뉴 반영
 
-- 상태: 제안 (2026-09-30)
-- 범위: 분석 전용. DB 반영·config 변경 없음 (Phase 2에서 결정).
+- 상태: 채택 (Phase 1 2026-09-30 분석, Phase 2 2026-09-30 반영)
+- 범위: Phase 1 = 분석 전용(DB 반영·config 변경 없음). **Phase 2 = 실제 반영** — 신규 브랜드 7곳 + 투썸 메뉴를
+  `menu_items`에 적재하고(`source = 'mfds_food'`), 사람 우유 라벨이 없는 이름은 이 DB의 단백질 실측으로 대신
+  판정한다. 기존 8개 브랜드(스타벅스·메가·빽다방·이디야·할리스·컴포즈·커피빈·폴바셋)의 공시 카페인 값은
+  덮어쓰지 않는다 — 아래 Phase 2 절 참고.
 
 ## 맥락
 
@@ -126,3 +129,82 @@
    우선순위 낮음.
 5. **당류(g)는 이 DB로 못 채움** — 1,823건 중 6건만 값이 있어 사실상 결측. 당류가 필요하면 다른 출처를
    찾아야 한다.
+
+## Phase 2 (채택, 2026-09-30)
+
+위 제안 1·2·3·4를 반영했다(5는 여전히 보류 — 당류는 이 DB로 못 채운다). `pipeline/normalize/mfds_food.py`의
+`menu_items_from_mfds`(+ `tests/test_normalize_mfds_food.py`, 24개 유닛 테스트, 제안 1은 아직 미반영 —
+"참고값" 컬럼은 만들지 않았다, 아래 한계 참고)가 새 `MenuItemRecord`를 만들고, `pipeline.normalize.run_normalize`가
+`data/raw/mfds_food/*.xlsx`(있으면)를 읽어 기존 소스들과 함께 적재한다.
+
+### 브랜드: twosome 채움 + 신규 7곳
+
+- **twosome**(기존 브랜드, 메뉴 0건 → 29건): 수집기가 CloudFront 403에 막혀 못 모으던 메뉴를 이 DB로 채웠다.
+  기존 원두 게이지(브랜드 하우스/디카페인 bean)는 그대로 둔다 — 메뉴만 새로 생겼다.
+- **신규 브랜드 7곳**(Phase 1 "다음 후보" 더벤티·아임일리터·공차·달콤 + "확인 후 포함" 대상 중 카페인
+  실측 ≥90% 통과분): 더벤티(93종, 100%)·아임일리터(39종 — 사이즈 M/L 중 M 선택 후, 100%)·공차(30종,
+  100%)·달콤(49종, 100%)·탐앤탐스(42종, 100%)·커피에반하다(36종 — Grande/Tall/Venti 중 Tall 선택 후,
+  100%)·매머드익스프레스(72종 — "매머드익스프레스"/"매머드 익스프레스" 공백 표기 통합, 100%). **기각**:
+  파스쿠찌(63%)·바나프레소(87%)·드롭탑(75%) — 모두 90% 미만. 이 7곳은 공식 원두 설명이 없어
+  `brands.yaml`의 `bean`/`decaf_bean`/`bean_open`/`decaf_bean_open`을 전부 `null`로 뒀다
+  (`test_open_brand_profiles_are_licence_clean`의 `(full is None) == (open is None)` 불변식 유지) —
+  추천 카드는 카페인·디카페인·우유만 보여주고 취향 매칭은 중립(0.5)으로 채점된다(`app/core/scoring.py`,
+  `tests/app/test_repo.py::test_brand_items_and_scoring_work_without_a_bean_profile`).
+- **메뉴 행 만들기**: 음료 × 온도(HOT/ICED, 없으면 온도 구분 없이 1행) 조합마다 브랜드의 기본/레귤러
+  사이즈(R/Tall/M/레귤러, 없으면 목록 중 가장 작은 사이즈)를 하나 골라 카페인 mg(1인분 환산)를 적는다.
+  다른 사이즈는 버린다. `source = 'mfds_food'`, `source_url`은 식품안전나라 음식 DB 페이지
+  (`https://various.foodsafetykorea.go.kr/nutrient/`). 브랜치별 한 매장의 별도 제출 행("...(K(코끼리))"
+  같은 지점 코드)과, `clean_drink_name`이 못 알아채는 두 단어짜리 영문 사이즈("(Mini Venti)")는 브랜드
+  수준 메뉴로 합쳐 별도 항목으로 새지 않게 했다.
+- **결과**: `menu_items` 512 → **902**(+390: twosome 29 + 신규 7곳 361), `brands` 10 → **17**
+  (`brand:mammothexpress`처럼 새 브랜드는 읽기 좋은 슬러그를 `NEW_BRAND_SLUGS`에 등록).
+
+### 우유 라벨: 사람 라벨 우선, 단백질 신호는 보조
+
+`menu_items_from_mfds`가 각 메뉴 이름의 단백질 밀도(g/100g·100ml, 기준량으로 정규화)도 함께 반환한다.
+`pipeline.load.load_milk_labels`가 이걸 `data/curated/menu_milk_labels.yaml`(사람 라벨)과 합치는데,
+**이름이 사람 라벨에 있으면 그 값이 무조건 이긴다** — 단백질 신호는 사람이 아직 안 본 새 메뉴 이름에만
+채워진다(파일은 `data/normalized/mfds_protein_milk_labels.json`, 파이프라인이 매번 새로 만드는 산출물이라
+커밋하지 않는다). 이 병합 덕에 `needs_review`(라벨 없는 메뉴는 추천에서 제외, ADR 0015)가 **두 라벨 종류
+모두를 "라벨 있음"으로 본다** — Phase 2로 늘어난 902건 모두 `needs_review = false`다.
+
+`app/eval.py`의 독립 판정 오라클(`has_milk`/`milk_label_source`)도 같은 순서로 갈라 조건 위반 평가를
+사람 라벨분과 단백질 신호분으로 **따로** 보고한다(`violation_rate`의 `by_milk_label_source`):
+
+| 우유 판정 근거 | 검사 | 위반 |
+|---|---|---|
+| 사람 라벨(`menu_milk_labels.yaml`, 453종) | 114건 | **0건** |
+| MFDS 단백질 신호(≥0.32g/100 → 우유, 사람 라벨 없는 이름만) | 51건 | 2건 |
+| 합계 | 165건 | 2건 |
+
+2건은 모두 탐앤탐스 "싱글오리진" 라인(콜롬비아·케냐AA·예가체프 등 디카페인 포함 전 종)이다 — 단백질
+실측이 정확히 임계값 0.32g/100(ICED는 0.21)이라 블랙커피인데도 "우유"로 갈렸다. Phase 1에서 측정한
+분류기 정확도(98.1%, FP 2/154)와 일치하는 경계 잡음이지 버그가 아니다 — 임계값을 손보면 Phase 1의
+다른 표본을 더 틀리게 할 수 있어 그대로 뒀다. **사람 라벨 기준 위반은 0건을 유지한다**는 것이 이 반영의
+불변식이다.
+
+이 과정에서 실제 키워드 버그 두 개도 찾았다 — `app/core/scoring.py`의 `is_milk_drink`(추천 계산이 실제로
+쓰는 키워드 판정)에 "마끼야또"(더벤티 카라멜 마끼야또)·"콘파냐"(탐앤탐스 에스프레소 콘파냐) 표기가
+빠져 있어, 두 메뉴가 실제로 "우유 없음" 손님에게 새어 나갈 뻔했다 — 두 표기를 `MILK_WORDS`에 추가해
+고쳤다(`tests/app/test_milk_labels.py::test_is_milk_drink_covers_macchiato_and_con_panna_spelling_variants`).
+
+### 스키마·config 변경
+
+- `menu_items.source text`(nullable) 컬럼 추가 — 기존 8개 브랜드 메뉴는 `NULL`(자체 수집기), Phase 2
+  메뉴만 `'mfds_food'`(`db/schema.sql`, `pipeline/records.py MenuItemRecord.source`).
+- `data/curated/brands.yaml`에 브랜드 7곳 추가(`bean`류 전부 `null`).
+- `scripts/refresh/refresh.py`의 `STATIC_SOURCES`에 `mfds_food` 추가 — 자동 주간 갱신은 이 소스를 절대
+  건드리지 않는다(xlsx가 없어도 실패하지 않고, 있어도 자동으로 다시 읽지 않는다). 갱신은 아래 수동 절차뿐.
+
+### 갱신 절차 (수동)
+
+1. https://various.foodsafetykorea.go.kr/nutrient/ → "음식 DB" 최신판을 내려받는다.
+2. `data/raw/mfds_food/<YYYYMMDD>_음식DB.xlsx`로 저장한다(gitignored, 폴더 안 가장 최근 날짜 파일 하나만
+   쓴다 — `pipeline.normalize._mfds_xlsx`가 `sorted(glob("*.xlsx"))[-1]`로 고른다).
+3. `uv run python -m pipeline run --only normalize --only load` (전체판) +
+   `bash scripts/competition/build_open_db.sh`(오픈판)로 다시 적재한다.
+4. `uv run python -m app.eval violations coverage`로 위 표(사람 라벨 위반 0건 유지)를 확인한다.
+5. xlsx가 아예 없어도 이 단계는 실패하지 않는다 — `mfds_food` 소스 기여가 0건이 될 뿐이고, 이전에
+   적재됐던 Phase 2 메뉴는 (참조하는 사용자 기록이 없다면) 다음 정식 재적재에서 `active = false`로
+   내려간다(다른 소스와 동일한 규칙, `pipeline/load.py::_retire_missing`) — 그래서 이 소스는 자동
+   주간 갱신(`scripts/refresh/refresh.py`) 대상에서 아예 뺐다(`STATIC_SOURCES`), 사람이 켤 때만 돈다.

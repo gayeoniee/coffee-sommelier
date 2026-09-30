@@ -21,6 +21,9 @@ ROOT = Path(__file__).resolve().parent.parent
 
 BRAND_KO = {"brand:starbucks": "스타벅스", "brand:mega": "메가", "brand:paik": "빽다방", "brand:paulbassett": "폴바셋",
             "brand:coffeebean": "커피빈", "brand:compose": "컴포즈", "brand:hollys": "할리스"}
+# ADR 0023 Phase 2 (식약처 음식 DB)로 추가된 브랜드는 여기 넣지 않는다 -- BRAND_KO는 required=True 개별
+# 검사를 만들어서(_checks 아래) tests/test_docs_checks.py의 최소 합성 GOOD_README까지 갱신해야 하는데,
+# 그 정확한 개수는 이미 menu_brand_count·menu_total(README의 "메뉴 실측 N개 브랜드"/합계)로 검증된다.
 
 NUM = r"\**([\d,]+(?:\.\d+)?)\**"
 

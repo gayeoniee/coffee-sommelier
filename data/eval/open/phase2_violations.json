@@ -1,6 +1,32 @@
 {
-  "checked": 108,
-  "violations": 0,
-  "rate": 0.0,
-  "details": []
+  "checked": 165,
+  "violations": 2,
+  "rate": 0.012121212121212121,
+  "by_milk_label_source": {
+    "note": "human = data/curated/menu_milk_labels.yaml, mfds_protein = ADR 0023 Phase 2 protein-density signal (no hand label yet), marker = neither (keyword fallback only)",
+    "human": {
+      "checked": 114,
+      "violations": 0
+    },
+    "mfds_protein": {
+      "checked": 51,
+      "violations": 2
+    },
+    "marker": {
+      "checked": 0,
+      "violations": 0
+    }
+  },
+  "details": [
+    {
+      "persona": "저카페인+우유X",
+      "brand": "brand:tomntoms",
+      "item": "싱글오리진 디카페인"
+    },
+    {
+      "persona": "디카페인+우유X+단맛",
+      "brand": "brand:tomntoms",
+      "item": "싱글오리진 디카페인"
+    }
+  ]
 }

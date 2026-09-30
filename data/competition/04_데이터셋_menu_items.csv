@@ -41,6 +41,42 @@ brand:coffeebean,바닐라 아이스 블렌디드,false,148.0,https://www.coffee
 brand:coffeebean,아이스 캐러멜 마키아또,false,91.0,https://www.coffeebeankorea.com/menu/list.asp
 brand:coffeebean,캐러멜 아이스 블렌디드,false,148.0,https://www.coffeebeankorea.com/menu/list.asp
 brand:coffeebean,플랫 화이트,false,198.0,https://www.coffeebeankorea.com/menu/list.asp
+brand:coffeeinlove,그린티도피오 라떼(HOT),false,194.0075,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,밀크티프레소(HOT),false,60.0048,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,콜드브루라떼(HOT),false,272.995,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,마스카포네 이천 쌀 슈페너(HOT),false,205.0164,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,카라멜모카(HOT),false,194.0075,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,콜드브루 라떼(HOT),false,273.0204,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,카페모카(HOT),false,410.0328,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,카푸치노(HOT),false,410.0328,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,화이트 아메리카노(HOT),false,205.0164,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,카라멜 마끼아또(HOT),false,410.0328,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,커피에 바나나(HOT),false,273.0204,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,바닐라 라떼(HOT),false,410.0328,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,카라멜 라떼(HOT),false,410.0328,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,토피넛 라떼(HOT),false,96.986,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,그샷추(HOT),false,273.0204,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,돌체 라떼(HOT),false,205.0164,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,카페 라떼(HOT),false,410.0328,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,그린티도피오 라떼(ICED),false,194.0075,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,밀크티프레소(ICED),false,60.0048,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,콜드브루라떼(ICED),false,272.995,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,마스카포네 이천 쌀 슈페너(ICED),false,205.0164,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,콜드브루 라떼(ICED),false,273.0204,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,살인미숫(ICED),false,122.9718,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,카페모카(ICED),false,410.0328,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,카푸치노(ICED),false,410.0328,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,달고나 아인슈페너(ICED),false,204.9696,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,화이트 아메리카노(ICED),false,205.0164,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,달고나 크림커피(ICED),false,204.9696,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,카라멜 마끼아또(ICED),false,410.0328,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,커피에 바나나(ICED),false,273.0204,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,바닐라 라떼(ICED),false,410.0328,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,카라멜 라떼(ICED),false,410.0328,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,그샷추(ICED),false,273.0204,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,커반 믹스커피(ICED),false,60.0048,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,돌체 라떼(ICED),false,205.0164,https://various.foodsafetykorea.go.kr/nutrient/
+brand:coffeeinlove,카페 라떼(ICED),false,410.0328,https://various.foodsafetykorea.go.kr/nutrient/
 brand:compose,매샷추,false,123.87,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
 brand:compose,아샷추,false,201.45,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
 brand:compose,돌체라떼,false,247.75,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
@@ -83,6 +119,55 @@ brand:compose,빅포즈 헤이즐넛라떼,false,495.49,https://composecoffee.co
 brand:compose,빅포즈 디카페인 아메리카노,true,18.32,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
 brand:compose,흑당 카페라떼,false,123.87,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
 brand:compose,흑당 버블 카페라떼,false,123.87,https://composecoffee.com/compose?search_tag=02.+%EC%BB%A4%ED%94%BC%E3%86%8D%EC%BD%9C%EB%93%9C%EB%B8%8C%EB%A3%A8&tab=nutrition
+brand:dalkomm,카라멜마끼아또 디카페인,true,8.0017,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,카라멜마끼아또 다크로스트,false,68.0038,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,카라멜마끼아또 프리미엄마일드,false,68.0038,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,바닐라라떼 디카페인,true,10.00035,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,아메리카노 디카페인,true,15.99985,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,아메리카노 다크로스트,false,136.00404,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,아메리카노 프리미엄마일드,false,136.00404,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,카푸치노 다크로스트,false,90.00315,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,카푸치노 프리미엄마일드,false,90.00315,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,바닐라 라떼 다크로스트,false,90.00315,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,바닐라 라떼 프리미엄마일드,false,90.00315,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,카페 라떼 디카페인,true,21.99935,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,카페 라떼 다크로스트,false,184.00716,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,카페 라떼 프리미엄마일드,false,184.00716,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,더블 모카 라떼 디카페인,true,10.00035,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,더블 모카 라떼 다크로스트,false,90.00315,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,더블 모카 라떼 프리미엄마일드,false,90.00315,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,카라멜마끼아또(HOT),false,67.9825,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,아메리카노 다크퍼플(HOT),false,136.0005,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,아메리카노 마일드 그린(HOT),false,136.0005,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,에스프레소 (더블)(HOT),false,135.99724,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,에스프레소 (싱글)(HOT),false,68.00036,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,아메리카노(HOT),false,183.9965,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,프렌치 마롱 카페 라떼(HOT),false,243.675,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,그린티 카페 라떼(HOT),false,128.013,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,바닐라 라떼(HOT),false,89.9925,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,흑당 아인슈페너(HOT),false,67.9825,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,더블 모카 라떼(HOT),false,89.9925,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,카페 라떼(HOT),false,183.9965,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,샤케아메리카노(ICED),false,203.98598,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,카라멜마끼아또(ICED),false,67.9825,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,아메리카노 다크퍼플(ICED),false,136.0005,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,아메리카노 마일드 그린(ICED),false,136.0005,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,아메리카노(ICED),false,183.9965,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,콜드브루 버터스카치 슈페너(ICED),false,107.0114,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,콜드브루 아인슈페너(ICED),false,24.00155,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,디카페인 콜드브루 아인슈페너(ICED),true,15.99985,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,디카페인 콜드브루 라떼(ICED),true,15.99985,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,디카페인 콜드브루(ICED),true,15.99985,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,콜드브루 라떼(ICED),false,24.00155,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,콜드브루(ICED),false,24.00155,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,허니큐브(ICED),false,206.0065,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,프렌치 마롱 카페 라떼(ICED),false,214.822,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,그린티 카페 라떼(ICED),false,128.013,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,바닐라 라떼(ICED),false,89.9925,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,흑당 아인슈페너(ICED),false,67.9825,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,더블 모카 라떼(ICED),false,89.9925,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,카페 라떼(ICED),false,183.9965,https://various.foodsafetykorea.go.kr/nutrient/
+brand:dalkomm,큐브(ICED),false,265.01105,https://various.foodsafetykorea.go.kr/nutrient/
 brand:ediya,달달커피,false,162.0,"https://ediya.com/contents/drink.html?chked_val=12,"
 brand:ediya,얼박샷추,false,261.0,"https://ediya.com/contents/drink.html?chked_val=12,"
 brand:ediya,카푸치노,false,202.0,"https://ediya.com/contents/drink.html?chked_val=12,"
@@ -124,6 +209,36 @@ brand:ediya,연유 콜드브루,false,181.0,"https://ediya.com/contents/drink.ht
 brand:ediya,흑당 콜드브루,false,181.0,"https://ediya.com/contents/drink.html?chked_val=12,"
 brand:ediya,카페 아메리카노,false,202.0,"https://ediya.com/contents/drink.html?chked_val=12,"
 brand:ediya,연유 카페 라떼,false,202.0,"https://ediya.com/contents/drink.html?chked_val=12,"
+brand:gongcha,아메리카노 DRIP(HOT),false,272.9502,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,얼그레이 아메리카노 DRIP(HOT),false,238.95667,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,바닐라 카페 라떼 DRIP(HOT),false,144.97452,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,카페 모카 DRIP(HOT),false,152.973,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,공차슈페너 DRIP(ICED),false,249.9805,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,아메리카노 DRIP(ICED),false,272.97775,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,얼그레이 아메리카노 DRIP(ICED),false,238.98325,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,바닐라 카페 라떼 DRIP(ICED),false,144.9887,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,카페 모카 DRIP(ICED),false,152.98712,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,아메리카노 ESP(HOT),false,128.97755,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,얼그레이 아메리카노 ESP(HOT),false,167.96808,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,바닐라 카페 라떼 ESP(HOT),false,128.97755,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,카페 모카 ESP(HOT),false,136.97604,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,공차슈페너 ESP(ICED),false,177.98517,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,아메리카노 ESP(ICED),false,128.99184,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,얼그레이 아메리카노 ESP(ICED),false,167.98595,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,바닐라 카페 라떼 ESP(ICED),false,128.99184,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,카페 모카 ESP(ICED),false,136.99026,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,아메리카노(HOT),false,118.9836,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,바닐라 카페 라떼(HOT),false,97.0002,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,카라멜 카페 라떼(HOT),false,130.9896,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,돌체 카페 라떼(HOT),false,144.9828,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,모카 카페 라떼(HOT),false,125.9802,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,카페 라떼(HOT),false,128.97755,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,아메리카노(ICED),false,101.9788,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,바닐라 카페 라떼(ICED),false,85.9914,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,카라멜 카페 라떼(ICED),false,82.0182,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,돌체 카페 라떼(ICED),false,92.9918,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,모카 카페 라떼(ICED),false,85.9914,https://various.foodsafetykorea.go.kr/nutrient/
+brand:gongcha,카페 라떼(ICED),false,128.99184,https://various.foodsafetykorea.go.kr/nutrient/
 brand:hollys,아샷추,false,74.0,https://www.hollys.co.kr/menu/espresso.do
 brand:hollys,아포가토,false,93.0,https://www.hollys.co.kr/menu/espresso.do
 brand:hollys,카푸치노,false,127.0,https://www.hollys.co.kr/menu/espresso.do
@@ -151,6 +266,117 @@ brand:hollys,돌체 라떼,false,93.0,https://www.hollys.co.kr/menu/espresso.do
 brand:hollys,카페 라떼,false,127.0,https://www.hollys.co.kr/menu/espresso.do
 brand:hollys,카페 모카,false,132.0,https://www.hollys.co.kr/menu/espresso.do
 brand:hollys,저당 바닐라 딜라이트,false,79.0,https://www.hollys.co.kr/menu/espresso.do
+brand:imaliter,콜드브루 디카페인(HOT),true,0.0,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,콜드브루 라떼 디카페인(HOT),true,0.0,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,콜드브루 라떼(HOT),false,79.9623,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,헤이즐넛 라떼(HOT),false,206.1408,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,카페모카(HOT),false,206.1408,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,콜드브루(HOT),false,79.9623,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,카라멜 마끼아또(HOT),false,206.1408,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,바닐라 라떼(HOT),false,206.1408,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,돌체 콜드브루 라떼 디카페인(HOT),true,0.0,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,돌체 콜드브루 라떼(HOT),false,53.1309,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,돌체 라떼(HOT),false,94.3236,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,카페 라떼(HOT),false,206.1408,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,꿀 라떼(HOT),false,206.1408,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,콜드브루 디카페인(ICED),true,0.0,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,콜드브루 라떼 디카페인(ICED),true,0.0,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,콜드브루 라떼(ICED),false,79.9623,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,헤이즐넛 라떼(ICED),false,206.1408,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,카페모카(ICED),false,206.1408,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,콜드브루(ICED),false,79.9623,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,흑당커피(ICED),false,94.3236,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,카라멜 마끼아또(ICED),false,206.1408,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,바닐라 라떼(ICED),false,206.1408,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,돌체 콜드브루 라떼 디카페인(ICED),true,0.0,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,돌체 콜드브루 라떼(ICED),false,53.1309,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,돌체 라떼(ICED),false,94.3236,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,카페 라떼(ICED),false,206.1408,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,꿀 라떼(ICED),false,206.1408,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,꿀메리카노 I’m B(HOT),false,78.7212,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,아메리카노 I’m B(HOT),false,78.7212,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,헤이즐넛 아메리카노 I’m B(HOT),false,78.7212,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,꿀메리카노 I’m B(ICED),false,153.069,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,아메리카노 I’m B(ICED),false,245.0286,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,헤이즐넛 아메리카노 I’m B(ICED),false,153.069,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,꿀메리카노 I’m D(HOT),false,94.3236,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,아메리카노 I’m D(HOT),false,78.7212,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,헤이즐넛 아메리카노 I’m D(HOT),false,94.3236,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,꿀메리카노 I’m D(ICED),false,206.1408,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,아메리카노 I’m D(ICED),false,330.0144,https://various.foodsafetykorea.go.kr/nutrient/
+brand:imaliter,헤이즐넛 아메리카노 I’m D(ICED),false,206.1408,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,아메리카노(HOT),false,178.1791,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 아메리카노(HOT),true,2.3177,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 헤이즐넛 라떼(HOT),true,4.1151,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 헤이즐넛 커피(HOT),true,4.10091,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 콜드브루(HOT),true,2.7907,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 달고나 콜드브루 라떼(HOT),true,2.0812,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 솔티드 카라멜 마키아토(HOT),true,2.29878,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 바나나 달달 커피(HOT),true,3.8786,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 베트남 연유 커피(HOT),true,3.89752,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 바닐라 라떼(HOT),true,2.29878,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 아몬드 라떼(HOT),true,2.29878,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 카페 라떼(HOT),true,2.29878,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 카페 모카(HOT),true,2.3177,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,헤이즐넛 라떼(HOT),false,244.4795,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,헤이즐넛 커피(HOT),false,179.9765,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 딥 화이트초코 모카(HOT),true,2.29878,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 꿀 라떼(HOT),true,2.29878,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 꿀 커피(HOT),true,2.29878,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,달고나 콜드브루 라떼(HOT),false,77.29293,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,바나나 달달 커피(HOT),false,285.219,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,베트남 연유 커피(HOT),false,388.2715,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,바닐라 라떼(HOT),false,178.1791,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,아몬드 라떼(HOT),false,178.1791,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,그린티 샷 라떼(HOT),false,330.9723,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,토피넛 샷 라떼(HOT),false,286.97855,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,믹스 커피(HOT),false,368.9731,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,카페 라떼(HOT),false,178.1791,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,카페 모카(HOT),false,178.1791,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,녹차 샷 라떼(HOT),false,266.5828,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,딥 화이트초코 모카(HOT),false,242.68211,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,꿀 라떼(HOT),false,178.1791,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,꿀 커피(HOT),false,178.1791,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,아인슈페너 라떼(ICED),false,242.65369,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,아메리카노(ICED),false,178.1865,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,아인슈페너(ICED),false,242.65369,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 아인슈페너 라떼(ICED),true,2.2977,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 아메리카노(ICED),true,2.29899,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 아인슈페너(ICED),true,2.3184,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 콜드브루 라떼(ICED),true,2.7777,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 헤이즐넛 라떼(ICED),true,4.10154,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 헤이즐넛 커피(ICED),true,4.0779,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 콜드브루(ICED),true,2.1276,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 달고나 콜드브루 라떼(ICED),true,2.1276,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 솔티드 카라멜 마키아토(ICED),true,2.29899,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 바나나 달달 커피(ICED),true,3.9006,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 베트남 연유 커피(ICED),true,3.9006,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 바닐라 라떼(ICED),true,2.3049,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 아몬드 라떼(ICED),true,2.29899,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 돌체 콜드브루 라떼(ICED),true,2.80134,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 카페 라떼(ICED),true,2.3049,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 카페 모카(ICED),true,2.3049,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,콜드브루 라떼(ICED),false,154.59378,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,헤이즐넛 라떼(ICED),false,244.49078,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,헤이즐넛 커피(ICED),false,180.0186,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 딥 화이트초코 모카(ICED),true,2.29899,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 꿀 라떼(ICED),true,2.29899,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,디카페인 꿀 커피(ICED),true,2.3049,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,달고나 콜드브루 라떼(ICED),false,77.29689,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,바나나 달달 커피(ICED),false,388.287,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,베트남 연유 커피(ICED),false,388.287,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,바닐라 라떼(ICED),false,178.1865,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,아몬드 라떼(ICED),false,178.1865,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,그린티 샷 라떼(ICED),false,330.98956,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,토피넛 샷 라떼(ICED),false,286.9896,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,돌체 콜드브루 라떼(ICED),false,154.4874,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,믹스 커피(ICED),false,368.99084,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,카페 라떼(ICED),false,242.69415,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,카페 모카(ICED),false,178.1865,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,녹차 샷 라떼(ICED),false,266.6001,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,딥 화이트초코 모카(ICED),false,242.69415,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,꿀 라떼(ICED),false,178.1865,https://various.foodsafetykorea.go.kr/nutrient/
+brand:mammothexpress,꿀 커피(ICED),false,242.69415,https://various.foodsafetykorea.go.kr/nutrient/
 brand:mega,녹차,false,78.5,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
 brand:mega,레몬차,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
 brand:mega,유자차,false,0.0,https://www.mega-mgccoffee.com/menu/?menu_category1=1&menu_category2=1
@@ -511,3 +737,167 @@ brand:starbucks,스타벅스 1호점 카페 아메리카노,false,210.0,https://
 brand:starbucks,아이스 스타벅스 1호점 카페 라떼,false,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
 brand:starbucks,아이스 스타벅스 1호점 크림 라떼,false,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
 brand:starbucks,아이스 스타벅스 1호점 카페 아메리카노,false,210.0,https://www.starbucks.co.kr/upload/json/menu/W0000003.js
+brand:theventi,바닐라다크리카노(HOT),false,263.9997,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,카라멜마끼아또(HOT),false,296.058,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,카라멜마끼야또(HOT),false,263.9997,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,헤이즐넛딥라떼(HOT),false,296.058,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,바닐라딥라떼(HOT),false,296.058,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,오트카페라떼(HOT),false,296.058,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,아메리카노(HOT),false,192.036,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,아인슈페너(HOT),false,264.0078,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 카라멜마끼야또(HOT),true,26.004,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 헤이즐넛딥라떼(HOT),true,26.004,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 바닐라딥라떼(HOT),true,26.004,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 아인슈페너(HOT),true,25.9992,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,헤이즐넛 다크리카노(HOT),false,263.9997,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 오트카페 라떼(HOT),true,26.004,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 카페모카(HOT),true,34.9872,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 연유 라떼(HOT),true,26.004,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 카페 라떼(HOT),true,26.004,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,바닐라딥 라떼(HOT),false,263.9997,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,오트카페 라떼(HOT),false,263.9997,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,헤이즐넛 딥 라떼(HOT),false,263.9997,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,믹스커피(HOT),false,134.028,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,연유라떼(HOT),false,296.058,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,카페라떼(HOT),false,296.058,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,카페모카(HOT),false,303.06,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,코코넛 라떼(HOT),false,296.058,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,토피넛 라떼(HOT),false,10.002,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,약과 크림커피(HOT),false,295.0272,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,연유 라떼(HOT),false,263.9997,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,카페 라떼(HOT),false,263.9997,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,꿀 다크리카노(HOT),false,263.9997,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,헤이즐넛크림콜드브루 (더벤티)(ICED),false,158.0544,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,헤이즐넛크림콜드브루(ICED),false,79.014,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,바닐라크림콜드브루 (더벤티)(ICED),false,158.0544,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,바닐라크림콜드브루(ICED),false,79.014,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,바닐라다크리카노(ICED),false,263.9997,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,카라멜마끼아또 (더벤티)(ICED),false,591.1872,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,헤이즐넛딥라떼 (더벤티)(ICED),false,591.1872,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,카라멜마끼아또(ICED),false,296.058,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,카라멜마끼야또(ICED),false,263.9997,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,헤이즐넛딥라떼(ICED),false,296.058,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,더벤티사이즈 아메리카노(ICED),false,480.0004,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,더벤티사이즈 디카페인 아메리카노(ICED),true,52.03,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,더벤티사이즈 디카페인 카페 라떼(ICED),true,52.03,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,더벤티사이즈 믹스커피(ICED),false,164.9824,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,더벤티사이즈 카페 라떼(ICED),false,527.9626,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,바닐라딥라떼 (더벤티)(ICED),false,591.1872,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,오트카페라떼 (더벤티)(ICED),false,591.1872,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,콜드브루라떼 (더벤티)(ICED),false,158.0544,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,바닐라딥라떼(ICED),false,296.058,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,오트카페라떼(ICED),false,296.058,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,콜드브루라떼(ICED),false,92.016,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,아이스크림 라떼(ICED),false,296.058,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,아인슈페너 (하프벤티)(ICED),false,296.0076,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,아메리카노 (더벤티)(ICED),false,383.1264,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,아메리카노(ICED),false,192.036,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,아인슈페너(ICED),false,591.12,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 카라멜마끼야또(ICED),true,26.004,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 헤이즐넛딥라떼(ICED),true,26.004,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 바닐라딥라떼(ICED),true,26.004,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,헤이즐넛 크림콜드브루(ICED),false,79.0167,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 아인슈페너(ICED),true,25.9992,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,헤이즐넛 다크리카노(ICED),false,263.9997,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 헤이즐넛 크림콜드브루(ICED),true,1.0047,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 오트카페 라떼(ICED),true,26.004,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 콜드브루 라떼(ICED),true,1.0047,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 카페모카(ICED),true,34.9872,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 콜드브루(ICED),true,1.0047,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 바닐라 크림콜드브루(ICED),true,1.0047,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 연유 라떼(ICED),true,26.004,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,디카페인 카페 라떼(ICED),true,26.004,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,바닐라딥 라떼(ICED),false,263.9997,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,오트카페 라떼(ICED),false,263.9997,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,콜드브루 라떼(ICED),false,92.0187,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,헤이즐넛 딥 라떼(ICED),false,263.9997,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,믹스커피 (더벤티)(ICED),false,202.0608,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,연유라떼 (더벤티)(ICED),false,591.1872,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,카페라떼 (더벤티)(ICED),false,591.1872,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,카페모카 (더벤티)(ICED),false,605.1936,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,콜드브루 (더벤티)(ICED),false,158.0544,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,믹스커피(ICED),false,134.028,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,연유라떼(ICED),false,296.058,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,카페라떼(ICED),false,296.058,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,카페모카(ICED),false,303.06,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,콜드브루(ICED),false,92.016,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,바닐라 크림콜드브루(ICED),false,79.0167,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,코코넛 라떼(ICED),false,296.058,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,토피넛 라떼(ICED),false,10.002,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,말차 아인슈페너 (하프벤티)(ICED),false,26.0022,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,말차 아인슈페너(ICED),false,52.008,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,약과 크림커피(ICED),false,295.0272,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,연유 라떼(ICED),false,263.9997,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,카페 라떼(ICED),false,263.9997,https://various.foodsafetykorea.go.kr/nutrient/
+brand:theventi,꿀 다크리카노(ICED),false,263.9997,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,콜드브루,false,113.406,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,싱글오리진 시다모,false,143.127,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,에스프레소 콘파냐,false,48.98,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,싱글오리진 동티모르,false,132.153,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,싱글오리진 디카페인,true,6.076,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,싱글오리진 스페셜티,false,161.634,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,싱글오리진 예가체프,false,125.86,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,싱글오리진 콜롬비아,false,119.66,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,에스프레소 마끼아또,false,48.98,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,브루잉 블라썸,false,131.49,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,브루잉 아리차,false,125.01,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,브루잉 블랙와인,false,132.75,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,브루잉 콜롬비아,false,137.19,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,싱글오리진 케냐 AA,false,131.998,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,브루잉 케냐AA,false,139.8,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,싱글오리진 케냐AA(ICED),false,132.023,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,버터스카치 라떼(HOT),false,3.198,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,바닐라빈 라떼(HOT),false,92.163,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,오리엔탈 라떼(HOT),false,97.96,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,헤이즐넛 라떼(HOT),false,97.96,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,카페모카(HOT),false,97.96,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,카푸치노(HOT),false,97.96,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,카라멜 마끼아또(HOT),false,97.96,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,바닐라 라떼(HOT),false,97.96,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,꼰대 라떼(HOT),false,109.337,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,카페 라떼(HOT),false,97.96,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,싱글오리진 동티모르(ICED),false,132.164,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,싱글오리진 디카페인(ICED),true,6.063,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,싱글오리진 스페셜티(ICED),false,161.633,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,싱글오리진 예가체프(ICED),false,125.866,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,싱글오리진 콜롬비아(ICED),false,119.662,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,싱글오리진 시다모(ICED),false,143.115,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,버터스카치 라떼(ICED),false,15.99,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,바닐라빈 라떼(ICED),false,92.168,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,오리엔탈 라떼(ICED),false,97.949,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,헤이즐넛 라떼(ICED),false,97.949,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,카페모카(ICED),false,97.949,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,카푸치노(ICED),false,97.949,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,카라멜 마끼아또(ICED),false,97.949,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,바닐라 라떼(ICED),false,97.949,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,꼰대 라떼(ICED),false,109.347,https://various.foodsafetykorea.go.kr/nutrient/
+brand:tomntoms,카페 라떼(ICED),false,97.949,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,데일리오트코코넛 라떼(HOT),false,143.0025,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,스페니쉬연유카페 라떼(HOT),false,142.994,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,카라멜마키아또(HOT),false,142.994,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,달고나카페 라떼(HOT),false,43.9845,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,바닐라카페 라떼(HOT),false,142.994,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,흑임자카페 라떼(HOT),false,142.994,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,에소프레소 (더블)(HOT),false,142.9983,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,에소프레소 (싱글)(HOT),false,72.0012,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,아메리카노(HOT),false,142.994,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,카페모카(HOT),false,142.994,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,카푸치노(HOT),false,142.994,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,숏카페 라떼(HOT),false,142.9976,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,롱블랫(HOT),false,143.0058,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,카페 라떼(HOT),false,142.994,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,데일리오트코코넛 라떼(ICED),false,143.0055,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,스페니쉬연유카페 라떼(ICED),false,142.9956,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,아이스크림카페 라떼(ICED),false,142.994,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,카라멜마키아또(ICED),false,142.994,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,달고나카페 라떼(ICED),false,33.9894,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,바닐라카페 라떼(ICED),false,142.994,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,흑임자카페 라떼(ICED),false,142.9956,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,아메리카노(ICED),false,142.994,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,아메리키토(ICED),false,287.9943,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,콜드브루 라떼(ICED),false,174.0042,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,카페모카(ICED),false,142.994,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,콜드브루(ICED),false,279.0111,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,숏카페 라떼(ICED),false,142.9976,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,롱블랫(ICED),false,142.9976,https://various.foodsafetykorea.go.kr/nutrient/
+brand:twosome,카페 라떼(ICED),false,142.994,https://various.foodsafetykorea.go.kr/nutrient/
