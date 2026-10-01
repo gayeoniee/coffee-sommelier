@@ -10,6 +10,7 @@ Databases (env; every URL stays out of logs and the report):
     REFRESH_STAGE_URL      scratch DB, dropped and rebuilt     (default .../coffee_refresh on the same server)
     REFRESH_STAGE_OPEN_URL scratch open-data DB                (default .../coffee_refresh_open)
     PUBLISH_FULL_URL       where a passing refresh is written  (default REFRESH_SOURCE_URL)
+    PUBLISH_FULL=off       skip the full publish (only the open variant is served)
     PUBLISH_OPEN_URL       open-data production DB             (default: none -> the open publish is skipped)
 Other env: DRY_RUN=1, ENRICH_TASK (enrich_ci in CI: no Ollama there), REFRESH_MAX_LLM_CALLS (default 300).
 
@@ -124,7 +125,9 @@ class Config:
                    source_url=source,
                    stage_url=os.getenv("REFRESH_STAGE_URL") or with_db(local, "coffee_refresh"),
                    stage_open_url=os.getenv("REFRESH_STAGE_OPEN_URL") or with_db(local, "coffee_refresh_open"),
-                   publish_full_url=os.getenv("PUBLISH_FULL_URL") or source,
+                   # PUBLISH_FULL=off: the full variant is no longer served (2026-10, only the open site runs);
+                   # the full catalog is still read as the refresh source, just never written
+                   publish_full_url=None if os.getenv("PUBLISH_FULL", "on") == "off" else (os.getenv("PUBLISH_FULL_URL") or source),
                    publish_open_url=os.getenv("PUBLISH_OPEN_URL") or None,
                    skip_collect=a.skip_collect, skip_pytest=a.skip_pytest, open_pr=not a.no_pr,
                    max_llm_calls=int(os.getenv("REFRESH_MAX_LLM_CALLS") or a.max_llm_calls),

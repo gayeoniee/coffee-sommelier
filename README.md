@@ -2,10 +2,11 @@
 
 > 건강 때문에 디카페인을 마시지만 산미 있는 커피를 좋아하는 사람도, 카페에서 실패 없이 고를 수 있게.
 
-카페에서 음료를 고를 때 **사용자 조건(카페인 등)은 반드시 지키고**, 취향(산미·바디·향미)에 맞는 선택지를 **근거와 함께** 추천하며, 마신 기록으로 점점 개인화되는 앱을 만든다. **라이브 데모: https://coffee-sommelier-psi.vercel.app** (무료 서버라 첫 접속은 30초쯤 깨우는 시간이 걸릴 수 있다)
+카페에서 음료를 고를 때 **사용자 조건(카페인 등)은 반드시 지키고**, 취향(산미·바디·향미)에 맞는 선택지를 **근거와 함께** 추천하며, 마신 기록으로 점점 개인화되는 앱을 만든다. **라이브 데모: https://coffee-sommelier-open.vercel.app** (무료 서버라 첫 접속은 30초쯤 깨우는 시간이 걸릴 수 있다)
 
-- 공모전 제출용 오픈 데이터판(coffeereview 미포함): https://coffee-sommelier-open.vercel.app
-- API(FastAPI, `/docs`): https://coffee-sommelier-api.onrender.com
+- 공개 사이트는 **라이선스 문제가 없는 오픈 데이터판 하나만** 운영한다(coffeereview·RoasterDB 미포함, 공모전 제출본과 같음). 이전 주소 https://coffee-sommelier-psi.vercel.app 도 같은 판을 보여 준다.
+- 전체판(coffeereview 리뷰 7,393건과 그 라벨로 학습한 태그·속성 모델 포함)은 코드·평가가 이 저장소에 그대로 있고 로컬에서 재현한다(아래 표의 "전체판" 수치). 무료 서버 사용 시간(월 750시간) 안에서 둘을 모두 띄울 수 없어 2026-10부터 공개 운영에서 뺐다 — 다시 띄우는 법은 [docs/deploy.md](docs/deploy.md) 10절.
+- API(FastAPI, `/docs`): https://coffee-sommelier-open-api.onrender.com
 
 ![데모: 온보딩 → 추천 → 기록 → 내 취향](docs/demo.gif)
 
@@ -166,7 +167,7 @@ npm run e2e       # 온보딩→추천→기록 스모크 (백엔드·DB 실행 
 
 ### 배포
 
-Vercel(웹) + Render(FastAPI 도커) + Neon(Postgres·pgvector), 모두 무료 등급·싱가포르 리전. 운영 중: 웹 https://coffee-sommelier-psi.vercel.app , API https://coffee-sommelier-api.onrender.com/health 계정 로그인(GitHub) 뒤에는 스크립트 하나로 끝난다.
+Vercel(웹) + Render(FastAPI 도커) + Neon(Postgres·pgvector), 모두 무료 등급·싱가포르 리전. 운영 중(오픈 데이터판 하나): 웹 https://coffee-sommelier-open.vercel.app , API https://coffee-sommelier-open-api.onrender.com/health — 구성과 전체판을 다시 띄우는 법은 [docs/deploy.md](docs/deploy.md) 10절. 계정 로그인(GitHub) 뒤에는 스크립트 하나로 끝난다.
 
 ```bash
 npx neonctl auth && npx vercel login     # (선택) export RENDER_API_KEY=...

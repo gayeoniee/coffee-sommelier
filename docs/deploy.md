@@ -241,3 +241,17 @@ DRY_RUN=1 PUBLISH_OPEN_URL=postgresql://coffee:coffee@localhost:5432/coffee_open
 ```
 
 - **수동 카탈로그 게시**: `MODE=catalog NEON_DATABASE_URL=... bash scripts/deploy/migrate_to_neon.sh`(오픈판은 `SRC_DB=coffee_open`).
+
+## 10. 지금의 운영 구성 (2026-10~): 오픈 데이터판 하나만
+
+무료 Render 계정의 인스턴스 시간(월 750시간, 계정 합계)으로 두 백엔드와 깨우기 핑을 함께 돌리다 2026-09-30에 두 서비스가 모두 billing 사유로 정지됐다. 그래서 공개 운영은 라이선스 문제가 없는 오픈 데이터판 하나로 줄였다.
+
+| 구성 요소 | 상태 |
+|---|---|
+| `coffee-sommelier-open-api` (Render) + `coffee-sommelier-open` (Vercel) + Neon `coffee_open` | 운영 — CI가 이 서비스만 배포, 깨우기 핑 대상 |
+| `coffee-sommelier` (Vercel, 이전 주소 coffee-sommelier-psi) | 남겨 둠 — 환경변수 `API_URL`을 오픈 API로, `NEXT_PUBLIC_VARIANT=open`으로 바꿔 같은 판을 보여 줌 |
+| `coffee-sommelier-api` (Render) | 정지 상태로 둠(지우지 않음) — CI 배포 대상에서 뺌 |
+| Neon `neondb` (전체판 DB) | 그대로 둠(무료) — 주간 자동 갱신이 원본으로 읽기만 하고 쓰지 않음(`PUBLISH_FULL=off`) |
+
+전체판을 다시 띄우려면: Render 대시보드에서 `coffee-sommelier-api`를 재개(유료 플랜이거나 사용 시간이 남을 때), `.github/workflows/ci.yml` deploy 단계의 서비스 목록에 다시 추가, `refresh.yml`의 `PUBLISH_FULL` 줄 삭제, Vercel `coffee-sommelier` 프로젝트의 `API_URL`·`NEXT_PUBLIC_VARIANT`를 원래 값(전체판 API, `full`)으로 되돌리고 재배포한다.
+

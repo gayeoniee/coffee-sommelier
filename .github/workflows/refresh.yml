@@ -61,6 +61,7 @@ jobs:
       NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
       REFRESH_SOURCE_URL: ${{ secrets.NEON_DATABASE_URL }}  # current production catalog (read) = publish target
       PUBLISH_OPEN_URL: ${{ secrets.NEON_OPEN_DATABASE_URL }}
+      PUBLISH_FULL: "off"   # only the competition/open site is served (2026-10); full DB is read, never written
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4

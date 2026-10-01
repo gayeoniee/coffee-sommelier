@@ -74,9 +74,9 @@ jobs:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
           if [ -z "$RENDER_API_KEY" ]; then echo "no RENDER_API_KEY secret; skipping"; exit 0; fi
-          # Both the full deployment and the competition open-data variant (render.yaml); a service that
-          # hasn't been created yet (e.g. the open variant, before Task 3's deploy step) is skipped, not an error.
-          for name in coffee-sommelier-api coffee-sommelier-open-api; do
+          # Only the competition open-data variant is served since 2026-10 (the full service is suspended; a free
+          # account's 750 instance hours cannot carry both). Re-add coffee-sommelier-api here to serve it again.
+          for name in coffee-sommelier-open-api; do
             sid=$(curl -fsS -H "Authorization: Bearer $RENDER_API_KEY" \
               "https://api.render.com/v1/services?name=$name&limit=1" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d[0]["service"]["id"] if d else "")') \
               || { echo "$name deploy trigger failed"; continue; }

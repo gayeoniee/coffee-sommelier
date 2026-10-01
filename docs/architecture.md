@@ -108,9 +108,8 @@ event: done             항상 마지막
 
 | 구성 | 위치 | 비고 |
 |---|---|---|
-| 웹 (전체판) | Vercel `sin1` — https://coffee-sommelier-psi.vercel.app | Next.js 16, PWA(서비스 워커는 `/api/*`를 캐시하지 않음) |
-| 웹 (공모전 오픈 데이터판) | Vercel — https://coffee-sommelier-open.vercel.app | coffeereview 없는 DB에 연결 |
-| API | Render 도커(singapore) — https://coffee-sommelier-api.onrender.com | 이미지 356 MB, 실행 메모리 약 75 MiB |
+| 웹 | Vercel — https://coffee-sommelier-open.vercel.app (이전 주소 coffee-sommelier-psi도 같은 판) | Next.js 16, PWA(서비스 워커는 `/api/*`를 캐시하지 않음) |
+| API | Render 도커(singapore) — https://coffee-sommelier-open-api.onrender.com | 이미지 356 MB, 실행 메모리 약 75 MiB. 2026-10부터 오픈 데이터판 하나만 운영([deploy.md 10절](deploy.md)) |
 | DB | Neon Postgres 17 + pgvector (aws-ap-southeast-1) | |
 | LLM·임베딩 | NVIDIA API 무료 엔드포인트 | 타임아웃 + 템플릿 폴백 |
 
